@@ -52,15 +52,19 @@ a:hover {
   margin-right: auto;
   max-width: 55rem;
   float: center;
+  display: flex;
+  justify-content: space-between;
 }
 
 .nav .nav-lang {
   margin-right: .5rem;
   text-align: right;
+  align-self: flex-start;
 }
 
 .nav .nav-index {
   text-align: left;
+  align-self: flex-end;
 }
 
 .container {
