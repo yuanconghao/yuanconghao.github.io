@@ -4,6 +4,41 @@
   
     
     <entry>
+      <title>Deeeplearning模型-NLP-大语言模型微调语料生成工具</title>
+      <link href="/2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/"/>
+      <url>/2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/</url>
+      
+        <content type="html"><![CDATA[<p>价值百万的语料设计服务，可一键微调语料设计生成，支持模型：</p><ul><li>OpenAI</li><li>百度千帆平台</li><li>LLama原生格式</li></ul><p>针对教材内容，设计了多轮对话语料，可以定制风格，并且设计了三种对话能力：</p><ul><li>拉会主题</li><li>自动纠错</li><li>单词语法解释</li></ul><span id="more"></span><img src="/images/nlp/ai_corpus.png" alt="corpus generate" width="100%"/><hr>]]></content>
+      
+      
+      <categories>
+          
+          <category> NLP </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> LLM </tag>
+            
+            <tag> 深度学习模型 </tag>
+            
+            <tag> 深度学习 </tag>
+            
+            <tag> NLP </tag>
+            
+            <tag> Transformer </tag>
+            
+            <tag> 大模型 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Deeeplearning模型-NLP-Transformer模型</title>
       <link href="/2023/12/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-Transformer%E6%A8%A1%E5%9E%8B/"/>
       <url>/2023/12/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-Transformer%E6%A8%A1%E5%9E%8B/</url>
