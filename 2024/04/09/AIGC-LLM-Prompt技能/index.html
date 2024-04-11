@@ -184,7 +184,8 @@ ga('create','UA-83251621-1','auto');ga('send','pageview');
 <h3 id="Program-Aided-Language-Models-PAL-Prompting"><a href="#Program-Aided-Language-Models-PAL-Prompting" class="headerlink" title="Program-Aided Language Models(PAL) Prompting"></a>Program-Aided Language Models(PAL) Prompting</h3><p>论文<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2211.10435.pdf">《PAL: Program-aided Language Models》</a><br>论文比较早了，2022年发表。本质上还是一种CoT，而且这种Coding的任务现在用LLMs+Tool，挂一个解释器会更准确。所以可能在实际应用场景中，作用不大。但是论文的思想还是值得借鉴的。比如对Programing任务进行拆解，通过CoT的方式最终给出答案。 可以用于苏格拉底式的启发式编程使用。</p>
 <img src="/images/prompt/prompt_pal.png" width="800px" />
 
-<h3 id="ReAct-Prompting"><a href="#ReAct-Prompting" class="headerlink" title="ReAct Prompting"></a>ReAct Prompting</h3><h3 id="Reflection"><a href="#Reflection" class="headerlink" title="Reflection"></a>Reflection</h3><p>Reflection这种Prompting思想，我认为非常有用。会对AGI的技术发展起到关键作用。相关论文：</p>
+<h3 id="ReAct-Prompting"><a href="#ReAct-Prompting" class="headerlink" title="ReAct Prompting"></a>ReAct Prompting</h3><p>论文：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2210.03629.pdf">《REAC T: SYNERGIZING REASONING AND ACTING IN LANGUAGE MODELS》</a><br>核心思想还是通过提出多个thought-action-observation的步骤，用于解决任务轨迹。<br>其实就是针对某一个任务，按照thought-action-observation这一套流程，步骤，分别执行了n次，然后统计n次执行后的结果，输出最优解。复杂度也挺高，但思想比较简单。</p>
+<h3 id="Reflection"><a href="#Reflection" class="headerlink" title="Reflection"></a>Reflection</h3><p>Reflection这种Prompting思想，我认为非常有用。会对AGI的技术发展起到关键作用。相关论文：</p>
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2303.11366.pdf">《Reflexion: Language Agents with Verbal Reinforcement Learning》</a></p>
 <p>步骤：</p>
 <ol>
