@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>LLama3.2调研报告</title>
+      <link href="/2024/09/27/LLama3.2%E8%B0%83%E7%A0%94/"/>
+      <url>/2024/09/27/LLama3.2%E8%B0%83%E7%A0%94/</url>
+      
+        <content type="html"><![CDATA[<img src="/images/llama/llama_intro.png" width="550px" /><span id="more"></span><h3 id="一、介绍"><a href="#一、介绍" class="headerlink" title="一、介绍"></a>一、介绍</h3><p>本次LLama3.2发布两款模型：</p><ul><li>小参数量文本生成模型（可在移动设备&#x2F;CPU设备上推理）：<ul><li>1B</li><li>3B</li></ul></li><li>多模态（Text&#x2F;Image-To-Text）模型：<ul><li>11B</li><li>90B</li></ul></li></ul><h3 id="二、收益"><a href="#二、收益" class="headerlink" title="二、收益"></a>二、收益</h3><ol><li>LLama3.2的发布，丰富了LLama全家桶，参数量上，从小模型到405B的Dense模型，全部覆盖，并且扩充了多模态的Vision模型：</li></ol><ul><li>2023年，LLama2 7B&#x2F;70B</li><li>2024年，LLama3 8B&#x2F;70B</li><li>2024年，LLama3.1 8B&#x2F;70B&#x2F;405B</li><li>2024年，LLama3.2 1B&#x2F;3B，Vision 11B&#x2F;90B</li></ul><ol start="2"><li>1B和3B模型，支持128K的Tokens，使得在设备上，进行summarization, instruction following, and rewriting 等任务，变得可能。</li><li>LLama3.2 11B和90B多模态模型，可以平替文本生成模型，并且在图片理解任务上，优于闭源模型Claude 3 ，并且可以使用torchtune等进行自定义微调，可以进行本地torchchat部署。</li><li>发布第一个LLama Stack，简化了开发人员针对LLama系列在不同环境下的部署、使用等操作。</li></ol><h3 id="三、能干什么"><a href="#三、能干什么" class="headerlink" title="三、能干什么"></a>三、能干什么</h3><p>可以提取图片细节，理解图片场景，使得在语言和视觉之间建立起桥梁。</p><ol><li>LightWeight Model（1B&#x2F;3B）:</li></ol><ul><li>强大的文本生成能力和工具调用能力。</li><li>可以在设备上部署，数据隐私方面得到改进。</li></ul><ol start="2"><li>MultiModel（11B&#x2F;90B）：</li></ol><ul><li>文档级理解：<ul><li>图表、图形的理解。</li><li>如，根据图表的数据，进行推理，给出需要推理的答案。</li></ul></li><li>图像标题和基础视觉任务：<ul><li>如用自然语言对图片中的内容进行描述，方位描述等。</li><li>如，对地图进行理解，给出最优路线等。</li></ul></li></ul><h3 id="四、模型评估"><a href="#四、模型评估" class="headerlink" title="四、模型评估"></a>四、模型评估</h3><p>Benchmark评测，LLama3.2 3B 在Few-Shot和Tool Use以及上下文理解方面要优于Gemma2 2B和Phi-3.5 mini。Math和推理任务上，优于Gemma2 2B ，比Phi-3.5 mini稍差。</p><img src="/images/llama/llama_bm1.png" width="800px" /><p>多模态模型，全面优于Gemma2 和 Phi-3.5。</p><img src="/images/llama/llama_bm2.png" width="800px" /><h3 id="五、模型原理"><a href="#五、模型原理" class="headerlink" title="五、模型原理"></a>五、模型原理</h3><ol><li>LightWeight<br>预训练阶段，LLama3.2 使用了，剪枝和知识蒸馏两种方法。基于LLama3.1 的8B和70B 作为教师模型，来训练小模型。</li></ol><img src="/images/llama/llama_arch.png" width="800px" /><p>后训练阶段，使用了fine-tuning (SFT), rejection sampling (RS), and direct preference optimization (DPO).来提升模型性能，支持了128K Tokens。</p><ol start="2"><li>Vision models<br>设计了一个新的模型结构，在增加对图像输入的支持，训练了一组权重适配器，将预先训练好的图像编码器整合到预训练语言模型中。适配器有一系列的Cross Attention组成，可以将图像编码器特征输入语言模型，然后对文本和图像进行 适配器训练，使得图像和语言的表征保持一致。其实就是统一输入特征，只是将图像和文本的输入表示无限逼近即可。</li></ol><h3 id="六、试用"><a href="#六、试用" class="headerlink" title="六、试用"></a>六、试用</h3><ol><li>LightWeight Model：</li></ol><ul><li>Mac上部署：<ul><li>安装ollama，<a href="https://ollama.com/">https://ollama.com/</a></li><li>terminal中运行：<code>ollama run llama3.2</code> 或着 <code>ollama run llama3.2:1b</code><img src="/images/llama/llama_ollama.png" width="600px" /></li></ul></li><li>Groq试用：<a href="https://groq.com/#">https://groq.com/#</a>  <img src="/images/llama/llama_groq.png" width="600px" /></li></ul><ol start="2"><li>Vision Models:</li></ol><ul><li>HuggingFace Space: <a href="https://huggingface.co/spaces/huggingface-projects/llama-3.2-vision-11B">https://huggingface.co/spaces/huggingface-projects/llama-3.2-vision-11B</a>  <img src="/images/llama/llama_hf.png" width="600px" />  <img src="/images/llama/llama_hf2.png" width="600px" /></li><li><a href="https://lmarena.ai/">https://lmarena.ai/</a>  选择Direct Chat Tab  <img src="/images/llama/llama_lm1.png" width="600px" />  <img src="/images/llama/llama_lm2.png" width="600px" /></li></ul><hr>]]></content>
+      
+      
+      <categories>
+          
+          <category> AIGC </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AIGC </tag>
+            
+            <tag> LLama </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>AIGC-LLM-Prompt工程技能综述</title>
       <link href="/2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/"/>
       <url>/2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/</url>
