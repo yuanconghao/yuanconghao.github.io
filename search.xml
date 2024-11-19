@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>AIGC-Agent-作文批改标注</title>
+      <link href="/2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/"/>
+      <url>/2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/</url>
+      
+        <content type="html"><![CDATA[<p>黑客马拉松项目，AI雅思先锋</p><ul><li>支持雅思口语陪练，接入Realtime，实现口语陪练或者模拟考试</li><li>支持英文作文批改，针对单词、句子、语法、整体逻辑给出优化建议。</li><li>给出待办事项todo list建议，并提供参考范文</li><li>支持手写图片的原图批改标注，在原图中通过<strong>波浪线</strong>，<strong>圆角方框</strong>等进行位置标注，并在相关位置进行批改建议。</li></ul><span id="more"></span><p>拿了个二等奖<br><img src="/images/aigc/zhengshu.jpg" width="500px" /></p><h3 id="基于原图的批改标注效果"><a href="#基于原图的批改标注效果" class="headerlink" title="基于原图的批改标注效果"></a>基于原图的批改标注效果</h3><img src="/images/aigc/biaozhu.jpg" width="600px" /><h3 id="作品效果图"><a href="#作品效果图" class="headerlink" title="作品效果图"></a>作品效果图</h3><table><tr><td width="200"><img src="/images/aigc/yasi_app1.png" width="200px"></td><td width="200"><img src="/images/aigc/yasi_app2.png" width="200px"></td><td width="200"><img src="/images/aigc/yasi_app3.png" width="200px"></td></tr></table>]]></content>
+      
+      
+      <categories>
+          
+          <category> AIGC </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
+            
+            <tag> Agent </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>LLama3.2调研报告</title>
       <link href="/2024/09/27/LLama32%E8%B0%83%E7%A0%94/"/>
       <url>/2024/09/27/LLama32%E8%B0%83%E7%A0%94/</url>
