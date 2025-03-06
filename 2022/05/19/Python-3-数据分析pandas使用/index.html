@@ -1,0 +1,572 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>Python-3.数据分析Pandas使用 | DeepLearner</title><link rel="stylesheet" type="text/css" href="../../../../css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="../../../../favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="../../../../favicon.ico"><link rel="apple-touch-icon" href="../../../../apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="../../../../apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="../../../../atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Python-3.数据分析Pandas使用</h1><a id="logo" href="../../../../.">DeepLearner</a><p class="description">Deep Learning Notes</p></div><div id="nav-menu"><a class="current" href="../../../../."><i class="fa fa-home"> 首页</i></a><a href="../../../../archives/"><i class="fa fa-archive"> 归档</i></a><a href="../../../../tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="../../../../resource/"><i class="fa fa-cloud"> 资源</i></a><a href="../../../../guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="../../../../codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="../../../../resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Python-3.数据分析Pandas使用</h1><div class="post-meta">created:2022-05-19</div><div class="post-meta">updated:2023-07-30<span> | </span><span class="category"><a href="../../../../categories/Python/">Python</a></span></div><a class="disqus-comment-count" href="#waline"><span class="waline-comment-count" id=""></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pandas%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">Pandas介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pandas%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9"><span class="toc-number">1.1.</span> <span class="toc-text">Pandas主要特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pandas%E5%86%85%E7%BD%AE%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">Pandas内置数据结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Series%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.</span> <span class="toc-text">Series对象</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9B%E5%BB%BASeries%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.1.</span> <span class="toc-text">创建Series对象</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96Series%E6%95%B0%E6%8D%AE"><span class="toc-number">1.3.2.</span> <span class="toc-text">读取Series数据</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Series%E5%B1%9E%E6%80%A7"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">Series属性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DataFrame%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.4.</span> <span class="toc-text">DataFrame对象</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9B%E5%BB%BADataFrame%E6%95%B0%E6%8D%AE"><span class="toc-number">1.4.1.</span> <span class="toc-text">创建DataFrame数据</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96DataFrame%E6%95%B0%E6%8D%AE"><span class="toc-number">1.4.2.</span> <span class="toc-text">读取DataFrame数据</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#DataFrame%E5%B1%9E%E6%80%A7%E5%92%8C%E6%96%B9%E6%B3%95"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">DataFrame属性和方法</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pandas%E8%AF%BBCSV%E6%96%87%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">Pandas读CSV文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pandas%E5%86%99CSV%E6%96%87%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">Pandas写CSV文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pandas%E5%B8%B8%E7%94%A8%E7%BB%9F%E8%AE%A1%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">Pandas常用统计方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Series%E7%BB%9F%E8%AE%A1%E5%87%BD%E6%95%B0"><span class="toc-number">4.1.</span> <span class="toc-text">Series统计函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DataFrame%E7%BB%9F%E8%AE%A1%E5%87%BD%E6%95%B0"><span class="toc-number">4.2.</span> <span class="toc-text">DataFrame统计函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pandas%E6%95%B0%E6%8D%AE%E5%90%88%E5%B9%B6"><span class="toc-number">5.</span> <span class="toc-text">Pandas数据合并</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pandas%E6%95%B0%E6%8D%AE%E5%88%86%E7%BB%84%E8%81%9A%E5%90%88"><span class="toc-number">6.</span> <span class="toc-text">Pandas数据分组聚合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pandas%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97"><span class="toc-number">7.</span> <span class="toc-text">Pandas数据清洗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pandas%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97"><span class="toc-number">8.</span> <span class="toc-text">Pandas时间序列</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E9%A2%91%E7%8E%87"><span class="toc-number">8.1.</span> <span class="toc-text">时间序列频率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%97%B6%E9%97%B4%E8%8C%83%E5%9B%B4"><span class="toc-number">8.2.</span> <span class="toc-text">创建时间范围</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BD%AC%E5%8C%96%E4%B8%BA%E6%97%B6%E9%97%B4%E6%88%B3"><span class="toc-number">8.3.</span> <span class="toc-text">转化为时间戳</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%97%B6%E9%97%B4%E5%91%A8%E6%9C%9F"><span class="toc-number">8.4.</span> <span class="toc-text">创建时间周期</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pandas%E6%A0%B8%E5%BF%83%E6%93%8D%E4%BD%9C"><span class="toc-number">9.</span> <span class="toc-text">Pandas核心操作</span></a></li></ol></div></div><div class="post-content"><p><a target="_blank" rel="noopener" href="https://pandas.pydata.org/">Pandas</a>官方定义: pandas is a fast, powerful, flexible and easy to use open source data analysis and manipulation tool, built on top of the Python programming language.</p>
+<p>&emsp;&emsp;Pandas是Python数据分析必备工具，实现数据分析的五个重要环节：</p>
+<ul>
+<li>加载数据</li>
+<li>整理数据</li>
+<li>操作数据</li>
+<li>构建数据模型</li>
+<li>分析数据<span id="more"></span></li>
+</ul>
+<h3 id="Pandas介绍"><a href="#Pandas介绍" class="headerlink" title="Pandas介绍"></a>Pandas介绍</h3><h4 id="Pandas主要特点"><a href="#Pandas主要特点" class="headerlink" title="Pandas主要特点"></a>Pandas主要特点</h4><ul>
+<li>提供DataFrame对象。</li>
+<li>从不同格式(Excel&#x2F;CSV&#x2F;SQL)文件中加载数据，转换为可处理对象。</li>
+<li>按照数据行、列标签进行分组，对分组后的对象进行聚合和转换操作。</li>
+<li>数据归一化和缺失值处理。</li>
+<li>对DataFrame数据的列进行增、删、改操作。</li>
+<li>处理不同格式数据集，如矩阵数据、异构数据表、时间序列。</li>
+<li>可构建子集、切片、过滤、分组以及重新排序操作。</li>
+</ul>
+<h4 id="Pandas内置数据结构"><a href="#Pandas内置数据结构" class="headerlink" title="Pandas内置数据结构"></a>Pandas内置数据结构</h4><table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Series</td>
+<td>一维</td>
+<td>可存储各种数据类型，比如字符数、整数、浮点数、对象等，Series 用<font color="#ff0000">index</font>和<font color="#0000ff">value</font>属性来描述数据值</td>
+</tr>
+<tr>
+<td>DataFrame</td>
+<td>二维</td>
+<td>二维表格型数据结构，包括<font color="#00ff00">行索引(index)</font>和<font color="#0000ff">列索引(columns)</font>，创建时，可指定相应索引值。</td>
+</tr>
+</tbody></table>
+<p><img src="/images/pandas/pandas_series1.png" width="500px" alt="Series" title="Series"></img><br><img src="/images/pandas/pandas_dataframe.gif" width="500px" alt="DataFrame" title="DataFrame"></img></p>
+<h4 id="Series对象"><a href="#Series对象" class="headerlink" title="Series对象"></a>Series对象</h4><h5 id="创建Series对象"><a href="#创建Series对象" class="headerlink" title="创建Series对象"></a>创建Series对象</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">data    : 输入的数据，可以是列表、常量、ndarray 数组等。</span></span><br><span class="line"><span class="string">index   : 索引值必须是惟一的，如果没有传递索引，则默认为 np.arange(n)。</span></span><br><span class="line"><span class="string">dtype   : dtype表示数据类型，如果没有提供，则会自动判断得出。</span></span><br><span class="line"><span class="string">copy    : 表示对 data 进行拷贝，默认为 False。</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">s=pd.Series(data, index, dtype, copy)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 标量创建</span></span><br><span class="line">s1 = pd.Series(<span class="number">5</span>, np.arange(<span class="number">5</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># ndarray创建</span></span><br><span class="line">data = np.array([<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>,<span class="string">&#x27;d&#x27;</span>])</span><br><span class="line"><span class="comment"># 默认索引</span></span><br><span class="line">s2 = pd.Series(data)</span><br><span class="line"><span class="comment"># 自定义索引标签</span></span><br><span class="line">s3 = pd.Series(data, index=[<span class="number">100</span>,<span class="number">101</span>,<span class="number">102</span>,<span class="number">103</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># dict创建</span></span><br><span class="line">data_dict = &#123;<span class="string">&#x27;a&#x27;</span> : <span class="number">0.</span>, <span class="string">&#x27;b&#x27;</span> : <span class="number">1.</span>, <span class="string">&#x27;c&#x27;</span> : <span class="number">2.</span>&#125;</span><br><span class="line">s4 = pd.Series(data_dict)</span><br><span class="line">s5 = pd.Series(data_dict, index=[<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>,<span class="string">&#x27;d&#x27;</span>,<span class="string">&#x27;a&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s1----------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s1----------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s2----------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s2)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s2----------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s3----------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s3)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s3----------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s4----------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s4)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s4----------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s5----------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s5)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s5----------&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">----------s1----------</span></span><br><span class="line"><span class="string">0    5</span></span><br><span class="line"><span class="string">1    5</span></span><br><span class="line"><span class="string">2    5</span></span><br><span class="line"><span class="string">3    5</span></span><br><span class="line"><span class="string">4    5</span></span><br><span class="line"><span class="string">dtype: int64</span></span><br><span class="line"><span class="string">----------s1----------</span></span><br><span class="line"><span class="string">----------s2----------</span></span><br><span class="line"><span class="string">0    a</span></span><br><span class="line"><span class="string">1    b</span></span><br><span class="line"><span class="string">2    c</span></span><br><span class="line"><span class="string">3    d</span></span><br><span class="line"><span class="string">dtype: object</span></span><br><span class="line"><span class="string">----------s2----------</span></span><br><span class="line"><span class="string">----------s3----------</span></span><br><span class="line"><span class="string">100    a</span></span><br><span class="line"><span class="string">101    b</span></span><br><span class="line"><span class="string">102    c</span></span><br><span class="line"><span class="string">103    d</span></span><br><span class="line"><span class="string">dtype: object</span></span><br><span class="line"><span class="string">----------s3----------</span></span><br><span class="line"><span class="string">----------s4----------</span></span><br><span class="line"><span class="string">a    0.0</span></span><br><span class="line"><span class="string">b    1.0</span></span><br><span class="line"><span class="string">c    2.0</span></span><br><span class="line"><span class="string">dtype: float64</span></span><br><span class="line"><span class="string">----------s4----------</span></span><br><span class="line"><span class="string">----------s5----------</span></span><br><span class="line"><span class="string">b    1.0</span></span><br><span class="line"><span class="string">c    2.0</span></span><br><span class="line"><span class="string">d    NaN</span></span><br><span class="line"><span class="string">a    0.0</span></span><br><span class="line"><span class="string">dtype: float64</span></span><br><span class="line"><span class="string">----------s5----------</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="读取Series数据"><a href="#读取Series数据" class="headerlink" title="读取Series数据"></a>读取Series数据</h5><h6 id="Series属性"><a href="#Series属性" class="headerlink" title="Series属性"></a>Series属性</h6><table>
+<thead>
+<tr>
+<th>attribute</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>axes</td>
+<td>一维以列表的形式返回所有行索引标签。</td>
+</tr>
+<tr>
+<td>dtype</td>
+<td>返回对象的数据类型。</td>
+</tr>
+<tr>
+<td>empty</td>
+<td>返回一个布尔值，用于判断数据对象是否为空。</td>
+</tr>
+<tr>
+<td>ndim</td>
+<td>返回Series的维数，Series始终为1。</td>
+</tr>
+<tr>
+<td>size</td>
+<td>返回Series对象大小，元素数量</td>
+</tr>
+<tr>
+<td>values</td>
+<td>以 ndarray 的形式返回 Series 对象。</td>
+</tr>
+<tr>
+<td>index</td>
+<td>返回一个RangeIndex对象，用来描述索引的取值范围。</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">s = pd.Series(np.random.randn(<span class="number">5</span>))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------s----------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;---------s[0]---------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;-----s[[0, 1, 2]]-----&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s[[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------s.axes--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s.axes)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------s.dtype--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s.dtype)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------s.empty--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s.empty)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------s.ndim--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s.ndim)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------s.size--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s.size)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------s.values--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s.values)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------s.index--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s.index)</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">----------s----------</span></span><br><span class="line"><span class="string">0    0.160836</span></span><br><span class="line"><span class="string">1   -0.289639</span></span><br><span class="line"><span class="string">2    0.260978</span></span><br><span class="line"><span class="string">3    0.194951</span></span><br><span class="line"><span class="string">4   -0.012629</span></span><br><span class="line"><span class="string">dtype: float64</span></span><br><span class="line"><span class="string">---------s[0]---------</span></span><br><span class="line"><span class="string">0.16083581207268774</span></span><br><span class="line"><span class="string">-----s[[0, 1, 2]]-----</span></span><br><span class="line"><span class="string">0    0.160836</span></span><br><span class="line"><span class="string">1   -0.289639</span></span><br><span class="line"><span class="string">2    0.260978</span></span><br><span class="line"><span class="string">dtype: float64</span></span><br><span class="line"><span class="string">--------s.axes--------</span></span><br><span class="line"><span class="string">[RangeIndex(start=0, stop=5, step=1)]</span></span><br><span class="line"><span class="string">--------s.dtype--------</span></span><br><span class="line"><span class="string">float64</span></span><br><span class="line"><span class="string">--------s.empty--------</span></span><br><span class="line"><span class="string">False</span></span><br><span class="line"><span class="string">--------s.ndim--------</span></span><br><span class="line"><span class="string">1</span></span><br><span class="line"><span class="string">--------s.size--------</span></span><br><span class="line"><span class="string">5</span></span><br><span class="line"><span class="string">--------s.values--------</span></span><br><span class="line"><span class="string">[ 0.16083581 -0.28963936  0.26097825  0.1949514  -0.012629  ]</span></span><br><span class="line"><span class="string">--------s.index--------</span></span><br><span class="line"><span class="string">RangeIndex(start=0, stop=5, step=1)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>description</th>
+<th>method</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>head()</td>
+<td>返回前n行数据，默认显示前5行</td>
+<td>isnull()</td>
+<td>如果为值不存在或者缺失，则返回True</td>
+</tr>
+<tr>
+<td>tail()</td>
+<td>返回后n行数据，默认显示后5行</td>
+<td>notnull()</td>
+<td>如果值不存在或者缺失，则返回 False</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">s = pd.Series(np.random.randn(<span class="number">5</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------s--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span> (s)</span><br><span class="line"><span class="comment"># 返回前三行数据</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----s.head()----&quot;</span>)</span><br><span class="line"><span class="built_in">print</span> (s.head(<span class="number">3</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----s.tail()----&quot;</span>)</span><br><span class="line"><span class="built_in">print</span> (s.tail(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line">s=pd.Series([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="literal">None</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----pd.isnull()----&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(pd.isnull(s))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----pd.notnull()----&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(pd.notnull(s))</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">--------s--------</span></span><br><span class="line"><span class="string">0   -0.863094</span></span><br><span class="line"><span class="string">1    0.298486</span></span><br><span class="line"><span class="string">2    1.344080</span></span><br><span class="line"><span class="string">3   -0.420814</span></span><br><span class="line"><span class="string">4   -1.042683</span></span><br><span class="line"><span class="string">dtype: float64</span></span><br><span class="line"><span class="string">----s.head()----</span></span><br><span class="line"><span class="string">0   -0.863094</span></span><br><span class="line"><span class="string">1    0.298486</span></span><br><span class="line"><span class="string">2    1.344080</span></span><br><span class="line"><span class="string">dtype: float64</span></span><br><span class="line"><span class="string">----s.tail()----</span></span><br><span class="line"><span class="string">2    1.344080</span></span><br><span class="line"><span class="string">3   -0.420814</span></span><br><span class="line"><span class="string">4   -1.042683</span></span><br><span class="line"><span class="string">dtype: float64</span></span><br><span class="line"><span class="string">----pd.isnull()----</span></span><br><span class="line"><span class="string">0    False</span></span><br><span class="line"><span class="string">1    False</span></span><br><span class="line"><span class="string">2    False</span></span><br><span class="line"><span class="string">3     True</span></span><br><span class="line"><span class="string">dtype: bool</span></span><br><span class="line"><span class="string">----pd.notnull()----</span></span><br><span class="line"><span class="string">0     True</span></span><br><span class="line"><span class="string">1     True</span></span><br><span class="line"><span class="string">2     True</span></span><br><span class="line"><span class="string">3    False</span></span><br><span class="line"><span class="string">dtype: bool</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="DataFrame对象"><a href="#DataFrame对象" class="headerlink" title="DataFrame对象"></a>DataFrame对象</h4><h5 id="创建DataFrame数据"><a href="#创建DataFrame数据" class="headerlink" title="创建DataFrame数据"></a>创建DataFrame数据</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">data    : 输入的数据，可以是 ndarray，series，list，dict，标量以及一个 DataFrame。</span></span><br><span class="line"><span class="string">index   : 行标签，如果没有传递 index 值，则默认行标签是 np.arange(n)，n 代表 data 的元素个数。</span></span><br><span class="line"><span class="string">columns : 列标签，如果没有传递 columns 值，则默认列标签是 np.arange(n)。</span></span><br><span class="line"><span class="string">dtype   : dtype表示每一列的数据类型。</span></span><br><span class="line"><span class="string">copy    : 默认为 False，表示复制数据 data。</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">pd.DataFrame( data, index, columns, dtype, copy)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">list1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">list2 = [[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>]]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;---------list创建---------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;---------list一维---------&quot;</span>)</span><br><span class="line">df1 = pd.DataFrame(list1)</span><br><span class="line"><span class="built_in">print</span>(df1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;---------list二维---------&quot;</span>)</span><br><span class="line">df2 = pd.DataFrame(list2)</span><br><span class="line"><span class="built_in">print</span>(df2)</span><br><span class="line">df3 = pd.DataFrame(list2, columns = [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;---------list指定columns---------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(df3)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;---------dict创建---------&quot;</span>)</span><br><span class="line">dict1 = &#123;<span class="string">&#x27;Name&#x27;</span>:[<span class="string">&#x27;Tom&#x27;</span>, <span class="string">&#x27;Jack&#x27;</span>, <span class="string">&#x27;Steve&#x27;</span>, <span class="string">&#x27;Ricky&#x27;</span>],<span class="string">&#x27;Age&#x27;</span>:[<span class="number">28</span>, <span class="number">34</span>, <span class="number">29</span>, <span class="number">42</span>]&#125;</span><br><span class="line">df4 = pd.DataFrame(dict1)</span><br><span class="line"><span class="built_in">print</span>(df4)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;---------dict创建指定index---------&quot;</span>)</span><br><span class="line">df5 = pd.DataFrame(dict1, index = [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;d&#x27;</span>, <span class="string">&#x27;d&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(df5)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;---------list嵌套dict创建---------&quot;</span>)</span><br><span class="line">list_dict = [&#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>&#125;,&#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">5</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">10</span>, <span class="string">&#x27;c&#x27;</span>: <span class="number">20</span>&#125;]</span><br><span class="line">df6 = pd.DataFrame(list_dict)</span><br><span class="line"><span class="built_in">print</span>(df6)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;---------list嵌套dict创建指定index---------&quot;</span>)</span><br><span class="line">df7 = pd.DataFrame(list_dict, index = [<span class="string">&#x27;first&#x27;</span>, <span class="string">&#x27;second&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(df7)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;---------Series创建---------&quot;</span>)</span><br><span class="line">dict_series = &#123;</span><br><span class="line">    <span class="string">&#x27;one&#x27;</span> : pd.Series([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], index=[<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>]),</span><br><span class="line">    <span class="string">&#x27;two&#x27;</span> : pd.Series([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], index=[<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>])&#125;</span><br><span class="line">df8 = pd.DataFrame(dict_series)</span><br><span class="line"><span class="built_in">print</span>(df8)</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">---------list创建---------</span></span><br><span class="line"><span class="string">---------list一维---------</span></span><br><span class="line"><span class="string">   0</span></span><br><span class="line"><span class="string">0  1</span></span><br><span class="line"><span class="string">1  2</span></span><br><span class="line"><span class="string">2  3</span></span><br><span class="line"><span class="string">3  4</span></span><br><span class="line"><span class="string">---------list二维---------</span></span><br><span class="line"><span class="string">   0  1  2  3</span></span><br><span class="line"><span class="string">0  1  2  3  4</span></span><br><span class="line"><span class="string">1  5  6  7  8</span></span><br><span class="line"><span class="string">---------list指定columns---------</span></span><br><span class="line"><span class="string">   a  b  c  d</span></span><br><span class="line"><span class="string">0  1  2  3  4</span></span><br><span class="line"><span class="string">1  5  6  7  8</span></span><br><span class="line"><span class="string">---------dict创建---------</span></span><br><span class="line"><span class="string">    Name  Age</span></span><br><span class="line"><span class="string">0    Tom   28</span></span><br><span class="line"><span class="string">1   Jack   34</span></span><br><span class="line"><span class="string">2  Steve   29</span></span><br><span class="line"><span class="string">3  Ricky   42</span></span><br><span class="line"><span class="string">---------dict创建指定index---------</span></span><br><span class="line"><span class="string">    Name  Age</span></span><br><span class="line"><span class="string">a    Tom   28</span></span><br><span class="line"><span class="string">b   Jack   34</span></span><br><span class="line"><span class="string">d  Steve   29</span></span><br><span class="line"><span class="string">d  Ricky   42</span></span><br><span class="line"><span class="string">---------list嵌套dict创建---------</span></span><br><span class="line"><span class="string">   a   b     c</span></span><br><span class="line"><span class="string">0  1   2   NaN</span></span><br><span class="line"><span class="string">1  5  10  20.0</span></span><br><span class="line"><span class="string">---------list嵌套dict创建指定index---------</span></span><br><span class="line"><span class="string">        a   b     c</span></span><br><span class="line"><span class="string">first   1   2   NaN</span></span><br><span class="line"><span class="string">second  5  10  20.0</span></span><br><span class="line"><span class="string">---------Series创建---------</span></span><br><span class="line"><span class="string">   one  two</span></span><br><span class="line"><span class="string">a  1.0    1</span></span><br><span class="line"><span class="string">b  2.0    2</span></span><br><span class="line"><span class="string">c  3.0    3</span></span><br><span class="line"><span class="string">d  NaN    4</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="读取DataFrame数据"><a href="#读取DataFrame数据" class="headerlink" title="读取DataFrame数据"></a>读取DataFrame数据</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">dict_series = &#123;</span><br><span class="line">    <span class="string">&#x27;one&#x27;</span> : pd.Series([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], index=[<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>]),</span><br><span class="line">    <span class="string">&#x27;two&#x27;</span> : pd.Series([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], index=[<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>])&#125;</span><br><span class="line">df = pd.DataFrame(d)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------print--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(df)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------列索引读--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(df[<span class="string">&#x27;one&#x27;</span>])</span><br><span class="line"></span><br><span class="line">df[<span class="string">&#x27;three&#x27;</span>] = pd.Series([<span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>], index=[<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>])</span><br><span class="line">df[<span class="string">&#x27;four&#x27;</span>] = df[<span class="string">&#x27;two&#x27;</span>] + df[<span class="string">&#x27;three&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------列索引加运算--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(df)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------行索引读取--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(df.loc[<span class="string">&#x27;a&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------行索引位置读取--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(df.iloc[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------切片多行读取--------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(df[<span class="number">2</span>:<span class="number">4</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">--------print--------</span></span><br><span class="line"><span class="string">   one  two</span></span><br><span class="line"><span class="string">a  1.0    1</span></span><br><span class="line"><span class="string">b  2.0    2</span></span><br><span class="line"><span class="string">c  3.0    3</span></span><br><span class="line"><span class="string">d  NaN    4</span></span><br><span class="line"><span class="string">--------列索引读--------</span></span><br><span class="line"><span class="string">a    1.0</span></span><br><span class="line"><span class="string">b    2.0</span></span><br><span class="line"><span class="string">c    3.0</span></span><br><span class="line"><span class="string">d    NaN</span></span><br><span class="line"><span class="string">Name: one, dtype: float64</span></span><br><span class="line"><span class="string">--------列索引加运算--------</span></span><br><span class="line"><span class="string">   one  two  three  four</span></span><br><span class="line"><span class="string">a  1.0    1     10    11</span></span><br><span class="line"><span class="string">b  2.0    2     11    13</span></span><br><span class="line"><span class="string">c  3.0    3     12    15</span></span><br><span class="line"><span class="string">d  NaN    4     13    17</span></span><br><span class="line"><span class="string">--------行索引读取--------</span></span><br><span class="line"><span class="string">one       1.0</span></span><br><span class="line"><span class="string">two       1.0</span></span><br><span class="line"><span class="string">three    10.0</span></span><br><span class="line"><span class="string">four     11.0</span></span><br><span class="line"><span class="string">Name: a, dtype: float64</span></span><br><span class="line"><span class="string">--------行索引位置读取--------</span></span><br><span class="line"><span class="string">one       2.0</span></span><br><span class="line"><span class="string">two       2.0</span></span><br><span class="line"><span class="string">three    11.0</span></span><br><span class="line"><span class="string">four     13.0</span></span><br><span class="line"><span class="string">Name: b, dtype: float64</span></span><br><span class="line"><span class="string">--------切片多行读取--------</span></span><br><span class="line"><span class="string">   one  two  three  four</span></span><br><span class="line"><span class="string">c  3.0    3     12    15</span></span><br><span class="line"><span class="string">d  NaN    4     13    17</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="DataFrame属性和方法"><a href="#DataFrame属性和方法" class="headerlink" title="DataFrame属性和方法"></a>DataFrame属性和方法</h6><table>
+<thead>
+<tr>
+<th>attr&amp;method</th>
+<th>desc</th>
+<th>attr&amp;method</th>
+<th>desc</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>T</td>
+<td>行和列转置</td>
+<td>head()</td>
+<td>返回前n行数据</td>
+</tr>
+<tr>
+<td>axes</td>
+<td>返回行、列标签组成的列表</td>
+<td>tail()</td>
+<td>返回后n行数据</td>
+</tr>
+<tr>
+<td>dtypes</td>
+<td>返回每一列的数据类型</td>
+<td>shift()</td>
+<td>将行&#x2F;列移动指定的步幅长度</td>
+</tr>
+<tr>
+<td>empty</td>
+<td>返回数据对象是否为空，True为空</td>
+<td>insert()</td>
+<td>插入新的列</td>
+</tr>
+<tr>
+<td>ndim</td>
+<td>数组的维数，DataFrame为2</td>
+<td>del()&#x2F;pop()</td>
+<td>删除列</td>
+</tr>
+<tr>
+<td>shape</td>
+<td>返回DataFrame形状，行列元组</td>
+<td>append()</td>
+<td>插入新的行</td>
+</tr>
+<tr>
+<td>size</td>
+<td>返回DataFrame中的元素数量</td>
+<td>drop()</td>
+<td>删除行</td>
+</tr>
+<tr>
+<td>values</td>
+<td>使用numpy数组表示DF中的元素值</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<h3 id="Pandas读CSV文件"><a href="#Pandas读CSV文件" class="headerlink" title="Pandas读CSV文件"></a>Pandas读CSV文件</h3><p><code>pd.read_csv(file_path_or_buffer, sep, header, names, index_col)</code></p>
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>desc</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>filepath_or_buffer</td>
+<td>文件路径</td>
+</tr>
+<tr>
+<td>sep</td>
+<td>列之间的分隔符。read_csv()默认为为’,’</td>
+</tr>
+<tr>
+<td>header</td>
+<td>默认将首行设为列名。<code>header=None</code>时应手动给出列名。</td>
+</tr>
+<tr>
+<td>names</td>
+<td><code>header=None</code>时设置此字段使用列表初始化列名。</td>
+</tr>
+<tr>
+<td>index_col</td>
+<td>将某一列作为行级索引。若使用列表，则设置复合索引。</td>
+</tr>
+<tr>
+<td>usecols</td>
+<td>选择读取文件中的某些列。设置为为相应列的索引列表。</td>
+</tr>
+<tr>
+<td>skiprows</td>
+<td>跳过行。可选择跳过前n行或给出跳过的行索引列表。</td>
+</tr>
+<tr>
+<td>encoding</td>
+<td>编码。</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">df = pd.read_csv(<span class="string">&#x27;nba.csv&#x27;</span>)</span><br><span class="line"><span class="comment"># 读取前5行，后5行</span></span><br><span class="line"><span class="built_in">print</span>(df)</span><br><span class="line"><span class="comment"># 读取前n行，默认5行</span></span><br><span class="line"><span class="built_in">print</span>(df.head())</span><br><span class="line"><span class="comment"># 读取后n行，默认5行</span></span><br><span class="line"><span class="built_in">print</span>(df.tail())</span><br><span class="line"><span class="comment"># 返回表格基本信息</span></span><br><span class="line"><span class="built_in">print</span>(df.info())</span><br></pre></td></tr></table></figure>
+
+<p>参考：<a target="_blank" rel="noopener" href="https://www.runoob.com/pandas/pandas-csv-file.html">www.runoob.com</a> ，以<a href="http://deeplearner.top/files/nba.csv">nba.csv</a>为例。</p>
+<p>CSV文件（逗号分隔符文件，数据与数据之间使用逗号分隔）：</p>
+<p><img src="/images/pandas/pandas_csv_data.png" width="600px" alt="csv数据" title="csv数据"></img><br>pandas读取CSV文件：<br><img src="/images/pandas/pandas_read_csv.png" width="600px" alt="pandas读取" title="pandas读取"></img></p>
+<h3 id="Pandas写CSV文件"><a href="#Pandas写CSV文件" class="headerlink" title="Pandas写CSV文件"></a>Pandas写CSV文件</h3><p><code>df.to_csv()</code></p>
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>desc</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>filepath_or_buffer</td>
+<td>文件路径</td>
+</tr>
+<tr>
+<td>sep</td>
+<td>列之间的分隔符。默认为’,’</td>
+</tr>
+<tr>
+<td>na_rep</td>
+<td>写入文件时dataFrame中缺失值的内容。默认空字符串。</td>
+</tr>
+<tr>
+<td>columns</td>
+<td>定义需要写入文件的列。</td>
+</tr>
+<tr>
+<td>header</td>
+<td>是否需要写入表头。默认为True。</td>
+</tr>
+<tr>
+<td>index</td>
+<td>会否需要写入行索引。默认为True。</td>
+</tr>
+<tr>
+<td>encoding</td>
+<td>编码。</td>
+</tr>
+</tbody></table>
+<h3 id="Pandas常用统计方法"><a href="#Pandas常用统计方法" class="headerlink" title="Pandas常用统计方法"></a>Pandas常用统计方法</h3><h4 id="Series统计函数"><a href="#Series统计函数" class="headerlink" title="Series统计函数"></a>Series统计函数</h4><table>
+<thead>
+<tr>
+<th>func</th>
+<th>desc</th>
+<th>func</th>
+<th>desc</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pct_change()</td>
+<td>百分比变化</td>
+<td>rank()</td>
+<td>排名</td>
+</tr>
+<tr>
+<td>cov()</td>
+<td>协方差</td>
+<td>corr()</td>
+<td>相关系数，pearson(default)、spearman()、kendall()</td>
+</tr>
+</tbody></table>
+<h4 id="DataFrame统计函数"><a href="#DataFrame统计函数" class="headerlink" title="DataFrame统计函数"></a>DataFrame统计函数</h4><table>
+<thead>
+<tr>
+<th>func</th>
+<th>desc</th>
+<th>func</th>
+<th>desc</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>count()</td>
+<td>统计某个非空值的数量</td>
+<td>min()</td>
+<td>求最小值</td>
+</tr>
+<tr>
+<td>sum()</td>
+<td>求和</td>
+<td>max()</td>
+<td>求最大值</td>
+</tr>
+<tr>
+<td>mean()</td>
+<td>求平均值</td>
+<td>average()</td>
+<td>加权平均值</td>
+</tr>
+<tr>
+<td>median()</td>
+<td>求中位数</td>
+<td>prod()</td>
+<td>求所有数值的乘积</td>
+</tr>
+<tr>
+<td>mode()</td>
+<td>求众数</td>
+<td>cumsum()</td>
+<td>计算累加和</td>
+</tr>
+<tr>
+<td>std()</td>
+<td>求标准差</td>
+<td>cumprod()</td>
+<td>计算累计积</td>
+</tr>
+<tr>
+<td>corr()</td>
+<td>计算数列或变量之间的相关系数</td>
+<td>abs()</td>
+<td>求绝对值</td>
+</tr>
+</tbody></table>
+<p>使用聚合类方法时需要指定轴(axis)参数，两种传参方式：</p>
+<ul>
+<li><font color="#ff0000">对行操作，默认使用 axis&#x3D;0 或者使用 “index”， axis&#x3D;0 表示按垂直方向进行计算；</font></li>
+<li><font color="#ff0000">对列操作，默认使用 axis&#x3D;1 或者使用 “columns”，axis&#x3D;1 则表示按水平方向进行计算。</font></li>
+</ul>
+<p><img src="/images/pandas/pandas_func_statistics.gif" width="500px" alt="axis轴示意图" title="axis轴示意图"></img></p>
+<h3 id="Pandas数据合并"><a href="#Pandas数据合并" class="headerlink" title="Pandas数据合并"></a>Pandas数据合并</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">left/right  : 两个不同的DataFrame对象。</span></span><br><span class="line"><span class="string">on          : 用于指定连接的键（列标签名字），左右DataFrame必须同时存在。不指定则以DF列名交集为连接键。</span></span><br><span class="line"><span class="string">how         : 合并类型，left/right/outer/inner join，类似mysql外键join。默认inner。</span></span><br><span class="line"><span class="string">left_on     : 指定左侧DataFrame中作连接键的列名</span></span><br><span class="line"><span class="string">right_on    : 指定右侧DataFrame中作连接键的列名</span></span><br><span class="line"><span class="string">left_index  : 使用左侧DataFrame的行索引作为连接键，默认False。</span></span><br><span class="line"><span class="string">right_index : 使用右侧DataFrame的行索引作为连接键，默认False。</span></span><br><span class="line"><span class="string">sort        : 合并后的数据进行排序，默认True；False时按照how给定的参数值进行排序。</span></span><br><span class="line"><span class="string">suffixes    : 字符串组成的元组。</span></span><br><span class="line"><span class="string">copy        : 对数据进行复制，默认为True。</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">pd.merge(left, right, how=<span class="string">&#x27;inner&#x27;</span>, on=<span class="literal">None</span>, left_on=<span class="literal">None</span>, right_on=<span class="literal">None</span>,left_index=<span class="literal">False</span>, right_index=<span class="literal">False</span>, sort=<span class="literal">True</span>,suffixes=(<span class="string">&#x27;_x&#x27;</span>, <span class="string">&#x27;_y&#x27;</span>), copy=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd </span><br><span class="line">left = pd.DataFrame(&#123;</span><br><span class="line">    <span class="string">&#x27;id&#x27;</span>:[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>], </span><br><span class="line">    <span class="string">&#x27;Name&#x27;</span>: [<span class="string">&#x27;AAA&#x27;</span>, <span class="string">&#x27;BBB&#x27;</span>, <span class="string">&#x27;CCC&#x27;</span>, <span class="string">&#x27;DDD&#x27;</span>], </span><br><span class="line">    <span class="string">&#x27;Age&#x27;</span>:[ <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">50</span>]&#125;) </span><br><span class="line"></span><br><span class="line">right = pd.DataFrame(&#123; </span><br><span class="line">    <span class="string">&#x27;id&#x27;</span>:[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>], </span><br><span class="line">    <span class="string">&#x27;Name&#x27;</span>: [<span class="string">&#x27;AA&#x27;</span>, <span class="string">&#x27;BB&#x27;</span>, <span class="string">&#x27;CC&#x27;</span>, <span class="string">&#x27;DDD&#x27;</span>], </span><br><span class="line">    <span class="string">&#x27;Age&#x27;</span>:[ <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">50</span>]&#125;) </span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;------left------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span> (left) </span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;------right------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span> (right)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;------merge------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(pd.merge(left, right))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;------merge_on_single------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(pd.merge(left, right, on=<span class="string">&quot;id&quot;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;------merge_on_multi------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(pd.merge(left, right, on=[<span class="string">&quot;id&quot;</span>, <span class="string">&quot;Age&quot;</span>]))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;------how------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(pd.merge(left, right, on=<span class="string">&quot;Age&quot;</span>, how=<span class="string">&quot;left&quot;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">------left------</span></span><br><span class="line"><span class="string">   id Name  Age</span></span><br><span class="line"><span class="string">0   1  AAA   20</span></span><br><span class="line"><span class="string">1   2  BBB   30</span></span><br><span class="line"><span class="string">2   3  CCC   40</span></span><br><span class="line"><span class="string">3   4  DDD   50</span></span><br><span class="line"><span class="string">------right------</span></span><br><span class="line"><span class="string">   id Name  Age</span></span><br><span class="line"><span class="string">0   1   AA   20</span></span><br><span class="line"><span class="string">1   2   BB   30</span></span><br><span class="line"><span class="string">2   3   CC   40</span></span><br><span class="line"><span class="string">3   4  DDD   50</span></span><br><span class="line"><span class="string">------merge------</span></span><br><span class="line"><span class="string">   id Name  Age</span></span><br><span class="line"><span class="string">0   4  DDD   50</span></span><br><span class="line"><span class="string">------merge_on_single------</span></span><br><span class="line"><span class="string">   id Name_x  Age_x Name_y  Age_y</span></span><br><span class="line"><span class="string">0   1    AAA     20     AA     20</span></span><br><span class="line"><span class="string">1   2    BBB     30     BB     30</span></span><br><span class="line"><span class="string">2   3    CCC     40     CC     40</span></span><br><span class="line"><span class="string">3   4    DDD     50    DDD     50</span></span><br><span class="line"><span class="string">------merge_on_multi------</span></span><br><span class="line"><span class="string">   id Name_x  Age Name_y</span></span><br><span class="line"><span class="string">0   1    AAA   20     AA</span></span><br><span class="line"><span class="string">1   2    BBB   30     BB</span></span><br><span class="line"><span class="string">2   3    CCC   40     CC</span></span><br><span class="line"><span class="string">3   4    DDD   50    DDD</span></span><br><span class="line"><span class="string">------how------</span></span><br><span class="line"><span class="string">   id_x Name_x  Age  id_y Name_y</span></span><br><span class="line"><span class="string">0     1    AAA   20     1     AA</span></span><br><span class="line"><span class="string">1     2    BBB   30     2     BB</span></span><br><span class="line"><span class="string">2     3    CCC   40     3     CC</span></span><br><span class="line"><span class="string">3     4    DDD   50     4    DDD</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Pandas数据分组聚合"><a href="#Pandas数据分组聚合" class="headerlink" title="Pandas数据分组聚合"></a>Pandas数据分组聚合</h3><p>跟SQL <strong>GROUP BY</strong>类似。对DataFrame对象进行分组操作。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">df = DataFrame()</span><br><span class="line">df.groupby(<span class="string">&quot;key&quot;</span>)</span><br><span class="line">df.groupby(<span class="string">&quot;key&quot;</span>, axis=<span class="number">1</span>)</span><br><span class="line">df.groupby([<span class="string">&quot;key1&quot;</span>, <span class="string">&quot;key2&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+<p>按照nba.csv的Team进行分组。可分成30只队伍。</p>
+<p><img src="/images/pandas/pandas_groupby.png" width="800px" alt="groupby分组" title="groupby分组"></img></p>
+<p>遍历分组数据：</p>
+<p><img src="/images/pandas/pandas_groupby_range.png" width="800px" alt="遍历groupby分组" title="遍历groupby分组"></img></p>
+<h3 id="Pandas数据清洗"><a href="#Pandas数据清洗" class="headerlink" title="Pandas数据清洗"></a>Pandas数据清洗</h3><p>空数据包含四种：</p>
+<ul>
+<li>n&#x2F;a</li>
+<li>NA</li>
+<li><ul>
+<li></li>
+</ul>
+</li>
+<li>na</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">axis     : 默认axis=0，删除整行；axis=1，删除整列；</span></span><br><span class="line"><span class="string">how      : 默认&#x27;any&#x27;，任何一行/一列为空则删除；&#x27;all&#x27;一行/一列都为空才删除；</span></span><br><span class="line"><span class="string">thresh   : 设置需要多少非空值的数据才可以保留下来的。</span></span><br><span class="line"><span class="string">subset   : 设置想要检查的列。如果是多个列，可以使用列名的 list 作为参数。</span></span><br><span class="line"><span class="string">inplace  : 如果设置 True，将计算得到的值直接覆盖之前的值并返回 None，修改的是源数据。</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">DataFrame.dropna(axis=<span class="number">0</span>, how=<span class="string">&#x27;any&#x27;</span>, thresh=<span class="literal">None</span>, subset=<span class="literal">None</span>, inplace=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Pandas时间序列"><a href="#Pandas时间序列" class="headerlink" title="Pandas时间序列"></a>Pandas时间序列</h3><p>时间序列（time series），由时间构成的序列。</p>
+<h4 id="时间序列频率"><a href="#时间序列频率" class="headerlink" title="时间序列频率"></a>时间序列频率</h4><table>
+<thead>
+<tr>
+<th>alias</th>
+<th>desc</th>
+<th>alias</th>
+<th>desc</th>
+<th>alias</th>
+<th>desc</th>
+<th>alias</th>
+<th>desc</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>B</td>
+<td>工作日频率</td>
+<td>MS</td>
+<td>月开始频率</td>
+<td>BQS</td>
+<td>工作季度开始频率</td>
+<td>T,min</td>
+<td>每分钟频率</td>
+</tr>
+<tr>
+<td>D</td>
+<td>日历日频率</td>
+<td>SMS</td>
+<td>半月开始频率</td>
+<td>A</td>
+<td>年终频率</td>
+<td>S</td>
+<td>每秒钟频率</td>
+</tr>
+<tr>
+<td>W</td>
+<td>每周频率</td>
+<td>BMS</td>
+<td>工作月开始频率</td>
+<td>BA</td>
+<td>工作年度结束频率</td>
+<td>L,ms</td>
+<td>毫秒</td>
+</tr>
+<tr>
+<td>M</td>
+<td>月末频率</td>
+<td>Q</td>
+<td>季末频率</td>
+<td>BAS</td>
+<td>工作年度开始频率</td>
+<td>U,us</td>
+<td>微妙</td>
+</tr>
+<tr>
+<td>SM</td>
+<td>半月结束频率</td>
+<td>BQ</td>
+<td>工作季度结束频率</td>
+<td>BH</td>
+<td>营业时间频率</td>
+<td>N</td>
+<td>纳秒</td>
+</tr>
+<tr>
+<td>BM</td>
+<td>工作月结束频率</td>
+<td>QS</td>
+<td>季度开始频率</td>
+<td>H</td>
+<td>小时频率</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<h4 id="创建时间范围"><a href="#创建时间范围" class="headerlink" title="创建时间范围"></a>创建时间范围</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">start : 开始时间</span></span><br><span class="line"><span class="string">end   : 结束时间</span></span><br><span class="line"><span class="string">freq  : 时间频率，默认为 &quot;D&quot;（天）</span></span><br><span class="line"><span class="string">date_range(start, end, freq) </span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="comment">#freq表示时间频率，每30min变化一次</span></span><br><span class="line"><span class="built_in">print</span>(pd.date_range(<span class="string">&quot;9:00&quot;</span>, <span class="string">&quot;18:10&quot;</span>, freq=<span class="string">&quot;30min&quot;</span>).time)</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">[datetime.time(9, 0) datetime.time(9, 30) datetime.time(10, 0)</span></span><br><span class="line"><span class="string"> datetime.time(10, 30) datetime.time(11, 0) datetime.time(11, 30)</span></span><br><span class="line"><span class="string"> datetime.time(12, 0) datetime.time(12, 30) datetime.time(13, 0)</span></span><br><span class="line"><span class="string"> datetime.time(13, 30) datetime.time(14, 0) datetime.time(14, 30)</span></span><br><span class="line"><span class="string"> datetime.time(15, 0) datetime.time(15, 30) datetime.time(16, 0)</span></span><br><span class="line"><span class="string"> datetime.time(16, 30) datetime.time(17, 0) datetime.time(17, 30)</span></span><br><span class="line"><span class="string"> datetime.time(18, 0)]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="转化为时间戳"><a href="#转化为时间戳" class="headerlink" title="转化为时间戳"></a>转化为时间戳</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(pd.to_datetime(pd.Series([<span class="string">&#x27;Jun 3, 2020&#x27;</span>,<span class="string">&#x27;2020-12-10&#x27;</span>, <span class="literal">None</span>])))</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">0   2020-06-03</span></span><br><span class="line"><span class="string">1   2020-12-10</span></span><br><span class="line"><span class="string">2          NaT</span></span><br><span class="line"><span class="string">dtype: datetime64[ns]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="创建时间周期"><a href="#创建时间周期" class="headerlink" title="创建时间周期"></a>创建时间周期</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="comment">#Y表示年</span></span><br><span class="line">p = pd.period_range(<span class="string">&#x27;2015&#x27;</span>,<span class="string">&#x27;2022&#x27;</span>, freq=<span class="string">&#x27;Y&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># output</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">PeriodIndex([&#x27;2015&#x27;, &#x27;2016&#x27;, &#x27;2017&#x27;, &#x27;2018&#x27;, &#x27;2019&#x27;, &#x27;2020&#x27;, &#x27;2021&#x27;, &#x27;2022&#x27;], dtype=&#x27;period[A-DEC]&#x27;)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Pandas核心操作"><a href="#Pandas核心操作" class="headerlink" title="Pandas核心操作"></a>Pandas核心操作</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>使用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>读取CSV格式的数据集</td>
+<td><code>pd.read_csv(&quot;csv_file&quot;)</code></td>
+</tr>
+<tr>
+<td>读取Excel数据集</td>
+<td><code>pd.read_excel(&quot;excel_file&quot;)</code></td>
+</tr>
+<tr>
+<td>将DF直接写入CSV文件</td>
+<td><code>df.to_csv(&quot;data.csv&quot;, sep=&quot;,&quot;, index=False)</code></td>
+</tr>
+<tr>
+<td>基本的数据集特征信息</td>
+<td><code>df.info()</code></td>
+</tr>
+<tr>
+<td>基本的数据集统计信息</td>
+<td><code>print(df.describe())</code></td>
+</tr>
+<tr>
+<td>将DF输出到一张表</td>
+<td><code>print(tabulate(print_table, headers=headers))</code></td>
+</tr>
+<tr>
+<td>列出所有列的名字</td>
+<td><code>df.columns</code></td>
+</tr>
+<tr>
+<td>删除缺失数据</td>
+<td><code>df.dropna(axis=0, how=&#39;any&#39;)</code></td>
+</tr>
+<tr>
+<td>替换缺失数据</td>
+<td><code>df.replace(to_replace=None, value=None)</code></td>
+</tr>
+<tr>
+<td>检查空值 NaN</td>
+<td><code>pd.isnull(object)</code></td>
+</tr>
+<tr>
+<td>删除特征</td>
+<td><code>df.drop(&#39;feature_variable_name&#39;, axis=1)</code></td>
+</tr>
+<tr>
+<td>将目标类型转换为浮点型</td>
+<td><code>pd.to_numeric(df[&quot;feature_name&quot;], errors=&#39;coerce&#39;)</code></td>
+</tr>
+<tr>
+<td>将DF转换为NumPy数组</td>
+<td><code>df.as_matrix()</code></td>
+</tr>
+<tr>
+<td>取DataFrame的前面n行</td>
+<td><code>df.head(n)</code></td>
+</tr>
+<tr>
+<td>通过特征名取数据</td>
+<td><code>df.loc[feature_name]</code></td>
+</tr>
+<tr>
+<td>对DataFrame使用函数</td>
+<td><code>df[&quot;height&quot;].apply(*lambda* height: 2 * height)</code></td>
+</tr>
+<tr>
+<td>重命名行</td>
+<td><code>df.rename(columns = &#123;df.columns[2]:&#39;size&#39;&#125;, inplace=True)</code></td>
+</tr>
+<tr>
+<td>取某一行的唯一实体</td>
+<td><code>df[&quot;name&quot;].unique()</code></td>
+</tr>
+<tr>
+<td>访问子DataFrame</td>
+<td><code>new_df = df[[&quot;name&quot;, &quot;size&quot;]]</code></td>
+</tr>
+<tr>
+<td>总结数据信息</td>
+<td><code>df.sum()/df.min()/df.max()/df.mean()/df.median()</code></td>
+</tr>
+<tr>
+<td>给数据排序</td>
+<td><code>df.sort_values(ascending = False)</code></td>
+</tr>
+<tr>
+<td>布尔型索引</td>
+<td><code>df[df[&quot;size&quot;] == 5]</code></td>
+</tr>
+<tr>
+<td>选定特定的值</td>
+<td><code>df.loc([0], [&#39;size&#39;])</code></td>
+</tr>
+</tbody></table>
+</div><script type="text/javascript" src="../../../../js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2022/05/19/Python-3-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90pandas%E4%BD%BF%E7%94%A8/" data-id="clkor69po00iyc6s6cqut59m2" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADLUlEQVR42u3a0U7rQAwEUP7/p3tfr1QoM94gtc7JUwQ0ydlKTGzv11d8PP47nn/+fJ5c7fnKz3f56eevn+qyAxsbG/tD2I+XR85+fc3872dLk1uwsbGxt7KTmGkjLQ+5dtGT81+M2NjY2DdmJ8F2/v4/K4GwsbGxsWfspAhJQq5dDmxsbGzs81u21GEDKG5U/UkvDRsbG/vt2bPR7Hue/8l8GxsbG/uN2Y/ySJr1bZCcBOdQgY2Njb2InQfABa/18SPOtvLk98XGxsa+D3vWBrq20Z+XHMnmoWIqgo2Njf0h7PMGfQvIgyqPsfZLwsbGxt7ETsYAry80i7q2tTRrKhWDBGxsbOyPZbetnCRCToqWdoNOG1TY2NjYW9knXZek0VN3uUbFRtGWwsbGxl7NnkVa24pqy4k88KKyChsbG3sde9Z/moXfyQLlxUk9FcHGxsZewW6HtXkxcFWR044BogDDxsbGXsRum/h50dJupsyfatjYwsbGxl7HPmnrJ62c2TLlhUo7fsbGxsbexM5f+vPiZLb58vya+UJjY2Njb2KfFB6zAmY2uD0pmaI9p9jY2NiL2G0jvo3AJFHb+7YFFTY2NvZudhID7Y3bltO1YfnNb7GxsbEXsc9b/EUBMCppZu0kbGxs7Puw87ZOvu2mDb82IPPzX+Yh2NjY2CvYswZQ3mCaFTb50sy+KmxsbOxN7NkAIH+Utsg5D85oyIGNjY29lJ03cfKYSaIrKSFmd/9xQbGxsbGXspMm/my7z2xTzlXn3ywBNjY29iL2ySabNrraIUQ+4m1HDtjY2Nj72LNNMHnJ0Y5mi/ZQyR4OCbCxsbE/in3SlE8Km3PS+UZPbGxs7Duwkxg4iboEPCuBikILGxsbewX7UR5tILUFyaypVD8PNjY29iJ2+68/+XDSNso/NbvLZbGHjY2N/SHsPCTOZ6az1lU+VB42lbCxsbFXsGdRlN/sfBNPMh7IW1rY2NjYd2bPNuvkV57FYVvMYGNjY9+ZXb/0l+VEEpl5gfTLbAQbGxt7EbstMNoiYVZ4tGGZhxw2Njb2JnY+6D1qxx9EUbLQ+dYfbGxs7EXsfyD7fhlBAiAgAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="../../../../tags/Python/"><i class="fa fa-tag"></i>Python</a><a href="../../../../tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/"><i class="fa fa-tag"></i>数据分析</a><a href="../../../../tags/Pandas/"><i class="fa fa-tag"></i>Pandas</a></div><div class="post-nav"><a class="pre" href="../../../06/14/MachineLearning%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-1-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A6%82%E8%BF%B0/">MachineLearning-1.机器学习概述</a><a class="next" href="../Python-2-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90numpy%E4%BD%BF%E7%94%A8/">Python-2.数据分析Numpy使用</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/AIGC/">AIGC</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../../2025/03/06/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8BPrompt%20Engineering/">AIGC-LLM-辟邪剑谱之Prompt Engineering</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/">AIGC-Agent-作文批改标注</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/09/27/LLama32%E8%B0%83%E7%A0%94/">LLama3.2调研报告</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/">AIGC-LLM-Prompt工程技能综述</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/">Deeeplearning模型-NLP-BERT</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">Deeeplearning模型-NLP-大语言模型微调语料生成工具</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/12/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-Transformer%E6%A8%A1%E5%9E%8B/">Deeeplearning模型-NLP-Transformer模型</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/12/01/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-NLP%E5%9F%BA%E7%A1%80/">Deeeplearning模型-NLP-NLP基础</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/10/26/%E6%95%B0%E5%AD%97%E4%BA%BA-%E6%95%B0%E5%AD%97%E4%BA%BA%E6%8A%80%E6%9C%AF%E6%95%88%E6%9E%9C%E5%AF%B9%E6%AF%94/">数字人-数字人技术效果对比</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/10/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/">GUI-应用程序打包与安装</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="../../../../css/search.css?v=1.0.0"><script type="text/javascript" src="../../../../js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="/static/js/MathJax.js?config=TeX-MML-AM_CHTML" async></script><div id="script" type="text/javascript" src="../../../../js/mathjaxs.js" async></div><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="assets/prism-bundle.js"></script>
+<script src="assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>

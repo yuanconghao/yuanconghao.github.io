@@ -1,0 +1,453 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>DeepLearning-0.数学符号 | DeepLearner</title><link rel="stylesheet" type="text/css" href="../../../../css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="../../../../favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="../../../../favicon.ico"><link rel="apple-touch-icon" href="../../../../apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="../../../../apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="../../../../atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">DeepLearning-0.数学符号</h1><a id="logo" href="../../../../.">DeepLearner</a><p class="description">Deep Learning Notes</p></div><div id="nav-menu"><a class="current" href="../../../../."><i class="fa fa-home"> 首页</i></a><a href="../../../../archives/"><i class="fa fa-archive"> 归档</i></a><a href="../../../../tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="../../../../resource/"><i class="fa fa-cloud"> 资源</i></a><a href="../../../../guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="../../../../codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="../../../../resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">DeepLearning-0.数学符号</h1><div class="post-meta">created:2021-12-08</div><div class="post-meta">updated:2023-07-30<span> | </span><span class="category"><a href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></span></div><a class="disqus-comment-count" href="#waline"><span class="waline-comment-count" id=""></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E5%92%8C%E6%95%B0%E7%BB%84"><span class="toc-number">1.</span> <span class="toc-text">数和数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%86%E5%90%88%E5%92%8C%E5%9B%BE"><span class="toc-number">2.</span> <span class="toc-text">集合和图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95"><span class="toc-number">3.</span> <span class="toc-text">索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%AD%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">线性代数中的操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AE%E7%A7%AF%E5%88%86"><span class="toc-number">5.</span> <span class="toc-text">微积分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E7%8E%87%E5%92%8C%E4%BF%A1%E6%81%AF%E8%AE%BA"><span class="toc-number">6.</span> <span class="toc-text">概率和信息论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-number">7.</span> <span class="toc-text">函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E5%90%88%E5%8F%91%E5%B8%83"><span class="toc-number">8.</span> <span class="toc-text">数据集合发布</span></a></li></ol></div></div><div class="post-content"><p>《深度学习》本书所使用数学符号。</p>
+<span id="more"></span>
+<h3 id="数和数组"><a href="#数和数组" class="headerlink" title="数和数组"></a>数和数组</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+<th>LaTex表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$\mathit{a}$</td>
+<td>标量（整数或实数）</td>
+<td>\mathit{a}</td>
+</tr>
+<tr>
+<td>$\vec{a}$</td>
+<td>向量</td>
+<td>\vec{a}</td>
+</tr>
+<tr>
+<td>$\mathit{A}$</td>
+<td>矩阵</td>
+<td>\mathit{A}</td>
+</tr>
+<tr>
+<td>$\mathbf{A}$</td>
+<td>张量</td>
+<td>\mathbf{A}</td>
+</tr>
+<tr>
+<td>$\mathit{I}\mathit{n}$</td>
+<td>n行n列的单位矩阵</td>
+<td>\mathit{I}\mathit{n}</td>
+</tr>
+<tr>
+<td>$\mathit{I}$</td>
+<td>维度蕴含于上下文的单位矩阵</td>
+<td>\mathit{I}</td>
+</tr>
+<tr>
+<td>$e^{(i)}$</td>
+<td>标准基向量[0,…,0,1,0,…,0]，其中索引i处的值为1</td>
+<td>e^{(i)}</td>
+</tr>
+<tr>
+<td>$diag(a)$</td>
+<td>对角方阵，其中对角元素由$\vec{a}$给定</td>
+<td>diag(a)</td>
+</tr>
+<tr>
+<td>a</td>
+<td>标量随机变量</td>
+<td>a</td>
+</tr>
+<tr>
+<td>a</td>
+<td>向量随机变量</td>
+<td>a</td>
+</tr>
+<tr>
+<td>A</td>
+<td>矩阵随机变量</td>
+<td>A</td>
+</tr>
+</tbody></table>
+<h3 id="集合和图"><a href="#集合和图" class="headerlink" title="集合和图"></a>集合和图</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+<th>LaTex表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$\mathbb{A}$</td>
+<td>集合</td>
+<td>\mathbb{A}</td>
+</tr>
+<tr>
+<td>$\mathbb{R}$</td>
+<td>实数集</td>
+<td>\mathbb{R}</td>
+</tr>
+<tr>
+<td>$\{0,1\}$</td>
+<td>包含0和1的集合</td>
+<td>\{0,1\}</td>
+</tr>
+<tr>
+<td>$\{0,1,…,n\}$</td>
+<td>包含0和n之间所有整数的集合</td>
+<td>\{0,1,…,n\}</td>
+</tr>
+<tr>
+<td>$\left [ a,b \right ]$</td>
+<td>包含a和b的实数区间</td>
+<td>\left [ a,b \right ]</td>
+</tr>
+<tr>
+<td>$\left ( a,b \right ]$</td>
+<td>不包含a但包含b的实数区间</td>
+<td>\left ( a,b \right ]</td>
+</tr>
+<tr>
+<td>$\mathbb{A}\backslash\mathbb{B}$</td>
+<td>差集，即其元素包含于A，但不包含于B</td>
+<td>\mathbb{A}\backslash\mathbb{B}</td>
+</tr>
+<tr>
+<td>$\mathit{G}$</td>
+<td>图</td>
+<td>\mathit{G}</td>
+</tr>
+<tr>
+<td>$P_{ag}( x_{i})$</td>
+<td>图 $\mathit{G}$ 中 $( x_{i})$ 的父节点</td>
+<td>P_{ag}( x_{i})</td>
+</tr>
+</tbody></table>
+<h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+<th>LaTex表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$\vec{a}_{i}$</td>
+<td>向量a的第i个元素，其中索引从1开始</td>
+<td>\vec{a}_{i}</td>
+</tr>
+<tr>
+<td>$\vec{a}_{-i}$</td>
+<td>除了第i个元素，a的所有元素</td>
+<td>\vec{a}_{-i}</td>
+</tr>
+<tr>
+<td>$A_{i,j}$</td>
+<td>矩阵A的i,j元素</td>
+<td>A_{i,j}</td>
+</tr>
+<tr>
+<td>$A_{i,:}$</td>
+<td>矩阵A的第i行</td>
+<td>A_{i,:}</td>
+</tr>
+<tr>
+<td>$A_{:,i}$</td>
+<td>矩阵A的第i列</td>
+<td>A_{:,i}</td>
+</tr>
+<tr>
+<td>$\mathbf{A}_{i,j,k}$</td>
+<td>三维张量A的(i,j,k)元素</td>
+<td>\mathbf{A}_{i,j,k}</td>
+</tr>
+<tr>
+<td>$\mathbf{A}_{:,:,i}$</td>
+<td>三维张量的二维切片</td>
+<td>\mathbf{A}_{:,:,i}</td>
+</tr>
+<tr>
+<td>$a_{i}$</td>
+<td>随机向量a的第i个元素</td>
+<td>a_{i}</td>
+</tr>
+</tbody></table>
+<h3 id="线性代数中的操作"><a href="#线性代数中的操作" class="headerlink" title="线性代数中的操作"></a>线性代数中的操作</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+<th>LaTex表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$A^{\top}$</td>
+<td>矩阵A的转置</td>
+<td>A^{\top}</td>
+</tr>
+<tr>
+<td>$A^{+}$</td>
+<td>矩阵A的Moore-Penrose伪逆</td>
+<td>A^{+}</td>
+</tr>
+<tr>
+<td>$A\odot B$</td>
+<td>A和B的遂元素乘积（Hadamard乘积）</td>
+<td>A\odot B</td>
+</tr>
+<tr>
+<td>$\det(A)$</td>
+<td>A的行列式</td>
+<td>\det(A)</td>
+</tr>
+</tbody></table>
+<h3 id="微积分"><a href="#微积分" class="headerlink" title="微积分"></a>微积分</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+<th>LaTex表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$\frac{\mathrm{d} y}{\mathrm{d} x}$</td>
+<td>y关于x的导数</td>
+<td>\frac{\mathrm{d} y}{\mathrm{d} x}</td>
+</tr>
+<tr>
+<td>$\frac{\partial y}{\partial x}$</td>
+<td>y关于x的偏导</td>
+<td>\frac{\partial y}{\partial x}</td>
+</tr>
+<tr>
+<td>$\nabla_{x}y$</td>
+<td>y关于x的梯度</td>
+<td>\nabla_{x}y</td>
+</tr>
+<tr>
+<td>$\nabla_{X}y$</td>
+<td>y关于X的矩阵导数</td>
+<td>\nabla_{X}y</td>
+</tr>
+<tr>
+<td>$\nabla_{\mathbf{X}}y$</td>
+<td>y关于$\mathbf{A}$求导后的张量</td>
+<td>\nabla_{\mathbf{X}}y</td>
+</tr>
+<tr>
+<td>$\frac{\partial f}{\partial x}$</td>
+<td>f:$\mathbb{R}^{n} \rightarrow \mathbb{R}^{m}$ 的Jacobian矩阵$J\in \mathbb{R}^{m\times n}$</td>
+<td>\frac{\partial f}{\partial x}</td>
+</tr>
+<tr>
+<td>$\nabla_{2}^{x}f(x)\ or \ H(f)(x)$</td>
+<td>f在点x处的Hessian矩阵</td>
+<td>\nabla_{2}^{x}f(x)\ or \ H(f)(x)</td>
+</tr>
+<tr>
+<td>$\int f(x)d_{x}$</td>
+<td>x整个域上的定积分</td>
+<td>\int f(x)d_{x}</td>
+</tr>
+<tr>
+<td>$\int_{\mathbb{S}}f(x)d_{x}$</td>
+<td>集合$\mathbb{S}$上关于x的定积分</td>
+<td>\int_{\mathbb{S}}f(x)d_{x}</td>
+</tr>
+</tbody></table>
+<h3 id="概率和信息论"><a href="#概率和信息论" class="headerlink" title="概率和信息论"></a>概率和信息论</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+<th>LaTex表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$a\perp b$</td>
+<td>a和b相互独立的随机变量</td>
+<td>a\perp b</td>
+</tr>
+<tr>
+<td>$a\perp b \ \mid  \ c$</td>
+<td>给定c后条件独立</td>
+<td>a\perp b \ \mid  \ c</td>
+</tr>
+<tr>
+<td>$P(a)$</td>
+<td>离散变量上的概率分布</td>
+<td>P(a)</td>
+</tr>
+<tr>
+<td>$p(a)$</td>
+<td>连续变量（或变量类型未指定时）上的概率分布</td>
+<td>p(a)</td>
+</tr>
+<tr>
+<td>$a\sim P$</td>
+<td>具有分布P的随机变量a</td>
+<td>a\sim P</td>
+</tr>
+<tr>
+<td>$\mathbb{E}_{x \sim P}[f(x)] \ or \ \mathbb{E}f(x)$</td>
+<td>f(x)关于P(x)的期望</td>
+<td>\mathbb{E}_{x \sim P}[f(x)] \ or \ \mathbb{E}f(x)</td>
+</tr>
+<tr>
+<td>$Var(f(x))$</td>
+<td>f(x)在分布P(x)下的方差</td>
+<td>Var(f(x))</td>
+</tr>
+<tr>
+<td>$Cov(f(x),g(x))$</td>
+<td>f(x)和g(x)在分布P(x)下的协方差</td>
+<td>Cov(f(x),g(x))</td>
+</tr>
+<tr>
+<td>$H(x)$</td>
+<td>随机变量x的香农熵</td>
+<td>H(x)</td>
+</tr>
+<tr>
+<td>$D_{KL}(P\parallel Q)$</td>
+<td>P和的KL散度</td>
+<td>D_{KL}(P\parallel Q)</td>
+</tr>
+<tr>
+<td>$N(x;\mu ,\Sigma )$</td>
+<td>均值为$\mu$,协方差为$\Sigma$,x上的高斯分布</td>
+<td>N(x;\mu ,\Sigma )</td>
+</tr>
+</tbody></table>
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+<th>LaTex表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$f:\mathbb{A}\rightarrow \mathbb{B}$</td>
+<td>定义域为$\mathbb{A}$，值域为$\mathbb{B}$的函数f</td>
+<td>f:\mathbb{A}\rightarrow \mathbb{B}</td>
+</tr>
+<tr>
+<td>$f\circ g$</td>
+<td>f和g的组合</td>
+<td>f\circ g</td>
+</tr>
+<tr>
+<td>$f(x;\theta )$</td>
+<td>由$\theta$参数化，关于x的函数（有时为简化表示，我们忽略$\theta$而记为f(x)）</td>
+<td>f(x;\theta )</td>
+</tr>
+<tr>
+<td>$\log x$</td>
+<td>x的自然对数</td>
+<td>\log x</td>
+</tr>
+<tr>
+<td>$\sigma (x)$</td>
+<td>Logistic sigmoid，$\frac{1}{1+exp(-x)}$</td>
+<td>\sigma (x)</td>
+</tr>
+<tr>
+<td>$\zeta (x)$</td>
+<td>Softplus，$\log(1+\exp(x))$</td>
+<td>\zeta (x)</td>
+</tr>
+<tr>
+<td>$\parallel x \parallel _{p}$</td>
+<td>x的$L^{p}$范数</td>
+<td>\parallel x \parallel _{p}</td>
+</tr>
+<tr>
+<td>$\parallel x \parallel$</td>
+<td>x的$L^{2}$范数</td>
+<td>\parallel x \parallel</td>
+</tr>
+<tr>
+<td>$x^{+}$</td>
+<td>x的正数部分，即max(0,x)</td>
+<td>x^{+}$</td>
+</tr>
+<tr>
+<td>$1_{condition}$</td>
+<td>如果条件为真则为1，否则为0</td>
+<td>1_{condition}</td>
+</tr>
+</tbody></table>
+<h3 id="数据集合发布"><a href="#数据集合发布" class="headerlink" title="数据集合发布"></a>数据集合发布</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+<th>LaTex表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$p_{data}$</td>
+<td>数据生成分布</td>
+<td>p_{data}</td>
+</tr>
+<tr>
+<td>$\hat{p}_{train}$</td>
+<td>由训练集定义的经验分布</td>
+<td>\hat{p}_{train}</td>
+</tr>
+<tr>
+<td>$\mathbb{X}$</td>
+<td>训练样本的集合</td>
+<td>\mathbb{X}</td>
+</tr>
+<tr>
+<td>$x^{(i)}$</td>
+<td>数据集的第i个样本（输入）</td>
+<td>x^{(i)}</td>
+</tr>
+<tr>
+<td>$y^{(i)}$或<b>$y^{(i)}$</b></td>
+<td>监督学习中与$x^{(i)}关联的目标$</td>
+<td>y^{(i)}</td>
+</tr>
+<tr>
+<td>$\mathit{X}$</td>
+<td>$m\times n$的矩阵，其中行$X_{i,:}$为输入样本$x^{(i)}$</td>
+<td>\mathit{X}</td>
+</tr>
+</tbody></table>
+</div><script type="text/javascript" src="../../../../js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2021/12/08/DeepLearning%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-0-%E6%95%B0%E5%AD%A6%E7%AC%A6%E5%8F%B7/" data-id="clkor69p1003rc6s6dmh69bx8" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASYAAAEmCAAAAADqr2IGAAAEl0lEQVR42u3aS3LiQBAFQN//0szawQDvVYkIGqdWDsCtVmrR9fv5ia/b3XX/+aNP7te5//vRt8/Xf/7581/+vOPChAkTJkwfyZQvnWzrOdbmgZOHTAhyXEyYMGHC9E1Ms+U2t39+3wT0qn1G3JgwYcKE6U8y5VcSgrTpdAKdrIwJEyZMmDC9SAvLh3++TrLp/JNNUIIJEyZMmL6JqV1ulo7uk9v68RZNUEyYMGHC9B1M7ZH8TX+/Zb4JEyZMmDB9DNPtoisPFPKdtEl1svLsqTFhwoQJ07lMeZMvTz7z/2pXSBqcCdNszAgTJkyYMJ3IlNxsc/TOCsR5M3XWOs1LupgwYcKE6XSm/IDPNzdrduaH9Cw4aO9YxDiYMGHChOnjmdoNtYnu7DjPk+e23JyHNQ8rBJgwYcKE6SimPCGcBQ2bgu9Vs0iXNWIxYcKECdNRTEnil4/svKMQvA8C2iLyf/aDCRMmTJgOZ8qXfr7oLLndF4jbUnL7LSZMmDBhOp1p07Obpa9tC/OqVzJsfGLChAkTpi9iSo78No1MVq7biuXKK1BMmDBhwvR1TG2K2wYBbQratlrbe0XDOpgwYcKE6UCm/Ef7oZwWbtY0zV98HkBgwoQJE6ZzmfIBmtkBPEtl8+Q5DxRmo0IvauGYMGHChOlYplnB9IIRmfhob0OHWVu0GNzBhAkTJkyHMG3GbvJW6KadeVtf9a4wYcKECdPhTAnWrGA6W3lTnL1q9AcTJkyYMH0TU5sGz5LY5ABuf5N/24Yav+6OCRMmTJiOZUoGdGZtzjxZze/bHvBJMj8MYjBhwoQJ01FMs4Zf23rMx4P2zdF8lKcoPWPChAkTpmOZ2qhhdqDOjvN9W/SqF4kJEyZMmE5kygudeZG3Lb9uyribJDwJI37VwjFhwoQJ04FMbRE2ufLDuN1020ydFayLIi8mTJgwYTqEKTlE28doU99Ns7MdwbkgOceECRMmTIcwtY3DPJnMsa46yNumabF/TJgwYcJ0LNOsDZmHAu24T7vateM+L3aCCRMmTJgOZNq0BjcHfB5qzEq0bZH6BSgmTJgwYTqcaT/m0paM29GcpDi7+fzFq8KECRMmTF/HlI/azNqZSaJ7beqbtzkf1gYwYcKECdPhTFdtrh2gaV/VbISoHQN6GBBgwoQJE6ajmPKGX97+nK2Qp7vv5ljNOmHChAkTpg9mKlLBoDA6Kw236WtbaJ7tGRMmTJgwncvUthLb8ZpZQ7Ed0GmLyHnYUdfCMWHChAnTBzO1h27b1JwFFpv/vSxowIQJEyZMxzLlN25LtO1G85pqizibvYk2hAkTJkyYPp7pVl55GbfFao/2Fm6W5GPChAkTptOZ2iM5R9yUWfNAZPN5HSthwoQJE6ZjmdqHnx3VbZk1T7Pzp2vLykX0hAkTJkyYPp4pKZLmCepmrCc5vGcp8exemDBhwoTp7zDlx3wbImxS3wR0sxomTJgwYfo7TLM2YX6oJ6n1u0vSL8Z3MGHChAnTsUxtcpuUYvNUczNItBncKV4MJkyYMGE6lqktgLYl1H3Q8I79zF4tJkyYMGE6iukfPpS1dk7LJmcAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="../../../../tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa fa-tag"></i>深度学习笔记</a><a href="../../../../tags/%E8%8A%B1%E4%B9%A6/"><i class="fa fa-tag"></i>花书</a></div><div class="post-nav"><a class="pre" href="../../09/DeepLearning%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/">DeepLearning-2.线性代数</a><a class="next" href="../../02/AI%E8%A1%8C%E4%B8%9A%E5%BA%94%E7%94%A8-%E7%94%9F%E7%89%A9%E5%8C%BB%E7%96%97/">AI行业应用-生物医疗</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/AIGC/">AIGC</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../../2025/03/06/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8BPrompt%20Engineering/">AIGC-LLM-辟邪剑谱之Prompt Engineering</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/">AIGC-Agent-作文批改标注</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/09/27/LLama32%E8%B0%83%E7%A0%94/">LLama3.2调研报告</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/">AIGC-LLM-Prompt工程技能综述</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/">Deeeplearning模型-NLP-BERT</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">Deeeplearning模型-NLP-大语言模型微调语料生成工具</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/12/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-Transformer%E6%A8%A1%E5%9E%8B/">Deeeplearning模型-NLP-Transformer模型</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/12/01/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-NLP%E5%9F%BA%E7%A1%80/">Deeeplearning模型-NLP-NLP基础</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/10/26/%E6%95%B0%E5%AD%97%E4%BA%BA-%E6%95%B0%E5%AD%97%E4%BA%BA%E6%8A%80%E6%9C%AF%E6%95%88%E6%9E%9C%E5%AF%B9%E6%AF%94/">数字人-数字人技术效果对比</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/10/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/">GUI-应用程序打包与安装</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="../../../../css/search.css?v=1.0.0"><script type="text/javascript" src="../../../../js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="/static/js/MathJax.js?config=TeX-MML-AM_CHTML" async></script><div id="script" type="text/javascript" src="../../../../js/mathjaxs.js" async></div><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="assets/prism-bundle.js"></script>
+<script src="assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>

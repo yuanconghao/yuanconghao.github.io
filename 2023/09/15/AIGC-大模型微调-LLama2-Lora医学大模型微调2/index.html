@@ -1,0 +1,187 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>AIGC-大模型微调-LLama2-Lora医学大模型微调【风格学习】 | DeepLearner</title><link rel="stylesheet" type="text/css" href="../../../../css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="../../../../favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="../../../../favicon.ico"><link rel="apple-touch-icon" href="../../../../apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="../../../../apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="../../../../atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">AIGC-大模型微调-LLama2-Lora医学大模型微调【风格学习】</h1><a id="logo" href="../../../../.">DeepLearner</a><p class="description">Deep Learning Notes</p></div><div id="nav-menu"><a class="current" href="../../../../."><i class="fa fa-home"> 首页</i></a><a href="../../../../archives/"><i class="fa fa-archive"> 归档</i></a><a href="../../../../tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="../../../../resource/"><i class="fa fa-cloud"> 资源</i></a><a href="../../../../guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="../../../../codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="../../../../resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">AIGC-大模型微调-LLama2-Lora医学大模型微调【风格学习】</h1><div class="post-meta">created:2023-09-15</div><div class="post-meta">updated:2024-01-08<span> | </span><span class="category"><a href="../../../../categories/AIGC/">AIGC</a></span></div><a class="disqus-comment-count" href="#waline"><span class="waline-comment-count" id=""></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Lora%E5%BE%AE%E8%B0%83%E5%8E%9F%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">Lora微调原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87"><span class="toc-number">2.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AE%E8%B0%83%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.</span> <span class="toc-text">微调步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2"><span class="toc-number">3.1.</span> <span class="toc-text">模型格式转换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83"><span class="toc-number">3.2.</span> <span class="toc-text">模型微调</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E6%9D%83%E9%87%8D%E5%90%88%E5%B9%B6%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-number">3.3.</span> <span class="toc-text">模型权重合并（可选）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A8%E7%90%86"><span class="toc-number">3.4.</span> <span class="toc-text">推理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">结果分析</span></a></li></ol></div></div><div class="post-content"><p>大模型预训练成本高昂，需要庞大的计算资源和大量的数据资源，一般个人和企业难以承受。为解决这一问题，谷歌率先提出Parameter-Efficient Fine-Tuning (PEFT)技术，旨在通过最小化微调参数的数量和计算复杂度，来提高预训练模型在新任务上的性能，从而缓解大型预训练模型的训练成本。这样一来，即使计算资源受限，也可以利用预训练模型的知识来迅速适应新任务，实现高效的迁移学习。其中Lora微调为常用的PEFT技术。</p>
+<span id="more"></span>
+
+<h3 id="Lora微调原理"><a href="#Lora微调原理" class="headerlink" title="Lora微调原理"></a>Lora微调原理</h3><p>可参照前篇<a href="https://deeplearner.top/2023/08/24/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-PEFT%E6%8A%80%E6%9C%AF%E7%AE%80%E4%BB%8B/#LoRA">AIGC-大模型微调-PEFT技术简介&#x2F;#LoRA</a></p>
+<h3 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h3><p>与Openai微调采用同一份数据集内容，只做格式化处理。数据集格式如下：</p>
+<table>
+<thead>
+<tr>
+<th>instruction</th>
+<th>input</th>
+<th>output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>胡女士出现了黄疸、恶心、呕吐等症状，可能患了什么疾病？</td>
+<td></td>
+<td>少侠保重身体。贤者胡女士，你身患黄疸、恶心、呕吐等症状，实乃身体之不适也。此病症或许是胆道梗阻所致，亦或是肝脏功能异常所引发。然而，医者非神仙，需详细了解你的病情方能作出准确的诊断。故请你速速前往医院就诊，寻求名医的指点，以便早日解除病痛之苦。</td>
+</tr>
+<tr>
+<td>患者男，28岁，关节部位红肿疼痛，排尿困难，近期有过微生物感染史。请问可能患的是什么疾病？如何治疗？</td>
+<td></td>
+<td>少侠保重身体。贤者，你身患的疾病乃是风湿病所致。风湿病乃是一种由于体内湿气郁结，风寒侵袭所引发的疾病。你所描述的关节红肿疼痛，以及排尿困难，皆为风湿病的典型症状。\n\n治疗之道，当以祛风湿、活血化瘀为主。可服用一些中药如川芎、红花、桑寄生等，以舒筋活络，祛除湿气。同时，还需注意保持身体温暖，避免受寒受湿，以免病情加重。\n\n然而，贤者，鉴于你近期有微生物感染史，我还需进一步了解感染的具体情况，以确定是否需要抗生素治疗。请你告知我更多细节，以便我能更准确地为你诊断和制定治疗方案。</td>
+</tr>
+<tr>
+<td>一位妊娠31周孕妇在家中自行服用草药，随后出现呕吐、腹痛、恶心、疲劳、皮肤瘙痒、黄疸等症状，血液检查显示血清转氨酶升高，交叉免疫电泳检测显示未见明显异常。</td>
+<td></td>
+<td>少侠保重身体。江湖人称小张，医术虽然不高，但也知道孕妇自行服草药可不妥。你所描述的症状似乎与肝功能异常有关，呕吐、腹痛、恶心、疲劳、皮肤瘙痒、黄疸都是肝脏问题的常见表现。血液检查显示血清转氨酶升高，这也是肝功能受损的指标之一。\n\n然而，交叉免疫电泳检测未见明显异常，这意味着其他可能的肝病因素被排除。但是，这并不代表你的肝脏没有问题。有时候，肝脏问题可能需要进一步的检查才能确定具体的病因。\n\n作为一位孕妇，你的身体更为脆弱，所以我强烈建议你立即寻求专业医生的帮助。他们会根据你的症状和检查结果，制定适合你的治疗方案。记住，孕期的健康对你和宝宝都至关重要，不可掉以轻心。</td>
+</tr>
+<tr>
+<td>一个患者的卵巢小细胞癌转移至其它部位，是否有必要进行手术治疗？</td>
+<td></td>
+<td>少侠保重身体。江湖上有一句话，医者仁心，岂能见死不救。对于患者的卵巢小细胞癌转移至其他部位的情况，手术治疗是否必要，还需综合考虑患者的具体情况。\n\n卵巢小细胞癌是一种恶性肿瘤，其转移至其他部位意味着病情已经进展到了晚期。手术治疗可以有助于减轻症状、控制病情，并提高患者的生存率。然而，手术治疗也存在一定的风险和副作用，需要患者和医生共同权衡利弊。\n\n在决定是否进行手术治疗时，医生会综合考虑患者的年龄、身体状况、病情严重程度以及转移部位等因素。如果患者身体状况较好，转移部位较少且手术风险可控，那么手术治疗可能是一个可行的选择。然而，如果患者身体状况较差，转移部位较多或手术风险较高，那么可能需要考虑其他治疗方式，如化疗、放疗等。\n\n总之，医者行医如行江湖，需谨慎权衡利弊，综合考虑患者的具体情况，才能做出最为恰当的治疗决策。</td>
+</tr>
+<tr>
+<td>一名患者因腹胀、纳差等症状就诊，检查发现肝大、腹水及肝功能损害，诊断为肝淀粉样变性，请问该患者应该接受哪些治疗方案？</td>
+<td></td>
+<td>少侠保重身体。贤者啊，你的身体遭受了肝淀粉样变性的折磨，这是一种罕见而严重的疾病。在这个黑暗的时刻，我将为你指引一条光明之路。\n\n首先，你需要调整饮食，避免摄入过多的蛋白质和糖类。清淡的饮食将有助于减轻肝脏的负担，缓解症状。\n\n其次，草药的力量是不可忽视的。黄连、丹参、山楂等草药具有清热解毒、活血化瘀的功效，可以帮助改善肝功能。\n\n此外，中药注射剂也是一种有效的治疗方式。黄芪、人参等药物可以提高免疫力，促进肝脏的修复和再生。\n\n最后，如果病情严重，你可能需要进行肝移植手术。这是一项复杂而危险的手术，但它也是唯一的治愈之道。\n\n但愿我的建议能为你带来一丝希望。请记住，坚持治疗和保持积极的心态是战胜疾病的关键。愿你早日恢复健康，重获新生！</td>
+</tr>
+</tbody></table>
+<h3 id="微调步骤"><a href="#微调步骤" class="headerlink" title="微调步骤"></a>微调步骤</h3><p>基础模型：<a target="_blank" rel="noopener" href="https://huggingface.co/meta-llama/Llama-2-7b-chat-hf">LLama2-7b-chat</a></p>
+<h4 id="模型格式转换"><a href="#模型格式转换" class="headerlink" title="模型格式转换"></a>模型格式转换</h4><p>微调需要将LLaMA原始权重文件转换为Transformers库对应的模型文件格式。<br>转换完成后的基础模型：<a target="_blank" rel="noopener" href="https://huggingface.co/conghao/llama2-7b-chat-hf">conghao&#x2F;llama2-7b-chat-hf</a><br>可直接基于此转换后的模型进行推理以及微调使用。</p>
+<h4 id="模型微调"><a href="#模型微调" class="headerlink" title="模型微调"></a>模型微调</h4><p>显卡：Tesla T4 15G显存<br>时长：35hours</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">..........................</span><br><span class="line">&#123;<span class="string">&#x27;loss&#x27;</span>: <span class="number">0.1803</span>, <span class="string">&#x27;learning_rate&#x27;</span>: <span class="number">2.418300653594771e-06</span>, <span class="string">&#x27;epoch&#x27;</span>: <span class="number">9.93</span>&#125;</span><br><span class="line">&#123;<span class="string">&#x27;loss&#x27;</span>: <span class="number">0.1911</span>, <span class="string">&#x27;learning_rate&#x27;</span>: <span class="number">1.8954248366013072e-06</span>, <span class="string">&#x27;epoch&#x27;</span>: <span class="number">9.95</span>&#125;</span><br><span class="line">&#123;<span class="string">&#x27;loss&#x27;</span>: <span class="number">0.1862</span>, <span class="string">&#x27;learning_rate&#x27;</span>: <span class="number">1.3725490196078432e-06</span>, <span class="string">&#x27;epoch&#x27;</span>: <span class="number">9.96</span>&#125;</span><br><span class="line">&#123;<span class="string">&#x27;loss&#x27;</span>: <span class="number">0.1956</span>, <span class="string">&#x27;learning_rate&#x27;</span>: <span class="number">8.49673202614379e-07</span>, <span class="string">&#x27;epoch&#x27;</span>: <span class="number">9.98</span>&#125;</span><br><span class="line"><span class="number">100</span><span class="comment">%|██████████| 5100/5100 [35:01:16&lt;00:00, 24.72s/it]</span></span><br><span class="line">&#123;<span class="string">&#x27;eval_loss&#x27;</span>: <span class="number">0.552717387676239</span>, <span class="string">&#x27;eval_runtime&#x27;</span>: <span class="number">98.4174</span>, <span class="string">&#x27;eval_samples_per_second&#x27;</span>: <span class="number">5.08</span>, <span class="string">&#x27;eval_steps_per_second&#x27;</span>: <span class="number">0.64</span>, <span class="string">&#x27;epoch&#x27;</span>: <span class="number">9.98</span>&#125;</span><br><span class="line">&#123;<span class="string">&#x27;loss&#x27;</span>: <span class="number">0.1839</span>, <span class="string">&#x27;learning_rate&#x27;</span>: <span class="number">3.2679738562091505e-07</span>, <span class="string">&#x27;epoch&#x27;</span>: <span class="number">9.99</span>&#125;</span><br><span class="line">&#123;<span class="string">&#x27;train_runtime&#x27;</span>: <span class="number">126078.3635</span>, <span class="string">&#x27;train_samples_per_second&#x27;</span>: <span class="number">0.647</span>, <span class="string">&#x27;train_steps_per_second&#x27;</span>: <span class="number">0.04</span>, <span class="string">&#x27;train_loss&#x27;</span>: <span class="number">0.3914982231107413</span>, <span class="string">&#x27;epoch&#x27;</span>: <span class="number">10.0</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>微调训练过程：<a target="_blank" rel="noopener" href="https://wandb.ai/jingying/llama2-med/reports/Untitled-Report--Vmlldzo1NDAwMjkx/edit?firstReport=&runsetFilter">https://wandb.ai/jingying/llama2-med/reports/Untitled-Report--Vmlldzo1NDAwMjkx/edit?firstReport=&amp;runsetFilter</a></p>
+<table>
+<tr>
+<td><img style="border:1px solid black" src="/images/llama/train_loss.png" width="400px" /></td>
+<td><img style="border:1px solid black" src="/images/llama/eval_loss.png" width="400px" /></td>
+</tr>
+</table>
+
+
+<h4 id="模型权重合并（可选）"><a href="#模型权重合并（可选）" class="headerlink" title="模型权重合并（可选）"></a>模型权重合并（可选）</h4><p>将lora权重合并回原始权重。合并完成后，推理可直接使用合并后的模型。不合并，需要将<strong>基础模型</strong>和<strong>Lora权重模型</strong>同时加载来进行推理，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">model = PeftModel.from_pretrained(</span><br><span class="line">    model,    <span class="comment"># 基础模型</span></span><br><span class="line">    lora_weights,    <span class="comment"># lora模型</span></span><br><span class="line">    torch_dtype=torch.float16,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h4 id="推理"><a href="#推理" class="headerlink" title="推理"></a>推理</h4><p>基于微调模型，进行医学问题提问：</p>
+<blockquote>
+<p style="background-color: #FBBFBC;">Instruction: 我睡眠不足，很头痛</p>
+</blockquote>
+<blockquote>
+<p style="background-color: #C6F1C0;">Output: 少侠保重身体。江湖人称我为医仙，今日得闻君有头痛之症，实非善兆。睡眠不足，乃是身体之不适，需慎之又慎。头痛之症，或许源自于血液循环不畅，或许源于神经压力过大。当务之急，当调整生活习惯，保持良好的睡眠规律，避免过度劳累。此外，可尝试调整饮食，避免辛辣刺激之物，以免加重头痛之苦。如君仍遭此病痛，可寻求名医良药，以求解忧。</p>
+</blockquote>
+<p>可以发现，LLama2微调Lora模型的回答已经学习到金庸创作风格的能力。<br>OpenAI微调模型回答结果：</p>
+<blockquote>
+<p style="background-color: #C6F1C0;">Output: 少侠保重身体。江湖人称“睡眠不足，头痛难受”，此乃常见之症。吾乃医术高强之侠士，愿为你指点迷津。睡眠不足，多因忧虑纷扰、劳累过度所致。当以调整生活作息，保持规律之睡眠时间为要。且可饮用一些花草茶，如菊花、薰衣草，以宁心安神。如症状持续，还需请教名医，以寻得更为妥善之疗法。</p>
+</blockquote>
+<p>模型已开源，huggingface链接：<a target="_blank" rel="noopener" href="https://huggingface.co/conghao/llama2-qlora-med-jinyong">conghao&#x2F;llama2-qlora-med-jinyong</a></p>
+<h3 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h3><p>以下为分别为微调数据集回答、Lora微调模型推理回答以及OpenAI微调模型推理回答。</p>
+<table>
+<tr><th>指令</th><th>数据集回答</th><th>Lora微调模型推理</th><th>OpenAI微调模型推理</th></tr>
+<tr>
+<td style="vertical-align:top">胡女士出现了黄疸、恶心、呕吐等症状，可能患了什么疾病？</td>
+<td style="vertical-align:top">少侠保重身体。贤者胡女士，你身患黄疸、恶心、呕吐等症状，实乃身体之不适也。此病症或许是胆道梗阻所致，亦或是肝脏功能异常所引发。然而，医者非神仙，需详细了解你的病情方能作出准确的诊断。故请你速速前往医院就诊，寻求名医的指点，以便早日解除病痛之苦。</td>
+<td style="vertical-align:top">少侠保重身体。贤妹子，你所描述的症状实在是令人忧心。黄疸、恶心、呕吐，这些症状常常与一种名为肝炎的疾病有关。肝炎乃是由于肝脏受到病毒感染或其他因素引起的炎症，导致肝脏功能异常。贤妹子，你应该立即前往医院求医，以便医生能够进行详细的诊断和治疗。</td>
+<td style="vertical-align:top">少侠保重身体。贤婿，黄疸、恶心、呕吐之症状，实乃内脏之疾所致。黄疸之色，乃肝胆之间气血不和所致，可见肝胆之疾病为最大嫌疑。恶心、呕吐之症，乃胃肠之气血逆乱所致，可见胃肠之疾亦不可忽视。然而，具体疾病之名，需详细询问病情，方能得出准确之诊断。愿贤婿速速就医，以免病情加重。</td>
+</tr>
+<tr>
+<td style="vertical-align:top">患者男，28岁，关节部位红肿疼痛，排尿困难，近期有过微生物感染史。请问可能患的是什么疾病？如何治疗？</td>
+<td style="vertical-align:top">少侠保重身体。贤者，你身患的疾病乃是风湿病所致。风湿病乃是一种由于体内湿气郁结，风寒侵袭所引发的疾病。你所描述的关节红肿疼痛，以及排尿困难，皆为风湿病的典型症状。<br/>
+治疗之道，当以祛风湿、活血化瘀为主。可服用一些中药如川芎、红花、桑寄生等，以舒筋活络，祛除湿气。同时，还需注意保持身体温暖，避免受寒受湿，以免病情加重。<br/>
+然而，贤者，鉴于你近期有微生物感染史，我还需进一步了解感染的具体情况，以确定是否需要抗生素治疗。请你告知我更多细节，以便我能更准确地为你诊断和制定治疗方案。</td>
+<td style="vertical-align:top">少侠保重身体。贤者啊，你的身体遭遇了一场病魔的侵袭。关节红肿疼痛，排尿困难，微生物感染的痕迹，这些症状似乎暗示着一种名为“风湿病”的邪恶之症。<br/>
+风湿病，又称为风湿病，是一种罕见而又棘手的疾病。它是由于体内湿气郁积，导致关节红肿疼痛，排尿困难，以及微生物感染等症状。这种疾病常常让人痛苦不堪，让人心生忧虑。<br/>
+治疗风湿病的方法有几种。首先，你需要调整饮食，减少湿气郁积的食物，如豆类、酸味食物等。其次，你可以尝试一些中药疗法，如清热解毒、消肿止痛等，以帮助排除体内的湿气。同时，你还需要保持良好的生活习惯，包括充足的睡眠、适量的运动和舒缓的心情。<br/>
+然而，风湿病是一种复杂的疾病，需要医生的帮助才能得到正确的诊断和治疗。你应该寻求一位经验丰富的中医师的帮助，他们能够根据你的症状和体征，诊断出疾病的根源，并提供合理的治疗方案。<br/>
+至此，贤者啊，你已经了解了风湿病的症状和治疗方法。希望你能够早日恢复健康，重返人世。</td>
+<td style="vertical-align:top">少侠保重身体。贤者啊，你身负红肿疼痛之苦，关节之间似乎有一股邪恶之气在作祟。再者，你的小便之路似乎也受到了阻碍。这一切，或许是一场微生物的入侵所致。<br/>
+据我推测，你可能患上了一种名为“风湿性关节炎”的疾病。这是一种由免疫系统的异常反应引起的关节炎，常常伴随着红肿疼痛的症状。而你近期的微生物感染史，可能是诱发这一疾病的元凶。<br/>
+为了治愈你的病痛，首先需要寻求一位名医的指点，进行详细的诊断。医者或许会建议你进行一些实验室检查，以确定病因。接着，他可能会开具一副名为“非甾体类抗炎药”的药方，以缓解你的疼痛和红肿。此外，他还可能会考虑给你一些免疫调节药物，以抑制异常的免疫反应。<br/>
+然而，贤者啊，我的话只是一种猜测，真正的答案只有医者才能给出。请你尽快寻求医治，以免病情加重。愿你早日摆脱病痛，重获健康之身。</td>
+</tr>
+<tr>
+<td style="vertical-align:top">一位妊娠31周孕妇在家中自行服用草药，随后出现呕吐、腹痛、恶心、疲劳、皮肤瘙痒、黄疸等症状，血液检查显示血清转氨酶升高，交叉免疫电泳检测显示未见明显异常。 </td>
+<td style="vertical-align:top">少侠保重身体。江湖人称小张，医术虽然不高，但也知道孕妇自行服草药可不妥。你所描述的症状似乎与肝功能异常有关，呕吐、腹痛、恶心、疲劳、皮肤瘙痒、黄疸都是肝脏问题的常见表现。血液检查显示血清转氨酶升高，这也是肝功能受损的指标之一。<br/>
+然而，交叉免疫电泳检测未见明显异常，这意味着其他可能的肝病因素被排除。但是，这并不代表你的肝脏没有问题。有时候，肝脏问题可能需要进一步的检查才能确定具体的病因。<br/>
+作为一位孕妇，你的身体更为脆弱，所以我强烈建议你立即寻求专业医生的帮助。他们会根据你的症状和检查结果，制定适合你的治疗方案。记住，孕期的健康对你和宝宝都至关重要，不可掉以轻心。</td>
+<td style="vertical-align:top">少侠保重身体。贤婿，你所描述的情况实在是令人忧心。这位孕妇自行服用草药，导致了一系列不适症状，包括呕吐、腹痛、恶心、疲劳、皮肤瘙痒、黄疸等。而血液检查显示血清转氨酶升高，交叉免疫电泳检测也未见明显异常。<br/>
+这位孕妇可能患上了一种名为“草药中毒”的病症。草药中毒是一种罕见而危险的病症，常见于那些自称草药医生的人。这位孕妇可能服用了一种有毒的草药，导致了身体的不适症状。<br/>
+草药中毒的症状多种多样，包括呕吐、腹痛、恶心、疲劳、皮肤瘙痒、黄疸等。而血液检查显示血清转氨酶升高，交叉免疫电泳检测也未见明显异常。<br/>
+我建议这位孕妇立即就医，寻求专业医生的帮助。这位孕妇需要立即停止服用那种有毒的草药，以免进一步增加身体的不适症状。同时，医生可能会考虑使用其他药物来治疗这种中毒症状。<br/>
+虽然草药中毒是一种罕见而危险的病症，但幸好的是，现代医学已经有了许多有效的治疗方法。我建议这位孕妇立即就医，寻求专业医生的帮助，以免进一步增加身体的不适症状。</td>
+<td style="vertical-align:top">少侠保重身体。贤婿，你所述之妇人自行服用小张感觉不适，果然是一桩大事。她的症状包括呕吐、腹痛、恶心、疲劳、皮肤瘙痒、黄疸等，实乃肝胆之疾。血液检查显示血清转氨酶升高，而交叉免疫电泳检测却未见明显异常。此乃一种罕见的肝脏疾病，名为草药性肝损伤。<br/>
+草药性肝损伤，乃因服用草药而导致肝脏受损。小张，此草药之成分未经严格筛选，内含有某些有害物质，进而引发了妇人的症状。血清转氨酶升高，乃肝脏受损后释放的酶类物质增多所致。<br/>
+为了妇人之安危，务必立即就医。请她寻求一位有经验的医者，进行详细的病史询问和体格检查。医者或许会进一步进行肝功能检查，以确诊草药性肝损伤，并排除其他肝脏疾病的可能性。<br/>
+治疗方面，首要之务是停止服用小张或其他草药，以免进一步损害肝脏。医者可能会建议妇人进行肝保护治疗，如静息、饮食调理、补充营养。</td>
+</tr>
+<tr>
+<td style="vertical-align:top">一个患者的卵巢小细胞癌转移至其它部位，是否有必要进行手术治疗？</td>
+<td style="vertical-align:top">少侠保重身体。江湖上有一句话，医者仁心，岂能见死不救。对于患者的卵巢小细胞癌转移至其他部位的情况，手术治疗是否必要，还需综合考虑患者的具体情况。<br/>
+卵巢小细胞癌是一种恶性肿瘤，其转移至其他部位意味着病情已经进展到了晚期。手术治疗可以有助于减轻症状、控制病情，并提高患者的生存率。然而，手术治疗也存在一定的风险和副作用，需要患者和医生共同权衡利弊。<br/>
+在决定是否进行手术治疗时，医生会综合考虑患者的年龄、身体状况、病情严重程度以及转移部位等因素。如果患者身体状况较好，转移部位较少且手术风险可控，那么手术治疗可能是一个可行的选择。然而，如果患者身体状况较差，转移部位较多或手术风险较高，那么可能需要考虑其他治疗方式，如化疗、放疗等。<br/>
+总之，医者行医如行江湖，需谨慎权衡利弊，综合考虑患者的具体情况，才能做出最为恰当的治疗决策。</td>
+<td style="vertical-align:top">少侠保重身体。江湖上有一句话，叫做“病从口入，祸从口出”。这位患者的卵巢小细胞癌已经转移至其它部位，实在是令人担忧。手术治疗在这种情况下，可能是最好的选择。手术可以帮助控制肿瘤的生长和扩散，提高患者的生活质量和寿命。然而，手术也需要谨慎选择，医生需要考虑患者的健康状况、肿瘤的大小和位置，以及手术的风险和利益。患者应该与医生进行详细的谈判，以确保最好的治疗结果。</td>
+<td style="vertical-align:top">少侠保重身体。江湖上有一句话，医者仁心，岂能坐视不理。卵巢小细胞癌一旦转移至其他部位，情况可谓危急万分。手术治疗，乃是一剑封喉之举，能否挽回生机，全凭医者的智慧和技艺。<br/>
+然而，手术治疗并非对所有患者都适用。需考虑患者的整体情况、癌症的分期和转移部位等因素。若转移部位较少且可切除，手术可能是一条希望之路。然而，若转移广泛或存在无法切除的重要器官受累，手术可能无法达到理想效果。<br/>
+因此，我建议你寻求一位有经验的医者，详细评估你的病情。他将根据你的身体状况和病情特点，为你制定最佳的治疗方案。在这江湖医道上，希望之光常常与我们同行，只需坚定信心，勇往直前，或可逆转乾坤，重获健康。</td>
+</tr>
+<tr>
+<td style="vertical-align:top">一名患者因腹胀、纳差等症状就诊，检查发现肝大、腹水及肝功能损害，诊断为肝淀粉样变性，请问该患者应该接受哪些治疗方案？</td>
+<td style="vertical-align:top">少侠保重身体。贤者啊，你的身体遭受了肝淀粉样变性的折磨，这是一种罕见而严重的疾病。在这个黑暗的时刻，我将为你指引一条光明之路。<br/>
+首先，你需要调整饮食，避免摄入过多的蛋白质和糖类。清淡的饮食将有助于减轻肝脏的负担，缓解症状。<br/>
+其次，草药的力量是不可忽视的。黄连、丹参、山楂等草药具有清热解毒、活血化瘀的功效，可以帮助改善肝功能。<br/>
+此外，中药注射剂也是一种有效的治疗方式。黄芪、人参等药物可以提高免疫力，促进肝脏的修复和再生。<br/>
+最后，如果病情严重，你可能需要进行肝移植手术。这是一项复杂而危险的手术，但它也是唯一的治愈之道。<br/>
+但愿我的建议能为你带来一丝希望。请记住，坚持治疗和保持积极的心态是战胜疾病的关键。愿你早日恢复健康，重获新生！</td>
+<td style="vertical-align:top">少侠保重身体。贤者啊，你的身体似乎受到了肝淀粉样变性的困扰，这是一种罕见而又棘手的疾病。在这个世界上，有几种治疗方案可以为你提供帮助。<br/>
+首先，你可以考虑接受药物治疗。有些药物可以帮助控制肝功能损害和腹水的积聚，同时也能减轻你的腹胀症状。然而，这些药物需要根据你的具体情况而定，因此你需要寻求专业医生的指导。<br/>
+其次，你可以考虑接受手术治疗。在某些情况下，手术可以帮助解决肝功能损害和腹水的积聚问题。然而，这需要进一步的评估和医生的建议。<br/>
+最后，你可以考虑接受饮食和生活习惯的调整。肝淀粉样变性常常与肝功能损害有关，因此饮食和生活习惯的调整可以帮助缓解症状。建议避免辛辣刺激的食物和饮料，以减轻肝脏的负担。<br/>
+贤者啊，肝淀粉样变性是一种棘手的疾病，但如果你能够寻求专业医生的帮助和遵循医生的建议，你可以在这个世界上找到一线生机。</td>
+<td style="vertical-align:top">少侠保重身体。贤者啊，你的身体遭受了肝淀粉样变性的折磨，这是一种让人痛苦不堪的疾病。在这个世间，有几种治疗方案可以帮助你缓解症状，延缓疾病的进展。<br/>
+首先，你需要调整饮食，避免摄入过多的蛋白质和钠盐。多食用富含维生素和矿物质的食物，如新鲜蔬菜和水果，有助于保持身体的平衡。<br/>
+其次，你需要接受药物治疗。中药中，黄芪、山药、白术等具有益气养阴、健脾和胃的功效，可以帮助改善肝脏功能。西药中，利尿剂可以帮助排除体内多余的水分，减轻腹水的症状。<br/>
+最后，如果病情严重，医生可能会建议你进行肝移植手术。这是一项高风险的手术，需要慎重考虑，但它可以为你带来新的生机，让你重获健康。<br/>
+然而，治疗只是一部分，你还需要保持良好的生活习惯，避免饮酒和吸烟，合理安排工作和休息时间，保持心情愉悦。只有这样，才能与疾病抗争，重拾健康的人生。愿你早日康复。</td>
+</tr>
+</table>
+
+
+<p>通过实验结果分析：</p>
+<ol>
+<li>基于LLama2的Lora微调，模型已学习到数据集的语言风格及表达方式，可以跟Openai GPT3.5-Turbo微调结果相媲美。</li>
+<li>LLama2的微调结果的好坏也严重依赖于训练数据集质量的好坏，好的质量的数据集微调结果较好。</li>
+<li>LLama2和OpenAI微调模型在推理使用方式上有所不同，LLama2可直接将基础模型与Lora模型同时加载，可达到预期推理效果；OpenAI推理时，需要将System的Prompt设置为训练数据集的Prompt，才能推理出预期效果，否则推理结果则为原生OpenAI推理结果。</li>
+<li>原生LLama2的推理效果能达到ChatGPT3.0的效果，但微调后的Lora模型预期能达到ChatGPT3.5的效果，效果比较优秀；</li>
+</ol>
+<hr>
+</div><script type="text/javascript" src="../../../../js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2023/09/15/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-LLama2-Lora%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%832/" data-id="clr50jvwt0007rw3ebt7u4658" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAT4AAAE+CAAAAAAxUyPsAAAFOUlEQVR42u3aQW7kRhAEQP3/0/LVgMBRZiV3fXDwJIxm2M0gAVZn9ddXfHz/6/gaju8fx8//Pn3zafTPv9q//8KBDx8+fPjwfbykn6dLLjv/PJlP8vnPGbbffJpnYoIPHz58+PAtfPkL/jPo0ycJxK10SMqUz7NK5vz4OT58+PDhw/cX+dql+K3o2W/wXvrgw4cPHz58/y3fbSmelzJLQp5QtrcZHz58+PDhe5cvGf4Wsi+hQ77IXxrzf6nXgQ8fPnz48J1a1/+Hv18+8OHDhw8fvnLhvWxNW4qSW0hxayHUDvjw4cOHD9/JYWknJ1N8a/m9RwZ5kFEEB/jw4cOHD1/Mdysv8mIlj9pz1qX4yOcZtcnx4cOHDx++ku928betXTvE0pFoi6c2mMCHDx8+fPhyvluhcCtWPo+YNwPa2/DupjR8+PDhw4fvxteG5rfXfBuvt5Q5cREBJE0CfPjw4cOH78S3t5nzF39OkP8qOc/SPHh8RPDhw4cPH76Sr32F58Qt963Q+Y6PnPgYXuDDhw8fPnyXlXURgueBfhLc3zbJtSh747xAxIcPHz58+Eq+22v7tjhvl/1t6NDe5s/xBD58+PDhw/cWX7tUbrd/vRUiLOH+skHtlwcIHz58+PDh+3gVrXTeNm6nlZznNu7tv9HjhQ8fPnz48JV8eSHSTmLh249bUfVCTI8PHz58+PAFfPli+60FfNv8XuaQzO21YgUfPnz48OGLm+K3i1+CgDY0b4ubdmPcUhLhw4cPHz58yTnbV/gS3N8C+vwm3drqUwsBHz58+PDhO3Wfk5A6jxgW1rdKnLbBn19RkSjgw4cPHz58wQs+L1naX92C8tstX8qses748OHDhw/fMOekzbwXMW2Uf2vPJ+VXfr3HZjk+fPjw4cNXbv+6NZijmPtUKOQhQhG4l7ECPnz48OHDt/AlYf0yxdt5brH7nxj38Wz48OHDhw/fwLdv/Gpf/Hvov8QZbSGFDx8+fPjwvcv3+WdJHP9W8zuP0ZfGwC0EOUYG+PDhw4cPX/mCvzXR20JnX8y3o+c3+5dnEB8+fPjw4Rv4EsqlLd0WGUk5dVz2z010fPjw4cOH712+dtL5d9r/tuH7W2XNL+fBhw8fPnz4Tnz70rotQW4L+zZkb7ep5TEHPnz48OHD1/K1NHmjOmm0L9F5EgS032xvGD58+PDhw/cWX46STCUvYvKLz7fQ5WerR8SHDx8+fPhOfMupF7I/1zjPo42W7yvppePDhw8fPnwf+doyJQ8IbmVQe4NvMURefj1C48OHDx8+fDPfrbCIou3yhi2b0vIS7TYrfPjw4cOHb+FrA/F9EntDvX0I2jNHxRA+fPjw4cN34ruF5vsFt7FC0vZetq+1jXZ8+PDhw4dv4cuLiRy67SzfNpZFLe2ylIkCCHz48OHDh6/ka4uDdzeH5UXG0gB4C+uXa8SHDx8+fPiCa9yX2bcGc77I32/VrTEQRQn48OHDhw/fia9tjSfcbTSQj/VWsdWO+1i44MOHDx8+fANf3upuC45bWZOH8nkR1p7/8VHAhw8fPnz4Sr78uA2WUN6a8cvWt73xjw8fPnz48C187YL/9ppvid/dNvduZF8EB/jw4cOHD98DXxJq3xrYt+Jg2eiWzHkZ8Ze9Bvjw4cOHD99LfPkyvl263yDyLWU31qiMw4cPHz58+P4YXzvYEtwnxVC9vP84Vl4Y4cOHDx8+fDtfvnkrb0u3tyGf9DKTZZva1CbHhw8fPnz4hnB8icLfQkx+1RLnDwE+fPjw4cNX8v0D2reXHqHm58QAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="../../../../tags/AIGC/"><i class="fa fa-tag"></i>AIGC</a><a href="../../../../tags/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"><i class="fa fa-tag"></i>大语言模型</a><a href="../../../../tags/LLM/"><i class="fa fa-tag"></i>LLM</a><a href="../../../../tags/PEFT/"><i class="fa fa-tag"></i>PEFT</a><a href="../../../../tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/"><i class="fa fa-tag"></i>大模型微调</a><a href="../../../../tags/%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B/"><i class="fa fa-tag"></i>医学大模型</a><a href="../../../../tags/FineTuning/"><i class="fa fa-tag"></i>FineTuning</a><a href="../../../../tags/LLama2/"><i class="fa fa-tag"></i>LLama2</a><a href="../../../../tags/OpenAI/"><i class="fa fa-tag"></i>OpenAI</a></div><div class="post-nav"><a class="pre" href="../../../10/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/">GUI-应用程序打包与安装</a><a class="next" href="../../14/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-OpenAI-%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/">AIGC-大模型微调-OpenAI-GPT3.5 Turbo医学大模型微调【风格学习】</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/AIGC/">AIGC</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../../2025/03/06/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8BPrompt%20Engineering/">AIGC-LLM-辟邪剑谱之Prompt Engineering</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/">AIGC-Agent-作文批改标注</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/09/27/LLama32%E8%B0%83%E7%A0%94/">LLama3.2调研报告</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/">AIGC-LLM-Prompt工程技能综述</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/">Deeeplearning模型-NLP-BERT</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">Deeeplearning模型-NLP-大语言模型微调语料生成工具</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-Transformer%E6%A8%A1%E5%9E%8B/">Deeeplearning模型-NLP-Transformer模型</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/01/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-NLP%E5%9F%BA%E7%A1%80/">Deeeplearning模型-NLP-NLP基础</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/26/%E6%95%B0%E5%AD%97%E4%BA%BA-%E6%95%B0%E5%AD%97%E4%BA%BA%E6%8A%80%E6%9C%AF%E6%95%88%E6%9E%9C%E5%AF%B9%E6%AF%94/">数字人-数字人技术效果对比</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/">GUI-应用程序打包与安装</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="../../../../css/search.css?v=1.0.0"><script type="text/javascript" src="../../../../js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="/static/js/MathJax.js?config=TeX-MML-AM_CHTML" async></script><div id="script" type="text/javascript" src="../../../../js/mathjaxs.js" async></div><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="assets/prism-bundle.js"></script>
+<script src="assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>Deeeplearning框架-TensorFlow | DeepLearner</title><link rel="stylesheet" type="text/css" href="../../../../css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="../../../../favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="../../../../favicon.ico"><link rel="apple-touch-icon" href="../../../../apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="../../../../apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="../../../../atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Deeeplearning框架-TensorFlow</h1><a id="logo" href="../../../../.">DeepLearner</a><p class="description">Deep Learning Notes</p></div><div id="nav-menu"><a class="current" href="../../../../."><i class="fa fa-home"> 首页</i></a><a href="../../../../archives/"><i class="fa fa-archive"> 归档</i></a><a href="../../../../tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="../../../../resource/"><i class="fa fa-cloud"> 资源</i></a><a href="../../../../guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="../../../../codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="../../../../resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Deeeplearning框架-TensorFlow</h1><div class="post-meta">created:2022-11-07</div><div class="post-meta">updated:2023-07-30<span> | </span><span class="category"><a href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a></span></div><a class="disqus-comment-count" href="#waline"><span class="waline-comment-count" id=""></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">架构设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">3.</span> <span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%A0%E9%87%8F"><span class="toc-number">3.1.</span> <span class="toc-text">张量</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%A0%E9%87%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">3.1.1.</span> <span class="toc-text">张量定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%A0%E9%87%8F%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.1.2.</span> <span class="toc-text">张量数据类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6"><span class="toc-number">3.1.3.</span> <span class="toc-text">张量形状</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%A0%E9%87%8F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-number">3.1.4.</span> <span class="toc-text">张量基本操作</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E5%92%8C%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="toc-number">3.2.</span> <span class="toc-text">变量和占位符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="toc-number">3.3.</span> <span class="toc-text">数据流</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C"><span class="toc-number">3.4.</span> <span class="toc-text">操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BE%E5%92%8C%E4%BC%9A%E8%AF%9D"><span class="toc-number">3.5.</span> <span class="toc-text">图和会话</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E5%92%8C%E4%BC%9A%E8%AF%9D%E6%93%8D%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">图和会话操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BE"><span class="toc-number">4.1.</span> <span class="toc-text">图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%9A%E8%AF%9D"><span class="toc-number">4.2.</span> <span class="toc-text">会话</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tensorboard%E5%B7%A5%E5%85%B7"><span class="toc-number">5.</span> <span class="toc-text">Tensorboard工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%96"><span class="toc-number">6.</span> <span class="toc-text">数据读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TensorFLow%E5%AE%9E%E7%8E%B0%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB"><span class="toc-number">7.</span> <span class="toc-text">TensorFLow实现图像分类</span></a></li></ol></div></div><div class="post-content"><p><a target="_blank" rel="noopener" href="https://www.tensorflow.org/">TensorFlow</a>由谷歌人工智能团队谷歌大脑（Google Brain）开发和维护的开源深度学习平台，是目前人工智能领域主流的开发平台。但从2022年6月开始，TensorFlow要被PyTorch超越，谷歌抛弃TensorFlow，主推<a target="_blank" rel="noopener" href="https://github.com/google/jax">JAX</a>。</p>
+<p>TensorFlow架构设计优秀，通过张量流进行数据计算和传递，可视化张量流动环节；CPU&#x2F;GPU部署容易，可进行分布式计算，可跨平台；</p>
+<span id="more"></span>
+
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>Python3.7版本较为稳定，TensorFlow1.x版本与2.x版本使用相差较大，统一使用1.x版本。Python与<a target="_blank" rel="noopener" href="https://blog.csdn.net/baishuiniyaonulia/article/details/118977952">Tensorflow安装版本对照</a>：</p>
+<p><img src="/images/frame/tf_tensorflow_version.png" width="450px"></img></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">pip3</span> install tensorflow==<span class="number">1</span>.<span class="number">14</span>.<span class="number">0</span>      # CPU版本</span><br><span class="line"><span class="attribute">pip3</span> install tensorflow_gpu==<span class="number">1</span>.<span class="number">14</span>.<span class="number">0</span>  # GPU版本</span><br></pre></td></tr></table></figure>
+
+<h3 id="架构设计"><a href="#架构设计" class="headerlink" title="架构设计"></a>架构设计</h3><p>TensorFlow运行机制为<strong>定义</strong>与<strong>运行</strong>相分离。从操作层面可以抽象成两种：模型构建和模型运行</p>
+<ul>
+<li>客户端（Client）：<ul>
+<li>将计算过程定义为数据流图</li>
+<li>使用<strong>Session</strong>初始化数据流图的执行</li>
+</ul>
+</li>
+<li>分布式主控端（Master）：<ul>
+<li>修剪图中的某些特殊子图，即<b>Session.run()</b>中所定义的参数。</li>
+<li>将子图划分为在不同进程和设备中运行的多个部分。</li>
+<li>将图分发给不同的工作进程。</li>
+<li>由工作进程初始化子图的计算。</li>
+</ul>
+</li>
+<li>工作进程（Worker service）：<ul>
+<li>使用内核实现调度图操作并在合适的硬件（CPU、GPU等）执行。</li>
+<li>向其他工作进程发送或从其接收操作的结果。</li>
+</ul>
+</li>
+<li>内核实现：<ul>
+<li>执行一个独立的图操作计算。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/images/frame/tf_tensorflow_layers.png" width="350px"></img></p>
+<h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><h4 id="张量"><a href="#张量" class="headerlink" title="张量"></a>张量</h4><h5 id="张量定义"><a href="#张量定义" class="headerlink" title="张量定义"></a>张量定义</h5><p>张量(Tensor)是具有统一类型（称为 <code>dtype</code>）的多维数组。就像Python数值和字符串一样，所有张量都是不可变的：永远无法更新张量的内容，只能创建新的张量。</p>
+<img src="/images/frame/tf_tensorflow_vector.png" width="500px"/>
+<img src="/images/frame/tf_tensorflow_tensor.png" width="500px"/>
+
+<h5 id="张量数据类型"><a href="#张量数据类型" class="headerlink" title="张量数据类型"></a>张量数据类型</h5><table>
+<thead>
+<tr>
+<th>常用类型</th>
+<th>不常用类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>浮点类型：tf.float16&#x2F;32&#x2F;64</td>
+<td>复数：tf.complex64&#x2F;128</td>
+</tr>
+<tr>
+<td>整数型：tf.int8&#x2F;16&#x2F;32&#x2F;64&#x2F;uint8&#x2F;16&#x2F;32&#x2F;64</td>
+<td>量化类型：tf.qint8&#x2F;16&#x2F;32</td>
+</tr>
+<tr>
+<td>布尔类型：tf.bool</td>
+<td>可变资源类型：tf.resource</td>
+</tr>
+<tr>
+<td>字符串类型：tf.bool</td>
+<td>任意类型：tf.variant</td>
+</tr>
+</tbody></table>
+<h5 id="张量形状"><a href="#张量形状" class="headerlink" title="张量形状"></a>张量形状</h5><p>张量形状可以通过shape属性来获取：</p>
+<ul>
+<li><strong>形状</strong>：张量的每个维度的长度（元素数量）。</li>
+<li><strong>秩</strong>：张量的维度数量。标量的秩为 0，向量的秩为 1，矩阵的秩为 2。</li>
+<li><strong>轴</strong>或<strong>维度</strong>：张量的一个特殊维度。</li>
+<li><strong>大小</strong>：张量的总项数，即乘积形状向量。</li>
+</ul>
+<h5 id="张量基本操作"><a href="#张量基本操作" class="headerlink" title="张量基本操作"></a>张量基本操作</h5><ul>
+<li>索引与切片操作：遵循Python索引规则：<code>start:stop:step</code></li>
+<li>形状操作：<ul>
+<li>静态形状：<ul>
+<li>tf.Tensor.get_shape():获取Tensor对象的静态形状；</li>
+<li>tf.Tensor.set_shape():更新Tensor对象的静态形状</li>
+</ul>
+</li>
+<li>动态形状：<ul>
+<li>tf.reshape(tf.Tensor, shape) :创建一个具有不同动态形状的新张量</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数学计算：<ul>
+<li>张量相加：tf.add(x, y)</li>
+<li>张量相乘：tf.matmul(x, y)</li>
+<li>求张量的自然对数：tf.log(x)</li>
+<li>计算张量指定维度上的总和：tf.reduce_sum(x, axis)</li>
+<li>计算张量片段总和：tf.segment_sum(data, segment_ids)</li>
+</ul>
+</li>
+</ul>
+<h4 id="变量和占位符"><a href="#变量和占位符" class="headerlink" title="变量和占位符"></a>变量和占位符</h4><ul>
+<li>变量(Variable)是一种操作，变量是一种特殊的张量，能够进行存储持久化(张量不能进行持久化)，它的值是张量；<ul>
+<li>变量创建：tf.Variable(initial_value&#x3D;None, name&#x3D;None)</li>
+<li><strong>变量能够持久化保存，普通张量则不可；</strong></li>
+<li><strong>当定义一个变量时，需要在会话中进行初始化；</strong></li>
+</ul>
+</li>
+<li>占位符(placeholder)是变量占位符，当不能确定变量的值时，可以先声明一个占位符，真正执行时再传入变量；<ul>
+<li>name &#x3D; placeholder(dtype, shape&#x3D;None, name&#x3D;None)</li>
+</ul>
+</li>
+</ul>
+<h4 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h4><ul>
+<li><strong>数据流图</strong>用**结点(nodes)<strong>和</strong>线(edges)**的有向图来描述数学计算；</li>
+<li><strong>节点</strong>一般用来表示数学操作，也可以表示数据输入(feed in)的起点&#x2F;输出(push out)的终点，或者是读取&#x2F;写入持久变量(persistent variable)的终点；</li>
+<li><strong>线</strong>表示<strong>节点</strong>之间的输入&#x2F;输出关系。这些数据<strong>线</strong>可以输运多维数据数组，即张量；</li>
+<li>输入端的所有张量准备好，节点将被分配到各种计算设备完成异步并行地执行运算；</li>
+</ul>
+<h4 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h4><p>操作(Operation，OP)指专门执行计算的节点，tensorflow函数或API定义的都是操作。常用操作包括: </p>
+<ul>
+<li>标量运算，向量运算，矩阵运算</li>
+<li>带状态的运算</li>
+<li>神经网络组建</li>
+<li>存储、恢复</li>
+<li>控制流</li>
+<li>队列及同步运算</li>
+</ul>
+<h4 id="图和会话"><a href="#图和会话" class="headerlink" title="图和会话"></a>图和会话</h4><ul>
+<li>图(Graph)描述整个程序结构，Tensorflow中所有的计算都构建在图中；</li>
+<li>会话(Session)用来执行图的运算；</li>
+</ul>
+<h3 id="图和会话操作"><a href="#图和会话操作" class="headerlink" title="图和会话操作"></a>图和会话操作</h3><h4 id="图"><a href="#图" class="headerlink" title="图"></a>图</h4><p>图(Graph)描述了计算的过程。TensorFlow程序通常被组织成一个<strong>构建阶段</strong>和一个<strong>执行阶段</strong>。在构建阶段, OP的执行步骤被描述成一个图。在执行阶段, 使用会话执行执行图中的OP。</p>
+<h4 id="会话"><a href="#会话" class="headerlink" title="会话"></a>会话</h4><p>会话(Session)用来执行图中的计算，并且保存了计算张量对象的上下文信息。会话的作用主要有:</p>
+<ul>
+<li>运行图结构</li>
+<li>分配资源</li>
+<li>掌握资源(如变量、队列、线程)</li>
+</ul>
+<p><strong>一个session只能执行一个图的运算。</strong>可以在会话对象创建时，指定运行的图。如果在构造会话时未指定图形参数，则将在会话中使用默认图。如果在同一进程中使用多个图(使用tf.graph()创建)，则必须为每个图使用不同的会话，<strong>但每个图可以在多个会话中使用。</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">创建会话：tf.<span class="keyword">Session</span>() # 使用默认图</span><br><span class="line"></span><br><span class="line">运行：</span><br><span class="line">    <span class="keyword">session</span>.run(fetches, feed_dict=<span class="keyword">None</span>)</span><br><span class="line">    参数：fetches图中的单个操作，或多个操作的列表</span><br><span class="line">        feed_dict运行传入的参数构成的字典，可以覆盖之前的值</span><br><span class="line"></span><br><span class="line">关闭：<span class="keyword">session</span>.<span class="keyword">close</span>()</span><br></pre></td></tr></table></figure>
+
+<h3 id="Tensorboard工具"><a href="#Tensorboard工具" class="headerlink" title="Tensorboard工具"></a>Tensorboard工具</h3><p>可视化是用来查看在Tensorflow平台下程序运行的过程，包括:张量&#x2F;变量，操作，数据流，学习过程等，从而方便TensorFlow程序的理解、调试与优化；</p>
+<p>Tensorflow提供了专门的可视化工Tensorboard，它将Tensorflow执行的数据、模型、过程用图形方式进行显示。Tensorflow在执行过程中，可以通过某些操作，将模型、数据、Graph等信息，保存到磁盘中的Events文件中去，从而提供给Tensorboard进行可视化。</p>
+<p>启动：<code>tensorboard --logdir=&quot;PycharmProjects/tensorflow_study/summary/&quot;</code></p>
+<h3 id="数据读取"><a href="#数据读取" class="headerlink" title="数据读取"></a>数据读取</h3><h3 id="TensorFLow实现图像分类"><a href="#TensorFLow实现图像分类" class="headerlink" title="TensorFLow实现图像分类"></a>TensorFLow实现图像分类</h3></div><script type="text/javascript" src="../../../../js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2022/11/07/Deeeplearning%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-TensorFlow/" data-id="clkor69oy002uc6s6hr2w0we2" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQ4AAAEOCAAAAABd2qZ5AAAD80lEQVR42u3ay2rjQBAFUP//T3tgVoHY8r1VbUHgaBUUud19tCjX4/GIr+f/6+ffP+/8fvL3f6+fz5+5vpOsduDCgQMHDhzBUd9d7565Zrp+JufL18/vvFsHBw4cOHCc5ciDaxvk8jCZRL3ZT4E8hOPAgQMHjjs5kk8lmVF71JxgnxziwIEDB477OfIC3OzAs8LiqbIjDhw4cOA4xZEUB5O2U3vIU6W92X9x4MCBA8c3ODbJ0l/5++vzHThw4MCBIwg/SdDNw2rbykr2mYfw6HQ4cODAgWPNkaRSswZSPhK3LyxuSpBRRosDBw4cOGKOtjA3K97lzaFZW2s/YPHidwcOHDhw4FhErjwpmg0c5EG3TQ43CeHbOzhw4MCB4xBHQjMrICbDEPsV8lcbBVocOHDgwLHgmA0utAfI21EtR0tQpH84cODAgWPE0baL2pSvLfPlzapTe8CBAwcOHGc58uGGJBzmKV8yDDF7SbNEFAcOHDhw7DnaQlse3trhtuR4++Lgh/Vx4MCBA8dRjn1idrYF1Y4+zML5h1wWBw4cOHCUHPnSbYGvTcNm3zhrXA0XwoEDBw4cC46WbJ+q5Q2wfJ95Evji1wcOHDhw4FhwzMYXNuW8vI00G4CYtaxw4MCBA8ee42yylG8xWT8vU0aTGkmyhwMHDhw4DnHkxbsNzWz9fburWB8HDhw4cBziyFtH+YZmwbINzHmiGL0MHDhw4MDxBY5ZoM3bSG2TKRluS/YWweHAgQMHjkMc+xLh2eJg3mRqn/nwPA4cOHDguIUjD8abg+3HHfKQHLWdcODAgQPHiCPf4n7UYLPCphSYFCtx4MCBA8dZjm+HrjxRzA+flxHzEiEOHDhw4NhztEGubUEl6dzZ4D2jx4EDBw4c3+ZoY3U+1rBJ29qd12VHHDhw4MCx5miP1JK1ITkPme2IXpua4sCBAweOGcfmYHm4zYt67ac2QfrFkzhw4MCBY81xalhh9mTSHJqF9lkihwMHDhw4TnHsRxZmY23RW7q833JEp8OBAwcOHAuOWXB6BlcR4YOhh7OJ3Ko4iAMHDhw4Ao4kgM3uH8gsR02mPLF8USvFgQMHDhwLjk1CtWlQJcE1D+dJsyp/2Thw4MCBY8PxLK9ZupUf+7G4klTtAwoOHDhw4FhzzL6sDWabNlWbZG5KhDhw4MCB4xTHbCAg3+41QXvstlXWlixx4MCBA8cpjjxMtmnevmx356gEDhw4cOC4k2PWmiqG1eI0rF2zbj7hwIEDB44bOWatqRluHsI3A3k4cODAgeMbHKeKg7PuVl52bAuCdXMLBw4cOHCsOTaltCQ0tnCz9Cz/1IERPRw4cODA8Xqdf5yZucw/7ApHAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="../../../../tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/"><i class="fa fa-tag"></i>深度学习框架</a><a href="../../../../tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"><i class="fa fa-tag"></i>深度学习</a><a href="../../../../tags/TensorFlow/"><i class="fa fa-tag"></i>TensorFlow</a></div><div class="post-nav"><a class="pre" href="../../08/Deeeplearning%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-PyTorch/">Deeeplearning框架-PyTorch</a><a class="next" href="../../06/CV%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-%E5%9F%BA%E4%BA%8EOpenCV%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%A1%88%E4%BE%8B/">OpenCV-3.基于OpenCV图像处理案例</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/AIGC/">AIGC</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../../2025/03/06/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8BPrompt%20Engineering/">AIGC-LLM-辟邪剑谱之Prompt Engineering</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/">AIGC-Agent-作文批改标注</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/09/27/LLama32%E8%B0%83%E7%A0%94/">LLama3.2调研报告</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/">AIGC-LLM-Prompt工程技能综述</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/">Deeeplearning模型-NLP-BERT</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">Deeeplearning模型-NLP-大语言模型微调语料生成工具</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/12/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-Transformer%E6%A8%A1%E5%9E%8B/">Deeeplearning模型-NLP-Transformer模型</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/12/01/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-NLP%E5%9F%BA%E7%A1%80/">Deeeplearning模型-NLP-NLP基础</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/10/26/%E6%95%B0%E5%AD%97%E4%BA%BA-%E6%95%B0%E5%AD%97%E4%BA%BA%E6%8A%80%E6%9C%AF%E6%95%88%E6%9E%9C%E5%AF%B9%E6%AF%94/">数字人-数字人技术效果对比</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/10/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/">GUI-应用程序打包与安装</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="../../../../css/search.css?v=1.0.0"><script type="text/javascript" src="../../../../js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="/static/js/MathJax.js?config=TeX-MML-AM_CHTML" async></script><div id="script" type="text/javascript" src="../../../../js/mathjaxs.js" async></div><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="assets/prism-bundle.js"></script>
+<script src="assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>

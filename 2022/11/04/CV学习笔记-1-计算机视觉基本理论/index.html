@@ -1,0 +1,152 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>OpenCV-1.计算机视觉基本理论 | DeepLearner</title><link rel="stylesheet" type="text/css" href="../../../../css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="../../../../favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="../../../../favicon.ico"><link rel="apple-touch-icon" href="../../../../apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="../../../../apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="../../../../atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">OpenCV-1.计算机视觉基本理论</h1><a id="logo" href="../../../../.">DeepLearner</a><p class="description">Deep Learning Notes</p></div><div id="nav-menu"><a class="current" href="../../../../."><i class="fa fa-home"> 首页</i></a><a href="../../../../archives/"><i class="fa fa-archive"> 归档</i></a><a href="../../../../tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="../../../../resource/"><i class="fa fa-cloud"> 资源</i></a><a href="../../../../guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="../../../../codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="../../../../resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">OpenCV-1.计算机视觉基本理论</h1><div class="post-meta">created:2022-11-04</div><div class="post-meta">updated:2023-07-30<span> | </span><span class="category"><a href="../../../../categories/CV/">CV</a></span></div><a class="disqus-comment-count" href="#waline"><span class="waline-comment-count" id=""></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div></div></div><div class="post-content">
+计算机视觉在广义上是和图像相关的技术总称，包括图像采集获取，图像压缩编码，图像存储和传输，图像合成，三维图像重建，图像增强，图像修复，图像分类和识别，图像目标检测、跟踪、表达和描述，图像特征提取，图像显示和输出等。并随着图像技术的发展，计算机视觉在各种场景下得到广泛应用。
+<span id="more"></span>
+
+### 计算机视觉
+
+#### 计算机视觉定义
+
+计算机视觉是人工智能(AI)的一个领域，是指让计算机和系统能够从图像、视频和其他视觉输入中获取有意义的信息，并根据该信息采取行动或提供建议。 如果说人工智能赋予计算机思考的能力，那么计算机视觉就是赋予发现、观察和理解的能力。<font color="#ff0000"><sup>[[1][1]]</sup></font>（参考IBM官网定义）
+
+#### 计算机视觉应用
+
+
+<div class="markmap-container" style="height:450px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;计算机视觉应用&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;生物医学&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3]},&quot;v&quot;:&quot;染色体分析&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4]},&quot;v&quot;:&quot;影像识别分析&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:8,&quot;p&quot;:{&quot;lines&quot;:[4,5]},&quot;v&quot;:&quot;X光&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:8,&quot;p&quot;:{&quot;lines&quot;:[5,6]},&quot;v&quot;:&quot;CT图像&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7]},&quot;v&quot;:&quot;显微医学操作&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[7,8]},&quot;v&quot;:&quot;公安安防&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9]},&quot;v&quot;:&quot;人脸识别&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10]},&quot;v&quot;:&quot;指纹识别&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11]},&quot;v&quot;:&quot;场景监控&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12]},&quot;v&quot;:&quot;环境建模&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[12,13]},&quot;v&quot;:&quot;文字处理&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14]},&quot;v&quot;:&quot;文字识别&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[14,15]},&quot;v&quot;:&quot;文档修复&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[15,16]},&quot;v&quot;:&quot;办公自动化&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[16,17]},&quot;v&quot;:&quot;垃圾邮件分类&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[17,18]},&quot;v&quot;:&quot;智能交通&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[18,19]},&quot;v&quot;:&quot;公路交通管理&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[19,20]},&quot;v&quot;:&quot;车牌识别&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[20,21]},&quot;v&quot;:&quot;电子抓拍&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[21,22]},&quot;v&quot;:&quot;自动驾驶车辆&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[22,23]},&quot;v&quot;:&quot;休闲娱乐&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[23,24]},&quot;v&quot;:&quot;电影特效&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[24,25]},&quot;v&quot;:&quot;视频剪辑&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[25,26]},&quot;v&quot;:&quot;人像美颜&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[26,27]},&quot;v&quot;:&quot;体感游戏&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[27,28]},&quot;v&quot;:&quot;VR&quot;}]}]}"></svg>
+</div>
+
+
+#### 计算机视觉与人工智能
+
+计算机视觉中的大部分理论运用了人工智能的技术。人工智能的发展离不开计算机视觉，计算机 视觉中的很多应用问题给人工智能技术提供了研究方向。人工智能在计算机视觉中最成熟的技术方向是图像识别，它实现了如何让机器理解图像中的内容。
+
+### 图像处理基础
+
+#### 人眼成像VS计算机成像
+
+##### 人眼成像
+
+总结了下，基本四步：物体光线 --> 人眼折射 --> 视网膜 --> 倒立成像<font color="#ff0000"><sup>[[2][2]]</sup></font>，再通过大脑计算处理。
+
+<img src="/images/cv/cv_eyes.png" alt="" width="500px" style="border:1px solid black;" />
+
+##### 计算机成像
+
+模仿人眼，若干光敏传感器获取图像信号，将获取的电压信号等转换为计算机能处理的数字形式。总结下分两个步骤：采样和量化。
+
+#### 图像采样与分辨率
+
+##### 图像采样
+
+将空间上连续的图像变换成离散点的操作称为采样。采样是按照某种时间间隔或空间间隔，采集模拟信号的过程，即空间离散化。图像数字化的采样过程是将空间上连续的图像变化为离散的点。采样的效果由传感器的采样间隔和采样孔径决定，采样间隔和采样孔径的大小是两个很重要的参数。
+
+##### 图像分辨率
+
+采样后得到离散图像的尺寸称为图像分辨率。分辨率是数字图像可辨别的最小细节。辨率由宽（width）和高（height）两个参数构成。宽表示水平方向的细节数，高表示垂直方向的细节数。如一副1920\*1080分辨率的图像，表示这幅图像是由1920\*1080=2073600个点组成。
+
+采样间隔越小，所得图像像素数越多，空间分辨率高，图像质量好，但数据量大。
+
+#### 灰度级与灰度图像
+
+灰度级（depth）表征了每个采样点的传感器输出中可分辨的最小变化。
+
+灰度级通常是2的整数次幂。图像数据的灰度级越多视觉效果就越好。计算机中常用的是8位图像。如：一副8位的图像，表示每个采样点有2^8=256级，从最暗到最亮，可以分辨256个级别。
+
+量化等级越多，所得图像层次越丰富，灰度分辨率高，图像质量好，但数据量大。下图展示了lena图的灰度级从256级依次降低到4级的图像效果。
+
+单通道的数字图像被称为灰度图。通常，单通道记录了采样点的亮度信息，例如8位的图像，0表示最暗（黑色），255表示最亮（白色）。
+
+#### 彩色图像与色彩空间
+
+##### RGB色彩空间
+
+彩色图像，使用多通道数字图像。最普遍的方式是使用RGB颜色空间。RGB颜色空间中每个像素点有三个维度，分别记录在红（Red）、绿（Green）、 蓝（Blue）三原色的分量上的亮度。
+<table><tr>
+<td><img src="/images/cv/cv_colorcube.jpg" alt="" width="300px"/></td>
+<td><img src="/images/cv/cv_rgb_quant.jpg" alt="" width="200px"/></td>
+</tr></table>
+
+注：图片来源[ece.northwestern.edu][3]
+
+##### HSV色彩空间
+
+<table><tr>
+<td width="60%">HSV，该颜色空间可以用一个圆锥来表示。HSV表示色相(Hue)、饱和度(Saturation)和亮度 (Value)。
+
+* H，颜色的相位角，取值范围是0---360； 
+* S，颜色的饱和度，范围从0到1，它表示成所选颜色的纯度和该颜色最大的纯度之间的比率；
+* V，色彩的明亮程度，范围从0到1；</td>
+<td><img src="/images/cv/cv_hsvcone.gif" alt="" width="500px"/></td>
+</tr></table>
+
+注：图片来源[ece.northwestern.edu][4]
+
+##### YUV色彩空间
+
+YUV(YCrCb)是被欧洲电视系统所采用的一种颜色编码方法。YUV色彩空间是为了用亮度信号Y解决彩色电视机与黑白电视机的兼容问题，使黑白电视机也能接收彩色电视信号，与RGB视频信号传输相比，YUV只需占用极少的频宽。
+
+亮度信号Y和两个色差信号R－Y、B－Y，最后发送端将亮度和色差三个信号分别进行编码。采用YUV色彩空间的重要性是它的亮度信号Y和色度信号U、V是分 离的。如果只有Y信号分量而没有U、V分量，那么这样表示的图就是黑白灰度图。 
+
+##### CMYK
+
+CMYK颜色空间应用于印刷工业,印刷业通过青(C)、品(M)、黄(Y)、黑(BK) 四色油墨的不同网点面积率的叠印来表现丰富多彩的颜色和阶调。
+
+##### Lab
+
+Lab的色彩空间要比RGB模式和CMYK模式的色彩空间大，自然界中任何一点 色都可以在Lab空间中表达出来。
+
+#### 颜色空间变化
+
+在计算机视觉中，尤其是颜色识别相关的算法设计中，各种颜色空间混合使用是常见的方法。RGB、HSV、YUV等常见颜色空间可以通过计算公式实现相互转化，这个过程叫做**颜色空间变化**。颜色变换的计算公式比较复杂，通常图像处理库会提供颜色空间变化的API给用户调用。
+
+#### 常用图像处理技术
+
+
+<div class="markmap-container" style="height:400px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;图像处理技术&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;图像色彩处理&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3]},&quot;v&quot;:&quot;亮度、饱和度、色调调整&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4]},&quot;v&quot;:&quot;灰度化&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5]},&quot;v&quot;:&quot;二值化/反二值化&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6]},&quot;v&quot;:&quot;色彩提取&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7]},&quot;v&quot;:&quot;直方图均衡化&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[7,8]},&quot;v&quot;:&quot;图像形态处理&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9]},&quot;v&quot;:&quot;仿射变换&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:8,&quot;p&quot;:{&quot;lines&quot;:[9,10]},&quot;v&quot;:&quot;旋转&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:8,&quot;p&quot;:{&quot;lines&quot;:[10,11]},&quot;v&quot;:&quot;平移&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12]},&quot;v&quot;:&quot;缩放、裁剪&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13]},&quot;v&quot;:&quot;相加、相减&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14]},&quot;v&quot;:&quot;透视变换&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[14,15]},&quot;v&quot;:&quot;腐蚀、膨胀&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[15,16]},&quot;v&quot;:&quot;形态学梯度&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[16,17]},&quot;v&quot;:&quot;图像色彩梯度处理&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[17,18]},&quot;v&quot;:&quot;模糊&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[18,19]},&quot;v&quot;:&quot;锐化&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[19,20]},&quot;v&quot;:&quot;边沿检测&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[20,21]},&quot;v&quot;:&quot;图像轮廓处理&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[21,22]},&quot;v&quot;:&quot;轮廓查找&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[22,23]},&quot;v&quot;:&quot;轮廓绘制&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[23,24]},&quot;v&quot;:&quot;多边形拟合&quot;}]}]}"></svg>
+</div>
+
+
+
+[1]: https://www.ibm.com/cn-zh/topics/computer-vision
+[2]: https://www.zcool.com.cn/article/ZNzg4OTAw.html
+[3]: http://www.ece.northwestern.edu/local-apps/matlabhelp/toolbox/images/color5.html
+[4]: http://www.ece.northwestern.edu/local-apps/matlabhelp/toolbox/images/color11.html</div><script type="text/javascript" src="../../../../js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2022/11/04/CV%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-1-%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E5%9F%BA%E6%9C%AC%E7%90%86%E8%AE%BA/" data-id="clkor69os0010c6s6fy8m3txs" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAT4AAAE+CAAAAAAxUyPsAAAFO0lEQVR42u3a0WrkVhAEUP//TzsQ8hAwM66q1iwhHD0N3rF0dWTYUvX9+oqP77+Pf3/++ZOfn7fz/Dzy87z/reR3vz5x4MOHDx8+fD9O934R38GR8N2vmHBcBPIV4sOHDx8+fBe+7T/497/bfj+HbmNW8nlcJz58+PDhw/cxvuSWfp6tLRReMSWU7U/a4gMfPnz48OH77/DlS7+82OcVRnL1BwIWPnz48OHDN/HlcSQPH8kS859v8SW5lz8068CHDx8+fPgOoeH//fnhAx8+fPjw4StfvC9PJo8XeZh46syXAx8+fPjw4ds02sK6HUgnZcQ9c+XFwWVUEDUu+PDhw4cP34t1JmTFwDgu7pPYkQ8M2iF9W+u/vFN8+PDhw4dvSgU5RHKTOUT+qNrhdxuJ2pICHz58+PDhu/MlBC1rW6nnFXm7Qe0Sfer0hw8fPnz48L2t6ZMLb4t+qjJIKNug0zYAL8t6fPjw4cOHb0kgXzli+812u1tbBDz1OLfNAfjw4cOHD9/Gd48CeUBpX/W3OuBC1j5yfPjw4cOHr+XLh8f5gDnna4uAbVNaW17UZQE+fPjw4cP39l/zaiCp0e/D7/a6SZXQ9iXFyBwfPnz48OGb+NoA0Qaar/J4dntZ/p26LMCHDx8+fPgmvvxle1tozr39pN3itg3j8eHDhw8fvk/z5afeRub3Yv2prW/bQAIfPnz48OGbJstfSZ3d1vpbOLg/qsuwvy7r8eHDhw8fvjNfHjUuW9C22r0dgV9GEe1wHR8+fPjw4cv52hJ8iwsbd/KY2xIhP3P0W/jw4cOHD9+jfPni7kt/Nvo8xfrLo8WHDx8+fPgmvq2Cv1x4u+6fuVYewvDhw4cPH76Nrx0w51Fg2462jcPbkUOy2l/+XPDhw4cPH74DX/J5Cxk5R/6d5AyXwiKix4cPHz58+Ca+rRy/1PRbgEgGBtsQfQxh+PDhw4cP3/L+Xh9bKLksKL/5rbYYy3p8+PDhw4cvvm5ecG/Fwf0ZPhsm8pIiqk7w4cOHDx++ku8+0m5L/3y8vW1ce2rTWx6M8OHDhw8fvpZvK7uTy7eD7bYCaOPXs2MAfPjw4cOHr+XLF3GpzseNX1Ol3iJug/wozeHDhw8fPnyHQry9pTYKtNXDfeDdVvkPdC348OHDhw/fVHnfA8223Dx8bCGsDXb48OHDhw/fxrdt/3rqJpNCoa3125KiHVfgw4cPHz58G1++9DzQPPZUH3rVf6rmwIcPHz58+O58WyBoK/jLZrU21myz7PaPIEp/+PDhw4cP34vrbgGljQJ5PGqrh3qkPQ3Cf/m7w4cPHz58+ILv5LHjEhFygnwlT43b82vhw4cPHz58T/HdX/W/p6MNFm3syB9VG+P++YwPHz58+PCVfMmXtpf8dvR+L+u3eJSPAaL0hw8fPnz48MWT4q0UaDeQ5cOArW5I4stlYP/ybPjw4cOHD1/AN5bUZWTZwsG9Gshri+RO8eHDhw8fvqf42mrgqWH5s/V9Ui60V/lFAx8+fPjw4TvztbeXD56TV/etrN/C1v26+PDhw4cP3zRfroNCcpl6VhBHkCQktaPxT0cffPjw4cOHry3oW6y2ZM8fzwUoX+epsseHDx8+fPjKYXm+uDyUJByXox3V50OIX9aJDx8+fPjwfYyvLdAT6ORf86DTDtfzMcDL8+DDhw8fPnwf5tuG1vdAcxmTb0V8VE/gw4cPHz58E98WL/JiPR9st3xtWMmjSfRHgA8fPnz48O17w+pFbA/j8mK/hZI8ol3Ogw8fPnz48L09z1/i2RZ18bqUwQAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="../../../../tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/"><i class="fa fa-tag"></i>计算机视觉</a><a href="../../../../tags/CV/"><i class="fa fa-tag"></i>CV</a><a href="../../../../tags/OpenCV/"><i class="fa fa-tag"></i>OpenCV</a><a href="../../../../tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/"><i class="fa fa-tag"></i>图像处理</a></div><div class="post-nav"><a class="pre" href="../../05/CV%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-%E5%9F%BA%E4%BA%8EOpenCV%E5%9B%BE%E5%83%8F%E6%93%8D%E4%BD%9C/">OpenCV-2.基于OpenCV图像操作</a><a class="next" href="../../03/MachineLearning%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-11-%E8%81%9A%E7%B1%BB/">MachineLearning-11.聚类</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/AIGC/">AIGC</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../../2025/03/06/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8BPrompt%20Engineering/">AIGC-LLM-辟邪剑谱之Prompt Engineering</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/">AIGC-Agent-作文批改标注</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/09/27/LLama32%E8%B0%83%E7%A0%94/">LLama3.2调研报告</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/">AIGC-LLM-Prompt工程技能综述</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/">Deeeplearning模型-NLP-BERT</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">Deeeplearning模型-NLP-大语言模型微调语料生成工具</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/12/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-Transformer%E6%A8%A1%E5%9E%8B/">Deeeplearning模型-NLP-Transformer模型</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/12/01/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-NLP%E5%9F%BA%E7%A1%80/">Deeeplearning模型-NLP-NLP基础</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/10/26/%E6%95%B0%E5%AD%97%E4%BA%BA-%E6%95%B0%E5%AD%97%E4%BA%BA%E6%8A%80%E6%9C%AF%E6%95%88%E6%9E%9C%E5%AF%B9%E6%AF%94/">数字人-数字人技术效果对比</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2023/10/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/">GUI-应用程序打包与安装</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="../../../../css/search.css?v=1.0.0"><script type="text/javascript" src="../../../../js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="/static/js/MathJax.js?config=TeX-MML-AM_CHTML" async></script><div id="script" type="text/javascript" src="../../../../js/mathjaxs.js" async></div><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="assets/prism-bundle.js"></script>
+<script src="assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --><script src="/js/markmap.js"></script></body></html>

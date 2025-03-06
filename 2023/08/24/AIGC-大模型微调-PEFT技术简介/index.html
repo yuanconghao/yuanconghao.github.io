@@ -1,0 +1,259 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>AIGC-大模型微调-PEFT技术简介 | DeepLearner</title><link rel="stylesheet" type="text/css" href="../../../../css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="../../../../favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="../../../../favicon.ico"><link rel="apple-touch-icon" href="../../../../apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="../../../../apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="../../../../atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">AIGC-大模型微调-PEFT技术简介</h1><a id="logo" href="../../../../.">DeepLearner</a><p class="description">Deep Learning Notes</p></div><div id="nav-menu"><a class="current" href="../../../../."><i class="fa fa-home"> 首页</i></a><a href="../../../../archives/"><i class="fa fa-archive"> 归档</i></a><a href="../../../../tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="../../../../resource/"><i class="fa fa-cloud"> 资源</i></a><a href="../../../../guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="../../../../codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="../../../../resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">AIGC-大模型微调-PEFT技术简介</h1><div class="post-meta">created:2023-08-24</div><div class="post-meta">updated:2023-10-30<span> | </span><span class="category"><a href="../../../../categories/AIGC/">AIGC</a></span></div><a class="disqus-comment-count" href="#waline"><span class="waline-comment-count" id=""></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%BE%AE%E8%B0%83"><span class="toc-number">1.</span> <span class="toc-text">关于微调</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PEFT%E6%96%B9%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">PEFT方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Adapter-Tuning"><span class="toc-number">2.1.</span> <span class="toc-text">Adapter Tuning</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Prefix-Tuning"><span class="toc-number">2.2.</span> <span class="toc-text">Prefix Tuning</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%BA%E6%96%87-Code"><span class="toc-number">2.2.1.</span> <span class="toc-text">论文&amp;Code</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.2.2.</span> <span class="toc-text">介绍</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Prompt-Tuning"><span class="toc-number">2.3.</span> <span class="toc-text">Prompt Tuning</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%BA%E6%96%87-Code-1"><span class="toc-number">2.3.1.</span> <span class="toc-text">论文&amp;Code</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D-1"><span class="toc-number">2.3.2.</span> <span class="toc-text">介绍</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#P-Tuning"><span class="toc-number">2.4.</span> <span class="toc-text">P-Tuning</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#V1"><span class="toc-number">2.4.1.</span> <span class="toc-text">V1</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%AE%BA%E6%96%87"><span class="toc-number">2.4.1.1.</span> <span class="toc-text">论文</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D-2"><span class="toc-number">2.4.1.2.</span> <span class="toc-text">介绍</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#V2"><span class="toc-number">2.4.2.</span> <span class="toc-text">V2</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%AE%BA%E6%96%87-Code-2"><span class="toc-number">2.4.2.1.</span> <span class="toc-text">论文&amp;Code</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D-3"><span class="toc-number">2.4.2.2.</span> <span class="toc-text">介绍</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LoRA"><span class="toc-number">2.5.</span> <span class="toc-text">LoRA</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%BA%E6%96%87-Code-3"><span class="toc-number">2.5.1.</span> <span class="toc-text">论文&amp;Code</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D-4"><span class="toc-number">2.5.2.</span> <span class="toc-text">介绍</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AdaLoRA"><span class="toc-number">2.6.</span> <span class="toc-text">AdaLoRA</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%BA%E6%96%87-Code-4"><span class="toc-number">2.6.1.</span> <span class="toc-text">论文&amp;Code</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D-5"><span class="toc-number">2.6.2.</span> <span class="toc-text">介绍</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#QLoRA"><span class="toc-number">2.7.</span> <span class="toc-text">QLoRA</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%BA%E6%96%87-Code-5"><span class="toc-number">2.7.1.</span> <span class="toc-text">论文&amp;Code</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D-6"><span class="toc-number">2.7.2.</span> <span class="toc-text">介绍</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%95%B0%E5%80%BC%E7%90%86%E8%A7%A3"><span class="toc-number">3.</span> <span class="toc-text">相关数值理解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%8F%82%E6%95%B0"><span class="toc-number">3.1.</span> <span class="toc-text">查看参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%90%86%E8%A7%A3loss%E5%92%8Cval-loss"><span class="toc-number">3.2.</span> <span class="toc-text">理解loss和val_loss</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E5%A4%A7batch-size%E5%AF%B9%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-number">3.3.</span> <span class="toc-text">调大batch_size对网络训练的影响</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#loss%E4%B8%8D%E6%94%B6%E6%95%9B"><span class="toc-number">3.4.</span> <span class="toc-text">loss不收敛</span></a></li></ol></li></ol></div></div><div class="post-content"><p>最近，基于LLama2对垂类领域的数据集做了LoRA微调，在微调过程中，系统学习了下微调方案，并对Fine Tuning方案做了对比总结。</p>
+<p>因大模型预训练成本高昂，需要庞大的计算资源和大量的数据资源，一般个人和小企业难以承受（百度、头条花了上百亿购买显卡）。为解决这一问题，谷歌率先提出Parameter-Efficient Fine-Tuning (PEFT)技术，旨在<strong>通过最小化微调参数的数量和计算复杂度，来提高预训练模型在新任务上的性能，从而缓解大型预训练模型的训练成本。这样一来，即使计算资源受限，也可以利用预训练模型的知识来迅速适应新任务，实现高效的迁移学习。</strong> 因此PEFT技术在提升大模型效果的同时，缩短模型训练时间和成本。</p>
+<span id="more"></span>
+
+<h3 id="关于微调"><a href="#关于微调" class="headerlink" title="关于微调"></a>关于微调</h3><ul>
+<li>数据量少, 但数据相似度非常高；在这种情况下, 只修改最后几层或最终的softmax图层的输出类别。</li>
+<li>数据量少, 数据相似度低；冻结预训练模型的初始层(比如k层), 并再次训练剩余的(n-k)层。由于新数据集的相似度较低, 因此根据新数据集对较高层进行重新训练具有重要意义。</li>
+<li>数据量大, 数据相似度低；大的数据集对神经网络训练将会很有效。但由于数据与用于训练我们的预训练模型的数据相比有很大不同，使用预训练模型进行的预测不会有效。因此, 最好根据数据从头开始训练神经网络(Training from scatch)</li>
+<li>数据量大, 数据相似度高；这是理想情况，在这种情况下, 预训练模型应该是最有效的。使用模型的最好方法是保留模型的体系结构和模型的初始权重。然后, 可以使用在预先训练的模型中的权重来重新训练该模型。</li>
+</ul>
+<h3 id="PEFT方法"><a href="#PEFT方法" class="headerlink" title="PEFT方法"></a>PEFT方法</h3><h4 id="Adapter-Tuning"><a href="#Adapter-Tuning" class="headerlink" title="Adapter Tuning"></a>Adapter Tuning</h4><p>谷歌的研究人员首次在论文<a target="_blank" rel="noopener" href="https://github.com/yuanconghao/deeplearning-datasets/blob/main/papers/FineTuning/Parameter-Efficient%20Transfer%20Learning%20for%20NLP.pdf">《Parameter-Efficient Transfer Learning for NLP》</a>提出针对BERT的PEFT微调方式，拉开了PEFT研究的序幕。他们指出，在面对特定的下游任务时，如果进行Full-fintuning（即预训练模型中的所有参数都进行微调），太过低效；而如果采用固定预训练模型的某些层，只微调接近下游任务的那几层参数，又难以达到较好的效果。<br>于是他们设计了如下图所示的Adapter结构，将其嵌入Transformer的结构里面，在训练时，固定住原来预训练模型的参数不变，只对新增的Adapter结构进行微调。同时为了保证训练的高效性（也就是尽可能少的引入更多参数），他们将Adapter设计为这样的结构：首先是一个down-project层将高维度特征映射到低维特征，然后过一个非线形层之后，再用一个up-project结构将低维特征映射回原来的高维特征；同时也设计了skip-connection结构，确保了在最差的情况下能够退化为identity。</p>
+<p><img src="/images/ft/adapter_tuning.png" width="600px"></img></p>
+<p>从实验结果来看，该方法能够在只额外对增加的3.6%参数规模（相比原来预训练模型的参数量）的情况下取得和Full-finetuning接近的效果（GLUE指标在0.4%以内）。</p>
+<p><img src="/images/ft/adapter_tuning_res.png" width="400px"></img></p>
+<h4 id="Prefix-Tuning"><a href="#Prefix-Tuning" class="headerlink" title="Prefix Tuning"></a>Prefix Tuning</h4><h5 id="论文-Code"><a href="#论文-Code" class="headerlink" title="论文&amp;Code"></a>论文&amp;Code</h5><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/yuanconghao/deeplearning-datasets/blob/main/papers/FineTuning/Prefix-Tuning-%20Optimizing%20Continuous%20Prompts%20for%20Generation.pdf">Prefix-Tuning: Optimizing Continuous Prompts for Generation</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/XiangLi1999/PrefixTuning">https://github.com/XiangLi1999/PrefixTuning</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">peft_config = PrefixTuningConfig(task_type=<span class="string">&quot;SEQ_CLS&quot;</span>, num_virtual_tokens=<span class="number">20</span>)</span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path, return_dict=<span class="literal">True</span>, num_labels=labels)</span><br><span class="line">model = get_peft_model(model, peft_config)</span><br></pre></td></tr></table></figure>
+
+<h5 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h5><p>Prefix Tuning方法由斯坦福的研究人员提出，与Full-finetuning更新所有参数的方式不同，该方法是在输入token之前构造一段任务相关的virtual tokens作为Prefix，然后训练的时候只更新Prefix部分的参数，而Transformer中的其他部分参数固定。该方法其实和构造Prompt类似，只是Prompt是人为构造的“显式”的提示,并且无法更新参数，而Prefix则是可以学习的“隐式”的提示。<br>同时，为了防止直接更新Prefix的参数导致训练不稳定的情况，他们在Prefix层前面加了MLP结构(相当于将Prefix分解为更小维度的Input与MLP的组合后输出的结果)，训练完成后，只保留Prefix的参数。</p>
+<p><img src="/images/ft/prefix_tuning.png" width="600px"></img></p>
+<p>实验结果也说明了Prefix Tuning的方式可以取得不错的效果。</p>
+<p><img src="/images/ft/prefix_tuning_res.png" width="900px"></img></p>
+<p>除此之外，作者还做了一系列的消融实验说明该方法的有效性：</p>
+<ul>
+<li>Prefix长度的影响 — 不同的任务所需要的Prefix的长度有差异；<font color="#ff0000">Figure4</font></li>
+<li>Full vs Embedding-only — 作者对比了Embedding-only（只有最上层输入处的Embedding作为参数更新，后续的参数固定）和Full（每一层的Prefix相关的参数都训练）的方式的效果；</li>
+<li>Prefixing vs Infixing — 对比了[PREFIX; x; y] 方式与[x; INFIX; y] 方式的差异，还是Prefix方式最好；<font color="#ff0000">Table4</font></li>
+<li>Initialization — 用任务相关的Prompt去初始化Prefix能取得更好的效果；<font color="#ff0000">Figure5</font></li>
+</ul>
+<table><tr>
+<td><img src="/images/ft/prefix_tuning_figure4.png" alt="Figure4" width="300px"/></td>
+<td><img src="/images/ft/prefix_tuning_table4.png" alt="Table4" width="300px"/></td>
+<td><img src="/images/ft/prefix_tuning_figure5.png" alt="Figure5" width="300px"/></td>
+</tr></table>
+
+<h4 id="Prompt-Tuning"><a href="#Prompt-Tuning" class="headerlink" title="Prompt Tuning"></a>Prompt Tuning</h4><h5 id="论文-Code-1"><a href="#论文-Code-1" class="headerlink" title="论文&amp;Code"></a>论文&amp;Code</h5><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/yuanconghao/deeplearning-datasets/blob/main/papers/FineTuning/The%20Power%20of%20Scale%20for%20Parameter-Efficient%20Prompt%20Tuning.pdf">The Power of Scale for Parameter-Efficient Prompt Tuning</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/google-research/prompt-tuning">https://github.com/google-research/prompt-tuning</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">peft_config = PromptTuningConfig(task_type=<span class="string">&quot;SEQ_CLS&quot;</span>, num_virtual_tokens=<span class="number">10</span>)</span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path, return_dict=<span class="literal">True</span>, num_labels=labels)</span><br><span class="line">model = get_peft_model(model, peft_config)</span><br></pre></td></tr></table></figure>
+<h5 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h5><p>该方法可以看作是Prefix Tuning的简化版本，只在输入层加入Prompt tokens进行微调，并不需要加入MLP进行调整来解决难训练的问题，主要在T5预训练模型上做实验。似乎只要预训练模型足够强大，其他的一切都不是问题。</p>
+<p>离散的Prompt Tuning(Prompt Design)基本不能达到fine-tuning的效果; Soft Prompt Tuning在模型增大时可以达到接近fine-tuning的效果, 并且有进一步超越fine-tuning的趋势。</p>
+<p>另外, Prompt Tuning往往比模型调优提供更强的零样本性能, 尤其是在像 TextbookQA 这样具有大域变化的数据集上。主要在T5预训练模型上做实验。似乎只要预训练模型足够强大, 其他的一切都不是问题。</p>
+<p>固定预训练参数, 为每一个任务额外添加一个或多个embedding, 之后拼接query正常输入LLM, 并只训练这些embedding。左图为单任务全参数微调, 右图为prompt tuning。</p>
+<img src="/images/ft/prompt_tuning.png" width="600px"/>
+
+<p>作者也做实验说明随着预训练模型参数量的增加，Prompt Tuning的方法会逼近Fine-tune的结果。</p>
+<img src="/images/ft/prompt_tuning_res.png" width="400px"/>
+
+<ul>
+<li>标准的T5模型(橙色线)多任务微调实现了强大的性能, 但需要为每个任务存储单独的模型副本。</li>
+<li>prompt tuning也会随着参数量增大而效果变好, 同时使得单个冻结模型可重复使用于所有任务。</li>
+<li>显著优于使用GPT-3进行fewshot prompt设计。</li>
+<li>当参数达到100亿规模与全参数微调方式效果无异。</li>
+</ul>
+<p>Prompt length、Prompt initialization、Pre-training method、LM adaptation steps参数实验变化：<br><img src="/images/ft/prompt_tuning_diff.png" width="900px"/></p>
+<p>作者做了一系列对比实验，都在说明：随着预训练模型参数的增加，一切的问题都不是问题，最简单的设置也能达到极好的效果。</p>
+<ul>
+<li>Prompt长度影响：模型参数达到一定量级时，Prompt长度为1也能达到不错的效果，Prompt长度为20就能达到极好效果。</li>
+<li>Prompt初始化方式影响：Random Uniform方式明显弱于其他两种，但是当模型参数达到一定量级，这种差异也不复存在。</li>
+<li>预训练的方式：LM Adaptation的方式效果好，但是当模型达到一定规模，差异又几乎没有了。</li>
+<li>微调步数影响：模型参数较小时，步数越多，效果越好。同样随着模型参数达到一定规模，zero shot也能取得不错效果。</li>
+</ul>
+<h4 id="P-Tuning"><a href="#P-Tuning" class="headerlink" title="P-Tuning"></a>P-Tuning</h4><h5 id="V1"><a href="#V1" class="headerlink" title="V1"></a>V1</h5><h6 id="论文"><a href="#论文" class="headerlink" title="论文"></a>论文</h6><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/yuanconghao/deeplearning-datasets/blob/main/papers/FineTuning/GPT%20Understands%2C%20Too.pdf">GPT Understands, Too</a></li>
+</ul>
+<h6 id="介绍-2"><a href="#介绍-2" class="headerlink" title="介绍"></a>介绍</h6><p>P-Tuning方法的提出主要是为了解决这样一个问题：大模型的Prompt构造方式严重影响下游任务的效果。<br>P-Tuning提出将Prompt转换为可以学习的Embedding层，只是考虑到直接对Embedding参数进行优化会存在这样两个挑战：</p>
+<ul>
+<li>Discretenes：对输入正常语料的Embedding层已经经过预训练，而如果直接对输入的prompt embedding进行随机初始化训练，容易陷入局部最优。</li>
+<li>Association：没法捕捉到prompt embedding之间的相关关系。</li>
+</ul>
+<img src="/images/ft/p-tuning.png" width="800px"/>
+
+<p>这篇文章（2021-03）和Prefix-Tuning（2021-01）差不多同时提出，做法其实也有一些相似之处，主要区别在于：</p>
+<ul>
+<li>Prefix Tuning是将额外的embedding加在开头，看起来更像是模仿Instruction指令；而P-Tuning的位置则不固定。</li>
+<li>Prefix Tuning通过在每个Attention层都加入Prefix Embedding来增加额外的参数，通过MLP来初始化；而P-Tuning只是在输入的时候加入Embedding，并通过LSTM+MLP来初始化。</li>
+</ul>
+<h5 id="V2"><a href="#V2" class="headerlink" title="V2"></a>V2</h5><h6 id="论文-Code-2"><a href="#论文-Code-2" class="headerlink" title="论文&amp;Code"></a>论文&amp;Code</h6><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/yuanconghao/deeplearning-datasets/blob/main/papers/FineTuning/P-Tuning%20v2-%20Prompt%20Tuning%20Can%20Be%20Comparable%20to%20Fine-tuning%20Universally%20Across%20Scales%20and%20Tasks.pdf">P-Tuning v2: Prompt Tuning Can Be Comparable to Fine-tuning Universally Across Scales and Tasks</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/THUDM/P-tuning-v2">https://github.com/THUDM/P-tuning-v2</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">peft_config = PromptEncoderConfig(task_type=<span class="string">&quot;SEQ_CLS&quot;</span>, num_virtual_tokens=<span class="number">20</span>, encoder_hidden_size=<span class="number">128</span>)</span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path, return_dict=<span class="literal">True</span>, num_labels=labels)</span><br><span class="line">model = get_peft_model(model, peft_config)</span><br></pre></td></tr></table></figure>
+
+<h6 id="介绍-3"><a href="#介绍-3" class="headerlink" title="介绍"></a>介绍</h6><p>P-Tuning v2的目标就是要让Prompt Tuning能够在不同参数规模的预训练模型、针对不同下游任务的结果上都达到匹敌Fine-tuning的结果。<br>当前Prompt Tuning方法未能在这两个方面都存在局限性。</p>
+<ul>
+<li>不同模型规模：Prompt Tuning和P-tuning这两种方法都是在预训练模型参数规模够足够大时，才能达到和Fine-tuning类似的效果，而参数规模较小时效果则很差。</li>
+<li>不同任务类型：Prompt Tuning和P-tuning这两种方法在sequence tagging任务上表现都很差。</li>
+</ul>
+<img src="/images/ft/p-tuning_v2_res.png" width="500px"/>
+
+<p>相比Prompt Tuning和P-tuning的方法， P-tuning v2方法在多层加入了Prompts tokens作为输入，带来两个方面的好处：</p>
+<ol>
+<li>带来更多可学习的参数（从P-tuning和Prompt Tuning的0.1%增加到0.1%-3%），同时也足够parameter-efficient。</li>
+<li>加入到更深层结构中的Prompt能给模型预测带来更直接的影响。</li>
+</ol>
+<img src="/images/ft/p-tuning_v2.png" width="900px"/>
+
+<p>几个关键因素：<br><img src="/images/ft/p-tuning_v2_keys.png" width="400px"/></p>
+<ul>
+<li>Reparameterization：Prefix Tuning和P-tuning中都有MLP来构造可训练的embedding。本文发现在自然语言理解领域，面对不同的任务以及不同的数据集，这种方法可能带来完全相反的结论。</li>
+<li>Prompt Length： 不同的任务对应的最合适的Prompt Length不一样，比如简单分类任务下length&#x3D;20最好，而复杂的任务需要更长的Prompt Length。</li>
+<li>Multi-task Learning 多任务对于P-Tuning v2是可选的，但可以利用它提供更好的初始化来进一步提高性能。</li>
+<li>Classification Head 使用LM head来预测动词是Prompt Tuning的核心，但我们发现在完整的数据设置中没有必要这样做，并且这样做与序列标记不兼容。P-tuning v2采用和BERT一样的方式，在第一个token处应用随机初始化的分类头。</li>
+</ul>
+<p>实验结果：</p>
+<ul>
+<li><p>不同预训练模型大小下的表现，在小模型下取得与Full-finetuning相近的结果，并远远优于P-Tuning。</p>
+<img src="/images/ft/p-tuning_v2_res1.png" width="900px"/>
+</li>
+<li><p>不同任务下的P-Tuning v2效果都很好，而P-Tuning和Prompt Learning效果不好；同时，采用多任务学习的方式能在多数任务上取得最好的结果。</p>
+<img src="/images/ft/p-tuning_v2_res2.png" width="900px"/></li>
+</ul>
+<h4 id="LoRA"><a href="#LoRA" class="headerlink" title="LoRA"></a>LoRA</h4><h5 id="论文-Code-3"><a href="#论文-Code-3" class="headerlink" title="论文&amp;Code"></a>论文&amp;Code</h5><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/yuanconghao/deeplearning-datasets/blob/main/papers/FineTuning/LORA-%20LOW-RANK%20ADAPTATION%20OF%20LARGE%20LANGUAGE%20MODELS.pdf">LORA: LOW-RANK ADAPTATION OF LARGE LANGUAGE MODELS</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/microsoft/LoRA">https://github.com/microsoft/LoRA</a></li>
+</ul>
+<p>PEFT对LoRA的实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> LoraConfig, get_peft_model</span><br><span class="line"></span><br><span class="line">cls = torch.nn.Linear</span><br><span class="line">lora_module_names = <span class="built_in">set</span>()</span><br><span class="line"><span class="keyword">for</span> name, module <span class="keyword">in</span> model.named_modules():</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(module, cls):</span><br><span class="line">        names = name.split(<span class="string">&#x27;.&#x27;</span>)</span><br><span class="line">        lora_module_names.add(names[<span class="number">0</span>] <span class="keyword">if</span> <span class="built_in">len</span>(names) == <span class="number">1</span> <span class="keyword">else</span> names[-<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># r	lora的秩, 矩阵A和矩阵B相连接的宽度, r«d</span></span><br><span class="line"><span class="comment"># lora_alpha	归一化超参数, lora参数Δ Wₓ 会被以α/r归一化, 以便减少改变r时需要重新训练的计算量</span></span><br><span class="line"><span class="comment"># lora_dropout	lora层的dropout比率</span></span><br><span class="line"><span class="comment"># merge_weights	eval模式中, 是否将lora矩阵的值加到原有W₀的值上</span></span><br><span class="line"><span class="comment"># fan_in_fan_out	只有应用在Conv1D层时置为True, 其他情况False</span></span><br><span class="line"><span class="comment"># bias	是否可训练bias, none: 均不可; all: 均可; lora_only: 只有lora部分的bias可训练</span></span><br><span class="line"><span class="comment"># modules_to_save	除了lora部分之外, 还有哪些层可以被训练, 并且需要保存</span></span><br><span class="line">lora_config = LoraConfig(</span><br><span class="line">    r=args.lora_r,</span><br><span class="line">    lora_alpha=args.lora_alpha,</span><br><span class="line">    lora_dropout=args.lora_dropout,</span><br><span class="line">    bias=<span class="string">&quot;none&quot;</span>,</span><br><span class="line">    task_type=<span class="string">&quot;CAUSAL_LM&quot;</span>,</span><br><span class="line">    target_modules = <span class="built_in">list</span>(lora_module_names)</span><br><span class="line">    <span class="comment"># target_modules = [&quot;c_proj&quot;, &quot;c_attn&quot;, &quot;q_attn&quot;]</span></span><br><span class="line">)</span><br><span class="line">model = get_peft_model(model, lora_config)</span><br></pre></td></tr></table></figure>
+
+<h5 id="介绍-4"><a href="#介绍-4" class="headerlink" title="介绍"></a>介绍</h5><p>微软和CMU的研究者指出，现有的一些PEFT的方法还存在这样一些问题：</p>
+<ul>
+<li>由于增加了模型的深度从而额外增加了模型推理的延时，如Adapter方法</li>
+<li>Prompt较难训练，同时减少了模型的可用序列长度，如Prompt Tuning、Prefix Tuning、P-Tuning方法</li>
+<li>往往效率和质量不可兼得，效果差于full-finetuning。</li>
+</ul>
+<p>有研究者对语言模型的参数进行研究发现：<strong>语言模型虽然参数众多，但是起到关键作用的还是其中低秩的本质维度（low instrisic dimension）</strong>。本文受到该观点的启发，提出了Low-Rank Adaption(LoRA)，设计了如下所示的结构，在涉及到矩阵相乘的模块，引入A、B这样两个低秩矩阵模块去模拟Full-finetune的过程，相当于只对语言模型中起关键作用的低秩本质维度进行更新。</p>
+<img src="/images/ft/lora.png" width="500px"/>
+
+<p>这么做就能完美解决以上存在的3个问题：</p>
+<ul>
+<li>相比于原始的Adapter方法”额外”增加网络深度，必然会带来推理过程额外的延迟，该方法可以在推理阶段直接用训练好的A、B矩阵参数与原预训练模型的参数相加去替换原有预训练模型的参数，这样的话推理过程就相当于和Full-finetune一样，没有额外的计算量，从而不会带来性能的损失。</li>
+<li>由于没有使用Prompt方式，自然不会存在Prompt方法带来的一系列问题。</li>
+<li>该方法由于实际上相当于是用LoRA去模拟Full-finetune的过程，几乎不会带来任何训练效果的损失，后续的实验结果也证明了这一点。</li>
+</ul>
+<p>在实验中，研究人员将这一LoRA模块与Transformer的attention模块相结合，在RoBERTa 、DeBERTa、GPT-2和GPT-3 175B这几个大模型上都做了实验，实验结果也充分证明了该方法的有效性。<br><img src="/images/ft/lora_diff.png" width="600px"/><br><img src="/images/ft/lora_acc.png" width="700px"/></p>
+<p>LoRA拥有几个关键优势：</p>
+<ul>
+<li>一个预训练好的模型可以被共享, 用来为不同的任务建立许多小的LoRA模块。我们可以冻结共享模型, 并通过替换图1中的矩阵A和B来有效地切换任务, 从而大大减少存储需求和任务切换的开销。</li>
+<li>LoRA使训练更加有效, 在使用自适应优化器时, 硬件门槛降低了3倍, 因为我们不需要计算梯度或维护大多数参数的优化器状态。相反, 我们只优化注入的、小得多的低秩矩阵。</li>
+<li>我们简单的线性设计允许我们在部署时将可训练矩阵与冻结权重合并, 与完全微调的模型相比, 在结构上没有引入推理延迟。</li>
+<li>LoRA与许多先前的方法是不相关的, 并且可以与许多方法相结合, 例如前缀微调。</li>
+</ul>
+<h4 id="AdaLoRA"><a href="#AdaLoRA" class="headerlink" title="AdaLoRA"></a>AdaLoRA</h4><h5 id="论文-Code-4"><a href="#论文-Code-4" class="headerlink" title="论文&amp;Code"></a>论文&amp;Code</h5><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/yuanconghao/deeplearning-datasets/blob/main/papers/FineTuning/ADAPTIVE%20BUDGET%20ALLOCATION%20FOR%20PARAMETEREFFICIENT%20FINE-TUNING.pdf">ADAPTIVE BUDGET ALLOCATION FOR PARAMETEREFFICIENT FINE-TUNING</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/QingruZhang/AdaLoRA">https://github.com/QingruZhang/AdaLoRA</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># AdaLoraConfig需要使用peft的main分支----v3版本</span></span><br><span class="line">peft_config = AdaLoraConfig(task_type=<span class="string">&quot;SEQ_CLS&quot;</span>, inference_mode=<span class="literal">False</span>, r=<span class="number">8</span>, lora_alpha=<span class="number">16</span>, lora_dropout=<span class="number">0.1</span>,</span><br><span class="line">                            target_modules=[<span class="string">&quot;query&quot;</span>, <span class="string">&quot;value&quot;</span>])</span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path, return_dict=<span class="literal">True</span>, num_labels=labels)</span><br><span class="line">model = get_peft_model(model, peft_config)</span><br></pre></td></tr></table></figure>
+
+<h5 id="介绍-5"><a href="#介绍-5" class="headerlink" title="介绍"></a>介绍</h5><p>对LoRA的一种改进，它根据重要性评分动态分配参数预算给权重矩阵，将关键的增量矩阵分配高秩以捕捉更精细和任务特定的信息，而将较不重要的矩阵的秩降低，以防止过拟合并节省计算预算。具体做法如下：</p>
+<ul>
+<li><strong>调整增量矩分配。</strong>AdaLoRA将关键的增量矩阵分配高秩以捕捉更精细和任务特定的信息，而将较不重要的矩阵的秩降低，以防止过拟合并节省计算预算。</li>
+<li><strong>以奇异值分解的形式对增量更新进行参数化，并根据重要性指标裁剪掉不重要的奇异值，同时保留奇异向量。</strong>由于对一个大矩阵进行精确SVD分解的计算消耗非常大，这种方法通过减少它们的参数预算来加速计算，同时，保留未来恢复的可能性并稳定训练。</li>
+<li><strong>在训练损失中添加了额外的惩罚项</strong>，以规范奇异矩阵P和Q的正交性，从而避免SVD的大量计算并稳定训练。</li>
+</ul>
+<p>通过实验证明，AdaLoRA 实现了在所有预算、所有数据集上与现有方法相比，性能更好或相当的水平。 例如，当参数预算为 0.3M 时，AdaLoRA 在RTE数据集上，比表现最佳的基线（Baseline）高 1.8%。</p>
+<img src="/images/ft/ada_lora.png" width="600px"/>
+
+<h4 id="QLoRA"><a href="#QLoRA" class="headerlink" title="QLoRA"></a>QLoRA</h4><h5 id="论文-Code-5"><a href="#论文-Code-5" class="headerlink" title="论文&amp;Code"></a>论文&amp;Code</h5><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/yuanconghao/deeplearning-datasets/blob/main/papers/FineTuning/QLORA-%20Efficient%20Finetuning%20of%20Quantized%20LLMs.pdf">QLORA: Efficient Finetuning of Quantized LLMs</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/artidoro/qlora">https://github.com/artidoro/qlora</a></li>
+</ul>
+<h5 id="介绍-6"><a href="#介绍-6" class="headerlink" title="介绍"></a>介绍</h5><p>QLoRA, 它是一种”高效的微调方法”, 以LLama 65B参数模型为例，常规16 bit微调需要超过780GB的GPU内存，而QLoRA可以在保持完整的16 bit微调任务性能的情况下, 将内存使用降低到48GB，即可完成微调。</p>
+<p>QLoRA使用一种新颖的高精度技术将预训练模型量化为4 bit，然后添加一小组可学习的低秩适配器权重，这些权重通过量化权重的反向传播梯度进行微调。QLoRA有一种低精度存储数据类型（4 bit），还有一种计算数据类型（BFloat16）。实际上，这意味着无论何时使用QLoRA权重张量，我们都会将张量反量化为BFloat16，然后执行16位矩阵乘法。QLoRA提出了两种技术实现高保真4 bit微调——4 bit NormalFloat(NF4)量化和双量化。此外，还引入了分页优化器，以防止梯度检查点期间的内存峰值，从而导致内存不足的错误，这些错误在过去使得大型模型难以在单台机器上进行微调。具体说明如下：</p>
+<ul>
+<li><strong>4bit NormalFloat（NF4）</strong>：对于正态分布权重而言，一种信息理论上最优的新数据类型，该数据类型对正态分布数据产生比4 bit整数和4 bit浮点数更好的实证结果。</li>
+<li><strong>双量化</strong>：对第一次量化后的那些常量再进行一次量化，减少存储空间。</li>
+<li><strong>分页优化器</strong>：使用Nvidia统一内存特性，该特性可以在在GPU偶尔OOM的情况下，进行CPU和GPU之间自动分页到分页的传输，以实现无错误的GPU处理。该功能的工作方式类似于CPU内存和磁盘之间的常规内存分页。使用此功能为优化器状态（Optimizer）分配分页内存，然后在GPU内存不足时将其自动卸载到CPU内存，并在优化器更新步骤需要时将其加载回GPU内存。</li>
+</ul>
+<img src="/images/ft/qlora.png" width="600px"/>
+
+<p>实验证明，无论是使用16bit、8bit还是4bit的适配器方法，都能够复制16bit全参数微调的基准性能。这说明，尽管量化过程中会存在性能损失，但通过适配器微调，完全可以恢复这些性能。</p>
+<img src="/images/ft/qlora-table3.png" width="600px"/>
+
+<p>实验还比较了不同的4bit数据类型对效果（zero-shot均值）的影响，其中，NFloat 显著优于Float，而NFloat + DQ略微优于NFloat，虽然DQ对精度提升不大，但是对于内存控制效果更好。</p>
+<img src="/images/ft/qlora-figure3.png" width="400px"/>
+
+<p>除此之外，论文中还对不同大小模型、不同数据类型、在 MMLU数据集上的微调效果进行了对比。使用QLoRA（NFloat4 + DQ）可以和Lora(BFloat16)持平，同时， 使用QLORA（ FP4）的模型效果落后于前两者一个百分点。</p>
+<img src="/images/ft/qlora-table4.png" width="700px"/>
+
+<p>作者在实验中也发现了一些有趣的点，比如：指令调优虽然效果比较好，但只适用于指令相关的任务，在聊天机器人上效果并不佳，而聊天机器人更适合用Open Assistant数据集去进行微调。通过指令类数据集的调优更像是提升大模型的推理能力，并不是为聊天而生的。</p>
+<p>总之，QLoRA的出现给大家带来一些新的思考，不管是微调还是部署大模型，之后都会变得更加容易。每个人都可以快速利用自己的私有数据进行微调；同时，又能轻松的部署大模型进行推理。</p>
+<h3 id="相关数值理解"><a href="#相关数值理解" class="headerlink" title="相关数值理解"></a>相关数值理解</h3><h4 id="查看参数"><a href="#查看参数" class="headerlink" title="查看参数"></a>查看参数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可训练</span></span><br><span class="line"><span class="keyword">for</span> name, param <span class="keyword">in</span> model.named_parameters():</span><br><span class="line">    <span class="keyword">if</span> param.requires_grad:</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看网络总参数</span></span><br><span class="line">model = Model()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;# Model parameters:&#x27;</span>, <span class="built_in">sum</span>(param.numel() <span class="keyword">for</span> param <span class="keyword">in</span> model.parameters()))</span><br></pre></td></tr></table></figure>
+
+<h4 id="理解loss和val-loss"><a href="#理解loss和val-loss" class="headerlink" title="理解loss和val_loss"></a>理解loss和val_loss</h4><p>loss: 训练集的损失值; val_loss: 测试集的损失值。</p>
+<p>一般训练规律:</p>
+<ul>
+<li>loss下降, val_loss下降: 训练网络正常, 最理想情况情况。</li>
+<li>loss下降, val_loss稳定: 网络过拟合。解决办法: ①数据集没问题: 可以向网络“中间深度”的位置添加Dropout层; 或者逐渐减少网络的深度(靠经验删除一部分模块)。②数据集有问题: 可将所有数据集混洗重新分配, 通常开源数据集不容易出现这种情况。</li>
+<li>loss稳定, val_loss下降: 数据集有严重问题, 建议重新选择。一般不会出现这种情况。</li>
+<li>loss稳定, val_loss稳定: 学习过程遇到瓶颈, 需要减小学习率(自适应动量优化器小范围修改的效果不明显)或batch数量。</li>
+<li>loss上升, val_loss上升: 可能是网络结构设计问题、训练超参数设置不当、数据集需要清洗等问题。属于训练过程中最差情况。</li>
+</ul>
+<h4 id="调大batch-size对网络训练的影响"><a href="#调大batch-size对网络训练的影响" class="headerlink" title="调大batch_size对网络训练的影响"></a>调大batch_size对网络训练的影响</h4><ul>
+<li>优点：<ul>
+<li>内存的利用率提高了, 大矩阵乘法的并行化效率提高</li>
+<li>跑完一次epoch(全数据集)所需迭代次数减少, 对于相同的数据量的处理速度进一步加快</li>
+<li>一定范围内, batchsize越大, 其确定的下降方向就越准, 引起训练震荡越小</li>
+<li>batchsize增大, 处理相同的数据量的速度越快</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>内存消耗严重, 面临显卡内存不足问题</li>
+<li>训练速度慢, loss不容易收敛</li>
+<li>batch_size过大导致网络收敛到局部最优点, loss下降不再明显</li>
+<li>batchsize增大, 达到相同精度所需要的epoch数量越来越多</li>
+</ul>
+</li>
+</ul>
+<h4 id="loss不收敛"><a href="#loss不收敛" class="headerlink" title="loss不收敛"></a>loss不收敛</h4><p>此处包含两种情况，一种是loss一直在震荡，一种是loss下降一点后不再下降到理想水平，而验证集上的表现保持不变.</p>
+<ul>
+<li>保持需要的batchsize不变;</li>
+<li>查看是否有梯度回传</li>
+<li>查看数据是否有问题,如标签错乱等现象;</li>
+<li>调节学习率,从大向小调,建议每次除以5;我的项目即是因为学习率过大过小都不收敛引起的;</li>
+<li>如果学习率调好后,需要调节batchsize大小,如batchsize调大2倍,则将学习率对应调大(项目测试调大2~3倍OK),反之,学习率对应调小</li>
+</ul>
+<hr>
+</div><script type="text/javascript" src="../../../../js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2023/08/24/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-PEFT%E6%8A%80%E6%9C%AF%E7%AE%80%E4%BB%8B/" data-id="clr50jvwv000frw3eemus2kvb" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASYAAAEmCAAAAADqr2IGAAAEkklEQVR42u3aS27bQBAFwNz/0gqQVYKYynvdVOCRiitDEslh0cD078eP+Hj8OpJvH78dV+c+/jquPr86N7lyvp7bDkyYMGHC9C2ZHk+Pq5s9v+XVsnLu/GXkq82v88W5mDBhwoTpcKZ2m0+223xrTxadb+SbkOLyc0yYMGHC9AFM+bY6Czjy9DtJm2dpOSZMmDBhwpRvwPnDtCXmfXiBCRMmTJg+jSm/3L4Q3PLt25NtAxUTJkyYML0TU7slv9PfL5xvwoQJEyZM34DpUR75Br9pl+Yb9vMrb675x1mYMGHChOlYprwRmO+YyUJnKeu+7Dt7FkyYMGHCdC7TrIzbllDbpmP+GpJwpG2jXsZNmDBhwoTpjZgSuM04Tt6ezFPuTfDxj7MwYcKECdNbMG3Ko7OeYJtCt+3VWZr9xe8xYcKECdOxTO2ATrvp5o/X4m7u9Xz90evHhAkTJkxHMeWJaJ6O3pBwlpt9m7rXTVNMmDBhwnQ4U/t4s3M3W3L++7uAMGHChAnTezC15dEZ6F1BQNvg3A/xYMKECROmd2VKirztlpy3MJNzoy28vE4dEGDChAkTpm/M1A7otNt5kqC2KW7bnryh4YoJEyZMmN6CaTMEkzxSOxKUcLe/bBN4TJgwYcJ0OlObNG6S3s1AT4K+GeuJggxMmDBhwvSmTHlAUA/BxNdPIGZ/FwcmTJgwYTqQafaQ+eBLvjFvCJIwog0mvmhnYsKECROmA5lmQy3tFp6kncldXvHyimYnJkyYMGE6kCkvnubjOPntN/fK6WcrL+ImTJgwYcJ0CNOmYJo89uZeefszT2uL4i8mTJgwYTqWKU8vZ4My+chOHhDsk+32XpgwYcKE6VymzThLu/X+/yLvbU+ECRMmTJiOZUpOK4qhZbNzdvf2ZezXjwkTJkyYzmW6rQC62NTz5HmzttmALCZMmDBhOp0pL4Mm324KrPn129JwHg1FyTMmTJgwYTqKafbAs0bm86XfVaJtX3CyKkyYMGHC9B5MbXrcNhrbxPsVWWeS5F8WeTFhwoQJ04FMm7bfZmhm1mV9XbJd/09hwoQJE6ZDmGaF0bbR2JLNRoLatmVROMaECRMmTMcytQ+T3CzZjPNtPk+k28GjOjnHhAkTJkwHMr0ilb2rqXnX5+0/wWU7ExMmTJgwHciUFFVXsUacoLbF5VkrdMWBCRMmTJgOZ8qLnrMm4isKsrPS88wBEyZMmDCdyNQWZNvQIW9ztuXdu9LdYYUAEyZMmDAdyHRX87JtNM4an5sr1yEIJkyYMGE6lqkFam/floPzgCMvB8+u8I/fY8KECROmQ5ge5bFPXNsQJG9/5g3ONrXGhAkTJkznMs3KuHmKe9f12/GdWbG46P1iwoQJE6ajmO7dzvMtvC0rz4ZykmtiwoQJE6ZPYJoFAXnxdBYu5PFLnvrORnkwYcKECdMnMM0akLMwIh8zzVPctnyMCRMmTJg+mSlJJvPF5S9j1nbN27E3BwSYMGHChOnbMN01rJOko+3v70rIV+vHhAkTJkzHMr1icKdtTO7njNoXOQtHMGHChAnTUUw/Abt3i0xmoLH4AAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="../../../../tags/AIGC/"><i class="fa fa-tag"></i>AIGC</a><a href="../../../../tags/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"><i class="fa fa-tag"></i>大语言模型</a><a href="../../../../tags/LLM/"><i class="fa fa-tag"></i>LLM</a><a href="../../../../tags/PEFT/"><i class="fa fa-tag"></i>PEFT</a><a href="../../../../tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/"><i class="fa fa-tag"></i>大模型微调</a><a href="../../../../tags/FineTuning/"><i class="fa fa-tag"></i>FineTuning</a><a href="../../../../tags/LoRA/"><i class="fa fa-tag"></i>LoRA</a><a href="../../../../tags/QLoRA/"><i class="fa fa-tag"></i>QLoRA</a><a href="../../../../tags/Adapter-Tuning/"><i class="fa fa-tag"></i>Adapter Tuning</a><a href="../../../../tags/Prefix-Tuning/"><i class="fa fa-tag"></i>Prefix Tuning</a><a href="../../../../tags/Prompt-Tuning/"><i class="fa fa-tag"></i>Prompt Tuning</a><a href="../../../../tags/P-Tuning/"><i class="fa fa-tag"></i>P-Tuning</a><a href="../../../../tags/AdaLoRA/"><i class="fa fa-tag"></i>AdaLoRA</a></div><div class="post-nav"><a class="pre" href="../../25/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-LLama2-QLoRA%E5%BE%AE%E8%B0%83/">AIGC-大模型微调-LLama2-QLoRA微调</a><a class="next" href="../../../../2022/11/24/Deeeplearning%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ImageSegmentation-DeepLab/">Deeeplearning模型-ImageSegmentation-DeepLab</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/AIGC/">AIGC</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../../2025/03/06/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8BPrompt%20Engineering/">AIGC-LLM-辟邪剑谱之Prompt Engineering</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/">AIGC-Agent-作文批改标注</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/09/27/LLama32%E8%B0%83%E7%A0%94/">LLama3.2调研报告</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/">AIGC-LLM-Prompt工程技能综述</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/">Deeeplearning模型-NLP-BERT</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">Deeeplearning模型-NLP-大语言模型微调语料生成工具</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-Transformer%E6%A8%A1%E5%9E%8B/">Deeeplearning模型-NLP-Transformer模型</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/01/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-NLP%E5%9F%BA%E7%A1%80/">Deeeplearning模型-NLP-NLP基础</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/26/%E6%95%B0%E5%AD%97%E4%BA%BA-%E6%95%B0%E5%AD%97%E4%BA%BA%E6%8A%80%E6%9C%AF%E6%95%88%E6%9E%9C%E5%AF%B9%E6%AF%94/">数字人-数字人技术效果对比</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/">GUI-应用程序打包与安装</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="../../../../css/search.css?v=1.0.0"><script type="text/javascript" src="../../../../js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="/static/js/MathJax.js?config=TeX-MML-AM_CHTML" async></script><div id="script" type="text/javascript" src="../../../../js/mathjaxs.js" async></div><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="assets/prism-bundle.js"></script>
+<script src="assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>
