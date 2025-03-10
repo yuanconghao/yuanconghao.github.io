@@ -289,39 +289,6 @@
     
     
     <entry>
-      <title>GUI-应用程序打包与安装</title>
-      <link href="/2023/10/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/"/>
-      <url>/2023/10/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/</url>
-      
-        <content type="html"><![CDATA[<p>将python程序打包为应用程序。pyinstaller将程序代码打包为app，再使用create-dmg将app压缩为磁盘文件，可解压安装。</p><span id="more"></span><h3 id="Mac图标生成方式"><a href="#Mac图标生成方式" class="headerlink" title="Mac图标生成方式"></a>Mac图标生成方式</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/sh</span></span><br><span class="line"></span><br><span class="line">output_path=~/tmp.iconset</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">the convert <span class="built_in">command</span> comes from imagemagick</span></span><br><span class="line">for size in 16 32 64 128 256; do</span><br><span class="line"><span class="meta prompt_">  #</span><span class="language-bash">half=<span class="string">&quot;<span class="subst">$(($size / 2)</span>)&quot;</span></span></span><br><span class="line">  sips -z $size $size app.png --out $output_path/icon_$&#123;size&#125;x$&#123;size&#125;.png</span><br><span class="line">  sips -z $size $size app.png --out $output_path/icon_$&#123;size&#125;x$&#123;size&#125;@2x.png</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">iconutil -c icns $output_path</span><br></pre></td></tr></table></figure><h3 id="APP打包"><a href="#APP打包" class="headerlink" title="APP打包"></a>APP打包</h3><p>拿labelImg举例：<a href="https://github.com/HumanSignal/labelImg">labelImg</a></p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认图标</span></span><br><span class="line">pyinstaller -w --clean --hidden-import=pyqt5 --hidden-import=lxml -p ./libs -p ./ -n &quot;labelImg&quot; labelImg.py</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">指定图标</span></span><br><span class="line">pyinstaller -w --clean --hidden-import=pyqt5 --hidden-import=lxml -i resources/icons/tmp.icns -p ./libs -p ./ -n &quot;labelImg&quot; labelImg.py</span><br></pre></td></tr></table></figure><h3 id="DMG打包"><a href="#DMG打包" class="headerlink" title="DMG打包"></a>DMG打包</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install -g create-dmg</span><br><span class="line"></span><br><span class="line">create-dmg labelImg.app ./</span><br></pre></td></tr></table></figure><p>打开打包好的dmg文件，将labelImg.app拖入&#x2F;Applications目录内即可。<br><img src="/images/labelimg.png" width="600px"/></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> GUI </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Python </tag>
-            
-            <tag> GUI </tag>
-            
-            <tag> pyinstaller </tag>
-            
-            <tag> dmg </tag>
-            
-            <tag> pkg </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>AIGC-大模型微调-LLama2-Lora医学大模型微调【风格学习】</title>
       <link href="/2023/09/15/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-LLama2-Lora%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%832/"/>
       <url>/2023/09/15/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-LLama2-Lora%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%832/</url>
@@ -562,6 +529,39 @@
             <tag> P-Tuning </tag>
             
             <tag> AdaLoRA </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>GUI-应用程序打包与安装</title>
+      <link href="/2023/07/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/"/>
+      <url>/2023/07/13/GUI-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85%E4%B8%8E%E5%AE%89%E8%A3%85/</url>
+      
+        <content type="html"><![CDATA[<p>将python程序打包为应用程序。pyinstaller将程序代码打包为app，再使用create-dmg将app压缩为磁盘文件，可解压安装。</p><span id="more"></span><h3 id="Mac图标生成方式"><a href="#Mac图标生成方式" class="headerlink" title="Mac图标生成方式"></a>Mac图标生成方式</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/sh</span></span><br><span class="line"></span><br><span class="line">output_path=~/tmp.iconset</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">the convert <span class="built_in">command</span> comes from imagemagick</span></span><br><span class="line">for size in 16 32 64 128 256; do</span><br><span class="line"><span class="meta prompt_">  #</span><span class="language-bash">half=<span class="string">&quot;<span class="subst">$(($size / 2)</span>)&quot;</span></span></span><br><span class="line">  sips -z $size $size app.png --out $output_path/icon_$&#123;size&#125;x$&#123;size&#125;.png</span><br><span class="line">  sips -z $size $size app.png --out $output_path/icon_$&#123;size&#125;x$&#123;size&#125;@2x.png</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">iconutil -c icns $output_path</span><br></pre></td></tr></table></figure><h3 id="APP打包"><a href="#APP打包" class="headerlink" title="APP打包"></a>APP打包</h3><p>拿labelImg举例：<a href="https://github.com/HumanSignal/labelImg">labelImg</a></p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认图标</span></span><br><span class="line">pyinstaller -w --clean --hidden-import=pyqt5 --hidden-import=lxml -p ./libs -p ./ -n &quot;labelImg&quot; labelImg.py</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">指定图标</span></span><br><span class="line">pyinstaller -w --clean --hidden-import=pyqt5 --hidden-import=lxml -i resources/icons/tmp.icns -p ./libs -p ./ -n &quot;labelImg&quot; labelImg.py</span><br></pre></td></tr></table></figure><h3 id="DMG打包"><a href="#DMG打包" class="headerlink" title="DMG打包"></a>DMG打包</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install -g create-dmg</span><br><span class="line"></span><br><span class="line">create-dmg labelImg.app ./</span><br></pre></td></tr></table></figure><p>打开打包好的dmg文件，将labelImg.app拖入&#x2F;Applications目录内即可。<br><img src="/images/labelimg.png" width="600px"/></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> GUI </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Python </tag>
+            
+            <tag> GUI </tag>
+            
+            <tag> pyinstaller </tag>
+            
+            <tag> dmg </tag>
+            
+            <tag> pkg </tag>
             
         </tags>
       
