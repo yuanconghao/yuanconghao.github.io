@@ -11,9 +11,11 @@ $(document).ready(function() {
   });
 });
 $(document).ready(function() {
-  $("a[href$='.jpg'],a[href$='.png'],a[href$='.gif'],a[href$='.webp']").attr('rel', 'gallery').fancybox({
-    helpers : {
-    title: { type: 'inside'}
-    }
-  });
+  if (typeof $.fn.fancybox === 'function') {
+    $("a[href$='.jpg'],a[href$='.png'],a[href$='.gif'],a[href$='.webp']").attr('rel', 'gallery').fancybox({
+      helpers : {
+      title: { type: 'inside'}
+      }
+    });
+  }
 });
