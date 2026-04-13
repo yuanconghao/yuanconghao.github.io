@@ -203,11 +203,11 @@
     
     
     <entry>
-      <title>Deeeplearning模型-NLP-BERT</title>
+      <title>DeepLearning模型-NLP-BERT</title>
       <link href="/2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/"/>
       <url>/2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/</url>
       
-        <content type="html"><![CDATA[<p><strong>BERT(Bidirectional Encoder Representations from Transformers)<strong>是第一个基于Transformer结构的纯</strong>Encoder</strong>模型，它在提出时横扫了整个NLP界，在流行的GLUE基准上超过了当时所有的最强模型。随后的一系列工作对BERT的预训练目标和架构进行调整以进一步提高性能。目前，纯Encoder模型依然在NLP行业中占据主导地位。</p><p>论文：<a href="https://arxiv.org/pdf/1810.04805.pdf">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></p><span id="more"></span>]]></content>
+        <content type="html"><![CDATA[<p><strong>BERT (Bidirectional Encoder Representations from Transformers)</strong> 是由 Google 团队在 2018 年提出的预训练语言模型底座。它是第一个基于 Transformer 架构的深层双向 <strong>Encoder</strong>。它的出现改变了自然语言处理（NLP）领域的范式，在发布时横扫了多项自然语言处理任务，在流行的 GLUE 基准上超过了当时所有的最强模型。</p><p>目前，基于 BERT 衍生的纯 Encoder 模型依然在 NLP 行业（尤其是文本分类、实体识别等自然语言理解任务 NLU）中占据着主导地位。</p><p>论文：<a href="https://arxiv.org/pdf/1810.04805.pdf">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></p><span id="more"></span><h2 id="1-研究背景与动机-Motivation"><a href="#1-研究背景与动机-Motivation" class="headerlink" title="1. 研究背景与动机 (Motivation)"></a>1. 研究背景与动机 (Motivation)</h2><p>在 BERT 提出之前，NLP 领域的预训练表示模型主要经历了以下几个阶段：</p><ol><li>**静态词向量 (Word2Vec &#x2F; GloVe)**：词的表示是固定的，无法克服“一词多义”问题（例如“bank”在银行和河岸中的表示完全相同）。</li><li>**上下文相关的动态向量 (ELMo)**：通过双向 LSTM 拼接获取上下文信息，但特征提取能力受限于 RNN 的浅层序列结构。</li><li><strong>单向 Transformer 模型 (OpenAI GPT)<strong>：引入了强大的 Transformer 架构提取特征，但采用的是</strong>严格从左到右</strong>的自回归（Autoregressive）结构，使得每个词只能看到它前面的词。</li></ol><p><strong>BERT 作者团队的核心洞察</strong>：<br>对于许多高级别语言理解任务（如阅读理解、自然语言推断），<strong>双向上下文捕捉能力</strong>（Bidirectional Context）至关重要。GPT 的前向自回归机制极大地限制了其由于缺乏下文信息而导致在理解全局语义时的表现。因此，BERT 旨在通过在大规模无标注语料中进行深层的双向预训练，来解决这一核心痛点。</p><hr><h2 id="2-核心架构设计-Architecture-Inputs"><a href="#2-核心架构设计-Architecture-Inputs" class="headerlink" title="2. 核心架构设计 (Architecture &amp; Inputs)"></a>2. 核心架构设计 (Architecture &amp; Inputs)</h2><p>BERT 的底层架构就是一个<strong>多层双向 Transformer 编码器（Encoder）</strong>。在论文中，作者公布了两种规模的模型：</p><ul><li><strong>BERT-Base</strong>: $L&#x3D;12$（层数）, $H&#x3D;768$（隐藏层维度）, $A&#x3D;12$（自注意力头数）, Total Parameters &#x3D; 110M。此设计是为了和 OpenAI GPT 规模保持一致，用于公平比对验证其架构先进性。</li><li><strong>BERT-Large</strong>: $L&#x3D;24$, $H&#x3D;1024$, $A&#x3D;16$, Total Parameters &#x3D; 340M。</li></ul><h3 id="输入表示-Input-Representation"><a href="#输入表示-Input-Representation" class="headerlink" title="输入表示 (Input Representation)"></a>输入表示 (Input Representation)</h3><p>为了能够弹性处理各种各样的下游任务，BERT 必须能够清晰地表示单条句子或一对话语（如 <code>[问句, 答句]</code>）。BERT 的单个输入 Token 最终的词嵌入向量（Embedding）由 <strong>三部分隐式特征相加</strong> 而成：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A([Input Text]) --&gt; B(Token Embeddings: 词块嵌入)</span><br><span class="line">    A --&gt; C(Segment Embeddings: 片段嵌入)</span><br><span class="line">    A --&gt; D(Position Embeddings: 位置嵌入)</span><br><span class="line">    B --&gt; E((Sum))</span><br><span class="line">    C --&gt; E</span><br><span class="line">    D --&gt; E</span><br><span class="line">    E --&gt; F[Transformer Encoder]</span><br><span class="line">    </span><br><span class="line">    classDef blue nodeBkg:#e8eef6,nodeBorder:#4a76a8</span><br><span class="line">    class B,C,D blue</span><br></pre></td></tr></table></figure><ol><li><strong>Token Embeddings</strong>：使用 WordPiece 分词技术，有效降低了 OOV（Out-of-Vocabulary）问题，全词表大小为 30,000。</li><li><strong>Segment Embeddings</strong>：用来显式区分两个文本连缀语句（句子 A 的 Token 全匹配标志位 0，句子 B 的 Token 全匹配标志位 1）。</li><li><strong>Position Embeddings</strong>：由于 Transformer 的 Self-Attention 是无序对等计算的，必须通过引入学习到的绝对位置向量支持高达 512 长度的序列信息。</li></ol><blockquote><p><strong>💡特权标识符（Special Tokens）规范</strong>：</p><ul><li><code>[CLS]</code>：序列前缀首个强制生成的特殊分词。在所有 Transformer 顶层计算完成后，对应的最后隐藏特征态将被用作聚合整个序列理解的高阶级表示，经常被直连各类<strong>句级别分类任务</strong>的分类头中。</li><li><code>[SEP]</code>：用于分隔串联的两个输入句子。</li></ul></blockquote><hr><h2 id="3-两大预训练任务-Pre-training-Tasks"><a href="#3-两大预训练任务-Pre-training-Tasks" class="headerlink" title="3. 两大预训练任务 (Pre-training Tasks)"></a>3. 两大预训练任务 (Pre-training Tasks)</h2><p>BERT 之所以能够学习深度的双向表示而不仅仅是浅显的连接上下文，得益于其设计的两个开创性的<strong>无监督语境重构挑战任务</strong>。</p><h3 id="任务一：Masked-Language-Model-MLM-掩码语言模型"><a href="#任务一：Masked-Language-Model-MLM-掩码语言模型" class="headerlink" title="任务一：Masked Language Model (MLM, 掩码语言模型)"></a>任务一：Masked Language Model (MLM, 掩码语言模型)</h3><p>为了训练深度双向表示，BERT 将输入文本序列中随机抽取出 15% 的 WordPiece Token ，并通过推断周边上下文来预测这部分被掩掉空缺原始词汇。这在理论上被称为<strong>深层次完形填空</strong>任务。</p><p><strong>设计冲突</strong>：如果 15% 的词直接全变为了 <code>[MASK]</code>，将会导致模型在预训练数据与实际微调（Fine-tuning）业务数据存在分布差异偏差（下游任务绝不存在随机被遮蔽 <code>[MASK]</code> 输入）。</p><p><strong>解决方案（经典的 80-10-10 策略）</strong>：<br>为了缓解偏差错位，在被算法选中需要遮盖的 15% Token 中，作出了如下分配：</p><ul><li>**80%**：替换为标准掩码保留预训练惩罚：<code>(my dog is hairy -&gt; my dog is [MASK])</code></li><li>**10%**：替换为随机其他错误词汇：<code>(my dog is hairy -&gt; my dog is apple)</code>，这迫使模型在每个位置都要保持警觉重叠计算，不单纯依靠背诵上下文。</li><li>**10%**：保持原样留存：<code>(my dog is hairy -&gt; my dog is hairy)</code>，目的是引导激活模型偏向并信赖自察到的事实语境。</li></ul><h3 id="任务二：Next-Sentence-Prediction-NSP-下一句预测"><a href="#任务二：Next-Sentence-Prediction-NSP-下一句预测" class="headerlink" title="任务二：Next Sentence Prediction (NSP, 下一句预测)"></a>任务二：Next Sentence Prediction (NSP, 下一句预测)</h3><p>许多重要的实际场景任务（如问答推断 Q&amp;A 和自然语言推理 NLI）都建立在理解<strong>跨句段连贯性映射</strong>之间，常规的掩码语言根本无法有效捕捉这类结构。</p><p>在生成每一大段预训练样本组装连句 A 和连句 B 时：</p><ul><li><strong>50%</strong> 的语料样本中，B 抽取的是正规篇章下文真实的下句跟随（打上正样本标签 <code>IsNext</code>）。</li><li><strong>50%</strong> 的语料样本中，B 抽取的是任意文章段落无关的随机句子篡改（打上负样本标签 <code>NotNext</code>）。</li></ul><p>模型需依靠 <code>[CLS]</code> 位置顶端特征计算出来的状态判断逻辑真伪，强行驱动捕捉粗粒度的段落结构关系。</p><hr><h2 id="4-微调应用策略-Fine-tuning-Strategy"><a href="#4-微调应用策略-Fine-tuning-Strategy" class="headerlink" title="4. 微调应用策略 (Fine-tuning Strategy)"></a>4. 微调应用策略 (Fine-tuning Strategy)</h2><p>BERT 的微调阶段最为优雅的地方在于其“万能接入的统一架构”，预训练基础权重的架构拓扑与下游微调之间不需要结构调整。在实际落地的初始化阶段除了修改对应的少量输出分类头映射矩阵（Classification Head），直接端对端反向传播微调就能产生惊人的结果。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">    subgraph &quot;序列标注推理 (如命名实体识别 NER)&quot;</span><br><span class="line">    D([CLS]) --&gt; BERT2</span><br><span class="line">    E(&quot;Text Tokens&quot;) --&gt; BERT2 --&gt; F(&quot;Softmax 标签多类预测&quot;)</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    subgraph &quot;单句分类范式 (如正负情感分析)&quot;</span><br><span class="line">    A([CLS]) --&gt; BERT(&quot;Transformer 多层提取&quot;) --&gt; C(&quot;Dense 标量输出&quot;)</span><br><span class="line">    B(&quot;Text Tokens&quot;) --&gt; BERT</span><br><span class="line">    end</span><br></pre></td></tr></table></figure><p>针对各个层级的场景映射：</p><ol><li><strong>全局单&#x2F;双序列分类</strong>：如 NLI（推断）、Sentiment Labeling（情感）。直接利用顶层的 <code>[CLS]</code> 集群特征对接传统的前馈网络进行逻辑回归。</li><li><strong>单个词元 Token 级别</strong>：如 NER（命名实体识别），保留完整的序列长度，直接对 Transformer 最外层级每个对应 Token 特征点按时间片应用分类头计算词元类别。</li><li>**阅读理解问答 (SQuAD)**：模型需要预测目标答案的确切游标。这部分直接学习出两组特殊的可验证向量参数（Start Vector &#x2F; End Vector）利用他们去单独和文段对应的各层表征计算余弦点积激活映射最终边界。</li></ol><hr><h2 id="5-实验结论与颠覆性影响"><a href="#5-实验结论与颠覆性影响" class="headerlink" title="5. 实验结论与颠覆性影响"></a>5. 实验结论与颠覆性影响</h2><p>在发布的论文里，团队测试了 11 个核心 NLP 任务体系（涵盖 GLUE, SQuAD v1.1, SQuAD v2.0，以及 SWAG）。凭借这套架构，BERT 刷新了并建立了一套全部前所未有的顶尖 <strong>SOTA（State-Of-The-Art）</strong>。</p><p><strong>BERT 带来的变革启示</strong>：</p><ol><li><strong>网络架构大一统</strong>：BERT 摧古拉朽般证明了利用大规模粗数据预训练所产生的隐蔽深层大一统架构，能够简单碾压完全替代过去各种细分垂直任务下小团队精心雕刻设计的特殊网络算法器（如 Bi-LSTM, TextCNN，R-Net 等）。</li><li><strong>定调“预训练+微调”范式主宰 AI 全面开花</strong>：这标志着个人&#x2F;小型学术研究机构范式的彻底终结。自此，大多数业务应用开发者不再需要费时从头训练大型系统级基座模型，真正的门槛转移为依赖并获取基础开源百亿参数基座（Foundation Models），利用相对轻量的算力储备对其垂直领域业务数据作精细化的下游 Fine-Tuning。</li></ol><p><strong>BERT 毫无争议可以说是 NLP 甚至是全体 DeepLearning 领域大模型时代到来的核心开天辟地之作，它宣告着我们彻底挥别浅层词嵌入范式，踏入了预训练宏大语境参数宇宙的新纪元。</strong></p>]]></content>
       
       
       <categories>
@@ -758,43 +758,6 @@
     
     
     <entry>
-      <title>Deeeplearning模型-ObjectDetection-SSD</title>
-      <link href="/2022/11/18/Deeeplearning%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ObjectDetection-SSD/"/>
-      <url>/2022/11/18/Deeeplearning%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ObjectDetection-SSD/</url>
-      
-        <content type="html"><![CDATA[<p><a href="https://arxiv.org/abs/1512.02325">SSD</a>是一种One Stage的检测模型，相比于R-CNN系列模型上要简单许多。其精度与Faster R-CNN相匹敌，而速度达到59FPS，速度上超过Faster R-CNN。</p><p>论文：<a href="https://arxiv.org/pdf/1512.02325.pdf">SSD: Single Shot MultiBox Detector</a></p><span id="more"></span><img src="/images/model/od/ssd.png" alt="" width="600px"/><h3 id="论文想解决什么问题"><a href="#论文想解决什么问题" class="headerlink" title="论文想解决什么问题"></a>论文想解决什么问题</h3><p>SSD针对的是一个当时很现实的矛盾：两阶段检测器精度高，但速度慢；已有一阶段方法虽然快，但精度还不够强。<br>这篇论文的目标，就是尽量保留单阶段检测的速度优势，同时把精度拉到能和Faster R-CNN竞争的水平。</p><h3 id="核心创新"><a href="#核心创新" class="headerlink" title="核心创新"></a>核心创新</h3><ul><li>使用default boxes，在每个位置预设多种尺度和宽高比的候选框。</li><li>在不同分辨率的特征图上同时做预测，自然处理多尺度目标。</li><li>彻底去掉proposal生成阶段，把所有检测计算都放进单个网络里完成。</li></ul><h3 id="结构理解"><a href="#结构理解" class="headerlink" title="结构理解"></a>结构理解</h3><p>SSD可以理解成“在多层特征图上同时密集地预测目标”。浅层特征图更适合看小目标，深层特征图更适合看大目标，因此它通过多尺度特征输出，把不同尺度目标分摊到不同层上处理。<br>这也是SSD相比更早单阶段方法的重要进步。</p><h3 id="实验结果怎么看"><a href="#实验结果怎么看" class="headerlink" title="实验结果怎么看"></a>实验结果怎么看</h3><p>论文报告了 <code>300×300</code> 输入下VOC2007上72.1% mAP、58 FPS，以及 <code>500×500</code> 输入下75.1% mAP 的结果。这个结果说明，单阶段检测器不一定只能换速度不要精度，设计合理的话也可以达到很强的综合表现。</p><h3 id="简单理解与局限"><a href="#简单理解与局限" class="headerlink" title="简单理解与局限"></a>简单理解与局限</h3><p>我对SSD的理解是，它是现代单阶段检测器真正成熟起来的重要一步。<br>它的局限主要在于对小目标仍然不够友好，后续很多方法都在特征金字塔、样本分配和损失函数上继续优化，但SSD奠定了“多尺度特征图直接预测”的基础思路。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> 深度学习模型 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> CV </tag>
-            
-            <tag> 深度学习 </tag>
-            
-            <tag> 深度学习模型 </tag>
-            
-            <tag> 目标检测 </tag>
-            
-            <tag> ObjectDetection </tag>
-            
-            <tag> OneStage </tag>
-            
-            <tag> SSD </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Deeeplearning模型-ObjectDetection-YOLO</title>
       <link href="/2022/11/18/Deeeplearning%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ObjectDetection-YOLO/"/>
       <url>/2022/11/18/Deeeplearning%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ObjectDetection-YOLO/</url>
@@ -832,6 +795,43 @@
     
     
     <entry>
+      <title>Deeeplearning模型-ObjectDetection-SSD</title>
+      <link href="/2022/11/18/Deeeplearning%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ObjectDetection-SSD/"/>
+      <url>/2022/11/18/Deeeplearning%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ObjectDetection-SSD/</url>
+      
+        <content type="html"><![CDATA[<p><a href="https://arxiv.org/abs/1512.02325">SSD</a>是一种One Stage的检测模型，相比于R-CNN系列模型上要简单许多。其精度与Faster R-CNN相匹敌，而速度达到59FPS，速度上超过Faster R-CNN。</p><p>论文：<a href="https://arxiv.org/pdf/1512.02325.pdf">SSD: Single Shot MultiBox Detector</a></p><span id="more"></span><img src="/images/model/od/ssd.png" alt="" width="600px"/><h3 id="论文想解决什么问题"><a href="#论文想解决什么问题" class="headerlink" title="论文想解决什么问题"></a>论文想解决什么问题</h3><p>SSD针对的是一个当时很现实的矛盾：两阶段检测器精度高，但速度慢；已有一阶段方法虽然快，但精度还不够强。<br>这篇论文的目标，就是尽量保留单阶段检测的速度优势，同时把精度拉到能和Faster R-CNN竞争的水平。</p><h3 id="核心创新"><a href="#核心创新" class="headerlink" title="核心创新"></a>核心创新</h3><ul><li>使用default boxes，在每个位置预设多种尺度和宽高比的候选框。</li><li>在不同分辨率的特征图上同时做预测，自然处理多尺度目标。</li><li>彻底去掉proposal生成阶段，把所有检测计算都放进单个网络里完成。</li></ul><h3 id="结构理解"><a href="#结构理解" class="headerlink" title="结构理解"></a>结构理解</h3><p>SSD可以理解成“在多层特征图上同时密集地预测目标”。浅层特征图更适合看小目标，深层特征图更适合看大目标，因此它通过多尺度特征输出，把不同尺度目标分摊到不同层上处理。<br>这也是SSD相比更早单阶段方法的重要进步。</p><h3 id="实验结果怎么看"><a href="#实验结果怎么看" class="headerlink" title="实验结果怎么看"></a>实验结果怎么看</h3><p>论文报告了 <code>300×300</code> 输入下VOC2007上72.1% mAP、58 FPS，以及 <code>500×500</code> 输入下75.1% mAP 的结果。这个结果说明，单阶段检测器不一定只能换速度不要精度，设计合理的话也可以达到很强的综合表现。</p><h3 id="简单理解与局限"><a href="#简单理解与局限" class="headerlink" title="简单理解与局限"></a>简单理解与局限</h3><p>我对SSD的理解是，它是现代单阶段检测器真正成熟起来的重要一步。<br>它的局限主要在于对小目标仍然不够友好，后续很多方法都在特征金字塔、样本分配和损失函数上继续优化，但SSD奠定了“多尺度特征图直接预测”的基础思路。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 深度学习模型 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> CV </tag>
+            
+            <tag> 深度学习 </tag>
+            
+            <tag> 深度学习模型 </tag>
+            
+            <tag> 目标检测 </tag>
+            
+            <tag> ObjectDetection </tag>
+            
+            <tag> OneStage </tag>
+            
+            <tag> SSD </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Deeeplearning模型-ObjectDetection-Faster R-CNN</title>
       <link href="/2022/11/18/Deeeplearning%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ObjectDetection-Faster-RCNN/"/>
       <url>/2022/11/18/Deeeplearning%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ObjectDetection-Faster-RCNN/</url>
@@ -856,11 +856,11 @@
             
             <tag> 目标检测 </tag>
             
-            <tag> Faster R-CNN </tag>
-            
             <tag> ObjectDetection </tag>
             
             <tag> OneStage </tag>
+            
+            <tag> Faster R-CNN </tag>
             
         </tags>
       
@@ -893,11 +893,11 @@
             
             <tag> 目标检测 </tag>
             
+            <tag> Fast R-CNN </tag>
+            
             <tag> ObjectDetection </tag>
             
             <tag> OneStage </tag>
-            
-            <tag> Fast R-CNN </tag>
             
         </tags>
       
@@ -1973,11 +1973,11 @@
             
             <tag> 算法 </tag>
             
+            <tag> Leetcode </tag>
+            
             <tag> 二叉树 </tag>
             
             <tag> BFS </tag>
-            
-            <tag> Leetcode </tag>
             
             <tag> 相交链表 </tag>
             
@@ -2043,9 +2043,9 @@
             
             <tag> 算法 </tag>
             
-            <tag> Leetcode </tag>
-            
             <tag> 动态规划 </tag>
+            
+            <tag> Leetcode </tag>
             
             <tag> 判断子序列 </tag>
             

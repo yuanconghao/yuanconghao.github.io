@@ -668,6 +668,7 @@ pre {
 ******************************************************* */
 #process {
   padding: 80px 0;
+  padding-right: 40px;
   background-color: #fff;
 }
 
@@ -1988,7 +1989,8 @@ html[data-dark=true] img {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3; /*这里设置第几行显示省略号，可以设置第一行或者其他行*/
+  -webkit-line-clamp: 3;
+  /*这里设置第几行显示省略号，可以设置第一行或者其他行*/
 }
 
 .waline-comment-content-author {
