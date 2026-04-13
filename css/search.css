@@ -2,12 +2,16 @@
     position: absolute;
     background-color: rgb(234, 234, 239);
     width: 100%;
+    left: 0;
+    top: 100%;
+    z-index: 20;
 }
 
 #sidebar .widget .search-form {
-    overflow:visible;
+    overflow: visible;
 }
 
 #sidebar .widget .search-form input {
-    width: auto;
+    width: 100%;
+    max-width: 100%;
 }
