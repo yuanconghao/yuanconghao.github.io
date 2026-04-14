@@ -1,0 +1,201 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>人脸检测与人脸识别 | DeepLearner</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">人脸检测与人脸识别</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/course/"><i class="fa fa-book"> 课程</i></a><a href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">人脸检测与人脸识别</h1><div class="post-meta">created:2026-04-14</div><div class="post-meta">updated:2026-04-14<span> | </span><span class="category"><a href="/categories/%E8%AF%BE%E7%A8%8B/">课程</a></span></div><a class="disqus-comment-count" href="/2026/04/14/course/face-detection-recognition/#waline"><span class="waline-comment-count" id="/2026/04/14/course/face-detection-recognition/"></span><span> 条评论</span></a><div class="post-cover post-cover-detail"><img src="/images/course/face-detection-recognition/face-detection-recognition_img_001.png" alt="人脸检测与人脸识别"></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">一、概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.</span> <span class="toc-text">1. 基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B%E4%B8%8E%E8%AF%86%E5%88%AB%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">2. 人脸检测与识别的应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BC%A0%E7%BB%9F%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B%E4%B8%8E%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">3. 传统人脸检测与人脸识别方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%EF%BC%89%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">1）人脸检测</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%EF%BC%89%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB"><span class="toc-number">1.3.2.</span> <span class="toc-text">2）人脸识别</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BA%BA%E8%84%B8%E6%95%B0%E6%8D%AE%E9%9B%86%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.</span> <span class="toc-text">二、人脸数据集介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-SFC%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">2.1.</span> <span class="toc-text">1. SFC数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-LFW%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">2.2.</span> <span class="toc-text">2. LFW数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-YTF%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">2.3.</span> <span class="toc-text">3. YTF数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-CelebA%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">2.4.</span> <span class="toc-text">4. CelebA数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-WIDER-Face%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">2.5.</span> <span class="toc-text">5. WIDER Face数据集</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B"><span class="toc-number">3.</span> <span class="toc-text">三、人脸检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-MTCNN%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.1.</span> <span class="toc-text">1. MTCNN模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%EF%BC%89%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.1.1.</span> <span class="toc-text">1）步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%EF%BC%89%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="toc-number">3.1.2.</span> <span class="toc-text">2）网络结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%EF%BC%89%E8%AE%AD%E7%BB%83"><span class="toc-number">3.1.3.</span> <span class="toc-text">3）训练</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%EF%BC%89%E7%BB%93%E8%AE%BA"><span class="toc-number">3.1.4.</span> <span class="toc-text">4）结论</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%8D%95%E6%A0%B7%E6%9C%AC%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B"><span class="toc-number">4.</span> <span class="toc-text">四、单样本学习模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AD%AA%E7%94%9F%E7%BD%91%E7%BB%9C"><span class="toc-number">4.1.</span> <span class="toc-text">1. 孪生网络</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%EF%BC%89%E6%A6%82%E8%BF%B0"><span class="toc-number">4.1.1.</span> <span class="toc-text">1）概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%EF%BC%89%E5%AD%AA%E7%94%9F%E7%BD%91%E7%BB%9C%E7%9A%84%E7%94%A8%E9%80%94"><span class="toc-number">4.1.2.</span> <span class="toc-text">2）孪生网络的用途</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%EF%BC%89%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">4.1.3.</span> <span class="toc-text">3）损失函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%89%E5%85%83%E7%BD%91%E7%BB%9C%EF%BC%88Triplet-Network%EF%BC%89"><span class="toc-number">4.2.</span> <span class="toc-text">2. 三元网络（Triplet Network）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%EF%BC%89%E6%A6%82%E8%BF%B0-1"><span class="toc-number">4.2.1.</span> <span class="toc-text">1）概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%EF%BC%89%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84-1"><span class="toc-number">4.2.2.</span> <span class="toc-text">2）网络结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%EF%BC%89%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0-1"><span class="toc-number">4.2.3.</span> <span class="toc-text">3）损失函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB"><span class="toc-number">5.</span> <span class="toc-text">五、人脸识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-DeepFace%EF%BC%882014%EF%BC%89"><span class="toc-number">5.1.</span> <span class="toc-text">1. DeepFace（2014）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%EF%BC%89%E6%A6%82%E8%BF%B0-2"><span class="toc-number">5.1.1.</span> <span class="toc-text">1）概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%EF%BC%89%E4%BA%BA%E8%84%B8%E5%AF%B9%E9%BD%90%E5%A4%84%E7%90%86"><span class="toc-number">5.1.2.</span> <span class="toc-text">2）人脸对齐处理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%EF%BC%89%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="toc-number">5.1.3.</span> <span class="toc-text">3）网络结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%EF%BC%89%E6%95%88%E6%9E%9C"><span class="toc-number">5.1.4.</span> <span class="toc-text">4）效果</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#LFW%E6%95%B0%E6%8D%AE%E9%9B%86%E5%AE%9E%E9%AA%8C%E6%95%88%E6%9E%9C"><span class="toc-number">5.1.4.1.</span> <span class="toc-text">LFW数据集实验效果</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#YTF%E6%95%B0%E6%8D%AE%E9%9B%86%E5%AE%9E%E9%AA%8C%E6%95%88%E6%9E%9C"><span class="toc-number">5.1.4.2.</span> <span class="toc-text">YTF数据集实验效果</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%EF%BC%89%E8%AE%A1%E7%AE%97%E6%95%88%E7%8E%87"><span class="toc-number">5.1.5.</span> <span class="toc-text">5）计算效率</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-FaceNet%EF%BC%882015%EF%BC%89"><span class="toc-number">5.2.</span> <span class="toc-text">2. FaceNet（2015）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%EF%BC%89%E6%A6%82%E8%BF%B0-3"><span class="toc-number">5.2.1.</span> <span class="toc-text">1）概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%EF%BC%89%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="toc-number">5.2.2.</span> <span class="toc-text">2）模型结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%EF%BC%89%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0-2"><span class="toc-number">5.2.3.</span> <span class="toc-text">3）损失函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%EF%BC%89%E6%95%88%E6%9E%9C%E4%B8%8E%E6%80%A7%E8%83%BD"><span class="toc-number">5.2.4.</span> <span class="toc-text">4）效果与性能</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%91%A0-%E4%B8%8D%E5%90%8C%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84%E5%8F%8A%E5%8F%82%E6%95%B0"><span class="toc-number">5.2.4.1.</span> <span class="toc-text">①  不同网络结构及参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%91%A1-%E4%B8%8D%E5%90%8C%E5%9B%BE%E5%83%8F%E8%B4%A8%E9%87%8F%E7%9A%84%E6%AD%A3%E7%A1%AE%E7%8E%87"><span class="toc-number">5.2.4.2.</span> <span class="toc-text">② 不同图像质量的正确率</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%91%A2-%E4%B8%8D%E5%90%8C%E5%B5%8C%E5%85%A5%E7%BB%B4%E5%BA%A6%E7%9A%84%E6%AD%A3%E7%A1%AE%E7%8E%87"><span class="toc-number">5.2.4.3.</span> <span class="toc-text">③ 不同嵌入维度的正确率</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%91%A3-%E4%B8%8D%E5%90%8C%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8A%E5%87%86%E7%A1%AE%E7%8E%87"><span class="toc-number">5.2.4.4.</span> <span class="toc-text">④ 不同数据集上准确率</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="post-content"><span id="more"></span>
+
+<h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><h3 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1. 基本概念"></a>1. 基本概念</h3><p>人脸是个人重要的生物特征，业界很早就对人脸图像处理技术进行了研究。人脸图像处理包括人脸检测、人脸识别、人脸检索等。人脸检测是在输入图像中检测人脸的位置、大小；人脸识别是对人脸图像身份进行确认，人脸识别通常会先对人脸进行检测定位，再进行识别；人脸检索是根据输入的人脸图像，从图像库或视频库中检索包含该人脸的其它图像或视频。</p>
+<h3 id="2-人脸检测与识别的应用"><a href="#2-人脸检测与识别的应用" class="headerlink" title="2. 人脸检测与识别的应用"></a>2. 人脸检测与识别的应用</h3><ul>
+<li>实名认证</li>
+<li>人脸考勤</li>
+<li>刷脸支付、刷脸检票</li>
+<li>公共安全：罪犯抓捕、失踪人员寻找</li>
+</ul>
+<h3 id="3-传统人脸检测与人脸识别方法"><a href="#3-传统人脸检测与人脸识别方法" class="headerlink" title="3. 传统人脸检测与人脸识别方法"></a>3. 传统人脸检测与人脸识别方法</h3><h4 id="1）人脸检测"><a href="#1）人脸检测" class="headerlink" title="1）人脸检测"></a>1）人脸检测</h4><ul>
+<li>基于知识的人脸检测法。它将典型的人脸形成规则库对人脸进行编码。通常, 通过面部特征之间的关系进行人脸定位。 </li>
+<li>基于模板匹配的人脸检测法。存储几种标准的人脸模式, 用来分别描述整个人脸和面部特征;计算输入图像和存储的模式间的相互关系并用于检测。</li>
+<li>基于特征的人脸检测法。是在姿态、视角或光照条件改变的情况下找到存在的结构特征, 然后使用这些特征确定人脸。</li>
+<li>基于外观的人脸检测法。与模板匹配方法相反, 从训练图像集中进行学习从而获得模型(或模板) ,并将这些模型用于检测。</li>
+</ul>
+<h4 id="2）人脸识别"><a href="#2）人脸识别" class="headerlink" title="2）人脸识别"></a>2）人脸识别</h4><ul>
+<li>几何特征分析法。首先，提取目标的特征，并将所有得到的特征值组合形成一个向量；然后利用某种距离公式进行比较匹配。</li>
+<li>主成分分析法。提取出图像数据主成分，得到特征向量（特征脸）在进行比对和识别。主成分分析法原理简单，容易编程实现，并且识别效果较好；但该方法易受光照、尺度、旋转等因素影响。</li>
+<li>弹性匹配法。属于动态模板匹配法的一种，模板可有多种表示方法，该方法受图像的形变影响小，且受光照、面部表情、图像尺寸等因素的干扰较小，不足之处在于识别速度慢。</li>
+</ul>
+<p>传统人脸检测、识别在特征提取、精确度、可扩展性方面均有诸多不足，进入深度学习时代后，逐渐被深度学习技术所取代。</p>
+<h2 id="二、人脸数据集介绍"><a href="#二、人脸数据集介绍" class="headerlink" title="二、人脸数据集介绍"></a>二、人脸数据集介绍</h2><h3 id="1-SFC数据集"><a href="#1-SFC数据集" class="headerlink" title="1. SFC数据集"></a>1. SFC数据集</h3><p>Social Face Classification（社交人脸分类，简称SFC）数据集是从一个流行的社交网络中收集的人脸数据集，包括440万张经过标记的人脸，来自4030人，每个人有800到1200张人脸图像，其中每个身份的最新5%的脸图像被排除在外进行测试。这是根据图像的时间戳来完成的，以模拟通过老化进行的连续识别。</p>
+<h3 id="2-LFW数据集"><a href="#2-LFW数据集" class="headerlink" title="2. LFW数据集"></a>2. LFW数据集</h3><p>Labeled Faces in the Wild（经标注的自然条件人脸，简称LFW）包含5749位名人的13323张网络照片，这些照片分为6000对人脸，分为10组。常用作无约束环境中进行人脸验证的基准数据集。</p>
+<h3 id="3-YTF数据集"><a href="#3-YTF数据集" class="headerlink" title="3. YTF数据集"></a>3. YTF数据集</h3><p>YouTube Faces（YTF）收集了1595个主题的3425个YouTube视频（LFW中名人的子集）。这些视频被分成5000个视频对和10个分割，用于评估视频级别的人脸验证在SFC中，人脸识别是由人来标记的，通常包含大约3%的错误。SFC数据集照片在图像质量、光线和表情方面的变化甚至比LFW和YTF中名人的网络图像更大，后者通常是由专业摄影师而不是智能手机拍摄的。</p>
+<h3 id="4-CelebA数据集"><a href="#4-CelebA数据集" class="headerlink" title="4. CelebA数据集"></a>4. CelebA数据集</h3><p>Large-scale CelebFaces Attributes (CelebA)数据集是由香港中文大学汤晓鸥教授实验室公布的大型人脸识别数据集。该数据集包含有200K张人脸图片，人脸属性有40多种，主要用于人脸属性的识别。</p>
+<h3 id="5-WIDER-Face数据集"><a href="#5-WIDER-Face数据集" class="headerlink" title="5. WIDER Face数据集"></a>5. WIDER Face数据集</h3><p>2015年由香港中文大学发布，包含32203张图像、393703张人脸，在面部的尺寸、姿势、遮挡、表情、妆容和光照上都有很大的变化，自发布后广泛应用于评估性能比传统方法更强大的卷积神经网络。</p>
+<h2 id="三、人脸检测"><a href="#三、人脸检测" class="headerlink" title="三、人脸检测"></a>三、人脸检测</h2><h3 id="1-MTCNN模型"><a href="#1-MTCNN模型" class="headerlink" title="1. MTCNN模型"></a>1. MTCNN模型</h3><p>Joint Face Detection and Alignment using  Multi-task Cascaded Convolutional Networks（基于多任务级联卷积网络的联合人脸检测与对准，MTCNN），是一个优秀的人脸检测模型，该模型通过三个阶段精心设计的深度卷积网络，以粗略到精细的方式检测面部位置。</p>
+<h4 id="1）步骤"><a href="#1）步骤" class="headerlink" title="1）步骤"></a>1）步骤</h4><p>第一阶段：通过浅层CNN快速生成候选窗口。</p>
+<p>第二阶段：通过更复杂的CNN拒绝大量非面部窗口来细化窗口。</p>
+<p>第三阶段：使用更强大的CNN再次细化结果并输出五个面部标志位置。</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_001.png" alt="MTCNN_图1"></p>
+<h4 id="2）网络结构"><a href="#2）网络结构" class="headerlink" title="2）网络结构"></a>2）网络结构</h4><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_002.png" alt="MTCNN_图2"></p>
+<ul>
+<li>Proposal Network（P-Net）：提议网络，该完全卷积网络来获得候选面部窗口及其边界框回归向量。 然后基于估计的边界框回归向量校准候选者。 之后，我们采用非最大抑制（NMS）来合并高度重叠的候选者。</li>
+<li>Refine Network（R-Net）：精炼网络（R-Net），它进一步拒绝大量错误候选者，使用边界框回归执行校准，并进行NMS。</li>
+<li>Output Network（O-Net）：输出网络，这个阶段类似于第二阶段，但在这个阶段，我们的目标是识别更多监督的面部区域。 特别是，该网络将输出五个面部坐标点。</li>
+</ul>
+<h4 id="3）训练"><a href="#3）训练" class="headerlink" title="3）训练"></a>3）训练</h4><p>MTCNN利用三项任务来训练CNN探测器：</p>
+<ul>
+<li>面部&#x2F;非面部分类</li>
+<li>边界框回归</li>
+<li>面部标记定位</li>
+</ul>
+<p>① 面部分类。学习目标被制定为二类分类问题。 对于每个样本，使用交叉熵损失函数：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_003.png" alt="MTCNN_公式1"></p>
+<p>其中$p_i$是网络产生的概率，表明样本是网络产生的概率，表明样本$x_i$是一个人脸。 符号 $y^{det}_i∈{0,1}$表示真实标签。</p>
+<p>② 边界框回归。对于每个候选窗口，我们预测它与最近的真实值之间的偏移（即边界框的左边，顶部，高度和宽度）。 学习目标被指定为回归问题，我们对每个样本使用欧几里德损失$x_i$:</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_004.png" alt="MTCNN_公式2"></p>
+<p>其中$\hat{y}_i^{box}$ 是真实坐标。 有四个坐标，包括左上角，高度和宽度，因此$y^{box}_i∈ \mathbb{R}^4$.</p>
+<p>③ 面部标记定位。类似于边界框回归任务，面部标记检测被公式化为回归问题，我们最小化欧几里德损失：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_005.png" alt="MTCNN_公式3"></p>
+<p>其中 $\hat{y}_i^{landmark}$是从网络获得的面部标记坐标，$y_i^{landmark}$是第i个样本的真实坐标。 有五个面部标志，包括左眼，右眼，鼻子，左嘴角和右嘴角，因此$y_i^{landmark} \in \mathbb{R}^1 0$.</p>
+<p>④ 多源训练。由于在每个CNN中使用不同的任务，因此在学习过程中存在不同类型的训练图像，例如面部，非面部和部分对齐的面部。 在这种情况下，不使用一些损失函数（即，等式（1） - （3））。 例如，对于背景区域的样本，仅计算$L_i{det}$，而另外两个损失设置为0.这可以直接使用样本类型指示符来实现。 然后整体学习目标可以表述为：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_006.png" alt="MTCNN_公式4"></p>
+<p>其中ܰN是训练样本的数量，$a_j$表示任务重要性。 在P-Net和R-Net中使用$(a_{det}&#x3D;1,a_{box}&#x3D;0.5,a_{landmark}&#x3D;0.5)$，而在O-Net中使用$(a_{det}&#x3D;1,a_{box}&#x3D;0.5,a_{landmark}&#x3D;1)$以获得更准确的面部标记本地化. $\beta_i^j \in{0,1}$ 是样本类型指示器。 </p>
+<h4 id="4）结论"><a href="#4）结论" class="headerlink" title="4）结论"></a>4）结论</h4><ul>
+<li>查准率：95.04%</li>
+<li>召回率：85.1%</li>
+<li>速度：99 FPS</li>
+</ul>
+<h2 id="四、单样本学习模型"><a href="#四、单样本学习模型" class="headerlink" title="四、单样本学习模型"></a>四、单样本学习模型</h2><h3 id="1-孪生网络"><a href="#1-孪生网络" class="headerlink" title="1. 孪生网络"></a>1. 孪生网络</h3><h4 id="1）概述"><a href="#1）概述" class="headerlink" title="1）概述"></a>1）概述</h4><p>孪生网络（Siamese network）又称“连体网络”，有两个结构相同（两个网络可以是CNN，也可以是LSTM等），且共享权值的子网络。分别接受两个输入$x_1, x_2$，将其转换为某种向量$G_w(x_1), G_w(x_2)$，再通过某种距离度量的方式计算两个输出向量的距离$E_w$.如下图所示：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_007.png" alt="siamese_0"></p>
+<p>“孪生网络”一词的由来：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">十九世纪泰国出生了一对连体婴儿，当时的医学技术无法使两人分离出来，于是两人顽强地生活了一生，<span class="number">1829</span>年被英国商人发现，进入马戏团，在全世界各地表演，<span class="number">1839</span>年他们访问美国北卡罗莱那州后来成为“玲玲马戏团” 的台柱，最后成为美国公民。<span class="number">1843年4月13</span>日跟英国一对姐妹结婚，恩生了<span class="number">10</span>个小孩，昌生了<span class="number">12</span>个，姐妹吵架时，兄弟就要轮流到每个老婆家住三天。<span class="number">1874</span>年恩因肺病去世，另一位不久也去世，两人均于<span class="number">63</span>岁离开人间。两人的肝至今仍保存在费城的马特博物馆内。从此之后“暹罗双胞胎”（Siamese twins）就成了连体人的代名词，也因为这对双胞胎让全世界都重视到这项特殊疾病。</span><br></pre></td></tr></table></figure>
+
+<h4 id="2）孪生网络的用途"><a href="#2）孪生网络的用途" class="headerlink" title="2）孪生网络的用途"></a>2）孪生网络的用途</h4><p>孪生网络主要用于单样本或样本较少的模型训练，用于衡量两个输入数据的相似程度。孪生网络有两个输入（$x_1和x_2$），将两个输入到两个相同且权重共享的网络中，这两个网络分别将输入映射到新的空间，形成输入在新的空间中的表示。通过Loss的计算，评价两个输入的相似度。例如：</p>
+<ul>
+<li>词汇或文本的语义相似度分析；</li>
+<li>QA中question和answer的匹配；</li>
+<li>签名或人脸的比对、验证。</li>
+</ul>
+<p>例如，在人脸比对中，如果输入的两幅人脸图像$X_1和X_2$为同一个人，那么映射到新的空间的两个向量距离足够小；反之，如果$X_1和X_2$不为同一个人，两个向量距离足够大。</p>
+<h4 id="3）损失函数"><a href="#3）损失函数" class="headerlink" title="3）损失函数"></a>3）损失函数</h4><p>孪生网络采用对比损失函数（contrastive loss），其表达式如下：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_008.png" alt="siamese_loss_1"></p>
+<p>其中，$D_W$被定义为姐妹孪生网络的输出之间的欧氏距离。$D_W$欧式距离公式如下：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_009.png" alt="siamese_loss_2"></p>
+<ul>
+<li>$G_W$是其中一个姐妹网络的输出。$X_1$和$X_2$是输入数据对;</li>
+<li>Y值为1或0。如果模型预测输入是相似的，那么Y的值为0，否则Y为1。当Y&#x3D;0时（输入是相似的），函数的值为前半部分；当Y&#x3D;1时（输入不相似），函数的值为后半部分；</li>
+<li>max（）是表示0和$m-D_w$之间较大值的函数;</li>
+<li>m是大于0的间隔值（margin value）。有一个边际价值表示超出该边际价值的不同对不会造成损失。这是有道理的，因为你只希望基于实际不相似对来优化网络，但网络认为是相当相似的。</li>
+</ul>
+<h3 id="2-三元网络（Triplet-Network）"><a href="#2-三元网络（Triplet-Network）" class="headerlink" title="2. 三元网络（Triplet Network）"></a>2. 三元网络（Triplet Network）</h3><h4 id="1）概述-1"><a href="#1）概述-1" class="headerlink" title="1）概述"></a>1）概述</h4><p>Triplet Network是Siamese Network的一种延伸，要解决的问题与Siamese Network的基本一致，主要用于单样本或样本较少的模型训练。与孪生网络不同的是，Triplet Network采用三个样本为一组：一个参考样本（也称为锚点样本），一个同类样本（正样本），一个异类样本（负样本）。Triplet Network网络将输入映射到某个特征空间中，使得参考样本与正样本距离足够小、与负样本足够大。</p>
+<h4 id="2）网络结构-1"><a href="#2）网络结构-1" class="headerlink" title="2）网络结构"></a>2）网络结构</h4><p>Triplet Network结构图如下所示：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_010.png" alt="triplet_network_1"></p>
+<ul>
+<li>Triplet Network由3个相同的前馈神经网络（彼此共享参数）组成；</li>
+<li>输入x为参考样本，$x^-$为负面样本，$x^+$为正面样本；</li>
+<li>网络会输出两个值：参考样本与负面样本、正面样本的特征向量的距离。</li>
+</ul>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_011.png" alt="triplet_network_2"></p>
+<h4 id="3）损失函数-1"><a href="#3）损失函数-1" class="headerlink" title="3）损失函数"></a>3）损失函数</h4><p>Triplet Network的损失函数称为Triplet Loss（三元损失），包含参照样本、正面样本、负面样本之间的距离。$||f(A)-f(P)||^2$表示参照样本与正向样本的距离，$||f(A)-f(N)||^2$表示参照样本与负面样本的距离。我们希望参照样本与正向样本的距离足够小，与负面样本的距离足够大，即：<br>$$<br>||f(A)-f(P)||^2 &lt;&#x3D; ||f(A)-f(N)||^2<br>$$<br>为了避免两个表达式为0的情况（同时为0也满足该表达式），需要作出一些调整，参照样本与正向样本的距离值比起与负面样本的距离需大于某个常数值，所以表达式变为：<br>$$<br>||f(A)-f(P)||^2 + \alpha &lt;&#x3D; ||f(A)-f(N)||^2<br>$$<br>其中，$\alpha$为一个超参数，称为间隔（margin）。将等式右边移项到左边：<br>$$<br>||f(A)-f(P)||^2 - ||f(A)-f(N)||^2 + \alpha &lt;&#x3D; 0<br>$$<br>所以为了定义这个损失函数，我们取这个和0的最大值：<br>$$<br>L(A, P, N) &#x3D; max(||f(A)-f(P)||^2 - ||f(A)-f(N)||^2 + \alpha, 0)<br>$$<br>在训练中，为了使得效果更好，通常选择更难训练的三元组$(A, P, N)$进行训练。所谓难训练的三元组就是选择的三元组$d(A, P)$很接近$d(A, N)$，即$d(A, P) \approx d(A, N)$，在训练时竭力使式子右边部分变大，左边部分变小，使得左右至少有一个$\alpha$的距离。并且，比起随机选择的三元组，这样的三元组还可以增加模型的学习算法的计算效率。</p>
+<h2 id="五、人脸识别"><a href="#五、人脸识别" class="headerlink" title="五、人脸识别"></a>五、人脸识别</h2><h3 id="1-DeepFace（2014）"><a href="#1-DeepFace（2014）" class="headerlink" title="1. DeepFace（2014）"></a>1. DeepFace（2014）</h3><h4 id="1）概述-2"><a href="#1）概述-2" class="headerlink" title="1）概述"></a>1）概述</h4><p>DeepFace是Facebook研究人员推出的人脸验证模型，是深度学习技术应用于人脸识别的先驱。模型深度9层，超过1.2亿个参数。在LFW数据集上识别率达到97.25%，接近人类识别能力。</p>
+<h4 id="2）人脸对齐处理"><a href="#2）人脸对齐处理" class="headerlink" title="2）人脸对齐处理"></a>2）人脸对齐处理</h4><p>和大多数模型一样，DeepFace采用基准点检测器指导对齐过程。在该模型中，使用了一个相对简单的基准点检测器，经过多次迭代来优化输出。在每一次迭代中，通过训练支持向量回归器（SVR）从图像描述中预测点的结构来提取基准点。</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_012.png" alt="DeepFace_图1"></p>
+<p>对齐步骤：</p>
+<ul>
+<li>检测人脸6个基准点（眼睛2个、鼻尖1个、嘴巴3个）</li>
+<li>裁剪人脸部分</li>
+<li>在裁剪出的人脸中，使用67个基准点进行三角剖分</li>
+<li>将二维对齐裁剪图像转换为三维参考形状</li>
+<li>对三维形状进行旋转，生成正面二维图像</li>
+</ul>
+<h4 id="3）网络结构"><a href="#3）网络结构" class="headerlink" title="3）网络结构"></a>3）网络结构</h4><p>DeepFace网络结构如下图所示：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_013.png" alt="DeepFace2"></p>
+<ul>
+<li>输入：152*152经过预处理3D对齐的3通道面部图像</li>
+<li>第一层：卷积层（论文中称为C1），采用32个11*11卷积核进行卷积，输出32个142*142的特征图</li>
+<li>第二层：池化层（M2），以步幅为2执行最大池化操作，输出32个71*71的特征图</li>
+<li>第三层：卷积层（C3），采用16个9*9卷积核进行卷积，输出16个63*63的特征图</li>
+</ul>
+<p>以上三层主要提取底层特征，例如简单边沿、纹理。</p>
+<ul>
+<li>第四&#x2F;五&#x2F;六层：局部连接层（L4&#x2F;L5&#x2F;L6），滤波器组，像卷积层一样，应用滤波器组，但是特征映射中的每个位置都学习不同的滤波器组。局部层的使用不会影响特征提取的计算负担，但会影响训练参数的数量。</li>
+<li>第七&#x2F;八层：全连接层（F7&#x2F;F8），用来捕获在面部图像的远处部分捕捉到的特征之间的相关性，例如眼睛的位置和形状以及嘴的位置和形状。最后一个全连接层在Softmax函数作用下产生K路输出。</li>
+</ul>
+<h4 id="4）效果"><a href="#4）效果" class="headerlink" title="4）效果"></a>4）效果</h4><ul>
+<li><h5 id="LFW数据集实验效果"><a href="#LFW数据集实验效果" class="headerlink" title="LFW数据集实验效果"></a>LFW数据集实验效果</h5></li>
+</ul>
+<p>DeepFace在LFW数据集上实验准确率与效果图ROC（Receiver Operating Characteristic）曲线如下所示：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_014.png" alt="DeepFace_表3"></p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_015.png" alt="DeepFace_图3"></p>
+<ul>
+<li><h5 id="YTF数据集实验效果"><a href="#YTF数据集实验效果" class="headerlink" title="YTF数据集实验效果"></a>YTF数据集实验效果</h5></li>
+</ul>
+<p>DeepFace还在视频级人脸验证数据集上进行了进一步验证。YouTube视频帧的图像质量通常比网络照片差，主要是由于运动模糊或观看距离。为每对训练视频创建50对帧，每个视频一对，并根据视频训练对标记这些帧是否相同。DeepFace取得了91.4%的准确度，将先前的最佳方法的误差减少了50%以上。如下图所示：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_016.png" alt="DeepFace_表4"></p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_017.png" alt="DeepFace_图4"></p>
+<h4 id="5）计算效率"><a href="#5）计算效率" class="headerlink" title="5）计算效率"></a>5）计算效率</h4><p>单核Intel 2.2GHz CPU，DeepFace每幅图像运行0.33秒，包括图像解码、人脸检测和对齐、前馈网络和最终分类输出。</p>
+<h3 id="2-FaceNet（2015）"><a href="#2-FaceNet（2015）" class="headerlink" title="2. FaceNet（2015）"></a>2. FaceNet（2015）</h3><h4 id="1）概述-3"><a href="#1）概述-3" class="headerlink" title="1）概述"></a>1）概述</h4><p>FaceNet是Google研究人员2015年推出的人脸识比对模型。其思想是将人脸照片转换为128-D的向量，判断向量之间的距离（差异），如果距离大于某个值，则认为不是同一个人的人脸图像；如果距离小于某个值，则认为是同一个人的人脸图像。</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_018.png" alt="FaceNet_图1"></p>
+<h4 id="2）模型结构"><a href="#2）模型结构" class="headerlink" title="2）模型结构"></a>2）模型结构</h4><p>FaceNet模型结构如下图所示：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_019.png" alt="FaceNet_图2"></p>
+<ul>
+<li>批量输入层：输入一个批次的样本；</li>
+<li>深度CNN：用来提取数据特征，然后进行L2标准化，输出向量特征（嵌入）。该部分可以采用不同的CNN模型；作者原论文中给出了两种CNN结构，并对性能进行了对比；</li>
+<li>三元损失函数：接收特征向量，构建三元损失函数，使得Anchor-Positive之间的距离足够小，Anchor-Negtive之间的距离足够大。</li>
+</ul>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_020.png" alt="FaceNet_图3"></p>
+<h4 id="3）损失函数-2"><a href="#3）损失函数-2" class="headerlink" title="3）损失函数"></a>3）损失函数</h4><p>FaceNet采用三元损失函数，表达式如下：<br>$$<br>||f(x_i^a)-f(x_i^p)||^2_2 + \alpha &lt;&#x3D; ||f(x_i^a)-f(x_i^n)||^2_2<br>$$</p>
+<p>$$<br>\forall f(x_i^a), f(x_i^p), f(x_i^n) \in \Tau<br>$$</p>
+<p>其中，$x^a_i$表示锚定样本（参考样本），$x^p_i$表示正样本，$x^n_i$表示负样本。$||f(x_i^a)-f(x_i^p)||_2$表示参考样本与正样本间距离的L2范数（欧式距离）。$\Tau$是训练集中所有可能的三元组的集合，具有基数N。训练优化的目标损失函数为：<br>$$<br>\sum_i^N[\ \ ||f(x_i^a)-f(x_i^p)||^2_2 - ||f(x_i^a)-f(x_i^n)||^2_2 + \alpha\ \ ]<br>$$<br>在训练过程中，为了让模型快速收敛，通常选择难训练的三元组样本进行训练，即$argmax \ x_i^p(||f(x_i^a)-f(x_i^p)||^2_2)$或$argmin \ x_i^n(||f(x_i^a)-f(x_i^n)||^2_2)$. 实际训练中，采用从小批量中选择argmin和argmax，而不是所有样本。</p>
+<h4 id="4）效果与性能"><a href="#4）效果与性能" class="headerlink" title="4）效果与性能"></a>4）效果与性能</h4><h5 id="①-不同网络结构及参数"><a href="#①-不同网络结构及参数" class="headerlink" title="①  不同网络结构及参数"></a>①  不同网络结构及参数</h5><p><strong>网络结构一</strong>：22层，140M（1.4亿）个参数，1.6B（16亿）次左右浮点运算</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_021.png" alt="FaceNet表1"></p>
+<p><strong>网络结构二</strong>：基于GoogLeNet的初始模型。参数量减少了约20倍（约为6.6M~7.5M），每个图像需要220M次浮点运算。</p>
+<h5 id="②-不同图像质量的正确率"><a href="#②-不同图像质量的正确率" class="headerlink" title="② 不同图像质量的正确率"></a>② 不同图像质量的正确率</h5><p>下表是不同压缩率的JPEG图像和不同分辨率图像的正确率：</p>
+<p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_022.png" alt="FaceNet表4"></p>
+<h5 id="③-不同嵌入维度的正确率"><a href="#③-不同嵌入维度的正确率" class="headerlink" title="③ 不同嵌入维度的正确率"></a>③ 不同嵌入维度的正确率</h5><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_023.png" alt="FaceNet表5"></p>
+<h5 id="④-不同数据集上准确率"><a href="#④-不同数据集上准确率" class="headerlink" title="④ 不同数据集上准确率"></a>④ 不同数据集上准确率</h5><ul>
+<li>LFW数据集：使用额外的人脸对齐平均准确率达99.63%</li>
+<li>YFB数据集：平均准确率95.18%</li>
+</ul>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2026/04/14/course/face-detection-recognition/" data-id="cmnyhx6pb0083aq9k0h88c8qn" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuElEQVR42u3aQYrjQAwF0L7/pXs2s5ihcfK/VAVpeF6FxHHqlcFSJH19xcf3j+Pf95NvPZ3/89PZb60OPDw8vPXSny799Gm+3PYXX29TtCo8PDy8a7xkocn5s+CRLDpfAx4eHt5v4b1GzhLuZD14eHh4v5GXJMSvz28DDB4eHt4n8NoUdn9OUraYJd94eHh4t3l5F+lzXl/p7+Hh4eGtu+qvH7htWjxrdM3W+fcKeHh4eBd4+QN3dukZJglOeWkYDw8P7yyvbdvnwWBfnJ1t1n+v8fDw8C7zkqQ2KdfmQaIdNWg3FA8PD+82Ly86zNLo2fn5zXjzXwEPDw/vMi9v4efP4ZzRBqqia4eHh4e35p0dDsiXvilbrCbL8PDw8Na8vEg6K2HMRlfzd958ioeHh3eN1ybQrx/NZ8dhV5uLh4eHd4G3KZu2RYrN6FXekHtzD/Hw8PAO8dpCw6ysMAsz+dZE9xAPDw9vzcsT2bxJtr/OgaGBNk/Hw8PDK3n5UFQ7apAXO4oIFpeh8fDw8G7w2sR3k7nPJhra8PPmHuLh4eGteTmpXUS7WZtSxeMW4+Hh4V3jzdpRsyGtfBR1VuCIkmk8PDy8Ne9AwTQOJ8mA7GY04THu4eHh4R3ltQNMmyGt2XBV+61hpo+Hh4fXZaR9YylucbWl3k0gSVaCh4eHt+fNMG1xIYdthreO3Ss8PDy8gNe2qWaw2fl4eHh4v4uXl3fbzWqD0PDAw8PDO8r7Lo9NuTYpFuejXdGneHh4eBd4m2ds20Lbj1u1jTo8PDy8e7xNMNg83PftsegPAB4eHt41XvtQ3owX1LMM8QwVHh4e3mfy9s2wTcGiDRh4eHh4n8bLr7MZscqLGvWy8PDw8Ba8WeK7KR+0Q1TJ2h4DAx4eHt5R3oE//GUrqx04SH79QH8PDw8P7z3vD2RvIhakDW1FAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/"><i class="fa fa-tag"></i>计算机视觉</a><a href="/tags/%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB/"><i class="fa fa-tag"></i>人脸识别</a><a href="/tags/%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B/"><i class="fa fa-tag"></i>人脸检测</a></div><div class="post-nav"><a class="pre" href="/2026/04/14/course/generative-adversarial-networks-gan/">生成对抗网络（GAN）</a><a class="next" href="/2026/04/14/course/semantic-segmentation/">图像语义分割</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/%E4%BB%AA%E5%99%A8%E4%BB%AA%E8%A1%A8%E7%A7%91%E5%AD%A6%E4%B8%8E%E5%85%89%E7%94%B5%E5%B7%A5%E7%A8%8B/">仪器仪表科学与光电工程</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B/">课程</a><span class="category-list-count">12</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/backpropagation-process/">反向传播过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/deep-learning-lab-manual/">深度学习实验手册</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/generative-adversarial-networks-gan/">生成对抗网络（GAN）</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/face-detection-recognition/">人脸检测与人脸识别</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/semantic-segmentation/">图像语义分割</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/ocr-optical-character-recognition/">光学字符识别（OCR）</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/natural-language-processing-nlp/">自然语言处理（NLP）</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/svm-support-vector-machine/">SVM 支持向量机</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/tf-idf-algorithm/">TF-IDF 算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/target-detection/">目标检测</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.0"><script type="text/javascript" src="/js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript">window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    processEscapes: true
+  },
+  chtml: {
+    fontURL: '/js/chtml/fonts/woff-v2'
+  },
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  }
+};
+</script><script type="text/javascript" src="/js/mathjax3.js" async></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="/assets/prism-bundle.js"></script>
+<script src="/assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>
