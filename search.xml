@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>CNN 实战：使用 PyTorch 构建经典的 LeNet-5</title>
+      <link href="/2026/04/14/course/cnn-pytorch-lenet5/"/>
+      <url>/2026/04/14/course/cnn-pytorch-lenet5/</url>
+      
+        <content type="html"><![CDATA[<h2 id="1-LeNet-5-结构回顾"><a href="#1-LeNet-5-结构回顾" class="headerlink" title="1. LeNet-5 结构回顾"></a>1. LeNet-5 结构回顾</h2><p>LeNet-5 是由 Yann LeCun 在 1998 年提出的，用于解决手写数字识别问题。其结构如下：</p><ul><li><strong>Input</strong>: 32x32 图像</li><li><strong>C1</strong>: 卷积层 (6@28x28)</li><li><strong>S2</strong>: 池化层 (6@14x14)</li><li><strong>C3</strong>: 卷积层 (16@10x10)</li><li><strong>S4</strong>: 池化层 (16@5x5)</li><li><strong>C5&#x2F;F6&#x2F;Output</strong>: 全连接层</li></ul><h2 id="2-PyTorch-代码实现"><a href="#2-PyTorch-代码实现" class="headerlink" title="2. PyTorch 代码实现"></a>2. PyTorch 代码实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LeNet5</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(LeNet5, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">6</span>, <span class="number">5</span>) <span class="comment"># 1 input channel, 6 output, 5x5 kernel</span></span><br><span class="line">        <span class="variable language_">self</span>.pool1 = nn.AvgPool2d(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">        <span class="variable language_">self</span>.conv2 = nn.Conv2d(<span class="number">6</span>, <span class="number">16</span>, <span class="number">5</span>)</span><br><span class="line">        <span class="variable language_">self</span>.pool2 = nn.AvgPool2d(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">        <span class="variable language_">self</span>.fc1 = nn.Linear(<span class="number">16</span> * <span class="number">5</span> * <span class="number">5</span>, <span class="number">120</span>)</span><br><span class="line">        <span class="variable language_">self</span>.fc2 = nn.Linear(<span class="number">120</span>, <span class="number">84</span>)</span><br><span class="line">        <span class="variable language_">self</span>.fc3 = nn.Linear(<span class="number">84</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = <span class="variable language_">self</span>.pool1(F.relu(<span class="variable language_">self</span>.conv1(x)))</span><br><span class="line">        x = <span class="variable language_">self</span>.pool2(F.relu(<span class="variable language_">self</span>.conv2(x)))</span><br><span class="line">        x = x.view(-<span class="number">1</span>, <span class="number">16</span> * <span class="number">5</span> * <span class="number">5</span>)</span><br><span class="line">        x = F.relu(<span class="variable language_">self</span>.fc1(x))</span><br><span class="line">        x = F.relu(<span class="variable language_">self</span>.fc2(x))</span><br><span class="line">        x = <span class="variable language_">self</span>.fc3(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure><h2 id="3-训练要点"><a href="#3-训练要点" class="headerlink" title="3. 训练要点"></a>3. 训练要点</h2><ol><li><strong>损失函数</strong>: CrossEntropyLoss</li><li><strong>优化器</strong>: Adam or SGD</li><li><strong>数据预处理</strong>: 归一化到 [-0.1, 1.175] (LeNet 原始建议)</li></ol><hr><blockquote><p>本文为 [课程] 系列 Demo 实战文章。</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> 课程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> PyTorch </tag>
+            
+            <tag> CNN </tag>
+            
+            <tag> 实战 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</title>
       <link href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/"/>
       <url>/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/</url>
@@ -103,6 +132,35 @@
             <tag> LangGraph </tag>
             
             <tag> RAG </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>CNN 基础：卷积神经网络的基本原理</title>
+      <link href="/2026/04/14/course/cnn-basics-principles/"/>
+      <url>/2026/04/14/course/cnn-basics-principles/</url>
+      
+        <content type="html"><![CDATA[<h2 id="1-为什么需要卷积？"><a href="#1-为什么需要卷积？" class="headerlink" title="1. 为什么需要卷积？"></a>1. 为什么需要卷积？</h2><p>在处理图像等高维数据时，传统的全连接网络（Fully Connected Network）会面临参数爆炸的问题。例如，一张 $224 \times 224$ 的彩色图片，如果第一层有 1000 个神经元，参数量将达到 $224 \times 224 \times 3 \times 1000 \approx 1.5$ 亿个。</p><p>卷积神经网络通过以下三个核心思想解决了这个问题：</p><ol><li><strong>局部感受野 (Local Receptive Fields)</strong></li><li><strong>权值共享 (Shared Weights)</strong></li><li><strong>空间池化 (Spatial Pooling)</strong></li></ol><h2 id="2-核心操作：卷积层"><a href="#2-核心操作：卷积层" class="headerlink" title="2. 核心操作：卷积层"></a>2. 核心操作：卷积层</h2><p>卷积核（Kernel&#x2F;Filter）在图像上平滑移动，提取特征。公式表达为：<br>$$ (f * g)(n) &#x3D; \sum_{m} f(m)g(n-m) $$</p><p>在深度学习中，我们通常关注的是互相关操作（Cross-correlation）：<br>$$ S(i, j) &#x3D; (I * K)(i, j) &#x3D; \sum_{m} \sum_{n} I(i+m, j+n)K(m, n) $$</p><h2 id="3-激活函数与池化层"><a href="#3-激活函数与池化层" class="headerlink" title="3. 激活函数与池化层"></a>3. 激活函数与池化层</h2><ul><li><strong>ReLU</strong>: 引入非线性，加速收敛。</li><li><strong>Max Pooling</strong>: 减少参数维度，保持平移不变性。</li></ul><hr><blockquote><p>本文为 [课程] 系列 Demo 文章，仅用于展示菜单归档功能。</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> 课程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 计算机视觉 </tag>
+            
+            <tag> 深度学习 </tag>
+            
+            <tag> CNN </tag>
             
         </tags>
       

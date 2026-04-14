@@ -12,7 +12,27 @@
     <![CDATA[Deep Learning & AI · Optoelectronics · Materials Analysis · Semiconductor Physics]]>
   </subtitle>
   <title>DeepLearner</title>
-  <updated>2026-04-14T03:48:55.809Z</updated>
+  <updated>2026-04-14T06:58:01.002Z</updated>
+  <entry>
+    <author>
+      <name>Yuan Conghao</name>
+    </author>
+    <category term="课程" scheme="https://deeplearner.top/categories/%E8%AF%BE%E7%A8%8B/"/>
+    <category term="PyTorch" scheme="https://deeplearner.top/tags/PyTorch/"/>
+    <category term="CNN" scheme="https://deeplearner.top/tags/CNN/"/>
+    <category term="实战" scheme="https://deeplearner.top/tags/%E5%AE%9E%E6%88%98/"/>
+    <content>
+      <![CDATA[<h2 id="1-LeNet-5-结构回顾"><a href="#1-LeNet-5-结构回顾" class="headerlink" title="1. LeNet-5 结构回顾"></a>1. LeNet-5 结构回顾</h2><p>LeNet-5 是由 Yann LeCun 在 1998 年提出的，用于解决手写数字识别问题。其结构如下：</p><ul><li><strong>Input</strong>: 32x32 图像</li><li><strong>C1</strong>: 卷积层 (6@28x28)</li><li><strong>S2</strong>: 池化层 (6@14x14)</li><li><strong>C3</strong>: 卷积层 (16@10x10)</li><li><strong>S4</strong>: 池化层 (16@5x5)</li><li><strong>C5&#x2F;F6&#x2F;Output</strong>: 全连接层</li></ul><h2 id="2-PyTorch-代码实现"><a href="#2-PyTorch-代码实现" class="headerlink" title="2. PyTorch 代码实现"></a>2. PyTorch 代码实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LeNet5</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(LeNet5, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">6</span>, <span class="number">5</span>) <span class="comment"># 1 input channel, 6 output, 5x5 kernel</span></span><br><span class="line">        <span class="variable language_">self</span>.pool1 = nn.AvgPool2d(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">        <span class="variable language_">self</span>.conv2 = nn.Conv2d(<span class="number">6</span>, <span class="number">16</span>, <span class="number">5</span>)</span><br><span class="line">        <span class="variable language_">self</span>.pool2 = nn.AvgPool2d(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">        <span class="variable language_">self</span>.fc1 = nn.Linear(<span class="number">16</span> * <span class="number">5</span> * <span class="number">5</span>, <span class="number">120</span>)</span><br><span class="line">        <span class="variable language_">self</span>.fc2 = nn.Linear(<span class="number">120</span>, <span class="number">84</span>)</span><br><span class="line">        <span class="variable language_">self</span>.fc3 = nn.Linear(<span class="number">84</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = <span class="variable language_">self</span>.pool1(F.relu(<span class="variable language_">self</span>.conv1(x)))</span><br><span class="line">        x = <span class="variable language_">self</span>.pool2(F.relu(<span class="variable language_">self</span>.conv2(x)))</span><br><span class="line">        x = x.view(-<span class="number">1</span>, <span class="number">16</span> * <span class="number">5</span> * <span class="number">5</span>)</span><br><span class="line">        x = F.relu(<span class="variable language_">self</span>.fc1(x))</span><br><span class="line">        x = F.relu(<span class="variable language_">self</span>.fc2(x))</span><br><span class="line">        x = <span class="variable language_">self</span>.fc3(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure><h2 id="3-训练要点"><a href="#3-训练要点" class="headerlink" title="3. 训练要点"></a>3. 训练要点</h2><ol><li><strong>损失函数</strong>: CrossEntropyLoss</li><li><strong>优化器</strong>: Adam or SGD</li><li><strong>数据预处理</strong>: 归一化到 [-0.1, 1.175] (LeNet 原始建议)</li></ol><hr><blockquote><p>本文为 [课程] 系列 Demo 实战文章。</p></blockquote>]]>
+    </content>
+    <id>https://deeplearner.top/2026/04/14/course/cnn-pytorch-lenet5/</id>
+    <link href="https://deeplearner.top/2026/04/14/course/cnn-pytorch-lenet5/"/>
+    <published>2026-04-14T03:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="1-LeNet-5-结构回顾"><a href="#1-LeNet-5-结构回顾" class="headerlink" title="1. LeNet-5 结构回顾"></a>1. LeNet-5 结构回顾</h2><p>LeNet-5 是由 Yann LeCu]]>
+    </summary>
+    <title>CNN 实战：使用 PyTorch 构建经典的 LeNet-5</title>
+    <updated>2026-04-14T06:58:01.002Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Yuan Conghao</name>
@@ -76,6 +96,26 @@
     <summary>从工程视角先讲清 LangChain 与 LangGraph 的区别、选型方式与当前官方统一架构，再系统梳理 LangChain 的核心概念、LCEL 用法与 RAG 基础链路。</summary>
     <title>AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门</title>
     <updated>2026-04-14T03:48:44.705Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Yuan Conghao</name>
+    </author>
+    <category term="课程" scheme="https://deeplearner.top/categories/%E8%AF%BE%E7%A8%8B/"/>
+    <category term="计算机视觉" scheme="https://deeplearner.top/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/"/>
+    <category term="深度学习" scheme="https://deeplearner.top/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    <category term="CNN" scheme="https://deeplearner.top/tags/CNN/"/>
+    <content>
+      <![CDATA[<h2 id="1-为什么需要卷积？"><a href="#1-为什么需要卷积？" class="headerlink" title="1. 为什么需要卷积？"></a>1. 为什么需要卷积？</h2><p>在处理图像等高维数据时，传统的全连接网络（Fully Connected Network）会面临参数爆炸的问题。例如，一张 $224 \times 224$ 的彩色图片，如果第一层有 1000 个神经元，参数量将达到 $224 \times 224 \times 3 \times 1000 \approx 1.5$ 亿个。</p><p>卷积神经网络通过以下三个核心思想解决了这个问题：</p><ol><li><strong>局部感受野 (Local Receptive Fields)</strong></li><li><strong>权值共享 (Shared Weights)</strong></li><li><strong>空间池化 (Spatial Pooling)</strong></li></ol><h2 id="2-核心操作：卷积层"><a href="#2-核心操作：卷积层" class="headerlink" title="2. 核心操作：卷积层"></a>2. 核心操作：卷积层</h2><p>卷积核（Kernel&#x2F;Filter）在图像上平滑移动，提取特征。公式表达为：<br>$$ (f * g)(n) &#x3D; \sum_{m} f(m)g(n-m) $$</p><p>在深度学习中，我们通常关注的是互相关操作（Cross-correlation）：<br>$$ S(i, j) &#x3D; (I * K)(i, j) &#x3D; \sum_{m} \sum_{n} I(i+m, j+n)K(m, n) $$</p><h2 id="3-激活函数与池化层"><a href="#3-激活函数与池化层" class="headerlink" title="3. 激活函数与池化层"></a>3. 激活函数与池化层</h2><ul><li><strong>ReLU</strong>: 引入非线性，加速收敛。</li><li><strong>Max Pooling</strong>: 减少参数维度，保持平移不变性。</li></ul><hr><blockquote><p>本文为 [课程] 系列 Demo 文章，仅用于展示菜单归档功能。</p></blockquote>]]>
+    </content>
+    <id>https://deeplearner.top/2026/04/14/course/cnn-basics-principles/</id>
+    <link href="https://deeplearner.top/2026/04/14/course/cnn-basics-principles/"/>
+    <published>2026-04-14T02:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="1-为什么需要卷积？"><a href="#1-为什么需要卷积？" class="headerlink" title="1. 为什么需要卷积？"></a>1. 为什么需要卷积？</h2><p>在处理图像等高维数据时，传统的全连接网络（Fully Connected]]>
+    </summary>
+    <title>CNN 基础：卷积神经网络的基本原理</title>
+    <updated>2026-04-14T06:57:51.352Z</updated>
   </entry>
   <entry>
     <author>
@@ -437,59 +477,6 @@
 </table>]]>
     </summary>
     <title>AIGC-StableDiffusion-Img2Img</title>
-    <updated>2023-10-30T13:38:30.000Z</updated>
-  </entry>
-  <entry>
-    <author>
-      <name>Yuan Conghao</name>
-    </author>
-    <category term="AIGC" scheme="https://deeplearner.top/categories/AIGC/"/>
-    <category term="AIGC" scheme="https://deeplearner.top/tags/AIGC/"/>
-    <category term="LLM" scheme="https://deeplearner.top/tags/LLM/"/>
-    <category term="PEFT" scheme="https://deeplearner.top/tags/PEFT/"/>
-    <category term="大语言模型" scheme="https://deeplearner.top/tags/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
-    <category term="大模型微调" scheme="https://deeplearner.top/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/"/>
-    <category term="医学大模型" scheme="https://deeplearner.top/tags/%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
-    <category term="FineTuning" scheme="https://deeplearner.top/tags/FineTuning/"/>
-    <category term="LoRA" scheme="https://deeplearner.top/tags/LoRA/"/>
-    <category term="QLoRA" scheme="https://deeplearner.top/tags/QLoRA/"/>
-    <content>
-      <![CDATA[<p>LLama2：<a href="https://huggingface.co/meta-llama/Llama-2-7b-chat-hf">meta-llama&#x2F;Llama-2-7b-chat-hf</a><br>基础模型：<a href="https://huggingface.co/conghao/llama2-7b-chat-hf">conghao&#x2F;llama2-7b-chat-hf</a><br>Lora模型：<a href="https://huggingface.co/conghao/llama2-qlora-med-zh">conghao&#x2F;llama2-qlora-med-zh</a></p><p>基础模型为基于<strong>Llama-2-7b-chat-hf</strong>将LLama的原始权重文件转换为Transformers库对应的模型文件格式。可基于此模型进行微调。</p><p>Lora模型<strong>llama2-qlora-med-zh</strong>为基于医学数据集训练好的模型权重，损失函数收敛至0.2924。</p><span id="more"></span><h3 id="资源配置"><a href="#资源配置" class="headerlink" title="资源配置"></a>资源配置</h3><ul><li>Hardware<ul><li>CPU: Arch x86_64 Intel(R) Xeon(R) Platinum 8163 CPU @ 2.50GHz 8Core</li><li>Mem: 32G</li><li>GPU: GPU 0: Tesla A10 24 MB</li></ul></li><li>OS<ul><li>CentOS7.9.2009</li><li>cuda 11.4</li></ul></li><li>Software<ul><li>Python3.10 &#x2F; pip 22.3.1</li></ul></li><li>Datasets<ul><li><a href="https://github.com/yuanconghao/deeplearning-datasets/blob/main/datasets/llm/llama_data_med.json">llama_data_med.json</a></li></ul></li></ul><h3 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">python finetune.py \</span><br><span class="line">--base_model <span class="string">&quot;/home/work/virtual-venv/lora-env/data/llama2-chat-hf&quot;</span>\</span><br><span class="line">--data_path <span class="string">&quot;./data/llama_data.json&quot;</span>\ </span><br><span class="line">--output_dir <span class="string">&quot;./llama2-qlora-med-zh&quot;</span>\ </span><br><span class="line">--prompt_template_name <span class="string">&#x27;med_template&#x27;</span>\ </span><br><span class="line">--micro_batch_size <span class="number">16</span>\</span><br><span class="line">--batch_size <span class="number">16</span>\ </span><br><span class="line">--wandb_run_name med_e1</span><br><span class="line"></span><br><span class="line"><span class="comment">#nohup python finetune.py --base_model &quot;/home/work/virtual-venv/lora-env/data/llama2-chat-hf&quot; --data_path &quot;./data/llama_data.json&quot; --output_dir &quot;./llama2-qlora-med-zh&quot; --prompt_template_name &#x27;med_template&#x27; --micro_batch_size 16 --batch_size 16 --wandb_run_name med_e2 2&gt;/tmp/llama2-ft.log 1&gt;&amp;2 &amp;</span></span><br></pre></td></tr></table></figure><p>训练过程：<a href="https://wandb.ai/jingying/llama2-med/runs/t3zap65o">https://wandb.ai/jingying/llama2-med/runs/t3zap65o</a><br><img src="/images/lora/lora_med_res1.png" width="800px" /><br><img src="/images/lora/lora_med_res2.png" width="800px" /><br><img src="/images/lora/lora_med_loss.png" style="border:1px solid" width="400px" /></p><h3 id="推理"><a href="#推理" class="headerlink" title="推理"></a>推理</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python infer.py \</span><br><span class="line">--base_model <span class="string">&#x27;/home/work/virtual-venv/lora-env/data/llama2-chat-hf&#x27;</span> \</span><br><span class="line">--lora_weights <span class="string">&#x27;/home/work/virtual-venv/lora-env/src/llama2-finetuning-med/llama2-qlora-med-zh&#x27;</span> \</span><br><span class="line">--use_lora <span class="literal">True</span> --instruct_dir <span class="string">&#x27;./data/infer.json&#x27;</span> \</span><br><span class="line">--prompt_template <span class="string">&#x27;med_template&#x27;</span></span><br></pre></td></tr></table></figure><img src="/images/lora/lora_med_infer.png" width="800px" /><p>华佗Lora模型推理效果：<br><img src="/images/lora/lora_med_infer1.png" width="800px" /></p><p>可以看到基于该数据集进行微调的效果与华佗效果存在一定差距，需要优化：</p><ul><li>batch_size ，用的16G T4微调，batch_size最大设置16，华佗batch_size为128</li><li>数据集优化，该训练使用的数据集指令和输出较为简单，需要更换数据集。</li></ul><hr>]]>
-    </content>
-    <id>https://deeplearner.top/2023/09/04/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-LLama2-Lora%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/</id>
-    <link href="https://deeplearner.top/2023/09/04/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-LLama2-Lora%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/"/>
-    <published>2023-09-04T08:23:59.000Z</published>
-    <summary>
-      <![CDATA[<p>LLama2：<a href="https://huggingface.co/meta-llama/Llama-2-7b-chat-hf">meta-llama&#x2F;Llama-2-7b-chat-hf</a><br>基础模型：<a href="https://huggingface.co/conghao/llama2-7b-chat-hf">conghao&#x2F;llama2-7b-chat-hf</a><br>Lora模型：<a href="https://huggingface.co/conghao/llama2-qlora-med-zh">conghao&#x2F;llama2-qlora-med-zh</a></p>
-<p>基础模型为基于<strong>Llama-2-7b-chat-hf</strong>将LLama的原始权重文件转换为Transformers库对应的模型文件格式。可基于此模型进行微调。</p>
-<p>Lora模型<strong>llama2-qlora-med-zh</strong>为基于医学数据集训练好的模型权重，损失函数收敛至0.2924。</p>]]>
-    </summary>
-    <title>AIGC-大模型微调-LLama2-Lora医学大模型微调</title>
-    <updated>2023-10-30T13:38:30.000Z</updated>
-  </entry>
-  <entry>
-    <author>
-      <name>Yuan Conghao</name>
-    </author>
-    <category term="AIGC" scheme="https://deeplearner.top/categories/AIGC/"/>
-    <category term="AIGC" scheme="https://deeplearner.top/tags/AIGC/"/>
-    <category term="LLM" scheme="https://deeplearner.top/tags/LLM/"/>
-    <category term="PEFT" scheme="https://deeplearner.top/tags/PEFT/"/>
-    <category term="大语言模型" scheme="https://deeplearner.top/tags/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
-    <category term="大模型微调" scheme="https://deeplearner.top/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/"/>
-    <category term="FineTuning" scheme="https://deeplearner.top/tags/FineTuning/"/>
-    <category term="LoRA" scheme="https://deeplearner.top/tags/LoRA/"/>
-    <category term="QLoRA" scheme="https://deeplearner.top/tags/QLoRA/"/>
-    <content>
-      <![CDATA[<p>QLoRA, 它是一种”高效的微调方法”, 以LLama 65B参数模型为例，常规16 bit微调需要超过780GB的GPU内存，而QLoRA可以在保持完整的16 bit微调任务性能的情况下, 将内存使用降低到48GB，即可完成微调。</p><span id="more"></span><h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><ul><li>Hardware<ul><li>CPU: Arch x86_64 Intel(R) Xeon(R) Platinum 8163 CPU @ 2.50GHz 8Core</li><li>Mem: 32G</li><li>GPU: GPU 0: Tesla T4 15109 MB</li></ul></li><li>OS<ul><li>CentOS7.9.2009</li><li>cuda 11.4</li></ul></li><li>Software<ul><li>Python3.10 &#x2F; pip 22.3.1</li></ul></li><li>Model<ul><li>[accelerate][1]</li><li>[peft][2]</li><li>[alpaca-lora][3]</li><li>[transformers][4]</li><li>[qlora][5]</li></ul></li><li>Datasets<ul><li>[alpaca_data_zh_51k.json][6]</li></ul></li></ul><h3 id="模型格式转换"><a href="#模型格式转换" class="headerlink" title="模型格式转换"></a>模型格式转换</h3><p>将LLaMA原始权重文件转换为Transformers库对应的模型文件格式。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">python src/transformers/models/llama/convert_llama_weights_to_hf.py \</span><br><span class="line">--input_dir /home/work/virtual-venv/lora-env/data/Llama2 \</span><br><span class="line">--model_size 7B \</span><br><span class="line">--output_dir /home/work/virtual-venv/lora-env/data/hf-llama2-model/</span><br></pre></td></tr></table></figure><img src="/images/qlora/convert_hf.png" width="800px" /><h3 id="模型微调"><a href="#模型微调" class="headerlink" title="模型微调"></a>模型微调</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">python qlora.py \</span><br><span class="line">--dataset &quot;/home/work/virtual-venv/lora-env/data/alpaca_data_cleaned_archive.json&quot; \</span><br><span class="line">--model_name_or_path &quot;/home/work/virtual-venv/lora-env/data/hf-llama2-model/&quot; \</span><br><span class="line">--output_dir &quot;/home/work/virtual-venv/lora-env/data/llama-7b-qlora&quot; \</span><br><span class="line">--per_device_train_batch_size 1 \</span><br><span class="line">--max_steps 1000 \</span><br><span class="line">--save_total_limit 2</span><br></pre></td></tr></table></figure><img src="/images/qlora/qlora1.png" width="800px" /><img src="/images/qlora/qlora2.png" width="800px" /><img src="/images/qlora/qlora3.png" width="800px" /><p>GPU使用<br><img src="/images/qlora/qlora4.png" width="800px" /></p><p>微调完，生成模型目录<br><img src="/images/qlora/qlora5.png" width="400px" /></p><h3 id="模型权重合并"><a href="#模型权重合并" class="headerlink" title="模型权重合并"></a>模型权重合并</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">BASE_MODEL=/home/work/virtual-venv/lora-env/data/hf-llama2-model \</span><br><span class="line">LORA_MODEL=/home/work/virtual-venv/lora-env/data/llama-7b-qlora/checkpoint-1000/adapter_model \</span><br><span class="line">HF_CHECKPOINT=/home/work/virtual-venv/lora-env/data/llama-7b-merge \</span><br><span class="line">python export_hf_checkpoint.py</span><br></pre></td></tr></table></figure><img src="/images/qlora/merge1.png" width="800px" /><p>GPU使用<br><img src="/images/qlora/merge2.png" width="800px" /></p><p>模型合并完成目录</p><img src="/images/qlora/merge3.png" width="400px" /><h3 id="模型推理"><a href="#模型推理" class="headerlink" title="模型推理"></a>模型推理</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python inference.py</span><br></pre></td></tr></table></figure><img src="/images/qlora/inference1.png" width="800px" /><hr>]]>
-    </content>
-    <id>https://deeplearner.top/2023/08/25/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-LLama2-QLoRA%E5%BE%AE%E8%B0%83/</id>
-    <link href="https://deeplearner.top/2023/08/25/AIGC-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-LLama2-QLoRA%E5%BE%AE%E8%B0%83/"/>
-    <published>2023-08-25T08:23:59.000Z</published>
-    <summary>
-      <![CDATA[<p>QLoRA, 它是一种”高效的微调方法”, 以LLama 65B参数模型为例，常规16 bit微调需要超过780GB的GPU内存，而QLoRA可以在保持完整的16 bit微调任务性能的情况下, 将内存使用降低到48GB，即可完成微调。</p>]]>
-    </summary>
-    <title>AIGC-大模型微调-LLama2-QLoRA微调</title>
     <updated>2023-10-30T13:38:30.000Z</updated>
   </entry>
 </feed>
