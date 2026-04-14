@@ -1,0 +1,57 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="80" x2="1460" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#081321"/>
+      <stop offset="0.52" stop-color="#0F2138"/>
+      <stop offset="1" stop-color="#1A324F"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="930" y1="160" x2="1410" y2="650" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5CF4D5"/>
+      <stop offset="1" stop-color="#4C72FF"/>
+    </linearGradient>
+    <filter id="glow" x="820" y="110" width="760" height="640" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="60"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity="0.08">
+    <path d="M0 90H1600M0 180H1600M0 270H1600M0 360H1600M0 450H1600M0 540H1600M0 630H1600M0 720H1600M0 810H1600" stroke="white"/>
+    <path d="M120 0V900M280 0V900M440 0V900M600 0V900M760 0V900M920 0V900M1080 0V900M1240 0V900M1400 0V900" stroke="white"/>
+  </g>
+  <g filter="url(#glow)" opacity="0.25">
+    <circle cx="1220" cy="340" r="190" fill="#59F1D5"/>
+    <circle cx="1290" cy="450" r="140" fill="#516DFF"/>
+  </g>
+  <rect x="150" y="120" width="126" height="42" rx="21" fill="#12283E"/>
+  <text x="180" y="148" fill="#95FFD9" font-size="22" font-family="Arial, Helvetica, sans-serif" font-weight="700">SERIES 02</text>
+  <text x="150" y="248" fill="white" font-size="78" font-family="Arial, Helvetica, sans-serif" font-weight="700">LANGGRAPH</text>
+  <text x="150" y="336" fill="white" font-size="78" font-family="Arial, Helvetica, sans-serif" font-weight="700">WORKFLOWS</text>
+  <text x="154" y="408" fill="#9BB8C8" font-size="28" font-family="Arial, Helvetica, sans-serif">State graphs, branching, loops, subgraphs and multi-agent orchestration.</text>
+  <g>
+    <rect x="150" y="520" width="132" height="54" rx="27" fill="#15314C"/>
+    <text x="183" y="555" fill="#E2F9FF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">STATE</text>
+    <rect x="298" y="520" width="126" height="54" rx="27" fill="#15314C"/>
+    <text x="330" y="555" fill="#E2F9FF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">EDGES</text>
+    <rect x="440" y="520" width="156" height="54" rx="27" fill="#15314C"/>
+    <text x="474" y="555" fill="#E2F9FF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">SUBGRAPHS</text>
+    <rect x="612" y="520" width="182" height="54" rx="27" fill="#15314C"/>
+    <text x="648" y="555" fill="#E2F9FF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">MULTI-AGENT</text>
+  </g>
+  <g>
+    <rect x="930" y="170" width="480" height="500" rx="34" fill="#0C1F31" stroke="rgba(255,255,255,0.14)"/>
+    <rect x="1004" y="226" width="134" height="80" rx="24" fill="#102F49" stroke="#5CF4D5"/>
+    <text x="1045" y="275" fill="#E7FBFF" font-size="26" font-family="Arial, Helvetica, sans-serif" font-weight="700">START</text>
+    <rect x="1200" y="226" width="134" height="80" rx="24" fill="#102F49" stroke="#4C72FF"/>
+    <text x="1241" y="275" fill="#E7FBFF" font-size="26" font-family="Arial, Helvetica, sans-serif" font-weight="700">PLAN</text>
+    <rect x="1102" y="384" width="134" height="80" rx="24" fill="#102F49" stroke="#5CF4D5"/>
+    <text x="1138" y="433" fill="#E7FBFF" font-size="26" font-family="Arial, Helvetica, sans-serif" font-weight="700">TOOLS</text>
+    <rect x="1200" y="542" width="134" height="80" rx="24" fill="#102F49" stroke="#4C72FF"/>
+    <text x="1237" y="591" fill="#E7FBFF" font-size="26" font-family="Arial, Helvetica, sans-serif" font-weight="700">END</text>
+    <path d="M1138 266H1200" stroke="url(#pulse)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1267 306V384" stroke="url(#pulse)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1236 424H1336C1360 424 1378 444 1378 468V545" stroke="url(#pulse)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1102 424H1018C986 424 962 398 962 366V264C962 238 980 226 1004 226" stroke="url(#pulse)" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="1267" cy="468" r="12" fill="#5CF4D5"/>
+  </g>
+  <text x="150" y="800" fill="#6F90A3" font-size="24" font-family="Arial, Helvetica, sans-serif">DeepLearner · LangChain Development Series</text>
+</svg>

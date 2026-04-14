@@ -1,0 +1,387 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent | DeepLearner</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</h1><div class="post-meta">created:2026-04-14</div><div class="post-meta">updated:2026-04-14<span> | </span><span class="category"><a href="/categories/AIGC/">AIGC</a></span></div><a class="disqus-comment-count" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/#waline"><span class="waline-comment-count" id="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88-LangGraph-%E4%BC%9A%E5%87%BA%E7%8E%B0"><span class="toc-number">1.</span> <span class="toc-text">1. 为什么 LangGraph 会出现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-LangGraph-%E7%9A%84%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-number">2.</span> <span class="toc-text">2. LangGraph 的核心思想</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-State%EF%BC%9A%E7%B3%BB%E7%BB%9F%E5%BD%93%E5%89%8D%E7%9A%84%E5%85%B1%E4%BA%AB%E5%BF%AB%E7%85%A7"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 State：系统当前的共享快照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-Node%EF%BC%9A%E5%81%9A%E4%BA%8B%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 Node：做事的地方</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-Edge%EF%BC%9A%E5%86%B3%E5%AE%9A%E6%8E%A5%E4%B8%8B%E6%9D%A5%E5%8E%BB%E5%93%AA"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 Edge：决定接下来去哪</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E4%BB%8E%E9%93%BE%E5%88%B0%E5%9B%BE%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%9B%BE%E6%9B%B4%E9%80%82%E5%90%88-Agent"><span class="toc-number">3.</span> <span class="toc-text">3. 从链到图：为什么图更适合 Agent</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-%E9%93%BE%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 链适合什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-%E5%9B%BE%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 图适合什么</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F-LangGraph-%E4%BE%8B%E5%AD%90"><span class="toc-number">4.</span> <span class="toc-text">4. 一个最小 LangGraph 例子</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-LangGraph-%E9%87%8C%E7%9A%84%E7%8A%B6%E6%80%81%E6%9C%BA%E6%80%9D%E7%BB%B4"><span class="toc-number">5.</span> <span class="toc-text">5. LangGraph 里的状态机思维</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-%E6%9D%A1%E4%BB%B6%E8%BE%B9%EF%BC%9A%E5%9B%BE%E7%9C%9F%E6%AD%A3%E6%B4%BB%E8%B5%B7%E6%9D%A5%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">6.</span> <span class="toc-text">6. 条件边：图真正活起来的地方</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-%E5%9B%9E%E7%8E%AF%EF%BC%9AAgent-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A9%E7%84%B6%E9%80%82%E5%90%88%E5%9B%BE"><span class="toc-number">7.</span> <span class="toc-text">7. 回环：Agent 为什么天然适合图</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#8-%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%92%8C-Agent-%E7%9A%84%E8%BE%B9%E7%95%8C%EF%BC%8C%E5%88%B0%E5%BA%95%E6%80%8E%E4%B9%88%E5%88%86"><span class="toc-number">8.</span> <span class="toc-text">8. 工作流和 Agent 的边界，到底怎么分</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#8-1-Workflow"><span class="toc-number">8.1.</span> <span class="toc-text">8.1 Workflow</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-2-Agent"><span class="toc-number">8.2.</span> <span class="toc-text">8.2 Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-3-%E4%B8%BA%E4%BB%80%E4%B9%88-LangGraph-%E5%90%8C%E6%97%B6%E9%80%82%E5%90%88%E4%B8%A4%E8%80%85"><span class="toc-number">8.3.</span> <span class="toc-text">8.3 为什么 LangGraph 同时适合两者</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#9-%E5%A4%9A-Agent-%E4%B8%8D%E6%98%AF%E5%A4%9A%E5%87%A0%E4%B8%AA-Prompt%EF%BC%8C%E8%80%8C%E6%98%AF%E5%A4%9A%E5%87%A0%E4%B8%AA%E7%8A%B6%E6%80%81%E8%BE%B9%E7%95%8C"><span class="toc-number">9.</span> <span class="toc-text">9. 多 Agent 不是多几个 Prompt，而是多几个状态边界</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#10-%E5%AD%90%E5%9B%BE%EF%BC%9A%E6%8A%8A%E5%A4%8D%E6%9D%82%E7%B3%BB%E7%BB%9F%E6%8B%86%E6%88%90%E5%8F%AF%E7%BB%B4%E6%8A%A4%E7%9A%84%E5%9D%97"><span class="toc-number">10.</span> <span class="toc-text">10. 子图：把复杂系统拆成可维护的块</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#11-%E4%B8%80%E4%B8%AA%E5%A4%9A-Agent-%E7%9A%84-LangGraph-%E5%BB%BA%E6%A8%A1%E6%80%9D%E8%B7%AF"><span class="toc-number">11.</span> <span class="toc-text">11. 一个多 Agent 的 LangGraph 建模思路</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#11-1-%E7%8A%B6%E6%80%81%E5%AE%9A%E4%B9%89"><span class="toc-number">11.1.</span> <span class="toc-text">11.1 状态定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-2-%E5%90%84-Agent-%E8%8A%82%E7%82%B9"><span class="toc-number">11.2.</span> <span class="toc-text">11.2 各 Agent 节点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-3-%E5%9B%BE%E7%BB%93%E6%9E%84"><span class="toc-number">11.3.</span> <span class="toc-text">11.3 图结构</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#12-Human-in-the-loop-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%92%8C-LangGraph-%E5%BE%88%E6%90%AD"><span class="toc-number">12.</span> <span class="toc-text">12. Human-in-the-loop 为什么和 LangGraph 很搭</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#13-%E6%88%91%E5%AF%B9-LangGraph-%E7%9A%84%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="toc-number">13.</span> <span class="toc-text">13. 我对 LangGraph 的实践建议</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#13-1-%E5%85%88%E6%8A%8A-State-%E8%AE%BE%E8%AE%A1%E6%B8%85%E6%A5%9A"><span class="toc-number">13.1.</span> <span class="toc-text">13.1 先把 State 设计清楚</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-2-%E5%86%8D%E5%86%99%E8%8A%82%E7%82%B9%E8%81%8C%E8%B4%A3"><span class="toc-number">13.2.</span> <span class="toc-text">13.2 再写节点职责</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-3-%E8%BE%B9%E7%9A%84%E8%AF%AD%E4%B9%89%E8%A6%81%E7%AE%80%E5%8D%95"><span class="toc-number">13.3.</span> <span class="toc-text">13.3 边的语义要简单</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-4-%E5%85%88%E5%81%9A%E5%8D%95-Agent-%E5%9B%BE%EF%BC%8C%E5%86%8D%E5%81%9A%E5%A4%9A-Agent-%E5%9B%BE"><span class="toc-number">13.4.</span> <span class="toc-text">13.4 先做单 Agent 图，再做多 Agent 图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-5-%E6%8A%8A%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7%E5%BD%93%E5%BF%85%E9%9C%80%E5%93%81"><span class="toc-number">13.5.</span> <span class="toc-text">13.5 把可观测性当必需品</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#14-LangGraph-%E5%92%8C%E7%AC%AC%E4%B8%89%E7%AF%87-Agent-%E5%AE%9E%E6%88%98%E6%98%AF%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB"><span class="toc-number">14.</span> <span class="toc-text">14. LangGraph 和第三篇 Agent 实战是什么关系</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#15-%E5%B0%8F%E7%BB%93"><span class="toc-number">15.</span> <span class="toc-text">15. 小结</span></a></li></ol></div></div><div class="post-content"><p>如果说上篇是在讲 LangChain、LangGraph 的区别与选型，那么这一篇就进入真正决定系统上限的部分了，也就是图式编排本身。</p>
+<p>很多团队第一次做 Agent，往往不是被模型能力卡住，而是被流程失控卡住。代码里一开始只是几步串联，后来要加分支、加工具、加重试、加人工确认、加上下文状态，再往后还想拆成多个角色协作。这时候如果还是继续在一个 <code>while</code> 循环里硬堆逻辑，系统很快就会变得既难调试，也难维护。</p>
+<p>LangGraph 的价值，正是在这里体现出来。它不是 LangChain 的替代品，而是更底层、更明确的图式编排能力，让你把 Agent 系统看成一张图，而不是一坨链式代码。</p>
+<p>这一篇就单独把 LangGraph 讲透，重点放在三个关键词：</p>
+<ol>
+<li>工作流</li>
+<li>状态机</li>
+<li>多 Agent</li>
+</ol>
+<span id="more"></span>
+
+<h1 id="1-为什么-LangGraph-会出现"><a href="#1-为什么-LangGraph-会出现" class="headerlink" title="1. 为什么 LangGraph 会出现"></a>1. 为什么 LangGraph 会出现</h1><p>官方对 LangGraph 的定位很明确，它是一个偏底层的 agent orchestration 框架，重点不是再包装一层模型调用，而是处理复杂 agent 系统真正关心的几个问题：</p>
+<ol>
+<li>长流程编排</li>
+<li>显式状态管理</li>
+<li>可循环执行</li>
+<li>条件分支</li>
+<li>持久化与可恢复</li>
+<li>human-in-the-loop</li>
+</ol>
+<p>换句话说，LangChain 更像是“组件层”和“链路层”，而 LangGraph 更像是“控制流层”和“运行时层”。</p>
+<p>如果把一个 LLM 应用类比成程序：</p>
+<ol>
+<li>Prompt、Model、Retriever、Tool 像函数和模块</li>
+<li>LangChain 像模块组合方式</li>
+<li>LangGraph 像程序的流程控制与状态运行模型</li>
+</ol>
+<p>所以当系统开始从“问一次答一次”走向“多步执行、多轮决策、长期运行”时，LangGraph 的意义就出来了。</p>
+<h1 id="2-LangGraph-的核心思想"><a href="#2-LangGraph-的核心思想" class="headerlink" title="2. LangGraph 的核心思想"></a>2. LangGraph 的核心思想</h1><p>LangGraph 最值得掌握的，不是某个 API 名字，而是它背后的建模方式。</p>
+<p>官方 Graph API 文档里，核心抽象其实非常朴素：</p>
+<ol>
+<li><code>State</code></li>
+<li><code>Node</code></li>
+<li><code>Edge</code></li>
+</ol>
+<p>这三个词看起来简单，但真正把它们想透了，整个框架就不难了。</p>
+<h2 id="2-1-State：系统当前的共享快照"><a href="#2-1-State：系统当前的共享快照" class="headerlink" title="2.1 State：系统当前的共享快照"></a>2.1 State：系统当前的共享快照</h2><p><code>State</code> 是系统当前状态的一个显式描述。</p>
+<p>它可以理解成：</p>
+<ol>
+<li>当前已经收到了什么输入</li>
+<li>已经做过哪些步骤</li>
+<li>中间结果是什么</li>
+<li>下一步路由依据是什么</li>
+<li>哪些信息需要在多个节点之间共享</li>
+</ol>
+<p>在很多普通 LangChain 链里，状态是“隐式”的，变量顺着代码传来传去；但在 LangGraph 里，状态被提升为第一等公民。</p>
+<p>这非常重要，因为复杂 Agent 系统真正难的往往不是“某一步怎么做”，而是“系统此刻到底处于什么状态”。</p>
+<h2 id="2-2-Node：做事的地方"><a href="#2-2-Node：做事的地方" class="headerlink" title="2.2 Node：做事的地方"></a>2.2 Node：做事的地方</h2><p>Node 就是图里的执行节点。它本质上只是一个函数：</p>
+<ol>
+<li>接收当前 state</li>
+<li>做一段逻辑</li>
+<li>返回对 state 的更新</li>
+</ol>
+<p>Node 可以非常轻，也可以非常重：</p>
+<ol>
+<li>可以只是一次分类</li>
+<li>可以是一次模型调用</li>
+<li>可以是一次工具执行</li>
+<li>也可以是一个完整子图</li>
+</ol>
+<p>所以 Node 并不等于“LLM 节点”，它只是一个状态变换单元。</p>
+<h2 id="2-3-Edge：决定接下来去哪"><a href="#2-3-Edge：决定接下来去哪" class="headerlink" title="2.3 Edge：决定接下来去哪"></a>2.3 Edge：决定接下来去哪</h2><p>Edge 负责路由控制，也就是：</p>
+<ol>
+<li>下一个节点是谁</li>
+<li>是否进入分支</li>
+<li>是否要回环</li>
+<li>是否应该结束</li>
+</ol>
+<p>普通 <code>add_edge</code> 表示固定流向，<code>add_conditional_edges</code> 则表示运行时根据状态决定流向。</p>
+<p>这一步就是 LangGraph 和“简单链式拼接”拉开差距的关键。</p>
+<h1 id="3-从链到图：为什么图更适合-Agent"><a href="#3-从链到图：为什么图更适合-Agent" class="headerlink" title="3. 从链到图：为什么图更适合 Agent"></a>3. 从链到图：为什么图更适合 Agent</h1><p>很多人会问，链式调用明明也能做很多事情，为什么一定要上图？</p>
+<p>原因是链适合“线性流程”，图适合“动态流程”。</p>
+<h2 id="3-1-链适合什么"><a href="#3-1-链适合什么" class="headerlink" title="3.1 链适合什么"></a>3.1 链适合什么</h2><p>链式结构适合：</p>
+<ol>
+<li>顺序稳定</li>
+<li>步骤固定</li>
+<li>失败路径简单</li>
+<li>状态不复杂</li>
+</ol>
+<p>比如：</p>
+<ol>
+<li>先总结，再翻译</li>
+<li>先检索，再回答</li>
+<li>先分类，再路由</li>
+</ol>
+<h2 id="3-2-图适合什么"><a href="#3-2-图适合什么" class="headerlink" title="3.2 图适合什么"></a>3.2 图适合什么</h2><p>图结构更适合：</p>
+<ol>
+<li>存在分支</li>
+<li>存在循环</li>
+<li>有多条可能路径</li>
+<li>有中间状态沉淀</li>
+<li>可能中断、恢复、审批</li>
+</ol>
+<p>这其实就是大多数真正 Agent 系统的样子。</p>
+<p>一旦你需要让系统具备“根据执行结果决定下一步”的能力，图的表达力就会远强于简单链。</p>
+<h1 id="4-一个最小-LangGraph-例子"><a href="#4-一个最小-LangGraph-例子" class="headerlink" title="4. 一个最小 LangGraph 例子"></a>4. 一个最小 LangGraph 例子</h1><p>LangGraph 官方 Graph API 的经典写法，大致如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing_extensions <span class="keyword">import</span> TypedDict</span><br><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> START, END, StateGraph</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">State</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    topic: <span class="built_in">str</span></span><br><span class="line">    draft: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write_outline</span>(<span class="params">state: State</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;draft&quot;</span>: <span class="string">f&quot;这是关于 <span class="subst">&#123;state[<span class="string">&#x27;topic&#x27;</span>]&#125;</span> 的提纲&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">finalize</span>(<span class="params">state: State</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;draft&quot;</span>: state[<span class="string">&quot;draft&quot;</span>] + <span class="string">&quot;\n\n这是最终版本。&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">builder = StateGraph(State)</span><br><span class="line">builder.add_node(<span class="string">&quot;write_outline&quot;</span>, write_outline)</span><br><span class="line">builder.add_node(<span class="string">&quot;finalize&quot;</span>, finalize)</span><br><span class="line"></span><br><span class="line">builder.add_edge(START, <span class="string">&quot;write_outline&quot;</span>)</span><br><span class="line">builder.add_edge(<span class="string">&quot;write_outline&quot;</span>, <span class="string">&quot;finalize&quot;</span>)</span><br><span class="line">builder.add_edge(<span class="string">&quot;finalize&quot;</span>, END)</span><br><span class="line"></span><br><span class="line">graph = builder.<span class="built_in">compile</span>()</span><br><span class="line"></span><br><span class="line">result = graph.invoke(&#123;<span class="string">&quot;topic&quot;</span>: <span class="string">&quot;LangGraph&quot;</span>&#125;)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+<p>这个例子虽然简单，但已经能看出 LangGraph 的最核心骨架：</p>
+<ol>
+<li>定义状态</li>
+<li>定义节点</li>
+<li>定义边</li>
+<li>编译图</li>
+<li>执行图</li>
+</ol>
+<p>如果只把它看成“又一种链式写法”，会低估它。真正的重点在于，从这里开始，流程控制就被显式建模了。</p>
+<h1 id="5-LangGraph-里的状态机思维"><a href="#5-LangGraph-里的状态机思维" class="headerlink" title="5. LangGraph 里的状态机思维"></a>5. LangGraph 里的状态机思维</h1><p>很多人提到 LangGraph，只记住了“图”，但其实更值得掌握的是“状态机”思维。</p>
+<p>所谓状态机思维，并不是非得写得像教科书里的 FSM，而是要明确：</p>
+<ol>
+<li>系统当前处于哪种状态</li>
+<li>哪个节点会改变状态</li>
+<li>哪种状态会触发哪条边</li>
+<li>哪些状态意味着结束</li>
+</ol>
+<p>举个很典型的例子，一个研究类 Agent 可以有这些状态：</p>
+<ol>
+<li><code>input_received</code></li>
+<li><code>planning</code></li>
+<li><code>searching</code></li>
+<li><code>analyzing</code></li>
+<li><code>reviewing</code></li>
+<li><code>completed</code></li>
+<li><code>failed</code></li>
+</ol>
+<p>如果没有状态机视角，代码就容易变成：</p>
+<ol>
+<li>到处 <code>if else</code></li>
+<li>中间变量散落</li>
+<li>出错后不知道怎么恢复</li>
+<li>人工接入点很难插</li>
+</ol>
+<p>而有了状态机视角，你就会把系统想成：</p>
+<ol>
+<li>状态更新发生在哪里</li>
+<li>状态跳转由什么触发</li>
+<li>哪一步允许重试</li>
+<li>哪一步必须人工确认</li>
+</ol>
+<p>这就是 LangGraph 真正的工程味道。</p>
+<h1 id="6-条件边：图真正活起来的地方"><a href="#6-条件边：图真正活起来的地方" class="headerlink" title="6. 条件边：图真正活起来的地方"></a>6. 条件边：图真正活起来的地方</h1><p>固定边只适合线性流程，条件边才是图的灵魂。</p>
+<p>官方文档里的写法大致是通过 <code>add_conditional_edges</code>，让某个函数根据当前状态返回下一步目标节点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Literal</span></span><br><span class="line"><span class="keyword">from</span> typing_extensions <span class="keyword">import</span> TypedDict</span><br><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> START, END, StateGraph</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">State</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    question: <span class="built_in">str</span></span><br><span class="line">    route: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">classify</span>(<span class="params">state: State</span>):</span><br><span class="line">    text = state[<span class="string">&quot;question&quot;</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;代码&quot;</span> <span class="keyword">in</span> text:</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;route&quot;</span>: <span class="string">&quot;coder&quot;</span>&#125;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;route&quot;</span>: <span class="string">&quot;researcher&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">coder</span>(<span class="params">state: State</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;question&quot;</span>: state[<span class="string">&quot;question&quot;</span>]&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">researcher</span>(<span class="params">state: State</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;question&quot;</span>: state[<span class="string">&quot;question&quot;</span>]&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">router</span>(<span class="params">state: State</span>) -&gt; <span class="type">Literal</span>[<span class="string">&quot;coder&quot;</span>, <span class="string">&quot;researcher&quot;</span>]:</span><br><span class="line">    <span class="keyword">return</span> state[<span class="string">&quot;route&quot;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">builder = StateGraph(State)</span><br><span class="line">builder.add_node(<span class="string">&quot;classify&quot;</span>, classify)</span><br><span class="line">builder.add_node(<span class="string">&quot;coder&quot;</span>, coder)</span><br><span class="line">builder.add_node(<span class="string">&quot;researcher&quot;</span>, researcher)</span><br><span class="line"></span><br><span class="line">builder.add_edge(START, <span class="string">&quot;classify&quot;</span>)</span><br><span class="line">builder.add_conditional_edges(<span class="string">&quot;classify&quot;</span>, router)</span><br><span class="line">builder.add_edge(<span class="string">&quot;coder&quot;</span>, END)</span><br><span class="line">builder.add_edge(<span class="string">&quot;researcher&quot;</span>, END)</span><br><span class="line"></span><br><span class="line">graph = builder.<span class="built_in">compile</span>()</span><br></pre></td></tr></table></figure>
+
+<p>这里最重要的不是“会分支”本身，而是：</p>
+<ol>
+<li>分支逻辑变成了图上的显式结构</li>
+<li>路由依据来自状态，而不是零散变量</li>
+<li>后续调试时能看到为什么走到这条路径</li>
+</ol>
+<p>对 Agent 来说，这一点非常重要，因为“为什么它做了这个决定”通常就是最关键的调试问题。</p>
+<h1 id="7-回环：Agent-为什么天然适合图"><a href="#7-回环：Agent-为什么天然适合图" class="headerlink" title="7. 回环：Agent 为什么天然适合图"></a>7. 回环：Agent 为什么天然适合图</h1><p>普通工作流很多是单向往前走，但 Agent 经常需要循环：</p>
+<ol>
+<li>先规划</li>
+<li>再调用工具</li>
+<li>再观察结果</li>
+<li>再决定是否继续</li>
+</ol>
+<p>这本质上就是一个 loop。</p>
+<p>在传统链式结构里，循环往往会被写成手工 while 循环；在 LangGraph 里，它可以自然建模为：</p>
+<ol>
+<li><code>agent</code> 节点思考</li>
+<li>条件边判断是否继续</li>
+<li><code>tools</code> 节点执行</li>
+<li>再回到 <code>agent</code></li>
+</ol>
+<p>这个模式正是很多 tool-calling agent 的基础骨架。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Literal</span></span><br><span class="line"><span class="keyword">from</span> typing_extensions <span class="keyword">import</span> TypedDict</span><br><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> START, END, StateGraph</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AgentState</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    messages: <span class="built_in">list</span>[<span class="built_in">str</span>]</span><br><span class="line">    need_tool: <span class="built_in">bool</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">call_model</span>(<span class="params">state: AgentState</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;messages&quot;</span>: state[<span class="string">&quot;messages&quot;</span>] + [<span class="string">&quot;模型决定需要继续调用工具&quot;</span>],</span><br><span class="line">        <span class="string">&quot;need_tool&quot;</span>: <span class="literal">True</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run_tool</span>(<span class="params">state: AgentState</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;messages&quot;</span>: state[<span class="string">&quot;messages&quot;</span>] + [<span class="string">&quot;工具执行完成&quot;</span>],</span><br><span class="line">        <span class="string">&quot;need_tool&quot;</span>: <span class="literal">False</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">should_continue</span>(<span class="params">state: AgentState</span>) -&gt; <span class="type">Literal</span>[<span class="string">&quot;tools&quot;</span>, <span class="string">&quot;__end__&quot;</span>]:</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;tools&quot;</span> <span class="keyword">if</span> state[<span class="string">&quot;need_tool&quot;</span>] <span class="keyword">else</span> <span class="string">&quot;__end__&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">builder = StateGraph(AgentState)</span><br><span class="line">builder.add_node(<span class="string">&quot;agent&quot;</span>, call_model)</span><br><span class="line">builder.add_node(<span class="string">&quot;tools&quot;</span>, run_tool)</span><br><span class="line"></span><br><span class="line">builder.add_edge(START, <span class="string">&quot;agent&quot;</span>)</span><br><span class="line">builder.add_conditional_edges(<span class="string">&quot;agent&quot;</span>, should_continue)</span><br><span class="line">builder.add_edge(<span class="string">&quot;tools&quot;</span>, <span class="string">&quot;agent&quot;</span>)</span><br><span class="line"></span><br><span class="line">graph = builder.<span class="built_in">compile</span>()</span><br></pre></td></tr></table></figure>
+
+<p>这种“思考 -&gt; 决策 -&gt; 行动 -&gt; 观察 -&gt; 再思考”的闭环，就是为什么图比链更适合 Agent。</p>
+<h1 id="8-工作流和-Agent-的边界，到底怎么分"><a href="#8-工作流和-Agent-的边界，到底怎么分" class="headerlink" title="8. 工作流和 Agent 的边界，到底怎么分"></a>8. 工作流和 Agent 的边界，到底怎么分</h1><p>这是做系统时非常容易混的地方。</p>
+<h2 id="8-1-Workflow"><a href="#8-1-Workflow" class="headerlink" title="8.1 Workflow"></a>8.1 Workflow</h2><p>工作流的特点是：</p>
+<ol>
+<li>大部分路径可预定义</li>
+<li>开发者知道主要步骤</li>
+<li>模型更多承担局部能力</li>
+</ol>
+<p>例如：</p>
+<ol>
+<li>分类</li>
+<li>路由</li>
+<li>检索</li>
+<li>生成</li>
+<li>审核</li>
+</ol>
+<p>这种时候，LangGraph 虽然也能用，但系统本质还是 workflow。</p>
+<h2 id="8-2-Agent"><a href="#8-2-Agent" class="headerlink" title="8.2 Agent"></a>8.2 Agent</h2><p>Agent 的特点是：</p>
+<ol>
+<li>下一步动作不完全固定</li>
+<li>模型要参与行动决策</li>
+<li>工具调用和执行路径会动态变化</li>
+</ol>
+<h2 id="8-3-为什么-LangGraph-同时适合两者"><a href="#8-3-为什么-LangGraph-同时适合两者" class="headerlink" title="8.3 为什么 LangGraph 同时适合两者"></a>8.3 为什么 LangGraph 同时适合两者</h2><p>因为 LangGraph 并不强行要求你做“完全自主 Agent”，它只是提供图式编排能力。</p>
+<p>所以它既能表达：</p>
+<ol>
+<li>非常确定的 workflow</li>
+<li>带循环的 tool agent</li>
+<li>多角色系统</li>
+</ol>
+<p>这也是它特别适合作为“中间层”的原因。你可以先用它搭 workflow，后面再逐步长成 agent 系统，而不是换一套架构。</p>
+<h1 id="9-多-Agent-不是多几个-Prompt，而是多几个状态边界"><a href="#9-多-Agent-不是多几个-Prompt，而是多几个状态边界" class="headerlink" title="9. 多 Agent 不是多几个 Prompt，而是多几个状态边界"></a>9. 多 Agent 不是多几个 Prompt，而是多几个状态边界</h1><p>很多人说自己在做多 Agent，实际只是写了几个不同 system prompt，然后让它们轮流说话。</p>
+<p>真正工程意义上的多 Agent，更重要的是边界和协作机制。</p>
+<p>我更倾向于把多 Agent 理解成：</p>
+<ol>
+<li>不同节点拥有不同职责</li>
+<li>不同节点消费不同上下文</li>
+<li>不同节点产出不同类型结果</li>
+<li>节点之间通过状态与边协作</li>
+</ol>
+<p>LangGraph 在这里的优势很明显，因为它允许你把每个 Agent 当成一个节点，或者进一步当成一个子图。</p>
+<p>一个经典拆法是：</p>
+<ol>
+<li>Planner</li>
+<li>Researcher</li>
+<li>Writer</li>
+<li>Reviewer</li>
+</ol>
+<p>它们并不一定都需要“自治”，但都应该有自己的职责和输入输出边界。</p>
+<h1 id="10-子图：把复杂系统拆成可维护的块"><a href="#10-子图：把复杂系统拆成可维护的块" class="headerlink" title="10. 子图：把复杂系统拆成可维护的块"></a>10. 子图：把复杂系统拆成可维护的块</h1><p>官方文档里也明确提到可以把 subgraph 当成 node 加进父图里。这一点在多 Agent 系统中特别有用。</p>
+<p>为什么？</p>
+<p>因为大系统最怕的是所有逻辑摊平成一个巨图。那样虽然理论上也能跑，但维护体验会非常差。</p>
+<p>更合理的方式是分层：</p>
+<ol>
+<li>顶层图负责任务编排</li>
+<li>子图负责某一类复杂任务</li>
+<li>子图内部再拆局部节点</li>
+</ol>
+<p>例如一个“研究报告系统”可以这样分：</p>
+<ol>
+<li>顶层图<br>负责接收需求、选择子流程、汇总结果</li>
+<li>检索子图<br>负责搜索、去重、摘要</li>
+<li>写作子图<br>负责组织提纲、写初稿、润色</li>
+<li>审核子图<br>负责事实检查、格式检查、风险判断</li>
+</ol>
+<p>这种设计方式的收益非常现实：</p>
+<ol>
+<li>可读性更好</li>
+<li>调试范围更小</li>
+<li>不同团队可以并行维护</li>
+<li>将来更容易升级成真正多 Agent 系统</li>
+</ol>
+<h1 id="11-一个多-Agent-的-LangGraph-建模思路"><a href="#11-一个多-Agent-的-LangGraph-建模思路" class="headerlink" title="11. 一个多 Agent 的 LangGraph 建模思路"></a>11. 一个多 Agent 的 LangGraph 建模思路</h1><p>下面给一个概念性例子，不追求直接可上线，但很适合建立建模直觉。</p>
+<h2 id="11-1-状态定义"><a href="#11-1-状态定义" class="headerlink" title="11.1 状态定义"></a>11.1 状态定义</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing_extensions <span class="keyword">import</span> TypedDict</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ReportState</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    topic: <span class="built_in">str</span></span><br><span class="line">    plan: <span class="built_in">str</span></span><br><span class="line">    research_notes: <span class="built_in">str</span></span><br><span class="line">    draft: <span class="built_in">str</span></span><br><span class="line">    review: <span class="built_in">str</span></span><br><span class="line">    status: <span class="built_in">str</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="11-2-各-Agent-节点"><a href="#11-2-各-Agent-节点" class="headerlink" title="11.2 各 Agent 节点"></a>11.2 各 Agent 节点</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">planner</span>(<span class="params">state: ReportState</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;plan&quot;</span>: <span class="string">f&quot;围绕 <span class="subst">&#123;state[<span class="string">&#x27;topic&#x27;</span>]&#125;</span> 先调研，再写作，再审核&quot;</span>,</span><br><span class="line">        <span class="string">&quot;status&quot;</span>: <span class="string">&quot;planned&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">researcher</span>(<span class="params">state: ReportState</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;research_notes&quot;</span>: <span class="string">&quot;这里是检索后的调研结果&quot;</span>,</span><br><span class="line">        <span class="string">&quot;status&quot;</span>: <span class="string">&quot;researched&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">writer</span>(<span class="params">state: ReportState</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;draft&quot;</span>: <span class="string">&quot;这里是基于调研信息生成的初稿&quot;</span>,</span><br><span class="line">        <span class="string">&quot;status&quot;</span>: <span class="string">&quot;drafted&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reviewer</span>(<span class="params">state: ReportState</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;review&quot;</span>: <span class="string">&quot;结构清晰，但还需要补充案例&quot;</span>,</span><br><span class="line">        <span class="string">&quot;status&quot;</span>: <span class="string">&quot;reviewed&quot;</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="11-3-图结构"><a href="#11-3-图结构" class="headerlink" title="11.3 图结构"></a>11.3 图结构</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> START, END, StateGraph</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">builder = StateGraph(ReportState)</span><br><span class="line">builder.add_node(<span class="string">&quot;planner&quot;</span>, planner)</span><br><span class="line">builder.add_node(<span class="string">&quot;researcher&quot;</span>, researcher)</span><br><span class="line">builder.add_node(<span class="string">&quot;writer&quot;</span>, writer)</span><br><span class="line">builder.add_node(<span class="string">&quot;reviewer&quot;</span>, reviewer)</span><br><span class="line"></span><br><span class="line">builder.add_edge(START, <span class="string">&quot;planner&quot;</span>)</span><br><span class="line">builder.add_edge(<span class="string">&quot;planner&quot;</span>, <span class="string">&quot;researcher&quot;</span>)</span><br><span class="line">builder.add_edge(<span class="string">&quot;researcher&quot;</span>, <span class="string">&quot;writer&quot;</span>)</span><br><span class="line">builder.add_edge(<span class="string">&quot;writer&quot;</span>, <span class="string">&quot;reviewer&quot;</span>)</span><br><span class="line">builder.add_edge(<span class="string">&quot;reviewer&quot;</span>, END)</span><br><span class="line"></span><br><span class="line">graph = builder.<span class="built_in">compile</span>()</span><br></pre></td></tr></table></figure>
+
+<p>这个例子看起来是线性的，但它已经具有多 Agent 风格的基础：</p>
+<ol>
+<li>职责拆分</li>
+<li>状态共享</li>
+<li>顺序显式</li>
+</ol>
+<p>如果后面你要加：</p>
+<ol>
+<li>审核不过退回写作</li>
+<li>某些主题先检索再规划</li>
+<li>高风险内容进入人工审批</li>
+</ol>
+<p>LangGraph 都可以继续承接，而不需要推翻原有结构。</p>
+<h1 id="12-Human-in-the-loop-为什么和-LangGraph-很搭"><a href="#12-Human-in-the-loop-为什么和-LangGraph-很搭" class="headerlink" title="12. Human-in-the-loop 为什么和 LangGraph 很搭"></a>12. Human-in-the-loop 为什么和 LangGraph 很搭</h1><p>一旦系统开始执行真实任务，人工介入通常是必需的，而不是可选项。</p>
+<p>典型场景包括：</p>
+<ol>
+<li>发邮件前确认</li>
+<li>调用高风险接口前审批</li>
+<li>审核生成内容</li>
+<li>在关键分支上人工修正状态</li>
+</ol>
+<p>LangGraph 适合做这件事，是因为它本身就是显式状态和显式边的框架。</p>
+<p>也就是说，你完全可以把“人工审批”当成图上的一个节点或状态关口，而不是临时塞进某个回调函数。</p>
+<p>从工程角度看，这种设计非常值钱，因为：</p>
+<ol>
+<li>它可观察</li>
+<li>它可恢复</li>
+<li>它可审计</li>
+</ol>
+<p>对于真正上线的 agent 系统，这比“模型多聪明一点”更重要。</p>
+<h1 id="13-我对-LangGraph-的实践建议"><a href="#13-我对-LangGraph-的实践建议" class="headerlink" title="13. 我对 LangGraph 的实践建议"></a>13. 我对 LangGraph 的实践建议</h1><p>如果你准备把 LangGraph 用进真实项目，我会建议按下面的顺序来：</p>
+<h2 id="13-1-先把-State-设计清楚"><a href="#13-1-先把-State-设计清楚" class="headerlink" title="13.1 先把 State 设计清楚"></a>13.1 先把 State 设计清楚</h2><p>别急着写节点。先想清楚：</p>
+<ol>
+<li>哪些字段属于共享状态</li>
+<li>哪些字段只是临时变量</li>
+<li>哪些字段决定路由</li>
+<li>哪些字段决定结束条件</li>
+</ol>
+<h2 id="13-2-再写节点职责"><a href="#13-2-再写节点职责" class="headerlink" title="13.2 再写节点职责"></a>13.2 再写节点职责</h2><p>每个节点最好回答一个问题：</p>
+<blockquote>
+<p>这个节点的唯一责任是什么？</p>
+</blockquote>
+<p>如果一个节点同时负责：</p>
+<ol>
+<li>检索</li>
+<li>总结</li>
+<li>判断分支</li>
+<li>写数据库</li>
+</ol>
+<p>那它往往已经过重了。</p>
+<h2 id="13-3-边的语义要简单"><a href="#13-3-边的语义要简单" class="headerlink" title="13.3 边的语义要简单"></a>13.3 边的语义要简单</h2><p>固定边就做固定跳转，条件边只负责路由，不要把一大堆业务逻辑全塞进路由函数里。</p>
+<h2 id="13-4-先做单-Agent-图，再做多-Agent-图"><a href="#13-4-先做单-Agent-图，再做多-Agent-图" class="headerlink" title="13.4 先做单 Agent 图，再做多 Agent 图"></a>13.4 先做单 Agent 图，再做多 Agent 图</h2><p>很多多 Agent 项目失败，不是因为“多 Agent 理念不对”，而是因为连单图状态流都没梳理清楚。</p>
+<h2 id="13-5-把可观测性当必需品"><a href="#13-5-把可观测性当必需品" class="headerlink" title="13.5 把可观测性当必需品"></a>13.5 把可观测性当必需品</h2><p>至少要能回答：</p>
+<ol>
+<li>执行到了哪个节点</li>
+<li>当前 state 长什么样</li>
+<li>为什么走了这条边</li>
+<li>哪一步失败了</li>
+</ol>
+<h1 id="14-LangGraph-和第三篇-Agent-实战是什么关系"><a href="#14-LangGraph-和第三篇-Agent-实战是什么关系" class="headerlink" title="14. LangGraph 和第三篇 Agent 实战是什么关系"></a>14. LangGraph 和第三篇 Agent 实战是什么关系</h1><p>到这里其实就能看出来，LangGraph 很像 Agent 系统的“骨架层”。</p>
+<p>如果没有 LangGraph 这种图式思维，很多 Agent 项目会出现这些问题：</p>
+<ol>
+<li>看起来能跑，但流程不可控</li>
+<li>看起来智能，但状态不可见</li>
+<li>看起来灵活，但一出错就没法恢复</li>
+</ol>
+<p>所以第三篇再讲 Agent 实战时，我们就不会只盯着：</p>
+<ol>
+<li>模型怎么调</li>
+<li>工具怎么接</li>
+<li>Prompt 怎么写</li>
+</ol>
+<p>而会更自然地回到这些更关键的问题：</p>
+<ol>
+<li>任务如何拆分</li>
+<li>状态如何流转</li>
+<li>工具调用如何被约束</li>
+<li>单 Agent、L2&#x2F;L3&#x2F;L4 和 OpenClaw 类系统本质上差在哪</li>
+</ol>
+<h1 id="15-小结"><a href="#15-小结" class="headerlink" title="15. 小结"></a>15. 小结</h1><p>这一篇最核心的内容，其实可以压缩成三句话：</p>
+<ol>
+<li>LangGraph 不是“另一个 Agent 包”，而是 agent orchestration 的图式框架</li>
+<li>它最值得学习的是状态机思维，而不是单个 API</li>
+<li>多 Agent 的关键不只是多角色，更是状态边界、子图拆分和流程治理</li>
+</ol>
+<p>如果用一句更通俗的话概括：</p>
+<blockquote>
+<p>LangChain 让你会搭积木，LangGraph 让你会搭一套真正能长期运行的系统。</p>
+</blockquote>
+<p>下一篇我们再回到 Agent 实战本身，把 L2 工作流、L3 工具型 Agent、L4 多 Agent 系统，以及 OpenClaw 这类更激进的 computer-use agent 放到同一张图谱里来看，你会更容易理解它们之间到底是升级关系、互补关系，还是根本不是同一类东西。</p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/" data-id="cmny35kgf00094kpx73icg15j" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAT4AAAE+CAAAAAAxUyPsAAAFWUlEQVR42u3dwW7bSBAEUP3/T3sve9ggK7mqms4lT6dAlsjhGwNsVjec1yt+ff32+u/7ybfevfP7cT7/NFnPu7O8O9fnzz/wwocPHz58+D4u5TPT52UlR3vq7MkxP29b8vlvrgIfPnz48OGb+PIbfFJebBeQFEPJt+5rS9aJDx8+fPjw/Xm+ZNHbcdqCpi2GLiURPnz48OHD92f4tqLk8jCfR/Z/pgmBDx8+fPjwPcWXlAjJci8P5FurOwFN3v/xXgc+fPjw4cNX3uD/nn//yHwfPnz48OH76/m+zq8tDmjD+rbR/lQR882148OHDx8+fNO15zf1bentcFseRuQrua/27frx4cOHDx++iS8Psp+KyJOl55+/tBwuvyj48OHDhw/fxvds3p9z5CtJLiw/whZMvNpF48OHDx8+fOWYVzsulscEeUjxbKnRHu3t5/Hhw4cPH76JbwvB81Lj2di9rsvizW43FR8+fPjw4dv4ttt8O46Wx/2XAbI2YmijhG/qPnz48OHDh+/72bNxqLoda2ujh+2d/OH/gS4HPnz48OHDNzXIN6atmNia69tFbmNz+a8CPnz48OHD1/I9NRx2fyDfGuevh17t6Fs95YcPHz58+PCVt/m8zZwE6MnZt+G5tvjIYwV8+PDhw4fvWb6tgNiILyNu23Zu8X0+qIcPHz58+PDlfPnoWFJS3B/d87M8i5WXXN8MqOHDhw8fPnzB2tpltU3uLZpPNukS329Byeu+q/jw4cOH76/ka1HubextIDsP0/Ny5PI+Pnz48OHDd+FrR8fyUmMLwbfjPDsCHp0dHz58+PDhm/iSG/Z2GduW3Dny42zh/r+fwYcPHz58+B7iy5vZW3M9b723a/iJFv7blePDhw8fPnwTX1umJINceViwnbdd4VNH+2W1+PDhw4cPX8mXj4jdH8gvTfFtbU9F9vVkHz58+PDhwxc8L99v5O0l3QuXDT0vuYpSDB8+fPjw4Yv5tsf7Syx+D+vzM15+Gl01Pnz48OHDF1/1HastHba2dF5gJWF9HuJHtR4+fPjw4cNX8iXD2Xlw37bVt8Aiacy3D/91iYMPHz58+PCdn47b8bLLBmwhRXLMtrWfFE/RavHhw4cPH75X94dItnj9Ui600UAeamzbXwwE4MOHDx8+fMss2au9zW+XlMNtRc8W2W8FWZEo4MOHDx8+fOWN/3Kb38L6tujJV9tuRt3xwIcPHz58+D6eZVtWO7hWD37FTfp2lG3b1LdHw4cPHz58+Eq+NkzPW9Q56B1ii0LawAIfPnz48OF7iq9uCcffaofJnorg23Z+e+1R7oIPHz58+PBNkf1Tw2Hj4Fdc1mxB/FYMFc1yfPjw4cOHLy4+7qxbWJ+XNe0WXtr2dViADx8+fPjwfe1/6voyELZtWBumb5F9S/x2ygAfPnz48OHrZp5Pnd8cq43aL4NueYj/I6MA+PDhw4cPXxActMNk+UVun9nG17biKS/O8OHDhw8fvo3vEqm3y7qE79twW95syMOLXz6PDx8+fPjwTXxtNNDG9Pnj+mWE7ucG1KI2OT58+PDhwzfxtYVLXqBs71y2MDlyzv0/6Pjw4cOHD1/Jl7+2lnMSuLeFxSVKyH8VTlj48OHDhw/f1/IfK7YhQhFzn1vseWM7P377Pj58+PDhw3fh227kbUN9GyZ7ap330i0aU8OHDx8+fPge4msf7PMH9TwQb4P4S2kSbQA+fPjw4cP3Y3z3wuLSrm5Ln63B324bPnz48OHDt/E9dUlPxfd5rLCttv3uN5EBPnz48OHDNz3/5lF1/mqh2/JiO0KyDW07AR8+fPjw4fv4/j/0QhZ1Ok0uQgAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/AIGC/"><i class="fa fa-tag"></i>AIGC</a><a href="/tags/LLM/"><i class="fa fa-tag"></i>LLM</a><a href="/tags/Agent/"><i class="fa fa-tag"></i>Agent</a><a href="/tags/LangChain/"><i class="fa fa-tag"></i>LangChain</a><a href="/tags/LangGraph/"><i class="fa fa-tag"></i>LangGraph</a><a href="/tags/Workflow/"><i class="fa fa-tag"></i>Workflow</a><a href="/tags/Multi-Agent/"><i class="fa fa-tag"></i>Multi-Agent</a></div><div class="post-nav"><a class="pre" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</a><a class="next" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8A-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/">AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/%E4%BB%AA%E5%99%A8%E4%BB%AA%E8%A1%A8%E7%A7%91%E5%AD%A6%E4%B8%8E%E5%85%89%E7%94%B5%E5%B7%A5%E7%A8%8B/">仪器仪表科学与光电工程</a><span class="category-list-count">1</span></li></ul></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8A-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/">AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/03/10/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8B%E9%80%9A%E4%B9%89Prompt%E5%9B%9B%E5%8D%81%E5%BC%8F/">AIGC-LLM-辟邪剑谱之通义Prompt四十式</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/03/06/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8BPrompt%20Engineering/">AIGC-LLM-辟邪剑谱之Prompt Engineering</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/">AIGC-Agent-作文批改标注</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/09/27/LLama32%E8%B0%83%E7%A0%94/">LLama3.2调研报告</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/">AIGC-LLM-Prompt工程技能综述</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/">DeepLearning模型-NLP-BERT</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">Deeeplearning模型-NLP-大语言模型微调语料生成工具</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.0"><script type="text/javascript" src="/js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript">window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    processEscapes: true
+  },
+  chtml: {
+    fontURL: '/js/chtml/fonts/woff-v2'
+  },
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  }
+};
+</script><script type="text/javascript" src="/js/mathjax3.js" async></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="/assets/prism-bundle.js"></script>
+<script src="/assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>

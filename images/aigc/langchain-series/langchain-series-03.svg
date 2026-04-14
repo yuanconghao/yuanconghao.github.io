@@ -1,0 +1,61 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="140" y1="70" x2="1460" y2="870" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#091320"/>
+      <stop offset="0.58" stop-color="#10253A"/>
+      <stop offset="1" stop-color="#173A58"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="980" y1="180" x2="1430" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#64F0D7"/>
+      <stop offset="0.5" stop-color="#53A6FF"/>
+      <stop offset="1" stop-color="#FFB36B"/>
+    </linearGradient>
+    <filter id="glow" x="840" y="80" width="740" height="700" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="56"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity="0.08">
+    <path d="M0 96H1600M0 192H1600M0 288H1600M0 384H1600M0 480H1600M0 576H1600M0 672H1600M0 768H1600" stroke="white"/>
+    <path d="M160 0V900M320 0V900M480 0V900M640 0V900M800 0V900M960 0V900M1120 0V900M1280 0V900M1440 0V900" stroke="white"/>
+  </g>
+  <g filter="url(#glow)" opacity="0.24">
+    <circle cx="1180" cy="350" r="175" fill="#57AFFF"/>
+    <circle cx="1280" cy="430" r="150" fill="#69F0D8"/>
+    <circle cx="1350" cy="510" r="110" fill="#FFB36B"/>
+  </g>
+  <rect x="150" y="120" width="126" height="42" rx="21" fill="#12283E"/>
+  <text x="180" y="148" fill="#9DFFD8" font-size="22" font-family="Arial, Helvetica, sans-serif" font-weight="700">SERIES 03</text>
+  <text x="150" y="248" fill="white" font-size="78" font-family="Arial, Helvetica, sans-serif" font-weight="700">AGENT</text>
+  <text x="150" y="336" fill="white" font-size="78" font-family="Arial, Helvetica, sans-serif" font-weight="700">SYSTEMS</text>
+  <text x="154" y="408" fill="#9AB7C7" font-size="28" font-family="Arial, Helvetica, sans-serif">L2 workflows, L3 tools, L4 multi-agent systems and OpenClaw.</text>
+  <g>
+    <rect x="150" y="520" width="108" height="54" rx="27" fill="#14324A"/>
+    <text x="186" y="555" fill="#E7FAFF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">L2</text>
+    <rect x="276" y="520" width="108" height="54" rx="27" fill="#14324A"/>
+    <text x="312" y="555" fill="#E7FAFF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">L3</text>
+    <rect x="402" y="520" width="108" height="54" rx="27" fill="#14324A"/>
+    <text x="438" y="555" fill="#E7FAFF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">L4</text>
+    <rect x="528" y="520" width="180" height="54" rx="27" fill="#14324A"/>
+    <text x="566" y="555" fill="#E7FAFF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">OPENCLAW</text>
+  </g>
+  <g>
+    <rect x="930" y="168" width="482" height="512" rx="36" fill="#0C1E30" stroke="rgba(255,255,255,0.14)"/>
+    <rect x="980" y="224" width="126" height="86" rx="24" fill="#113149" stroke="#64F0D7"/>
+    <text x="1010" y="276" fill="#E6FBFF" font-size="26" font-family="Arial, Helvetica, sans-serif" font-weight="700">PLAN</text>
+    <rect x="1160" y="224" width="126" height="86" rx="24" fill="#113149" stroke="#53A6FF"/>
+    <text x="1194" y="276" fill="#E6FBFF" font-size="26" font-family="Arial, Helvetica, sans-serif" font-weight="700">ACT</text>
+    <rect x="1340" y="224" width="126" height="86" rx="24" fill="#113149" stroke="#FFB36B"/>
+    <text x="1360" y="276" fill="#E6FBFF" font-size="26" font-family="Arial, Helvetica, sans-serif" font-weight="700">OBSERVE</text>
+    <rect x="1070" y="434" width="126" height="86" rx="24" fill="#113149" stroke="#64F0D7"/>
+    <text x="1094" y="486" fill="#E6FBFF" font-size="26" font-family="Arial, Helvetica, sans-serif" font-weight="700">TOOLS</text>
+    <rect x="1254" y="434" width="156" height="86" rx="24" fill="#113149" stroke="#53A6FF"/>
+    <text x="1286" y="486" fill="#E6FBFF" font-size="26" font-family="Arial, Helvetica, sans-serif" font-weight="700">COMPUTER</text>
+    <path d="M1106 267H1160" stroke="url(#accent)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1286 267H1340" stroke="url(#accent)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1223 310V434" stroke="url(#accent)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1403 310V434" stroke="url(#accent)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1070 477H1018C986 477 962 452 962 420V267C962 240 980 224 1006 224" stroke="url(#accent)" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="150" y="800" fill="#6D8EA4" font-size="24" font-family="Arial, Helvetica, sans-serif">DeepLearner · LangChain Development Series</text>
+</svg>

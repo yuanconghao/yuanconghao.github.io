@@ -1,0 +1,63 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="180" y1="70" x2="1400" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07131F"/>
+      <stop offset="0.55" stop-color="#0C2435"/>
+      <stop offset="1" stop-color="#15425B"/>
+    </linearGradient>
+    <linearGradient id="card" x1="1010" y1="160" x2="1450" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F2E45"/>
+      <stop offset="1" stop-color="#0B1E30"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="210" y1="140" x2="780" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6EF3D6"/>
+      <stop offset="1" stop-color="#42B9FF"/>
+    </linearGradient>
+    <filter id="blur" x="860" y="70" width="700" height="700" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="50"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity="0.08">
+    <path d="M0 96H1600M0 192H1600M0 288H1600M0 384H1600M0 480H1600M0 576H1600M0 672H1600M0 768H1600" stroke="white"/>
+    <path d="M140 0V900M300 0V900M460 0V900M620 0V900M780 0V900M940 0V900M1100 0V900M1260 0V900M1420 0V900" stroke="white"/>
+  </g>
+  <g filter="url(#blur)" opacity="0.35">
+    <circle cx="1200" cy="320" r="180" fill="#3DC8FF"/>
+    <circle cx="1290" cy="430" r="150" fill="#43F2C7"/>
+  </g>
+  <rect x="150" y="120" width="126" height="42" rx="21" fill="#112B3D"/>
+  <text x="180" y="148" fill="#8BFFDE" font-size="22" font-family="Arial, Helvetica, sans-serif" font-weight="700">SERIES 01</text>
+  <text x="150" y="248" fill="white" font-size="78" font-family="Arial, Helvetica, sans-serif" font-weight="700">LANGCHAIN</text>
+  <text x="150" y="336" fill="white" font-size="78" font-family="Arial, Helvetica, sans-serif" font-weight="700">FOUNDATIONS</text>
+  <text x="154" y="408" fill="#8FB4C8" font-size="28" font-family="Arial, Helvetica, sans-serif">Core concepts, LCEL, prompts, retrievers and RAG basics.</text>
+  <g>
+    <rect x="150" y="520" width="150" height="54" rx="27" fill="#14344A"/>
+    <text x="189" y="555" fill="#DDF8FF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">PROMPTS</text>
+    <rect x="320" y="520" width="110" height="54" rx="27" fill="#14344A"/>
+    <text x="353" y="555" fill="#DDF8FF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">LCEL</text>
+    <rect x="448" y="520" width="92" height="54" rx="27" fill="#14344A"/>
+    <text x="480" y="555" fill="#DDF8FF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">RAG</text>
+    <rect x="558" y="520" width="128" height="54" rx="27" fill="#14344A"/>
+    <text x="593" y="555" fill="#DDF8FF" font-size="24" font-family="Arial, Helvetica, sans-serif" font-weight="700">TOOLS</text>
+  </g>
+  <rect x="940" y="140" width="460" height="520" rx="36" fill="url(#card)" stroke="rgba(255,255,255,0.15)"/>
+  <g>
+    <rect x="1000" y="220" width="110" height="88" rx="24" fill="#103A52" stroke="#6EF3D6"/>
+    <text x="1020" y="273" fill="#DFFBFF" font-size="28" font-family="Arial, Helvetica, sans-serif" font-weight="700">INPUT</text>
+    <rect x="1160" y="220" width="110" height="88" rx="24" fill="#103A52" stroke="#42B9FF"/>
+    <text x="1180" y="273" fill="#DFFBFF" font-size="28" font-family="Arial, Helvetica, sans-serif" font-weight="700">CHAIN</text>
+    <rect x="1320" y="220" width="110" height="88" rx="24" fill="#103A52" stroke="#6EF3D6"/>
+    <text x="1346" y="273" fill="#DFFBFF" font-size="28" font-family="Arial, Helvetica, sans-serif" font-weight="700">OUTPUT</text>
+    <path d="M1110 264H1160" stroke="url(#accent)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1270 264H1320" stroke="url(#accent)" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g>
+    <rect x="1010" y="396" width="350" height="164" rx="28" fill="#0C2134" stroke="rgba(255,255,255,0.12)"/>
+    <text x="1054" y="454" fill="#8BFFDE" font-size="28" font-family="Arial, Helvetica, sans-serif" font-weight="700">BUILDING BLOCKS</text>
+    <text x="1054" y="500" fill="#D7E8F1" font-size="24" font-family="Arial, Helvetica, sans-serif">PromptTemplate</text>
+    <text x="1054" y="536" fill="#D7E8F1" font-size="24" font-family="Arial, Helvetica, sans-serif">Model / Parser / Retriever</text>
+    <text x="1054" y="572" fill="#D7E8F1" font-size="24" font-family="Arial, Helvetica, sans-serif">Composable LLM workflows</text>
+  </g>
+  <text x="150" y="800" fill="#7091A5" font-size="24" font-family="Arial, Helvetica, sans-serif">DeepLearner · LangChain Development Series</text>
+</svg>

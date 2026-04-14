@@ -1,0 +1,399 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw | DeepLearner</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</h1><div class="post-meta">created:2026-04-14</div><div class="post-meta">updated:2026-04-14<span> | </span><span class="category"><a href="/categories/AIGC/">AIGC</a></span></div><a class="disqus-comment-count" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/#waline"><span class="waline-comment-count" id="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%85%88%E8%AF%B4%E7%BB%93%E8%AE%BA%EF%BC%9A%E4%B8%8D%E6%98%AF%E6%89%80%E6%9C%89-LLM-%E5%BA%94%E7%94%A8%E9%83%BD%E8%AF%A5%E5%81%9A-Agent"><span class="toc-number">1.</span> <span class="toc-text">1. 先说结论：不是所有 LLM 应用都该做 Agent</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E6%88%91%E5%AF%B9-L2-L3-L4-%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B7%A5%E7%A8%8B%E5%8C%96%E7%90%86%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">2. 我对 L2&#x2F;L3&#x2F;L4 的一个工程化理解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#L2%EF%BC%9AWorkflow-%E5%9E%8B%E6%99%BA%E8%83%BD%E5%BA%94%E7%94%A8"><span class="toc-number">2.1.</span> <span class="toc-text">L2：Workflow 型智能应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#L3%EF%BC%9ATool-Using-Agent"><span class="toc-number">2.2.</span> <span class="toc-text">L3：Tool-Using Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#L4%EF%BC%9AMulti-Agent-Stateful-Agent-System"><span class="toc-number">2.3.</span> <span class="toc-text">L4：Multi-Agent &#x2F; Stateful Agent System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OpenClaw-%E7%B1%BB-Computer-Use-Agent"><span class="toc-number">2.4.</span> <span class="toc-text">OpenClaw 类 Computer-Use Agent</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%9A%84-LangChain-Agent-%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="toc-number">3.</span> <span class="toc-text">3. 一个最小可用的 LangChain Agent 长什么样</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E4%BD%86%E7%9C%9F%E6%AD%A3%E8%90%BD%E5%9C%B0%E6%97%B6%EF%BC%8CLangGraph-%E5%BE%80%E5%BE%80%E6%AF%94%E7%BA%AF-AgentExecutor-%E6%9B%B4%E9%9D%A0%E8%B0%B1"><span class="toc-number">4.</span> <span class="toc-text">4. 但真正落地时，LangGraph 往往比纯 AgentExecutor 更靠谱</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%83%8F%E5%B7%A5%E7%A8%8B%E7%9A%84-Agent-%E8%AE%BE%E8%AE%A1%E6%96%B9%E5%BC%8F"><span class="toc-number">5.</span> <span class="toc-text">5. 一个更像工程的 Agent 设计方式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-%E4%BB%BB%E5%8A%A1%E5%B1%82"><span class="toc-number">5.1.</span> <span class="toc-text">5.1 任务层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-%E8%A7%84%E5%88%92%E5%B1%82"><span class="toc-number">5.2.</span> <span class="toc-text">5.2 规划层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-3-%E6%89%A7%E8%A1%8C%E5%B1%82"><span class="toc-number">5.3.</span> <span class="toc-text">5.3 执行层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-4-%E8%AE%B0%E5%BF%86%E4%B8%8E%E7%8A%B6%E6%80%81%E5%B1%82"><span class="toc-number">5.4.</span> <span class="toc-text">5.4 记忆与状态层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-5-%E8%A7%82%E6%B5%8B%E4%B8%8E%E5%AE%89%E5%85%A8%E5%B1%82"><span class="toc-number">5.5.</span> <span class="toc-text">5.5 观测与安全层</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-%E4%BB%8E-L2-%E5%88%B0-L4%EF%BC%8C%E5%BC%80%E5%8F%91%E9%87%8D%E7%82%B9%E5%88%B0%E5%BA%95%E5%8F%98%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">6.</span> <span class="toc-text">6. 从 L2 到 L4，开发重点到底变了什么</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#6-1-L2%EF%BC%9AWorkflow-%E7%9A%84%E9%87%8D%E7%82%B9%E6%98%AF%E7%A1%AE%E5%AE%9A%E6%80%A7"><span class="toc-number">6.1.</span> <span class="toc-text">6.1 L2：Workflow 的重点是确定性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-2-L3%EF%BC%9A%E5%8D%95-Agent-%E7%9A%84%E9%87%8D%E7%82%B9%E6%98%AF%E5%B7%A5%E5%85%B7%E9%80%89%E6%8B%A9"><span class="toc-number">6.2.</span> <span class="toc-text">6.2 L3：单 Agent 的重点是工具选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-3-L4%EF%BC%9A%E7%B3%BB%E7%BB%9F%E7%BA%A7-Agent-%E7%9A%84%E9%87%8D%E7%82%B9%E6%98%AF%E7%8A%B6%E6%80%81%E4%B8%8E%E6%B2%BB%E7%90%86"><span class="toc-number">6.3.</span> <span class="toc-text">6.3 L4：系统级 Agent 的重点是状态与治理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-%E4%B8%80%E4%B8%AA%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B%EF%BC%9A%E5%81%9A%E4%B8%80%E4%B8%AA%E2%80%9C%E7%A0%94%E7%A9%B6%E6%8A%A5%E5%91%8A-Agent%E2%80%9D"><span class="toc-number">7.</span> <span class="toc-text">7. 一个实战案例：做一个“研究报告 Agent”</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#7-1-L2-%E5%81%9A%E6%B3%95"><span class="toc-number">7.1.</span> <span class="toc-text">7.1 L2 做法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-2-L3-%E5%81%9A%E6%B3%95"><span class="toc-number">7.2.</span> <span class="toc-text">7.2 L3 做法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-3-L4-%E5%81%9A%E6%B3%95"><span class="toc-number">7.3.</span> <span class="toc-text">7.3 L4 做法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#8-OpenClaw-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E7%81%AB"><span class="toc-number">8.</span> <span class="toc-text">8. OpenClaw 为什么会火</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#8-1-%E4%BC%A0%E7%BB%9F-LangChain-Agent-%E6%9B%B4%E5%83%8F%E5%BA%94%E7%94%A8%E5%86%85-Agent"><span class="toc-number">8.1.</span> <span class="toc-text">8.1 传统 LangChain Agent 更像应用内 Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-2-OpenClaw-%E7%B1%BB%E7%B3%BB%E7%BB%9F%E6%9B%B4%E5%83%8F%E4%B8%AA%E4%BA%BA%E8%87%AA%E5%8A%A8%E5%8C%96%E6%93%8D%E4%BD%9C%E5%B1%82"><span class="toc-number">8.2.</span> <span class="toc-text">8.2 OpenClaw 类系统更像个人自动化操作层</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#9-LangChain-%E4%BD%93%E7%B3%BB%E8%83%BD%E4%BB%8E-OpenClaw-%E5%AD%A6%E5%88%B0%E4%BB%80%E4%B9%88"><span class="toc-number">9.</span> <span class="toc-text">9. LangChain 体系能从 OpenClaw 学到什么</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#9-1-Agent-%E4%B8%8D%E5%8F%AA%E6%98%AF%E6%8E%A8%E7%90%86%EF%BC%8C%E8%BF%98%E8%A6%81%E6%9C%89%E6%89%A7%E8%A1%8C%E9%9D%A2"><span class="toc-number">9.1.</span> <span class="toc-text">9.1 Agent 不只是推理，还要有执行面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-2-%E5%B7%A5%E5%85%B7%E4%B8%8D%E6%98%AF%E8%B6%8A%E5%A4%9A%E8%B6%8A%E5%A5%BD%EF%BC%8C%E8%80%8C%E6%98%AF%E8%A6%81%E6%9C%89%E6%8E%A7%E5%88%B6%E5%B9%B3%E9%9D%A2"><span class="toc-number">9.2.</span> <span class="toc-text">9.2 工具不是越多越好，而是要有控制平面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-3-%E9%95%BF%E6%9C%9F%E8%BF%90%E8%A1%8C%E8%83%BD%E5%8A%9B%E4%BC%9A%E6%94%B9%E5%8F%98-Agent-%E8%AE%BE%E8%AE%A1"><span class="toc-number">9.3.</span> <span class="toc-text">9.3 长期运行能力会改变 Agent 设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-4-%E8%AE%B0%E5%BF%86%E7%9C%9F%E6%AD%A3%E9%87%8D%E8%A6%81%E7%9A%84%E6%98%AF%E5%8F%AF%E6%B2%BB%E7%90%86"><span class="toc-number">9.4.</span> <span class="toc-text">9.4 记忆真正重要的是可治理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#10-%E5%A6%82%E6%9E%9C%E8%AE%A9%E6%88%91%E4%BB%8A%E5%A4%A9%E5%81%9A%E4%B8%80%E4%B8%AA%E5%8F%AF%E4%B8%8A%E7%BA%BF%E7%9A%84-LangChain-Agent%EF%BC%8C%E6%88%91%E4%BC%9A%E8%BF%99%E6%A0%B7%E9%80%89%E5%9E%8B"><span class="toc-number">10.</span> <span class="toc-text">10. 如果让我今天做一个可上线的 LangChain Agent，我会这样选型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%82%E5%90%88%E7%9B%B4%E6%8E%A5%E7%94%A8-LangChain-%E9%93%BE%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">10.1.</span> <span class="toc-text">适合直接用 LangChain 链的场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%82%E5%90%88-LangChain-Tool-Agent-%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">10.2.</span> <span class="toc-text">适合 LangChain + Tool Agent 的场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E9%80%82%E5%90%88-LangGraph-%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">10.3.</span> <span class="toc-text">更适合 LangGraph 的场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%8E%A5%E8%BF%91-OpenClaw-%E6%80%9D%E8%B7%AF%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">10.4.</span> <span class="toc-text">更接近 OpenClaw 思路的场景</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#11-%E5%BC%80%E5%8F%91-Agent-%E6%97%B6%E6%9C%80%E5%AE%B9%E6%98%93%E5%BF%BD%E7%95%A5%E7%9A%84%E4%BA%94%E4%BB%B6%E4%BA%8B"><span class="toc-number">11.</span> <span class="toc-text">11. 开发 Agent 时最容易忽略的五件事</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#11-1-%E5%B7%A5%E5%85%B7%E6%8F%8F%E8%BF%B0%E6%9C%AC%E8%BA%AB%E5%B0%B1%E6%98%AF%E4%BA%A7%E5%93%81%E8%AE%BE%E8%AE%A1"><span class="toc-number">11.1.</span> <span class="toc-text">11.1 工具描述本身就是产品设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-2-%E4%B8%8D%E8%A6%81%E6%8A%8A%E6%89%80%E6%9C%89%E9%97%AE%E9%A2%98%E4%BA%A4%E7%BB%99%E6%A8%A1%E5%9E%8B%E8%A7%84%E5%88%92"><span class="toc-number">11.2.</span> <span class="toc-text">11.2 不要把所有问题交给模型规划</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-3-%E6%8A%8A%E5%A4%B1%E8%B4%A5%E5%BD%93%E5%B8%B8%E6%80%81"><span class="toc-number">11.3.</span> <span class="toc-text">11.3 把失败当常态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-4-%E8%A7%82%E6%B5%8B%E8%83%BD%E5%8A%9B%E6%AF%94-Demo-%E8%83%BD%E5%8A%9B%E6%9B%B4%E9%87%8D%E8%A6%81"><span class="toc-number">11.4.</span> <span class="toc-text">11.4 观测能力比 Demo 能力更重要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-5-%E5%AE%89%E5%85%A8%E8%AE%BE%E8%AE%A1%E5%BF%85%E9%A1%BB%E5%89%8D%E7%BD%AE"><span class="toc-number">11.5.</span> <span class="toc-text">11.5 安全设计必须前置</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#12-%E5%B0%8F%E7%BB%93"><span class="toc-number">12.</span> <span class="toc-text">12. 小结</span></a></li></ol></div></div><div class="post-content"><p>如果说上篇是在讲“LangChain 和 LangGraph 到底怎么分”，中篇是在讲“图怎么搭、状态怎么流转”，那这一篇就是真正把 Agent 系统跑起来。</p>
+<p>很多人谈 Agent 时，容易把所有东西揉成一团，仿佛只要模型会调用工具、能循环几轮、能自动执行任务，就都叫 Agent。可一旦进入工程落地，我们会很快发现，不同复杂度的 Agent，设计重点完全不一样。</p>
+<p>有的系统本质上是工作流，只是看起来像 Agent；有的系统已经能自主决定工具调用；再往上则会出现多角色协作、状态管理、长期运行，甚至发展到最近很火的 OpenClaw 这类 computer-use &#x2F; personal automation agent。</p>
+<p>这一篇就围绕这条线展开：先做一个基于 LangChain 体系的 Agent 实战，再把几种典型范式拆开来看。</p>
+<span id="more"></span>
+
+<h1 id="1-先说结论：不是所有-LLM-应用都该做-Agent"><a href="#1-先说结论：不是所有-LLM-应用都该做-Agent" class="headerlink" title="1. 先说结论：不是所有 LLM 应用都该做 Agent"></a>1. 先说结论：不是所有 LLM 应用都该做 Agent</h1><p>在真正写 Agent 之前，先下一个很重要的判断：</p>
+<blockquote>
+<p>如果业务流程足够确定，优先做工作流；只有当“步骤不确定，需要模型决定下一步动作”时，才考虑 Agent。</p>
+</blockquote>
+<p>这是因为 Agent 的核心代价就是不确定性：</p>
+<ol>
+<li>路径不固定</li>
+<li>工具调用不固定</li>
+<li>token 成本不固定</li>
+<li>调试难度更高</li>
+<li>结果稳定性更弱</li>
+</ol>
+<p>所以 Agent 最大的价值，不是“看起来更智能”，而是能够处理那些流程难以预先写死的问题。</p>
+<h1 id="2-我对-L2-L3-L4-的一个工程化理解"><a href="#2-我对-L2-L3-L4-的一个工程化理解" class="headerlink" title="2. 我对 L2&#x2F;L3&#x2F;L4 的一个工程化理解"></a>2. 我对 L2&#x2F;L3&#x2F;L4 的一个工程化理解</h1><p>这里先说明一下，L2&#x2F;L3&#x2F;L4 并不是所有团队都完全统一的标准命名。为了方便工程讨论，本文采用一个比较实用的分法：</p>
+<h2 id="L2：Workflow-型智能应用"><a href="#L2：Workflow-型智能应用" class="headerlink" title="L2：Workflow 型智能应用"></a>L2：Workflow 型智能应用</h2><p>特点是：</p>
+<ol>
+<li>主流程由开发者定义</li>
+<li>模型负责局部理解与生成</li>
+<li>节点顺序总体可控</li>
+</ol>
+<p>典型场景：</p>
+<ol>
+<li>分类后路由</li>
+<li>文本清洗后检索</li>
+<li>问答后结构化输出</li>
+<li>审核后再发布</li>
+</ol>
+<p>它更像“LLM 增强工作流”。</p>
+<h2 id="L3：Tool-Using-Agent"><a href="#L3：Tool-Using-Agent" class="headerlink" title="L3：Tool-Using Agent"></a>L3：Tool-Using Agent</h2><p>特点是：</p>
+<ol>
+<li>模型会根据任务自主选择工具</li>
+<li>执行路径不完全固定</li>
+<li>通常有 ReAct、Tool Calling、Observation 这样的循环</li>
+</ol>
+<p>典型场景：</p>
+<ol>
+<li>搜索后总结</li>
+<li>查数据库再分析</li>
+<li>多工具协同完成任务</li>
+</ol>
+<p>它更像“单 Agent 自主执行器”。</p>
+<h2 id="L4：Multi-Agent-Stateful-Agent-System"><a href="#L4：Multi-Agent-Stateful-Agent-System" class="headerlink" title="L4：Multi-Agent &#x2F; Stateful Agent System"></a>L4：Multi-Agent &#x2F; Stateful Agent System</h2><p>特点是：</p>
+<ol>
+<li>多角色协作</li>
+<li>状态显式管理</li>
+<li>有长期任务或复杂任务分解</li>
+<li>通常带审批、回滚、人工介入和记忆</li>
+</ol>
+<p>典型场景：</p>
+<ol>
+<li>Planner + Executor + Reviewer</li>
+<li>研究员 Agent + 编码 Agent + 审核 Agent</li>
+<li>长周期任务追踪</li>
+</ol>
+<p>它更像“Agent 系统”，不是单个 Agent。</p>
+<p>如果再往前走，就会碰到现在非常热的一类方向：</p>
+<h2 id="OpenClaw-类-Computer-Use-Agent"><a href="#OpenClaw-类-Computer-Use-Agent" class="headerlink" title="OpenClaw 类 Computer-Use Agent"></a>OpenClaw 类 Computer-Use Agent</h2><p>这类系统不只是调用几个函数，而是直接接近“个人自动化操作系统”：</p>
+<ol>
+<li>可控制浏览器</li>
+<li>可连接消息入口</li>
+<li>可调度任务</li>
+<li>可持久化记忆</li>
+<li>可长期驻留运行</li>
+</ol>
+<p>所以它和传统“聊天框里的 Agent”已经不完全是一个量级的问题了。</p>
+<h1 id="3-一个最小可用的-LangChain-Agent-长什么样"><a href="#3-一个最小可用的-LangChain-Agent-长什么样" class="headerlink" title="3. 一个最小可用的 LangChain Agent 长什么样"></a>3. 一个最小可用的 LangChain Agent 长什么样</h1><p>先从 L3 风格的单 Agent 入手。</p>
+<p>假设我们要做一个“技术研究助理”，需求如下：</p>
+<ol>
+<li>用户给一个技术主题</li>
+<li>Agent 可以调用搜索工具</li>
+<li>Agent 最后输出结构化调研结果</li>
+</ol>
+<p>最简思路是：</p>
+<ol>
+<li>定义模型</li>
+<li>定义工具</li>
+<li>创建 Agent</li>
+<li>让 Agent 在推理中决定何时调用工具</li>
+</ol>
+<p>示意代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_openai <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"><span class="keyword">from</span> langchain.tools <span class="keyword">import</span> tool</span><br><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> create_tool_calling_agent, AgentExecutor</span><br><span class="line"><span class="keyword">from</span> langchain_core.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">search_docs</span>(<span class="params">query: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;搜索技术资料并返回摘要结果&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;以下是关于 <span class="subst">&#123;query&#125;</span> 的模拟搜索结果：LangChain 常用于构建 RAG、Agent 和多步工作流。&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">llm = ChatOpenAI(model=<span class="string">&quot;gpt-4o-mini&quot;</span>, temperature=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">prompt = ChatPromptTemplate.from_messages([</span><br><span class="line">    (<span class="string">&quot;system&quot;</span>, <span class="string">&quot;你是一名 AI 技术研究助理，必要时调用工具，不要编造事实。&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;human&quot;</span>, <span class="string">&quot;&#123;input&#125;&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;placeholder&quot;</span>, <span class="string">&quot;&#123;agent_scratchpad&#125;&quot;</span>)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">tools = [search_docs]</span><br><span class="line"></span><br><span class="line">agent = create_tool_calling_agent(llm, tools, prompt)</span><br><span class="line">agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">result = agent_executor.invoke(&#123;</span><br><span class="line">    <span class="string">&quot;input&quot;</span>: <span class="string">&quot;请调研 LangChain 在 Agent 开发中的作用，并给出三点结论&quot;</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(result[<span class="string">&quot;output&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+<p>这个例子已经具备 Agent 的几个核心要素：</p>
+<ol>
+<li>模型不是只回答问题，而是会决定是否行动</li>
+<li>工具被显式暴露给模型</li>
+<li>模型在“思考-行动-观察”中迭代推进任务</li>
+</ol>
+<p>这就和上篇的普通链不一样了。</p>
+<h1 id="4-但真正落地时，LangGraph-往往比纯-AgentExecutor-更靠谱"><a href="#4-但真正落地时，LangGraph-往往比纯-AgentExecutor-更靠谱" class="headerlink" title="4. 但真正落地时，LangGraph 往往比纯 AgentExecutor 更靠谱"></a>4. 但真正落地时，LangGraph 往往比纯 AgentExecutor 更靠谱</h1><p>为什么很多生产项目后来都转向 LangGraph？</p>
+<p>因为一旦任务复杂起来，单纯的 Agent 循环会暴露很多问题：</p>
+<ol>
+<li>状态不透明</li>
+<li>节点不可控</li>
+<li>重试逻辑难写</li>
+<li>中间产物不易保存</li>
+<li>人工审核难插入</li>
+</ol>
+<p>而 LangGraph 更适合表达下面这种流程：</p>
+<ol>
+<li>先计划</li>
+<li>再执行</li>
+<li>失败则重试</li>
+<li>风险高则人工确认</li>
+<li>最后总结与写回状态</li>
+</ol>
+<p>也就是说，现代 Agent 实战已经越来越像“图上的状态流转”，而不是“让模型在一个 while 循环里自己乱跑”。</p>
+<h1 id="5-一个更像工程的-Agent-设计方式"><a href="#5-一个更像工程的-Agent-设计方式" class="headerlink" title="5. 一个更像工程的 Agent 设计方式"></a>5. 一个更像工程的 Agent 设计方式</h1><p>如果让我今天用 LangChain 体系来做 Agent，我通常会按这几个层次设计：</p>
+<h2 id="5-1-任务层"><a href="#5-1-任务层" class="headerlink" title="5.1 任务层"></a>5.1 任务层</h2><p>定义用户真正想完成什么，例如：</p>
+<ol>
+<li>调研一个主题</li>
+<li>生成报告</li>
+<li>安排会议</li>
+<li>执行批量操作</li>
+</ol>
+<h2 id="5-2-规划层"><a href="#5-2-规划层" class="headerlink" title="5.2 规划层"></a>5.2 规划层</h2><p>决定任务要拆成哪些步骤，例如：</p>
+<ol>
+<li>是否需要检索</li>
+<li>是否需要结构化提取</li>
+<li>是否需要调用内部系统</li>
+<li>是否需要人工确认</li>
+</ol>
+<h2 id="5-3-执行层"><a href="#5-3-执行层" class="headerlink" title="5.3 执行层"></a>5.3 执行层</h2><p>真正调用工具完成动作，例如：</p>
+<ol>
+<li>搜索</li>
+<li>读写文件</li>
+<li>调 API</li>
+<li>发消息</li>
+</ol>
+<h2 id="5-4-记忆与状态层"><a href="#5-4-记忆与状态层" class="headerlink" title="5.4 记忆与状态层"></a>5.4 记忆与状态层</h2><p>保存：</p>
+<ol>
+<li>当前执行到哪一步</li>
+<li>已经看过哪些资料</li>
+<li>用户偏好是什么</li>
+<li>是否出现异常</li>
+</ol>
+<h2 id="5-5-观测与安全层"><a href="#5-5-观测与安全层" class="headerlink" title="5.5 观测与安全层"></a>5.5 观测与安全层</h2><p>记录：</p>
+<ol>
+<li>模型输入输出</li>
+<li>工具调用参数</li>
+<li>执行结果</li>
+<li>风险动作审批</li>
+</ol>
+<p>把这几层拆开之后，你会发现 Agent 并不是一个“神秘的大脑”，而是一套由模型、工具、状态、流程和治理共同组成的系统。</p>
+<h1 id="6-从-L2-到-L4，开发重点到底变了什么"><a href="#6-从-L2-到-L4，开发重点到底变了什么" class="headerlink" title="6. 从 L2 到 L4，开发重点到底变了什么"></a>6. 从 L2 到 L4，开发重点到底变了什么</h1><p>下面我们把三种典型范式直接对比一下。</p>
+<h2 id="6-1-L2：Workflow-的重点是确定性"><a href="#6-1-L2：Workflow-的重点是确定性" class="headerlink" title="6.1 L2：Workflow 的重点是确定性"></a>6.1 L2：Workflow 的重点是确定性</h2><p>L2 里最重要的是：</p>
+<ol>
+<li>节点边界清晰</li>
+<li>输入输出固定</li>
+<li>错误可定位</li>
+</ol>
+<p>例如一个“客服工单分发系统”：</p>
+<ol>
+<li>模型识别工单类型</li>
+<li>路由到不同处理链</li>
+<li>检索知识库</li>
+<li>输出回复建议</li>
+</ol>
+<p>这里即使用到了模型，本质上还是工作流，不一定需要 Agent。</p>
+<p>适合 L2 的问题通常是：</p>
+<ol>
+<li>步骤明确</li>
+<li>需要稳定</li>
+<li>结果要可控</li>
+</ol>
+<h2 id="6-2-L3：单-Agent-的重点是工具选择"><a href="#6-2-L3：单-Agent-的重点是工具选择" class="headerlink" title="6.2 L3：单 Agent 的重点是工具选择"></a>6.2 L3：单 Agent 的重点是工具选择</h2><p>L3 的重点不再是固定流程，而是：</p>
+<ol>
+<li>给模型哪些工具</li>
+<li>工具描述是否清楚</li>
+<li>如何约束模型少走弯路</li>
+<li>如何防止无意义循环</li>
+</ol>
+<p>这时 Prompt 工程会从“生成提示词”变成“执行策略设计”。</p>
+<p>你需要考虑：</p>
+<ol>
+<li>什么时候必须调用工具</li>
+<li>什么时候禁止调用工具</li>
+<li>一次最多调用几步</li>
+<li>工具失败怎么兜底</li>
+</ol>
+<h2 id="6-3-L4：系统级-Agent-的重点是状态与治理"><a href="#6-3-L4：系统级-Agent-的重点是状态与治理" class="headerlink" title="6.3 L4：系统级 Agent 的重点是状态与治理"></a>6.3 L4：系统级 Agent 的重点是状态与治理</h2><p>到了 L4，问题就不再只是“模型能不能做”，而是：</p>
+<ol>
+<li>多角色如何协作</li>
+<li>状态如何共享</li>
+<li>子任务如何回收</li>
+<li>出错如何中断</li>
+<li>风险动作如何审批</li>
+</ol>
+<p>这已经非常接近分布式系统思维了。</p>
+<p>你会开始认真面对这些工程问题：</p>
+<ol>
+<li>幂等性</li>
+<li>可恢复性</li>
+<li>可观测性</li>
+<li>权限隔离</li>
+<li>人机协同</li>
+</ol>
+<h1 id="7-一个实战案例：做一个“研究报告-Agent”"><a href="#7-一个实战案例：做一个“研究报告-Agent”" class="headerlink" title="7. 一个实战案例：做一个“研究报告 Agent”"></a>7. 一个实战案例：做一个“研究报告 Agent”</h1><p>下面给一个更实用的案例思路。目标是：</p>
+<ol>
+<li>输入一个主题</li>
+<li>自动调研</li>
+<li>归纳观点</li>
+<li>输出报告草稿</li>
+</ol>
+<h2 id="7-1-L2-做法"><a href="#7-1-L2-做法" class="headerlink" title="7.1 L2 做法"></a>7.1 L2 做法</h2><p>L2 会这么做：</p>
+<ol>
+<li>固定先检索</li>
+<li>固定再抽取要点</li>
+<li>固定再汇总成报告</li>
+</ol>
+<p>优点：</p>
+<ol>
+<li>稳定</li>
+<li>易调试</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>遇到复杂问题不够灵活</li>
+</ol>
+<h2 id="7-2-L3-做法"><a href="#7-2-L3-做法" class="headerlink" title="7.2 L3 做法"></a>7.2 L3 做法</h2><p>L3 会这么做：</p>
+<ol>
+<li>Agent 自己判断要不要继续搜索</li>
+<li>判断还缺什么信息</li>
+<li>决定是否调用第二个工具</li>
+</ol>
+<p>优点：</p>
+<ol>
+<li>更灵活</li>
+<li>更接近“助理”</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>不稳定因素明显增加</li>
+</ol>
+<h2 id="7-3-L4-做法"><a href="#7-3-L4-做法" class="headerlink" title="7.3 L4 做法"></a>7.3 L4 做法</h2><p>L4 会这么做：</p>
+<ol>
+<li>Planner 先拆任务</li>
+<li>Researcher 去找资料</li>
+<li>Writer 写草稿</li>
+<li>Reviewer 审核逻辑</li>
+<li>必要时人工确认</li>
+</ol>
+<p>优点：</p>
+<ol>
+<li>更适合复杂长任务</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>系统复杂度大幅上升</li>
+</ol>
+<p>所以真正落地时，不是“越高级越好”，而是“问题配什么形态最合适”。</p>
+<h1 id="8-OpenClaw-为什么会火"><a href="#8-OpenClaw-为什么会火" class="headerlink" title="8. OpenClaw 为什么会火"></a>8. OpenClaw 为什么会火</h1><p>这里我把 OpenClaw 看成最近一类很有代表性的 computer-use &#x2F; self-hosted agent 方向。</p>
+<p>它之所以让很多人兴奋，不只是因为“它也是 Agent”，而是因为它把 Agent 往前推进了一步：</p>
+<ol>
+<li>从聊天框里的建议，走向真实操作</li>
+<li>从一次性调用，走向长期驻留</li>
+<li>从单轮任务，走向持续自动化</li>
+<li>从纯文本工具，走向浏览器、系统、消息入口和调度系统</li>
+</ol>
+<p>也就是说，OpenClaw 类产品更像“一个运行在你电脑或环境里的行动型代理”。</p>
+<p>这和传统 LangChain Agent 的差别，大致在于：</p>
+<h2 id="8-1-传统-LangChain-Agent-更像应用内-Agent"><a href="#8-1-传统-LangChain-Agent-更像应用内-Agent" class="headerlink" title="8.1 传统 LangChain Agent 更像应用内 Agent"></a>8.1 传统 LangChain Agent 更像应用内 Agent</h2><p>典型特征：</p>
+<ol>
+<li>嵌在某个业务系统里</li>
+<li>为某个具体场景服务</li>
+<li>工具边界较清晰</li>
+<li>生命周期相对短</li>
+</ol>
+<h2 id="8-2-OpenClaw-类系统更像个人自动化操作层"><a href="#8-2-OpenClaw-类系统更像个人自动化操作层" class="headerlink" title="8.2 OpenClaw 类系统更像个人自动化操作层"></a>8.2 OpenClaw 类系统更像个人自动化操作层</h2><p>典型特征：</p>
+<ol>
+<li>常驻</li>
+<li>跨应用</li>
+<li>有浏览器和系统操作能力</li>
+<li>有持续任务与记忆</li>
+<li>更强调“替用户执行”</li>
+</ol>
+<p>所以它们不是简单替代关系，更像是两个层面：</p>
+<ol>
+<li>LangChain &#x2F; LangGraph 更适合搭建应用内智能流程</li>
+<li>OpenClaw 更像把 Agent 推向个人操作系统与自动化平台</li>
+</ol>
+<h1 id="9-LangChain-体系能从-OpenClaw-学到什么"><a href="#9-LangChain-体系能从-OpenClaw-学到什么" class="headerlink" title="9. LangChain 体系能从 OpenClaw 学到什么"></a>9. LangChain 体系能从 OpenClaw 学到什么</h1><p>虽然两者定位不同，但 OpenClaw 这类系统给我们很多启发。</p>
+<h2 id="9-1-Agent-不只是推理，还要有执行面"><a href="#9-1-Agent-不只是推理，还要有执行面" class="headerlink" title="9.1 Agent 不只是推理，还要有执行面"></a>9.1 Agent 不只是推理，还要有执行面</h2><p>过去很多 Agent 项目停留在“会说”，而真正有价值的是“能做事”。</p>
+<h2 id="9-2-工具不是越多越好，而是要有控制平面"><a href="#9-2-工具不是越多越好，而是要有控制平面" class="headerlink" title="9.2 工具不是越多越好，而是要有控制平面"></a>9.2 工具不是越多越好，而是要有控制平面</h2><p>浏览器、文件系统、消息、任务调度，这些能力一旦进入系统，就不能只靠 Prompt 约束，必须有权限管理和隔离机制。</p>
+<h2 id="9-3-长期运行能力会改变-Agent-设计"><a href="#9-3-长期运行能力会改变-Agent-设计" class="headerlink" title="9.3 长期运行能力会改变 Agent 设计"></a>9.3 长期运行能力会改变 Agent 设计</h2><p>一次性会话和持续运行代理是两种完全不同的工程问题。</p>
+<h2 id="9-4-记忆真正重要的是可治理"><a href="#9-4-记忆真正重要的是可治理" class="headerlink" title="9.4 记忆真正重要的是可治理"></a>9.4 记忆真正重要的是可治理</h2><p>长期记忆如果没有分类、清理和权限控制，很快就会变成噪声与风险源。</p>
+<h1 id="10-如果让我今天做一个可上线的-LangChain-Agent，我会这样选型"><a href="#10-如果让我今天做一个可上线的-LangChain-Agent，我会这样选型" class="headerlink" title="10. 如果让我今天做一个可上线的 LangChain Agent，我会这样选型"></a>10. 如果让我今天做一个可上线的 LangChain Agent，我会这样选型</h1><h2 id="适合直接用-LangChain-链的场景"><a href="#适合直接用-LangChain-链的场景" class="headerlink" title="适合直接用 LangChain 链的场景"></a>适合直接用 LangChain 链的场景</h2><ol>
+<li>信息抽取</li>
+<li>问答生成</li>
+<li>摘要改写</li>
+<li>固定流程 RAG</li>
+</ol>
+<h2 id="适合-LangChain-Tool-Agent-的场景"><a href="#适合-LangChain-Tool-Agent-的场景" class="headerlink" title="适合 LangChain + Tool Agent 的场景"></a>适合 LangChain + Tool Agent 的场景</h2><ol>
+<li>研究助理</li>
+<li>数据查询助理</li>
+<li>多工具分析助手</li>
+</ol>
+<h2 id="更适合-LangGraph-的场景"><a href="#更适合-LangGraph-的场景" class="headerlink" title="更适合 LangGraph 的场景"></a>更适合 LangGraph 的场景</h2><ol>
+<li>多步骤复杂任务</li>
+<li>有状态工作流</li>
+<li>需要人工审批</li>
+<li>需要多 Agent 协作</li>
+</ol>
+<h2 id="更接近-OpenClaw-思路的场景"><a href="#更接近-OpenClaw-思路的场景" class="headerlink" title="更接近 OpenClaw 思路的场景"></a>更接近 OpenClaw 思路的场景</h2><ol>
+<li>跨应用自动化</li>
+<li>浏览器操作代理</li>
+<li>长期驻留型个人助理</li>
+<li>自托管、强调本地控制的自动化系统</li>
+</ol>
+<h1 id="11-开发-Agent-时最容易忽略的五件事"><a href="#11-开发-Agent-时最容易忽略的五件事" class="headerlink" title="11. 开发 Agent 时最容易忽略的五件事"></a>11. 开发 Agent 时最容易忽略的五件事</h1><h2 id="11-1-工具描述本身就是产品设计"><a href="#11-1-工具描述本身就是产品设计" class="headerlink" title="11.1 工具描述本身就是产品设计"></a>11.1 工具描述本身就是产品设计</h2><p>Tool description 写得模糊，模型就很容易乱用工具。</p>
+<h2 id="11-2-不要把所有问题交给模型规划"><a href="#11-2-不要把所有问题交给模型规划" class="headerlink" title="11.2 不要把所有问题交给模型规划"></a>11.2 不要把所有问题交给模型规划</h2><p>能由程序写死的约束，就别全部交给模型临场发挥。</p>
+<h2 id="11-3-把失败当常态"><a href="#11-3-把失败当常态" class="headerlink" title="11.3 把失败当常态"></a>11.3 把失败当常态</h2><p>Agent 一定会失败，关键是失败后能不能被看到、被重试、被人工接管。</p>
+<h2 id="11-4-观测能力比-Demo-能力更重要"><a href="#11-4-观测能力比-Demo-能力更重要" class="headerlink" title="11.4 观测能力比 Demo 能力更重要"></a>11.4 观测能力比 Demo 能力更重要</h2><p>一个能跑十次成功八次但无法定位问题的 Agent，实际上远不如一个成功率稍低但链路清晰的系统。</p>
+<h2 id="11-5-安全设计必须前置"><a href="#11-5-安全设计必须前置" class="headerlink" title="11.5 安全设计必须前置"></a>11.5 安全设计必须前置</h2><p>只要涉及：</p>
+<ol>
+<li>发消息</li>
+<li>发邮件</li>
+<li>操作网页</li>
+<li>执行命令</li>
+<li>调业务接口</li>
+</ol>
+<p>就必须考虑权限、审批、白名单和审计。</p>
+<h1 id="12-小结"><a href="#12-小结" class="headerlink" title="12. 小结"></a>12. 小结</h1><p>这一篇真正想说明的，不是“怎么把 Agent 写出来”，而是“怎么分清不同层级 Agent 的问题本质”。</p>
+<p>如果做个总结，我会这么说：</p>
+<ol>
+<li>L2 的关键是把工作流写稳</li>
+<li>L3 的关键是把工具调用管住</li>
+<li>L4 的关键是把状态、协作和治理做好</li>
+<li>OpenClaw 代表的是 Agent 从应用能力走向持续执行能力的一条更激进路线</li>
+</ol>
+<p>所以，今天聊 LangChain Agent，不能只盯着几行 API。真正的难点已经不再只是“模型怎么调”，而是：</p>
+<ol>
+<li>任务怎么拆</li>
+<li>状态怎么管</li>
+<li>工具怎么控</li>
+<li>风险怎么兜</li>
+</ol>
+<p>如果只想快速起步，我的建议是：</p>
+<ol>
+<li>先做一个 L2 工作流</li>
+<li>再做一个单 Agent 工具调用版本</li>
+<li>最后再上 LangGraph 或更复杂的系统设计</li>
+</ol>
+<p>这样一路走下来，你会真正明白 Agent 不是一个 Demo 名词，而是一套要和工程现实正面碰撞的系统能力。</p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/" data-id="cmny35kgd00034kpx2sk513su" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASYAAAEmCAAAAADqr2IGAAAEjklEQVR42u3aS3LbMBAFQN//0k5VtpHoN2+klEA3Vy6ZBMHGApjP11d8ff+98t+f/ff7yZX8998xr8e//uXrHRcmTJgwYfpIpu/LK3n99VMb1mugfLbTcR48iwkTJkyYDmfaDJcg5tv5BqK7J1owTJgwYcL0C5jye67/7kLT/IOnb8eECRMmTJimL7vejK9D03ycLqGMCRMmTJh+J1M3XBKyJh/fpYk77rfnwjFhwoQJ04cxTRt37vT3G/ubMGHChAnTBzB9D69uE+3Kpd3Wvj8EPHgKEyZMmDAdyzR98fSIME3dTnfkrthZzg0TJkyYMB3INC0K5hv5foPvipddOviHmWPChAkTphsxbcqEXdg5PV68uxH2wbswYcKECdMtmPJk6GbDnobW06aivFk2L99iwoQJE6ZzmabDdQHktIQ5HWdTzhwnhTFhwoQJ01FMXZkw+X3TWDNd4SnlOLTGhAkTJky3Y+o+sgtrvxbXNMmbz2fcyYsJEyZMmD6SKS9JdoeALnjuypnTAH5aOsWECRMmTCcy5QnQ6Tbctey8toWom8nTFlVMmDBhwnQg0ztacPJNenOMmC7t5uswYcKECdNdmV7VLjM9CuQBdrcAL8DChAkTJkxHMeUv24Sg09C6K6wmAXl5XMCECRMmTIcz5SnX6cdPt+TpR07bW7vFxoQJEyZMd2Xqyn5d0093yHhVoP7DAmDChAkTpmOZpkXBTRCbb8ndAWX6FVNWTJgwYcJ0LlP+4jzUzLfbvADZtdVOF29c9cWECRMmTIcwJUnSbhJdErYLevcJ5fIcgQkTJkyYPpgpSeZOWfMWnOt7Ns92h48fTkyYMGHChOkQpk36dV8m7N6VH1m6Zp0HM8SECRMmTMcydRtkEi5OR8vbg7rQd9p+9EO9FxMmTJgwHcX02jadbgO+/rB9Q2rehrs6pmDChAkTpo9kyqebb+3d9p8zdaFvXrx8GvpiwoQJE6bDmfLH8jC1KzEmNF3bUBlmY8KECROmY5ny5pvu87r0cdcYlCz2FA4TJkyYMN2PadquuieYhqP5fPJ7BocPTJgwYcJ0CNNrm3KmB4s8qJ4mdjftPg/Gx4QJEyZMt2DalPqSwuE0iO2aR7vlGRwIMGHChAnTUUxdqTJvA823+U0g3S3ndP6YMGHChOl0pmnZb9qasylwbsbsFmawepgwYcKE6YOZ8nRtd+UoeRvr/tAwPvpgwoQJE6bDmfKkZxdeTltC8/TuJjU8aPfBhAkTJky3YMpLfdPAeNoC242ZH2imy4YJEyZMmM5l6gbNt+dpcrnLr/7P+WDChAkTprOYuqRtlw7uEqxdKJtv/+NcOCZMmDBhOoopv/LWma6ZZlqq3ATh08QxJkyYMGE6nWnTfJOnYruQe3NASY4LedoXEyZMmDCdzvTaDTv/5X1J3nGGGxMmTJgw/XqmPADeN7zuE7tdcvnpGzFhwoQJ069kmn5MkrTt5rM5FkQzwYQJEyZMhzO9KsmbtwTl080Lq9N3Xd+JCRMmTJjuwTQtB+YBZBdwbpK80+B8nw7GhAkTJkwfzPQHptaVJidtE1AAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/AIGC/"><i class="fa fa-tag"></i>AIGC</a><a href="/tags/LLM/"><i class="fa fa-tag"></i>LLM</a><a href="/tags/Agent/"><i class="fa fa-tag"></i>Agent</a><a href="/tags/LangChain/"><i class="fa fa-tag"></i>LangChain</a><a href="/tags/LangGraph/"><i class="fa fa-tag"></i>LangGraph</a><a href="/tags/OpenClaw/"><i class="fa fa-tag"></i>OpenClaw</a></div><div class="post-nav"><a class="next" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/%E4%BB%AA%E5%99%A8%E4%BB%AA%E8%A1%A8%E7%A7%91%E5%AD%A6%E4%B8%8E%E5%85%89%E7%94%B5%E5%B7%A5%E7%A8%8B/">仪器仪表科学与光电工程</a><span class="category-list-count">1</span></li></ul></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8A-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/">AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/03/10/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8B%E9%80%9A%E4%B9%89Prompt%E5%9B%9B%E5%8D%81%E5%BC%8F/">AIGC-LLM-辟邪剑谱之通义Prompt四十式</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/03/06/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8BPrompt%20Engineering/">AIGC-LLM-辟邪剑谱之Prompt Engineering</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/">AIGC-Agent-作文批改标注</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/09/27/LLama32%E8%B0%83%E7%A0%94/">LLama3.2调研报告</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/">AIGC-LLM-Prompt工程技能综述</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/">DeepLearning模型-NLP-BERT</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">Deeeplearning模型-NLP-大语言模型微调语料生成工具</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.0"><script type="text/javascript" src="/js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript">window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    processEscapes: true
+  },
+  chtml: {
+    fontURL: '/js/chtml/fonts/woff-v2'
+  },
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  }
+};
+</script><script type="text/javascript" src="/js/mathjax3.js" async></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="/assets/prism-bundle.js"></script>
+<script src="/assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门 | DeepLearner</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门</h1><div class="post-meta">created:2026-04-14</div><div class="post-meta">updated:2026-04-14<span> | </span><span class="category"><a href="/categories/AIGC/">AIGC</a></span></div><a class="disqus-comment-count" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8A-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/#waline"><span class="waline-comment-count" id="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8A-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E5%85%88%E6%8A%8A%E4%B8%89%E7%AF%87%E7%9A%84%E5%85%B3%E7%B3%BB%E8%AE%B2%E6%B8%85%E6%A5%9A"><span class="toc-number">1.</span> <span class="toc-text">0. 先把三篇的关系讲清楚</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-LangChain-%E5%92%8C-LangGraph-%E5%88%B0%E5%BA%95%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="toc-number">2.</span> <span class="toc-text">1. LangChain 和 LangGraph 到底有什么区别</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-LangChain-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.1.</span> <span class="toc-text">1.1 LangChain 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-LangGraph-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.2.</span> <span class="toc-text">1.2 LangGraph 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-%E4%B8%A4%E8%80%85%E4%B8%8D%E6%98%AF%E6%9B%BF%E4%BB%A3%E5%85%B3%E7%B3%BB%EF%BC%8C%E8%80%8C%E6%98%AF%E4%B8%8A%E4%B8%8B%E5%B1%82%E5%85%B3%E7%B3%BB"><span class="toc-number">2.3.</span> <span class="toc-text">1.3 两者不是替代关系，而是上下层关系</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E5%A6%82%E4%BD%95%E9%80%89%E5%9E%8B%EF%BC%9A%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-LangChain%EF%BC%8C%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%B8%8A-LangGraph"><span class="toc-number">3.</span> <span class="toc-text">2. 如何选型：什么时候用 LangChain，什么时候上 LangGraph</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E8%BF%99%E4%BA%9B%E6%83%85%E5%86%B5%E4%BC%98%E5%85%88%E7%94%A8-LangChain"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 这些情况优先用 LangChain</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E8%BF%99%E4%BA%9B%E6%83%85%E5%86%B5%E4%BC%98%E5%85%88%E4%B8%8A-LangGraph"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 这些情况优先上 LangGraph</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E6%9C%80%E5%B8%B8%E8%A7%81%E7%9A%84%E6%AD%A3%E7%A1%AE%E8%B7%AF%E5%BE%84%EF%BC%9A%E5%85%88-LangChain%EF%BC%8C%E5%90%8E-LangGraph"><span class="toc-number">3.3.</span> <span class="toc-text">2.3 最常见的正确路径：先 LangChain，后 LangGraph</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E5%BD%93%E5%89%8D%E5%AE%98%E6%96%B9%E2%80%9C%E7%BB%9F%E4%B8%80%E6%9E%B6%E6%9E%84%E2%80%9D%E5%88%B0%E5%BA%95%E7%BB%9F%E4%B8%80%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">4.</span> <span class="toc-text">3. 当前官方“统一架构”到底统一了什么</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-%E9%AB%98%E5%B1%82%E7%BB%9F%E4%B8%80%E5%85%A5%E5%8F%A3%EF%BC%9Acreate-agent"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 高层统一入口：create_agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-%E6%A8%A1%E5%9E%8B%E5%B1%82%E7%BB%9F%E4%B8%80%E6%8E%A5%E5%8F%A3%EF%BC%9Aprovider-neutral-model-API"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 模型层统一接口：provider-neutral model API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-%E5%86%85%E5%AE%B9%E5%B1%82%E7%BB%9F%E4%B8%80%E6%A0%BC%E5%BC%8F%EF%BC%9Acontent-blocks"><span class="toc-number">4.3.</span> <span class="toc-text">3.3 内容层统一格式：content blocks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-4-%E6%89%A7%E8%A1%8C%E5%B1%82%E7%BB%9F%E4%B8%80%E5%88%B0%E5%BA%95%E5%BA%A7%EF%BC%9ALangChain-agents-built-on-LangGraph"><span class="toc-number">4.4.</span> <span class="toc-text">3.4 执行层统一到底座：LangChain agents built on LangGraph</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-5-%E5%8C%85%E4%B8%8E%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E6%9B%B4%E6%B8%85%E6%99%B0"><span class="toc-number">4.5.</span> <span class="toc-text">3.5 包与命名空间更清晰</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E4%B8%80%E5%BC%A0%E5%9B%BE%E7%9C%8B%E6%87%82%E5%BD%93%E5%89%8D%E5%85%B3%E7%B3%BB"><span class="toc-number">5.</span> <span class="toc-text">4. 一张图看懂当前关系</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-LangChain-%E5%88%B0%E5%BA%95%E5%9C%A8%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">5. LangChain 到底在解决什么问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-LangChain-%E7%94%9F%E6%80%81%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3"><span class="toc-number">7.</span> <span class="toc-text">2. LangChain 生态怎么理解</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-LangChain-%E6%9C%80%E6%A0%B8%E5%BF%83%E7%9A%84%E5%87%A0%E4%B8%AA%E6%A6%82%E5%BF%B5"><span class="toc-number">8.</span> <span class="toc-text">3. LangChain 最核心的几个概念</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-Model"><span class="toc-number">8.1.</span> <span class="toc-text">3.1 Model</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-Prompt-Template"><span class="toc-number">8.2.</span> <span class="toc-text">3.2 Prompt Template</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-Output-Parser"><span class="toc-number">8.3.</span> <span class="toc-text">3.3 Output Parser</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-4-Chain"><span class="toc-number">8.4.</span> <span class="toc-text">3.4 Chain</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-5-Runnable"><span class="toc-number">8.5.</span> <span class="toc-text">3.5 Runnable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-6-Retriever"><span class="toc-number">8.6.</span> <span class="toc-text">3.6 Retriever</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-7-Tool"><span class="toc-number">8.7.</span> <span class="toc-text">3.7 Tool</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-8-Memory"><span class="toc-number">8.8.</span> <span class="toc-text">3.8 Memory</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-LangChain-%E6%9C%80%E6%8E%A8%E8%8D%90%E7%9A%84%E6%80%9D%E7%BB%B4%E6%96%B9%E5%BC%8F%EF%BC%9A%E5%85%88%E9%93%BE%EF%BC%8C%E5%90%8E-Agent"><span class="toc-number">9.</span> <span class="toc-text">4. LangChain 最推荐的思维方式：先链，后 Agent</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-LangChain-%E6%80%8E%E4%B9%88%E5%AE%89%E8%A3%85%E5%92%8C%E8%B5%B7%E6%AD%A5"><span class="toc-number">10.</span> <span class="toc-text">5. LangChain 怎么安装和起步</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-%E4%B8%80%E4%B8%AA%E7%A8%8D%E5%BE%AE%E5%AE%8C%E6%95%B4%E7%82%B9%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A1%88%E4%BE%8B"><span class="toc-number">11.</span> <span class="toc-text">6. 一个稍微完整点的基础案例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-LangChain-%E4%B8%8E-RAG-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">12.</span> <span class="toc-text">7. LangChain 与 RAG 的关系</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#8-LangChain-%E5%92%8C-LangGraph-%E6%98%AF%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB"><span class="toc-number">13.</span> <span class="toc-text">8. LangChain 和 LangGraph 是什么关系</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#9-%E5%88%9D%E5%AD%A6-LangChain-%E6%9C%80%E5%AE%B9%E6%98%93%E8%B8%A9%E7%9A%84%E5%9D%91"><span class="toc-number">14.</span> <span class="toc-text">9. 初学 LangChain 最容易踩的坑</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#9-1-%E4%B8%80%E5%BC%80%E5%A7%8B%E5%B0%B1%E5%81%9A%E4%B8%87%E8%83%BD-Agent"><span class="toc-number">14.1.</span> <span class="toc-text">9.1 一开始就做万能 Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-2-%E5%8F%AA%E5%85%B3%E6%B3%A8%E6%A8%A1%E5%9E%8B%EF%BC%8C%E4%B8%8D%E5%85%B3%E6%B3%A8%E8%BE%93%E5%87%BA%E5%A5%91%E7%BA%A6"><span class="toc-number">14.2.</span> <span class="toc-text">9.2 只关注模型，不关注输出契约</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-3-Prompt%E3%80%81%E6%A3%80%E7%B4%A2%E3%80%81%E5%B7%A5%E5%85%B7%E3%80%81%E7%8A%B6%E6%80%81%E6%B7%B7%E5%9C%A8%E4%B8%80%E8%B5%B7"><span class="toc-number">14.3.</span> <span class="toc-text">9.3 Prompt、检索、工具、状态混在一起</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-4-%E6%B2%A1%E6%9C%89%E8%A7%82%E6%B5%8B%E4%B8%8E%E6%97%A5%E5%BF%97"><span class="toc-number">14.4.</span> <span class="toc-text">9.4 没有观测与日志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-5-%E6%8A%8A-Memory-%E5%BD%93%E6%88%90%E9%AD%94%E6%B3%95"><span class="toc-number">14.5.</span> <span class="toc-text">9.5 把 Memory 当成魔法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#10-%E6%88%91%E5%AF%B9-LangChain-%E7%9A%84%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="toc-number">15.</span> <span class="toc-text">10. 我对 LangChain 的实践建议</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#12-%E5%B0%8F%E7%BB%93"><span class="toc-number">16.</span> <span class="toc-text">12. 小结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#13-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">17.</span> <span class="toc-text">13. 参考资料</span></a></li></ol></div></div><div class="post-content"><p>这两年做 LLM 应用，大家很容易一开始就陷入“调模型”“拼 Prompt”“堆工具”的局部优化里，代码能跑，但结构很快失控。LangChain 之所以流行，不是因为它替我们发明了新的模型能力，而是因为它把大模型应用开发里最常见的几个动作，整理成了一套可以组合、可以维护、可以扩展的工程抽象。</p>
+<p>不过现在真正容易让人混淆的，已经不只是 LangChain，而是 LangChain、LangGraph、Agent、Workflow 这些概念经常被混着讲。于是很多人看完几篇文章后，会觉得名字都熟，但边界还是不清楚。</p>
+<p>所以这一篇我先不急着上复杂 Agent，而是先把三件事讲清楚：</p>
+<ol>
+<li>LangChain 和 LangGraph 到底有什么区别</li>
+<li>项目里该怎么选型</li>
+<li>当前官方稳定架构到底统一了什么</li>
+</ol>
+<p>把这层打稳了，后面再去看 LangGraph 工作流和 Agent 实战，就不会觉得“明明都在讲 Agent，为什么又要单独学一套图框架”。</p>
+<span id="more"></span>
+
+<h1 id="0-先把三篇的关系讲清楚"><a href="#0-先把三篇的关系讲清楚" class="headerlink" title="0. 先把三篇的关系讲清楚"></a>0. 先把三篇的关系讲清楚</h1><p>这个系列现在可以按下面的方式理解：</p>
+<ol>
+<li><p>上篇：先解决认知问题<br>搞清楚 LangChain、LangGraph、Agent、Workflow 的区别与选型，再讲 LangChain 基础能力。</p>
+</li>
+<li><p>中篇：专讲控制流问题<br>聚焦 LangGraph，理解工作流、状态机、条件边、回环、子图和多 Agent 编排。</p>
+</li>
+<li><p>下篇：专讲 Agent 落地问题<br>回到实际系统，讨论 L2、L3、L4、OpenClaw 这类不同层级的 Agent 形态。</p>
+</li>
+</ol>
+<p>所以这三篇不是并列重复，而是三层递进：</p>
+<ol>
+<li>先分清概念</li>
+<li>再掌握骨架</li>
+<li>最后进入实战</li>
+</ol>
+<h1 id="1-LangChain-和-LangGraph-到底有什么区别"><a href="#1-LangChain-和-LangGraph-到底有什么区别" class="headerlink" title="1. LangChain 和 LangGraph 到底有什么区别"></a>1. LangChain 和 LangGraph 到底有什么区别</h1><p>如果只用一句话来概括，我更倾向于这样说：</p>
+<ol>
+<li>LangChain 是高层应用框架，偏“快速搭应用”</li>
+<li>LangGraph 是底层编排框架，偏“把复杂系统跑稳”</li>
+</ol>
+<p>更具体一点：</p>
+<h2 id="1-1-LangChain-是什么"><a href="#1-1-LangChain-是什么" class="headerlink" title="1.1 LangChain 是什么"></a>1.1 LangChain 是什么</h2><p>根据官方 overview 的表述，LangChain 现在的核心定位是：</p>
+<ol>
+<li>提供统一模型接口</li>
+<li>提供工具集成</li>
+<li>提供预置 Agent 架构</li>
+<li>让你更快搭出 agent 和 autonomous application</li>
+</ol>
+<p>也就是说，LangChain 更像一个高层开发层。</p>
+<p>它擅长解决的问题是：</p>
+<ol>
+<li>怎么快速接模型</li>
+<li>怎么快速接工具</li>
+<li>怎么快速把一个 agent 跑起来</li>
+<li>怎么用统一方式适配不同 provider</li>
+</ol>
+<h2 id="1-2-LangGraph-是什么"><a href="#1-2-LangGraph-是什么" class="headerlink" title="1.2 LangGraph 是什么"></a>1.2 LangGraph 是什么</h2><p>官方对 LangGraph 的定位则很明确，它是一个 low-level orchestration framework and runtime。</p>
+<p>翻成工程语言，大致就是：</p>
+<ol>
+<li>它更低层</li>
+<li>它更关注 orchestration，而不是 prompt 抽象</li>
+<li>它更关注长流程、状态、持久化、回环和人工介入</li>
+</ol>
+<p>LangGraph 主要解决的是：</p>
+<ol>
+<li>长流程怎么编排</li>
+<li>状态怎么在节点之间传</li>
+<li>失败后怎么恢复</li>
+<li>如何做 durable execution</li>
+<li>如何插入 human-in-the-loop</li>
+</ol>
+<h2 id="1-3-两者不是替代关系，而是上下层关系"><a href="#1-3-两者不是替代关系，而是上下层关系" class="headerlink" title="1.3 两者不是替代关系，而是上下层关系"></a>1.3 两者不是替代关系，而是上下层关系</h2><p>这点是最关键的。</p>
+<p>当前官方文档已经把这个关系讲得很清楚：</p>
+<ol>
+<li>LangChain 的 agents 是 built on top of LangGraph</li>
+<li>LangGraph 可以单独使用，不依赖 LangChain</li>
+<li>但 LangGraph 文档也明确说，通常会配合 LangChain 组件来接模型和工具</li>
+</ol>
+<p>所以更合理的理解方式不是：</p>
+<ol>
+<li>学 LangChain 还是学 LangGraph</li>
+</ol>
+<p>而是：</p>
+<ol>
+<li>你现在需要的是高层入口，还是底层控制力</li>
+</ol>
+<h1 id="2-如何选型：什么时候用-LangChain，什么时候上-LangGraph"><a href="#2-如何选型：什么时候用-LangChain，什么时候上-LangGraph" class="headerlink" title="2. 如何选型：什么时候用 LangChain，什么时候上 LangGraph"></a>2. 如何选型：什么时候用 LangChain，什么时候上 LangGraph</h1><p>如果你只是想快速判断，我建议按下面这个逻辑来。</p>
+<h2 id="2-1-这些情况优先用-LangChain"><a href="#2-1-这些情况优先用-LangChain" class="headerlink" title="2.1 这些情况优先用 LangChain"></a>2.1 这些情况优先用 LangChain</h2><ol>
+<li>你想快速起一个 agent demo</li>
+<li>你需要统一接不同模型和工具</li>
+<li>你还没有复杂状态流转需求</li>
+<li>你更关心“先跑起来”，而不是“先做成可编排系统”</li>
+</ol>
+<p>典型例子：</p>
+<ol>
+<li>智能问答助手</li>
+<li>调用几个工具的研究助理</li>
+<li>简单 RAG 应用</li>
+<li>单轮或短流程自动化</li>
+</ol>
+<h2 id="2-2-这些情况优先上-LangGraph"><a href="#2-2-这些情况优先上-LangGraph" class="headerlink" title="2.2 这些情况优先上 LangGraph"></a>2.2 这些情况优先上 LangGraph</h2><ol>
+<li>有明确的多步工作流</li>
+<li>存在条件分支</li>
+<li>任务需要回环</li>
+<li>系统需要持久化状态</li>
+<li>需要人工审批或人工纠偏</li>
+<li>需要多 Agent 协作</li>
+</ol>
+<p>典型例子：</p>
+<ol>
+<li>Planner + Researcher + Writer + Reviewer</li>
+<li>长周期任务执行</li>
+<li>带人工审批的自动化流程</li>
+<li>可恢复、可回放的 agent system</li>
+</ol>
+<h2 id="2-3-最常见的正确路径：先-LangChain，后-LangGraph"><a href="#2-3-最常见的正确路径：先-LangChain，后-LangGraph" class="headerlink" title="2.3 最常见的正确路径：先 LangChain，后 LangGraph"></a>2.3 最常见的正确路径：先 LangChain，后 LangGraph</h2><p>大多数团队并不是一开始就应该直接上 LangGraph。</p>
+<p>更实际的路径通常是：</p>
+<ol>
+<li>先用 LangChain 验证需求</li>
+<li>当流程开始复杂化时，引入 LangGraph</li>
+<li>再把原来分散的逻辑收拢成显式状态图</li>
+</ol>
+<p>这个路径的好处是：</p>
+<ol>
+<li>认知成本更低</li>
+<li>交付更快</li>
+<li>不会过早为复杂度买单</li>
+</ol>
+<h1 id="3-当前官方“统一架构”到底统一了什么"><a href="#3-当前官方“统一架构”到底统一了什么" class="headerlink" title="3. 当前官方“统一架构”到底统一了什么"></a>3. 当前官方“统一架构”到底统一了什么</h1><p>这里我先明确一句，避免概念误伤：</p>
+<blockquote>
+<p>截至 2026-04-14，我查到的官方稳定主线仍然是 LangChain 1.0 和 LangGraph 1.x，并不是已经正式进入一个公开稳定的 2.0 架构时代。</p>
+</blockquote>
+<p>所以如果你说“2.0 统一架构”，更贴切的理解应该是：</p>
+<ol>
+<li>这一代官方稳定设计，到底把哪些层统一了</li>
+<li>LangChain 和 LangGraph 的分工现在是怎么收敛的</li>
+</ol>
+<p>从官方 release &#x2F; overview 文档来看，我认为有四个非常关键的统一点。</p>
+<h2 id="3-1-高层统一入口：create-agent"><a href="#3-1-高层统一入口：create-agent" class="headerlink" title="3.1 高层统一入口：create_agent"></a>3.1 高层统一入口：<code>create_agent</code></h2><p>LangChain v1 把 <code>create_agent</code> 变成了标准高层入口。</p>
+<p>这件事的意义在于：</p>
+<ol>
+<li>你不再需要一开始就从低层 prebuilt graph 思维入手</li>
+<li>Agent 的高层创建方式被统一了</li>
+<li>LangChain 更明确承担“易用入口层”的角色</li>
+</ol>
+<p>官方也明确提到，它替代了过去从 LangGraph 侧暴露出来的 <code>create_react_agent</code> 这种更偏过渡时代的入口。</p>
+<h2 id="3-2-模型层统一接口：provider-neutral-model-API"><a href="#3-2-模型层统一接口：provider-neutral-model-API" class="headerlink" title="3.2 模型层统一接口：provider-neutral model API"></a>3.2 模型层统一接口：provider-neutral model API</h2><p>LangChain 现在非常强调“统一模型接口”。</p>
+<p>也就是：</p>
+<ol>
+<li>OpenAI</li>
+<li>Anthropic</li>
+<li>Google</li>
+<li>其他 provider</li>
+</ol>
+<p>尽量都走一致的调用体验。</p>
+<p>这意味着在应用层，你更容易做到：</p>
+<ol>
+<li>provider 切换</li>
+<li>模型 AB test</li>
+<li>结构化输出复用</li>
+<li>tool calling 行为复用</li>
+</ol>
+<h2 id="3-3-内容层统一格式：content-blocks"><a href="#3-3-内容层统一格式：content-blocks" class="headerlink" title="3.3 内容层统一格式：content blocks"></a>3.3 内容层统一格式：content blocks</h2><p>官方 v1 里把 <code>content_blocks</code> 作为一个重要统一方向提出。</p>
+<p>它解决的是另一个非常现实的问题：</p>
+<ol>
+<li>不同模型对文本、工具调用、多模态内容的返回格式并不一致</li>
+<li>如果没有统一中间层，应用代码会越来越 provider-specific</li>
+</ol>
+<p>content blocks 的意义，就是把现代模型返回内容抽象到一个更一致的消费形式上。</p>
+<h2 id="3-4-执行层统一到底座：LangChain-agents-built-on-LangGraph"><a href="#3-4-执行层统一到底座：LangChain-agents-built-on-LangGraph" class="headerlink" title="3.4 执行层统一到底座：LangChain agents built on LangGraph"></a>3.4 执行层统一到底座：LangChain agents built on LangGraph</h2><p>这是我认为最关键的一点。</p>
+<p>今天官方的关系已经不是：</p>
+<ol>
+<li>LangChain 一套 agent</li>
+<li>LangGraph 另一套 agent</li>
+</ol>
+<p>而是：</p>
+<ol>
+<li>LangChain 负责高层 agent abstraction</li>
+<li>LangGraph 负责底层 agent runtime &#x2F; orchestration</li>
+</ol>
+<p>这意味着 durable execution、persistence、human-in-the-loop、streaming 这类能力，不再是两套世界观，而是逐步落在同一套分层里。</p>
+<h2 id="3-5-包与命名空间更清晰"><a href="#3-5-包与命名空间更清晰" class="headerlink" title="3.5 包与命名空间更清晰"></a>3.5 包与命名空间更清晰</h2><p>LangChain v1 还做了一个非常务实的收敛：</p>
+<ol>
+<li><code>langchain</code> 聚焦当前主线能力</li>
+<li>历史遗留和经典接口迁到 <code>langchain-classic</code></li>
+</ol>
+<p>这个变化很像一次“架构清淤”。</p>
+<p>它的价值不在于名字，而在于官方终于更明确地告诉开发者：</p>
+<ol>
+<li>现在推荐走哪条路</li>
+<li>哪些东西是主线</li>
+<li>哪些属于兼容历史</li>
+</ol>
+<h1 id="4-一张图看懂当前关系"><a href="#4-一张图看懂当前关系" class="headerlink" title="4. 一张图看懂当前关系"></a>4. 一张图看懂当前关系</h1><p>如果把当前官方主线简化成三层，我会这样画：</p>
+<ol>
+<li><p>应用入口层：LangChain<br>负责快速接模型、工具、agent abstraction、provider 统一接口。</p>
+</li>
+<li><p>编排运行层：LangGraph<br>负责状态图、循环、持久化、人工介入、长期执行。</p>
+</li>
+<li><p>观测与生产层：LangSmith<br>负责 tracing、evaluation、observability、debugging。</p>
+</li>
+</ol>
+<p>也就是说，今天更推荐的认知方式是：</p>
+<ol>
+<li>LangChain 不是 LangGraph 的对手</li>
+<li>LangGraph 不是 LangChain 的升级版替代品</li>
+<li>它们是同一代架构里不同层级的东西</li>
+</ol>
+<h1 id="5-LangChain-到底在解决什么问题"><a href="#5-LangChain-到底在解决什么问题" class="headerlink" title="5. LangChain 到底在解决什么问题"></a>5. LangChain 到底在解决什么问题</h1><p>如果我们只调用一次模型接口，其实直接写 OpenAI SDK、Anthropic SDK 或者任意 HTTP 请求就够了。问题在于，真实业务很少只是一句输入、一句输出。</p>
+<p>一个稍微像样点的 LLM 应用，通常都要处理下面这些问题：</p>
+<ol>
+<li>Prompt 模板如何复用</li>
+<li>模型调用如何替换</li>
+<li>结构化输出如何约束</li>
+<li>多步处理如何串联</li>
+<li>外部知识如何接入</li>
+<li>工具调用如何组织</li>
+<li>状态、记忆、日志和调试如何管理</li>
+</ol>
+<p>LangChain 的价值，本质上就在于把这些问题拆成标准组件，然后让我们通过“拼装”的方式完成应用开发，而不是从零开始手搓一套流程引擎。</p>
+<p>可以把它理解成一句话：</p>
+<blockquote>
+<p>LangChain 不是模型本身，而是围绕 LLM 应用开发的一层工程框架。</p>
+</blockquote>
+<h1 id="2-LangChain-生态怎么理解"><a href="#2-LangChain-生态怎么理解" class="headerlink" title="2. LangChain 生态怎么理解"></a>2. LangChain 生态怎么理解</h1><p>现在的 LangChain 生态已经不像早期那样只是一个包，而是逐渐拆成了几层：</p>
+<ol>
+<li><p><code>langchain-core</code><br>负责最核心的抽象，比如 <code>Runnable</code>、Prompt、Output Parser、Message 等。</p>
+</li>
+<li><p><code>langchain</code><br>提供常见链路封装和更高层的组合能力。</p>
+</li>
+<li><p><code>langchain-community</code><br>放各种社区集成，比如不同向量数据库、文档加载器、工具连接器。</p>
+</li>
+<li><p><code>langchain-openai</code><br>把 OpenAI 模型适配到 LangChain 的统一接口里。</p>
+</li>
+<li><p><code>langgraph</code><br>更适合做复杂 Agent、状态图、多节点工作流和带回环的执行流程。</p>
+</li>
+<li><p><code>langsmith</code><br>用于链路追踪、调试、评估和观测。</p>
+</li>
+</ol>
+<p>如果只做入门项目，通常你至少会接触到：</p>
+<ol>
+<li><code>langchain</code></li>
+<li><code>langchain-openai</code></li>
+<li><code>langchain-community</code></li>
+</ol>
+<p>如果要做生产级 Agent，基本就绕不开 <code>langgraph</code> 和 <code>langsmith</code>。</p>
+<h1 id="3-LangChain-最核心的几个概念"><a href="#3-LangChain-最核心的几个概念" class="headerlink" title="3. LangChain 最核心的几个概念"></a>3. LangChain 最核心的几个概念</h1><h2 id="3-1-Model"><a href="#3-1-Model" class="headerlink" title="3.1 Model"></a>3.1 Model</h2><p><code>Model</code> 是最基础的一层，也就是你真正调用的大模型。</p>
+<p>在 LangChain 里，常见的模型分两类：</p>
+<ol>
+<li><p><code>ChatModel</code><br>面向对话消息输入输出，比如 GPT、Claude、Gemini 这类聊天模型。</p>
+</li>
+<li><p><code>LLM</code><br>更偏传统“纯文本输入输出”形式，现在实际项目里大多数场景都更常用 <code>ChatModel</code>。</p>
+</li>
+</ol>
+<p>一个最简单的例子如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_openai <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"></span><br><span class="line">model = ChatOpenAI(</span><br><span class="line">    model=<span class="string">&quot;gpt-4o-mini&quot;</span>,</span><br><span class="line">    temperature=<span class="number">0</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">resp = model.invoke(<span class="string">&quot;请用三句话介绍 LangChain&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(resp.content)</span><br></pre></td></tr></table></figure>
+
+<p>这里的重点不是这几行代码，而是从这一步开始，模型就被包装进 LangChain 的统一调用接口里了，后面它就可以和 Prompt、Parser、Retriever、Tool 无缝串起来。</p>
+<h2 id="3-2-Prompt-Template"><a href="#3-2-Prompt-Template" class="headerlink" title="3.2 Prompt Template"></a>3.2 Prompt Template</h2><p>Prompt 如果全都写死在字符串里，维护成本会非常高。LangChain 提供了模板化 Prompt 的能力。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_core.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"></span><br><span class="line">prompt = ChatPromptTemplate.from_messages([</span><br><span class="line">    (<span class="string">&quot;system&quot;</span>, <span class="string">&quot;你是一名专业的 AI 工程讲师&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;human&quot;</span>, <span class="string">&quot;请用通俗方式解释 &#123;topic&#125;，并给出一个简单例子&quot;</span>)</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+
+<p>这样做有两个好处：</p>
+<ol>
+<li>Prompt 参数化了，便于复用</li>
+<li>system &#x2F; human &#x2F; tool 等角色消息被显式建模，更接近真实对话接口</li>
+</ol>
+<h2 id="3-3-Output-Parser"><a href="#3-3-Output-Parser" class="headerlink" title="3.3 Output Parser"></a>3.3 Output Parser</h2><p>很多时候我们不希望模型只输出一段自然语言，而是希望它输出结构化数据，例如 JSON、列表、字段对象。</p>
+<p>这时就需要 <code>Output Parser</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_core.output_parsers <span class="keyword">import</span> StrOutputParser</span><br><span class="line"></span><br><span class="line">parser = StrOutputParser()</span><br></pre></td></tr></table></figure>
+
+<p>如果项目要进入自动化执行，结构化输出非常重要，因为“好看”不等于“可消费”。一个面向程序的 LLM 应用，最终一定要把输出转成程序真正能接住的数据结构。</p>
+<h2 id="3-4-Chain"><a href="#3-4-Chain" class="headerlink" title="3.4 Chain"></a>3.4 Chain</h2><p>所谓 <code>Chain</code>，可以理解成“把多个步骤串起来”。</p>
+<p>早期 LangChain 强调各种 <code>LLMChain</code>、<code>SequentialChain</code>，现在更推荐的方式是 LCEL，也就是 <code>LangChain Expression Language</code>。</p>
+<p>一个最简单的链写法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_core.output_parsers <span class="keyword">import</span> StrOutputParser</span><br><span class="line"><span class="keyword">from</span> langchain_core.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"><span class="keyword">from</span> langchain_openai <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"></span><br><span class="line">prompt = ChatPromptTemplate.from_template(<span class="string">&quot;请用三点介绍 &#123;topic&#125;&quot;</span>)</span><br><span class="line">model = ChatOpenAI(model=<span class="string">&quot;gpt-4o-mini&quot;</span>, temperature=<span class="number">0</span>)</span><br><span class="line">parser = StrOutputParser()</span><br><span class="line"></span><br><span class="line">chain = prompt | model | parser</span><br><span class="line"></span><br><span class="line">result = chain.invoke(&#123;<span class="string">&quot;topic&quot;</span>: <span class="string">&quot;LangChain 的作用&quot;</span>&#125;)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+<p>这行 <code>prompt | model | parser</code> 就是 LCEL 的核心味道。它的好处是：</p>
+<ol>
+<li>组合关系直观</li>
+<li>每个节点都可以单独替换</li>
+<li>后期扩展成更复杂工作流时更自然</li>
+</ol>
+<h2 id="3-5-Runnable"><a href="#3-5-Runnable" class="headerlink" title="3.5 Runnable"></a>3.5 Runnable</h2><p><code>Runnable</code> 是现在 LangChain 很核心的底层抽象。你可以把它理解成：</p>
+<blockquote>
+<p>任何“能接收输入并产出输出的组件”，都可以被当成 Runnable 来组合。</p>
+</blockquote>
+<p>Prompt 是 Runnable，Model 是 Runnable，Parser 也是 Runnable。正因为它们都遵守统一协议，所以链路可以拼起来。</p>
+<p>这是 LangChain 从“工具箱”走向“组合框架”的关键。</p>
+<h2 id="3-6-Retriever"><a href="#3-6-Retriever" class="headerlink" title="3.6 Retriever"></a>3.6 Retriever</h2><p>如果模型不知道你的私有知识，就需要先检索再生成。Retriever 就是 RAG 流程里的“查资料”组件。</p>
+<p>经典链路是：</p>
+<ol>
+<li>用户提问</li>
+<li>向量检索召回相关文档</li>
+<li>把召回结果拼进 Prompt</li>
+<li>模型基于上下文回答</li>
+</ol>
+<p>Retriever 本身不负责生成答案，它只负责把合适的上下文捞出来。</p>
+<h2 id="3-7-Tool"><a href="#3-7-Tool" class="headerlink" title="3.7 Tool"></a>3.7 Tool</h2><p>Tool 是 Agent 场景的关键。它让模型不只是“说”，还可以“做”。</p>
+<p>常见 Tool 包括：</p>
+<ol>
+<li>搜索网页</li>
+<li>查数据库</li>
+<li>调用内部 API</li>
+<li>运行 Python</li>
+<li>读写文件</li>
+<li>发消息、发邮件、调日历</li>
+</ol>
+<p>只要 Tool 定义清楚输入、输出和用途，模型就可以在推理过程中决定是否调用它。</p>
+<h2 id="3-8-Memory"><a href="#3-8-Memory" class="headerlink" title="3.8 Memory"></a>3.8 Memory</h2><p>早期 LangChain 很强调 Memory，但现在大家会更谨慎地看待它。</p>
+<p>因为所谓“记忆”在工程上其实分很多层：</p>
+<ol>
+<li>会话上下文</li>
+<li>短期任务状态</li>
+<li>用户画像</li>
+<li>长期知识沉淀</li>
+</ol>
+<p>所以今天更好的理解方式不是“有没有 Memory”，而是：</p>
+<blockquote>
+<p>你的系统希望记住什么，记多久，存在哪里，谁能读到，什么时候该被清除。</p>
+</blockquote>
+<p>在简单对话里，Memory 可能只是消息历史；在复杂 Agent 里，它更像状态管理加长期存储。</p>
+<h1 id="4-LangChain-最推荐的思维方式：先链，后-Agent"><a href="#4-LangChain-最推荐的思维方式：先链，后-Agent" class="headerlink" title="4. LangChain 最推荐的思维方式：先链，后 Agent"></a>4. LangChain 最推荐的思维方式：先链，后 Agent</h1><p>很多人一上来就想做 Agent，但经验上看，真正稳定的 LLM 应用往往不是先做 Agent，而是先把确定性流程搭出来。</p>
+<p>建议顺序通常是：</p>
+<ol>
+<li>单次模型调用</li>
+<li>Prompt + 输出解析</li>
+<li>多步链式处理</li>
+<li>检索增强</li>
+<li>工具调用</li>
+<li>Agent 化</li>
+</ol>
+<p>原因很简单：</p>
+<ol>
+<li>链更稳定</li>
+<li>链更容易调试</li>
+<li>链更适合明确业务流程</li>
+<li>不是所有问题都值得上 Agent</li>
+</ol>
+<p>如果一个任务的步骤本来就清楚，硬上 Agent 往往只会增加不确定性和调试成本。</p>
+<h1 id="5-LangChain-怎么安装和起步"><a href="#5-LangChain-怎么安装和起步" class="headerlink" title="5. LangChain 怎么安装和起步"></a>5. LangChain 怎么安装和起步</h1><p>一个最小可用环境通常如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -U langchain langchain-openai langchain-community</span><br></pre></td></tr></table></figure>
+
+<p>配置环境变量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> OPENAI_API_KEY=<span class="string">&quot;your_api_key&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>最小可运行示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_openai <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"><span class="keyword">from</span> langchain_core.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"><span class="keyword">from</span> langchain_core.output_parsers <span class="keyword">import</span> StrOutputParser</span><br><span class="line"></span><br><span class="line">model = ChatOpenAI(model=<span class="string">&quot;gpt-4o-mini&quot;</span>, temperature=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">prompt = ChatPromptTemplate.from_template(</span><br><span class="line">    <span class="string">&quot;你是一名 AI 助手，请用简洁语言回答：&#123;question&#125;&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">chain = prompt | model | StrOutputParser()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(chain.invoke(&#123;<span class="string">&quot;question&quot;</span>: <span class="string">&quot;LangChain 和直接调用 OpenAI API 有什么区别？&quot;</span>&#125;))</span><br></pre></td></tr></table></figure>
+
+<p>这已经是一个非常标准的 LangChain 入门骨架了。</p>
+<h1 id="6-一个稍微完整点的基础案例"><a href="#6-一个稍微完整点的基础案例" class="headerlink" title="6. 一个稍微完整点的基础案例"></a>6. 一个稍微完整点的基础案例</h1><p>下面做一个“文章摘要器”，让模型输出结构化摘要。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> TypedDict</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> langchain_core.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"><span class="keyword">from</span> langchain_openai <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Summary</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    title: <span class="built_in">str</span></span><br><span class="line">    highlights: <span class="built_in">list</span>[<span class="built_in">str</span>]</span><br><span class="line">    conclusion: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">model = ChatOpenAI(model=<span class="string">&quot;gpt-4o-mini&quot;</span>, temperature=<span class="number">0</span>)</span><br><span class="line">structured_model = model.with_structured_output(Summary)</span><br><span class="line"></span><br><span class="line">prompt = ChatPromptTemplate.from_template(</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    你是一名技术编辑，请阅读下面内容并提炼结构化摘要。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    内容：</span></span><br><span class="line"><span class="string">    &#123;article&#125;</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">chain = prompt | structured_model</span><br><span class="line"></span><br><span class="line">result = chain.invoke(&#123;</span><br><span class="line">    <span class="string">&quot;article&quot;</span>: <span class="string">&quot;LangChain 是一个围绕大模型应用开发的工程框架，强调组件化、可组合与可维护性。&quot;</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+<p>这个例子比纯文本输出更接近工程实战，因为它已经开始体现两个非常重要的思想：</p>
+<ol>
+<li>Prompt 负责表达任务</li>
+<li>结构化输出负责保证程序可消费</li>
+</ol>
+<h1 id="7-LangChain-与-RAG-的关系"><a href="#7-LangChain-与-RAG-的关系" class="headerlink" title="7. LangChain 与 RAG 的关系"></a>7. LangChain 与 RAG 的关系</h1><p>很多人会把 LangChain 和 RAG 画等号，其实不完全对。</p>
+<p>RAG 是一种应用模式，LangChain 是实现这种模式的工程框架之一。</p>
+<p>一个典型 RAG 流程可以拆成：</p>
+<ol>
+<li>文档加载</li>
+<li>文本切分</li>
+<li>向量化</li>
+<li>建索引</li>
+<li>检索召回</li>
+<li>拼接上下文</li>
+<li>模型生成答案</li>
+</ol>
+<p>LangChain 在这些环节里都提供了相应抽象，所以做 RAG 会非常顺手。</p>
+<p>一个简单示意代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.chains <span class="keyword">import</span> create_retrieval_chain</span><br><span class="line"><span class="keyword">from</span> langchain.chains.combine_documents <span class="keyword">import</span> create_stuff_documents_chain</span><br><span class="line"><span class="keyword">from</span> langchain_core.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"><span class="keyword">from</span> langchain_openai <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"></span><br><span class="line">llm = ChatOpenAI(model=<span class="string">&quot;gpt-4o-mini&quot;</span>, temperature=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">prompt = ChatPromptTemplate.from_template(</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    请基于以下上下文回答问题。</span></span><br><span class="line"><span class="string">    如果上下文无法支持答案，请明确说明。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    上下文：</span></span><br><span class="line"><span class="string">    &#123;context&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    问题：</span></span><br><span class="line"><span class="string">    &#123;input&#125;</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">doc_chain = create_stuff_documents_chain(llm, prompt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># retriever 需要由向量库创建，这里省略</span></span><br><span class="line"><span class="comment"># chain = create_retrieval_chain(retriever, doc_chain)</span></span><br></pre></td></tr></table></figure>
+
+<p>你会发现，LangChain 的价值不是替你发明 RAG，而是帮你把 RAG 的每个节点标准化。</p>
+<h1 id="8-LangChain-和-LangGraph-是什么关系"><a href="#8-LangChain-和-LangGraph-是什么关系" class="headerlink" title="8. LangChain 和 LangGraph 是什么关系"></a>8. LangChain 和 LangGraph 是什么关系</h1><p>这是现在非常容易混淆的一点。</p>
+<p>我的理解是：</p>
+<ol>
+<li>LangChain 更适合表达组件组合和基础链路</li>
+<li>LangGraph 更适合表达有状态、可回环、可中断、可恢复的 Agent 工作流</li>
+</ol>
+<p>如果你的应用只是：</p>
+<ol>
+<li>Prompt 组合</li>
+<li>检索增强</li>
+<li>数据抽取</li>
+<li>简单工具调用</li>
+</ol>
+<p>那么 LangChain 就够用了。</p>
+<p>如果你的应用开始出现下面这些特征：</p>
+<ol>
+<li>多节点状态流转</li>
+<li>条件分支</li>
+<li>重试和回环</li>
+<li>人类审批节点</li>
+<li>多 Agent 协作</li>
+</ol>
+<p>那 LangGraph 会比单纯 LangChain 更合适。</p>
+<p>简单说：</p>
+<blockquote>
+<p>LangChain 解决“怎么拼组件”，LangGraph 解决“怎么管理复杂状态流”。</p>
+</blockquote>
+<h1 id="9-初学-LangChain-最容易踩的坑"><a href="#9-初学-LangChain-最容易踩的坑" class="headerlink" title="9. 初学 LangChain 最容易踩的坑"></a>9. 初学 LangChain 最容易踩的坑</h1><h2 id="9-1-一开始就做万能-Agent"><a href="#9-1-一开始就做万能-Agent" class="headerlink" title="9.1 一开始就做万能 Agent"></a>9.1 一开始就做万能 Agent</h2><p>这是最常见的问题。很多项目并不需要自主规划，只需要一条清晰的工作流。</p>
+<h2 id="9-2-只关注模型，不关注输出契约"><a href="#9-2-只关注模型，不关注输出契约" class="headerlink" title="9.2 只关注模型，不关注输出契约"></a>9.2 只关注模型，不关注输出契约</h2><p>应用系统最终是要给程序消费的，不是只给人读的。结构化输出、字段校验、异常兜底非常重要。</p>
+<h2 id="9-3-Prompt、检索、工具、状态混在一起"><a href="#9-3-Prompt、检索、工具、状态混在一起" class="headerlink" title="9.3 Prompt、检索、工具、状态混在一起"></a>9.3 Prompt、检索、工具、状态混在一起</h2><p>如果这些层没有拆开，后面几乎必然越来越难维护。</p>
+<h2 id="9-4-没有观测与日志"><a href="#9-4-没有观测与日志" class="headerlink" title="9.4 没有观测与日志"></a>9.4 没有观测与日志</h2><p>LLM 应用出问题时，最怕的是“不知道它为什么这么回答”。链路追踪、输入输出记录、工具调用日志都很重要。</p>
+<h2 id="9-5-把-Memory-当成魔法"><a href="#9-5-把-Memory-当成魔法" class="headerlink" title="9.5 把 Memory 当成魔法"></a>9.5 把 Memory 当成魔法</h2><p>记忆不是“越多越好”，而是“合适的信息在合适的时候出现”。</p>
+<h1 id="10-我对-LangChain-的实践建议"><a href="#10-我对-LangChain-的实践建议" class="headerlink" title="10. 我对 LangChain 的实践建议"></a>10. 我对 LangChain 的实践建议</h1><p>如果你是第一次做 LangChain 项目，我建议按下面这个顺序来：</p>
+<ol>
+<li>先写一个单轮问答链</li>
+<li>再加 PromptTemplate</li>
+<li>再加结构化输出</li>
+<li>再加检索</li>
+<li>最后再决定要不要加 Agent</li>
+</ol>
+<p>一个成熟项目里，往往真正稳定可靠的部分，反而不是最“智能”的那部分，而是边界最清晰、输入输出最可控的那部分。</p>
+<p>所以 LangChain 真正值得学的，不只是 API 怎么写，而是它背后的工程思想：</p>
+<ol>
+<li>把步骤拆开</li>
+<li>把职责分清</li>
+<li>把状态显式化</li>
+<li>把不确定性关进边界里</li>
+</ol>
+<h1 id="12-小结"><a href="#12-小结" class="headerlink" title="12. 小结"></a>12. 小结</h1><p>这一篇我们主要做了四件事：</p>
+<ol>
+<li>解释 LangChain 为什么存在</li>
+<li>说明 LangChain 生态的基本分层</li>
+<li>梳理 Model、Prompt、Parser、Retriever、Tool、Memory、Chain 等核心概念</li>
+<li>给出基础代码示例和学习路径</li>
+</ol>
+<p>如果只记住一句话，我更希望是这句：</p>
+<blockquote>
+<p>LangChain 不是“让模型更聪明”的框架，而是“让 LLM 应用更可工程化”的框架。</p>
+</blockquote>
+<p>下一篇会先把 LangGraph 单独拆开讲透。因为一旦开始做复杂工作流、状态机、条件分支和多 Agent 协作，LangGraph 基本就是绕不过去的一层。等把这层讲清楚之后，第三篇再回到 Agent 实战，就会更容易理解 L2、L3、L4 以及 OpenClaw 这类 computer-use agent 的差异。</p>
+<h1 id="13-参考资料"><a href="#13-参考资料" class="headerlink" title="13. 参考资料"></a>13. 参考资料</h1><ol>
+<li>LangChain 官方 overview：<a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langchain/overview">https://docs.langchain.com/oss/python/langchain/overview</a></li>
+<li>LangGraph 官方 overview：<a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/overview">https://docs.langchain.com/oss/python/langgraph/overview</a></li>
+<li>LangChain v1 更新说明：<a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/releases/langchain-v1">https://docs.langchain.com/oss/python/releases/langchain-v1</a></li>
+<li>LangChain &#x2F; LangGraph versioning：<a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/versioning">https://docs.langchain.com/oss/python/versioning</a></li>
+</ol>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8A-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="cmny35kgb00014kpx58r7eycf" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAT4AAAE+CAAAAAAxUyPsAAAFOUlEQVR42u3d0W7bVhAEUP//T7tAn1oklmd2qKCoD58MWRTJcwVk7+wm+fiIj8+/j3/+/OsrX/02ef3Xn796z+tX8uOrsz7eceDDhw8fPnzxhZMHa7Fe33S7PPmStFdM7hYfPnz48OG78e3FyuuzksXIf3srXBKstoTChw8fPnz43seXb+PzzXlbLrSb/Lwgw4cPHz58+P5rfG0J8o5+wnFjPywqPnz48OHD9w6+2zZ7eaS2NFni+9vX4uFeBz58+PDhwzeUC//vn98+34cPHz58+H4k32d55I3t2xBY/vrSXF8a7f86Fx8+fPjw4TtpJA+fE7zj4fNoYI/s6xgCHz58+PDhi/lujeE2ts5HxG5DcreWQB6IfHkP+PDhw4cP36mDnGzXF6D2FpM7yT9h+SpEr+PDhw8fPnwxXzIEdisycoK9oMmriHYJv3kKfPjw4cOHb+Bro/YE5RYELK3rZZHqNgM+fPjw4cM38N0283m5syxG27xvg/6W+xgZ4MOHDx8+fDNBvmlvy5p8GG5Z+PaKU3cdHz58+PD9eL78D/gl4F6Gz55Cz++hXTZ8+PDhw4ev5buNauWjbHn7+RYltCPgOVCxJPjw4cOHD1/At7SoE6C9yFha40lscWux48OHDx8+fDe+vIXc8uWfcHvP0m7PY4go4MCHDx8+fPhivrZouDXIl1C+few2CGjvoe5y4MOHDx8+fJ/d3y3KaZJzl9dvA9y3gCNvReDDhw8fPnw3vvzhn4oDbu3q/CGXcL+gxIcPHz58+E6zZO22eSkI9kb4UtC0dxUFFvjw4cOHD9/Ad/tDfYkbcrJkqC5vOby+SkKPDx8+fPjw5Xy34uOphnd7xXfEAdOBDx8+fPjwvYEyv62kOMhBb83vpKy5Rf91ZIAPHz58+PB9pP9u8615nDfI82AiWYyWcmmWH+cL8OHDhw8fvpigLUfaR124lwVrz/rNb/Hhw4cPH75H+d4R2bePd1uSZdy8iBvw4cOHDx++E98+cHZrhN/C91shkocURTMeHz58+PDhO81xtSNcyza7PVq4JfS/XQUfPnz48OFr+dpGdX5z7fb+FhMkn3m727wIw4cPHz58+BK+W3j91LDaEsTXLe3yKaLvHT58+PDhw1fy3eKAdjgsH2XLP2cJLGqU29QAPnz48OHDd4oJboH4Uxv+W9GTL+Sy2Pjw4cOHD1/Ld2t+52e17ecb/Q7UvnOaHcCHDx8+fD+YL99IvyMIaFHyEucpvm+KJ3z48OHDh+/Up94b20lrOSlc8lbBU0zJ/UQVHz58+PDhw9e9/4H/WLH97R7oLyVOfm9F4oIPHz58+PDFfLfNfxvEP9uA35sE+RxaUQPiw4cPHz585f73WdakGbAE93nh0kbzbUSCDx8+fPjwvX7efCwsH9puW+8L3+0qt+bBb87Fhw8fPnz4Sr7249ogO2l77+/cy6z8wIcPHz58+Ba+ZdirbZbfSo22kLq1EPKGPT58+PDhw7fz5afdmuJ7o71djCVKmPrn+PDhw4cP32n0qh3JSrbit+b6Uojc4vsiqsCHDx8+fPjWlLseULu1mduIf7+H5Kvw1HXx4cOHDx++19dtA/rbyNry2HmYnkcJt2ILHz58+PDhe4ovj92XmH6podpQow0dbgUcPnz48OHD9z6+9jHqIiC+7hIKPDz0hg8fPnz48P0RvtvQ2LPF0G1J2hb7N/eMDx8+fPjwnfjyEqR9gJ1gKYae/XJMvQ58+PDhw4fvFFLn2/K8QEkKoHxgriXLYxF8+PDhw4dv4PsLIlXLIhpH6Z4AAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/AIGC/"><i class="fa fa-tag"></i>AIGC</a><a href="/tags/LLM/"><i class="fa fa-tag"></i>LLM</a><a href="/tags/Agent/"><i class="fa fa-tag"></i>Agent</a><a href="/tags/LangChain/"><i class="fa fa-tag"></i>LangChain</a><a href="/tags/LangGraph/"><i class="fa fa-tag"></i>LangGraph</a><a href="/tags/RAG/"><i class="fa fa-tag"></i>RAG</a></div><div class="post-nav"><a class="pre" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a><a class="next" href="/research/physics-informed-ml-mpc-batch-crystallization/">论文解读：Physics-Informed Machine Learning for MPC 在批式结晶中的应用</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/%E4%BB%AA%E5%99%A8%E4%BB%AA%E8%A1%A8%E7%A7%91%E5%AD%A6%E4%B8%8E%E5%85%89%E7%94%B5%E5%B7%A5%E7%A8%8B/">仪器仪表科学与光电工程</a><span class="category-list-count">1</span></li></ul></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8A-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/">AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/03/10/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8B%E9%80%9A%E4%B9%89Prompt%E5%9B%9B%E5%8D%81%E5%BC%8F/">AIGC-LLM-辟邪剑谱之通义Prompt四十式</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/03/06/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8BPrompt%20Engineering/">AIGC-LLM-辟邪剑谱之Prompt Engineering</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/11/18/AIGC-Agent-%E4%BD%9C%E6%96%87%E6%89%B9%E6%94%B9%E6%A0%87%E6%B3%A8/">AIGC-Agent-作文批改标注</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/09/27/LLama32%E8%B0%83%E7%A0%94/">LLama3.2调研报告</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/04/09/AIGC-LLM-Prompt%E6%8A%80%E8%83%BD/">AIGC-LLM-Prompt工程技能综述</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/03/05/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-BERT/">DeepLearning模型-NLP-BERT</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/01/16/Deeeplearning%E6%A8%A1%E5%9E%8B-NLP-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E8%AF%AD%E6%96%99%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">Deeeplearning模型-NLP-大语言模型微调语料生成工具</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.0"><script type="text/javascript" src="/js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript">window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    processEscapes: true
+  },
+  chtml: {
+    fontURL: '/js/chtml/fonts/woff-v2'
+  },
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  }
+};
+</script><script type="text/javascript" src="/js/mathjax3.js" async></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="/assets/prism-bundle.js"></script>
+<script src="/assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>
