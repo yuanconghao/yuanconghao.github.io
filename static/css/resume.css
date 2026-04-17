@@ -1,105 +1,394 @@
-/*
- * Theme of Mtics Resume
- * Copyright (c) Jevis Li, 2020
- */
-@import url(/static/css/mobile.css) screen and (max-device-width: 48rem);
-@import url(/static/css/laptop.css) all and (min-device-width: 48rem);
-
 html {
-  width: 100%;
   font-size: 14px;
 }
 
-body {
-  text-align: center;
-  width: 100%;
-  font-family: system-ui, "Noto Sans", "Segoe UI", Roboto, Helvetica, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  font-size: 1rem;
+body.resume-page {
   margin: 0;
-  color: #495057;
-  background-color: #fff;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(13, 108, 116, 0.08), transparent 28%),
+    linear-gradient(180deg, #f5f7fa 0%, #eef3f7 100%);
+  color: #24313d;
+  font-family: system-ui, "Noto Sans", "Segoe UI", Roboto, Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-a {
-  text-decoration: none;
+.resume-page *,
+.resume-page *::before,
+.resume-page *::after {
+  box-sizing: border-box;
+}
+
+.resume-page a {
   color: inherit;
+  text-decoration: none;
 }
 
-a:hover {
-  text-decoration: underline;
+.resume-page a:hover {
+  text-decoration: none;
 }
 
-@media print {
-  html {
-    font-size: 12px;
-  }
-
-  .print {
-    display: none;
-  }
-
-  footer {
-    display: none;
-  }
-
+.resume-shell {
+  width: min(980px, calc(100vw - 32px));
+  margin: 28px auto 40px;
 }
 
-.nav {
-  font-size: .9rem;
-  line-height: 1.5;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 55rem;
-  float: center;
+.resume-topbar {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
 }
 
-.nav .nav-lang {
-  margin-right: .5rem;
-  text-align: right;
-  align-self: flex-start;
+.resume-toplink,
+.resume-version-switch a,
+.resume-lang-switch a {
+  color: #4d5a67;
+  transition: color 0.18s ease;
 }
 
-.nav .nav-index {
-  text-align: left;
-  align-self: flex-end;
+.resume-toplink:hover,
+.resume-version-switch a:hover,
+.resume-lang-switch a:hover {
+  color: #0d5660;
 }
 
-.container {
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1rem;
-  max-width: 55rem;
-  text-align: left;
+.resume-topbar-actions,
+.resume-version-switch,
+.resume-lang-switch {
+  display: inline-flex;
+  align-items: center;
 }
 
-.contact-item:a {
-  color: inherit;
-  text-decoration: none;
+.resume-topbar-actions {
+  gap: 14px;
 }
 
-.section-title {
-  font-weight: bolder;
-  text-align: left;
+.resume-version-switch,
+.resume-lang-switch {
+  gap: 8px;
+  color: #7d8792;
+}
+
+.resume-version-switch .is-current,
+.resume-lang-switch .is-current {
+  color: #0d5660;
+  font-weight: 700;
+}
+
+.resume-layout {
+  padding: 32px;
+  border: 1px solid rgba(36, 49, 61, 0.1);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 26px 60px rgba(26, 39, 51, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.resume-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: start;
+  padding-bottom: 26px;
+  border-bottom: 1px solid rgba(36, 49, 61, 0.1);
+}
+
+.resume-name {
+  margin: 0;
+  color: #13202b;
+  font-size: 2.35rem;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+
+.resume-role {
+  margin: 10px 0 0;
+  color: #0d5660;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.resume-summary {
+  margin: 16px 0 0;
+  max-width: 64ch;
+  color: #55616d;
+  font-size: 0.98rem;
+  line-height: 1.85;
+}
+
+.resume-contact-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  margin-top: 20px;
+}
+
+.resume-contact-item {
+  min-width: 0;
+}
+
+.resume-contact-link,
+.resume-contact-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid rgba(36, 49, 61, 0.1);
+  border-radius: 999px;
+  background: #f7fafc;
+  color: #33414e;
+  font-size: 0.93rem;
+  line-height: 1.4;
+}
+
+.resume-contact-link:hover {
+  border-color: rgba(13, 86, 96, 0.28);
+  background: #f0f7f8;
+}
+
+.resume-contact-link .fa,
+.resume-contact-text .fa {
+  color: #0d5660;
+}
+
+.resume-portrait {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.resume-portrait-image {
+  width: 118px;
+  height: 142px;
+  border-radius: 22px;
+  object-fit: cover;
+  box-shadow: 0 14px 32px rgba(18, 32, 43, 0.12);
+}
+
+.resume-section {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+  padding-top: 24px;
+}
+
+.resume-section-head {
+  position: sticky;
+  top: 18px;
+}
+
+.resume-section-title {
+  margin: 0;
+  color: #13202b;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  border-bottom: 0.1rem solid #adb5bd;
 }
 
-.block:last-child {
+.resume-section-body {
+  min-width: 0;
+}
+
+.resume-entry,
+.resume-note-card,
+.resume-skill-card {
+  border: 1px solid rgba(36, 49, 61, 0.08);
+  border-radius: 20px;
+  background: #ffffff;
+}
+
+.resume-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 18px;
+  padding: 18px 18px 16px;
+  margin-bottom: 14px;
+}
+
+.resume-entry:last-child,
+.resume-skill-card:last-child {
   margin-bottom: 0;
 }
 
-.block-title {
-  font-weight: bold;
+.resume-entry-title,
+.resume-skill-title {
+  margin: 0;
+  color: #13202b;
+  font-size: 1.03rem;
+  line-height: 1.45;
 }
 
-.block-subtitle {
-  font-weight: bold;
+.resume-entry-content,
+.resume-skill-items,
+.resume-note-card p {
+  margin: 10px 0 0;
+  color: #55616d;
+  font-size: 0.95rem;
+  line-height: 1.85;
 }
 
-footer {
-  color: #adb5bd;
-  line-height: 1.5rem;
+.resume-entry-side {
+  text-align: right;
+}
+
+.resume-entry-project-content {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+}
+
+.resume-entry-meta,
+.resume-entry-submeta {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.resume-entry-meta {
+  color: #0d5660;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.resume-entry-submeta {
+  margin-top: 4px;
+  color: #73808d;
+  font-size: 0.88rem;
+}
+
+.resume-note-card {
+  padding: 18px 18px 16px;
+}
+
+.resume-note-card p {
+  margin-top: 0;
+}
+
+.resume-skill-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.resume-skill-card {
+  padding: 18px;
+}
+
+@media (max-width: 820px) {
+  .resume-layout {
+    padding: 24px 20px;
+    border-radius: 24px;
+  }
+
+  .resume-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .resume-portrait {
+    justify-content: flex-start;
+  }
+
+  .resume-section {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .resume-section-head {
+    position: static;
+  }
+
+  .resume-entry {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .resume-entry-side {
+    text-align: left;
+  }
+}
+
+@media (max-width: 560px) {
+  html {
+    font-size: 13px;
+  }
+
+  .resume-shell {
+    width: min(100vw - 20px, 980px);
+    margin: 18px auto 28px;
+  }
+
+  .resume-topbar {
+    margin-bottom: 14px;
+    font-size: 12px;
+  }
+
+  .resume-topbar,
+  .resume-topbar-actions {
+    flex-wrap: wrap;
+  }
+
+  .resume-topbar-actions {
+    justify-content: flex-end;
+    gap: 10px 14px;
+  }
+
+  .resume-layout {
+    padding: 18px 16px;
+    border-radius: 20px;
+  }
+
+  .resume-name {
+    font-size: 1.9rem;
+  }
+
+  .resume-contact-grid,
+  .resume-skill-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .resume-contact-grid {
+    display: grid;
+  }
+
+  .resume-contact-link,
+  .resume-contact-text {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .resume-portrait-image {
+    width: 100px;
+    height: 122px;
+  }
+}
+
+@media print {
+  body.resume-page {
+    background: #fff;
+  }
+
+  .resume-shell {
+    width: 100%;
+    margin: 0;
+  }
+
+  .resume-topbar {
+    display: none;
+  }
+
+  .resume-layout {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .resume-section-head {
+    position: static;
+  }
 }
