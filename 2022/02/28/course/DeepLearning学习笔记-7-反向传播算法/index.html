@@ -1,0 +1,226 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="从链式法则、逐层梯度推导到 NumPy 实验，系统梳理反向传播算法。"><title>【DeepLearning】神经网络训练：反向传播算法推导与实验 | DeepLearner</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">【DeepLearning】神经网络训练：反向传播算法推导与实验</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/essay/"><i class="fa fa-pencil"> 随笔</i></a><a href="/course/"><i class="fa fa-book"> 课程</i></a><a href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">【DeepLearning】神经网络训练：反向传播算法推导与实验</h1><div class="post-meta">created:2022-02-28</div><div class="post-meta">updated:2026-04-17<span> | </span><span class="category"><a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></span></div><a class="disqus-comment-count" href="/2022/02/28/course/DeepLearning%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-7-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/#waline"><span class="waline-comment-count" id="/2022/02/28/course/DeepLearning%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-7-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">反向传播解决了什么问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E8%AE%A1%E7%AE%97%E5%9B%BE%E7%90%86%E8%A7%A3%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="toc-number">2.</span> <span class="toc-text">从计算图理解反向传播</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%A6%E5%8F%B7%E7%BA%A6%E5%AE%9A%E4%B8%8E%E7%BB%B4%E5%BA%A6%E8%AF%B4%E6%98%8E"><span class="toc-number">3.</span> <span class="toc-text">符号约定与维度说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%A4%E5%B1%82%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="toc-number">4.</span> <span class="toc-text">两层神经网络的前向传播</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AF%E5%B7%AE%E9%A1%B9%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">5.</span> <span class="toc-text">误差项的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E5%B1%82%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC"><span class="toc-number">6.</span> <span class="toc-text">输出层梯度推导</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9A%90%E8%97%8F%E5%B1%82%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC"><span class="toc-number">7.</span> <span class="toc-text">隐藏层梯度推导</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E6%A2%AF%E5%BA%A6%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E5%86%99%E6%88%90%E7%BB%9F%E4%B8%80%E5%BD%A2%E5%BC%8F"><span class="toc-number">8.</span> <span class="toc-text">参数梯度为什么能写成统一形式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E6%9B%B4%E6%96%B0%E5%85%AC%E5%BC%8F"><span class="toc-number">9.</span> <span class="toc-text">参数更新公式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B8%8E%E8%BE%93%E5%87%BA%E5%B1%82%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">10.</span> <span class="toc-text">损失函数与输出层的关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E5%88%86%E7%B1%BB%E4%BB%BB%E5%8A%A1"><span class="toc-number">10.1.</span> <span class="toc-text">二分类任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%88%86%E7%B1%BB%E4%BB%BB%E5%8A%A1"><span class="toc-number">10.2.</span> <span class="toc-text">多分类任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9E%E5%BD%92%E4%BB%BB%E5%8A%A1"><span class="toc-number">10.3.</span> <span class="toc-text">回归任务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E5%90%88%E7%A4%BA%E6%84%8F%E5%9B%BE%E7%90%86%E8%A7%A3%E6%8E%A8%E5%AF%BC%E6%B5%81%E7%A8%8B"><span class="toc-number">11.</span> <span class="toc-text">结合示意图理解推导流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E5%90%91%E4%BC%A0%E6%92%AD"><span class="toc-number">11.1.</span> <span class="toc-text">正向传播</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="toc-number">11.2.</span> <span class="toc-text">反向传播</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E7%AE%97%E7%A4%BA%E4%BE%8B%EF%BC%9A%E4%BB%8E%E8%AF%AF%E5%B7%AE%E5%88%B0%E5%8D%95%E4%B8%AA%E6%9D%83%E9%87%8D%E6%A2%AF%E5%BA%A6"><span class="toc-number">12.</span> <span class="toc-text">手算示例：从误差到单个权重梯度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8-NumPy-%E6%89%8B%E5%86%99%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="toc-number">13.</span> <span class="toc-text">实验：使用 NumPy 手写反向传播</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">13.1.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%84%E6%9C%9F%E7%8E%B0%E8%B1%A1"><span class="toc-number">13.2.</span> <span class="toc-text">预期现象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%AD%E7%9A%84%E5%85%B3%E9%94%AE%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="toc-number">14.</span> <span class="toc-text">实验中的关键实现细节</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BB%A3%E7%A0%81%E9%87%8C%E8%A6%81%E7%BC%93%E5%AD%98%E4%B8%AD%E9%97%B4%E5%8F%98%E9%87%8F"><span class="toc-number">14.1.</span> <span class="toc-text">1. 为什么代码里要缓存中间变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88-batch-%E8%AE%AD%E7%BB%83%E8%A6%81%E5%AF%B9%E6%A2%AF%E5%BA%A6%E5%81%9A%E5%B9%B3%E5%9D%87"><span class="toc-number">14.2.</span> <span class="toc-text">2. 为什么 batch 训练要对梯度做平均</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%8D%E8%83%BD%E5%85%A8%E4%B8%BA-0"><span class="toc-number">14.3.</span> <span class="toc-text">3. 为什么初始化不能全为 0</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E4%B8%AD%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">15.</span> <span class="toc-text">训练中常见问题与注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%A2%AF%E5%BA%A6%E4%BC%9A%E6%B6%88%E5%A4%B1"><span class="toc-number">15.1.</span> <span class="toc-text">1. 为什么梯度会消失</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E4%BC%9A%E5%BD%B1%E5%93%8D%E8%AE%AD%E7%BB%83%E9%9A%BE%E5%BA%A6"><span class="toc-number">15.2.</span> <span class="toc-text">2. 为什么激活函数会影响训练难度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%85%88%E7%AE%97%E8%AF%AF%E5%B7%AE%E9%A1%B9%E5%86%8D%E7%AE%97%E5%8F%82%E6%95%B0%E6%A2%AF%E5%BA%A6"><span class="toc-number">15.3.</span> <span class="toc-text">3. 为什么要先算误差项再算参数梯度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AD%A6%E4%B9%A0%E7%8E%87%E4%BC%9A%E7%9B%B4%E6%8E%A5%E5%BD%B1%E5%93%8D%E8%AE%AD%E7%BB%83%E6%95%88%E6%9E%9C"><span class="toc-number">15.4.</span> <span class="toc-text">4. 为什么学习率会直接影响训练效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%81%9A%E6%A2%AF%E5%BA%A6%E6%A3%80%E6%9F%A5"><span class="toc-number">15.5.</span> <span class="toc-text">5. 为什么要做梯度检查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">16.</span> <span class="toc-text">小结</span></a></li></ol></div></div><div class="post-content"><p>&emsp;&emsp;在前两篇深度前馈网络笔记中，我们已经介绍了感知机、隐藏层、激活函数和代价函数。真正让神经网络能够训练起来的关键步骤，是<strong>如何高效计算每一层参数的梯度</strong>。反向传播（Backpropagation）就是这一过程的核心算法。</p>
+<p>&emsp;&emsp;这一节不再停留在“会背公式”的层面，而是把反向传播拆成几个真正需要理解的部分：<strong>梯度为什么要从后往前传、误差项到底是什么、每一层参数梯度为什么都能写成统一形式、不同损失函数与激活函数组合会对训练产生什么影响</strong>。在最后的实验部分，也会用一个 <code>NumPy</code> 版本的两层网络验证推导结果。</p>
+<span id="more"></span>
+
+<h2 id="反向传播解决了什么问题"><a href="#反向传播解决了什么问题" class="headerlink" title="反向传播解决了什么问题"></a>反向传播解决了什么问题</h2><p>&emsp;&emsp;考虑一个多层感知机，其前向传播过程本质上是若干个复合函数的嵌套：</p>
+<p>$$<br>\hat{y}&#x3D;f(x; \theta)&#x3D;f^{(L)}(f^{(L-1)}(\cdots f^{(1)}(x)))<br>$$</p>
+<p>其中，参数集合 $\theta&#x3D;{W^{(1)}, b^{(1)}, W^{(2)}, b^{(2)}, \ldots }$。训练神经网络的目标，是最小化损失函数：</p>
+<p>$$<br>\mathcal{L}(\theta)&#x3D;\frac{1}{N}\sum_{i&#x3D;1}^{N}\ell(\hat{y}^{(i)}, y^{(i)})<br>$$</p>
+<p>&emsp;&emsp;如果我们逐个参数单独求导，会发现每一个权重都嵌套在多层复合运算中，直接展开既繁琐又低效。反向传播的作用，就是利用<strong>链式法则</strong>和<strong>中间结果复用</strong>，从输出层开始逐层向前计算梯度，从而在线性于网络边数的复杂度内完成求导。</p>
+<h2 id="从计算图理解反向传播"><a href="#从计算图理解反向传播" class="headerlink" title="从计算图理解反向传播"></a>从计算图理解反向传播</h2><p>&emsp;&emsp;神经网络可以看作一张有向无环图。前向传播是把输入沿着图向前计算，得到预测值；反向传播则是从损失函数开始，将“损失对当前节点输出的敏感度”逐层传回前面的节点。</p>
+<p>&emsp;&emsp;假设存在如下复合关系：</p>
+<p>$$<br>z&#x3D;f(y), \quad y&#x3D;g(x)<br>$$</p>
+<p>那么根据链式法则：</p>
+<p>$$<br>\frac{dz}{dx}&#x3D;\frac{dz}{dy}\frac{dy}{dx}<br>$$</p>
+<p>&emsp;&emsp;这意味着如果我们已经知道 $\frac{dz}{dy}$，再乘上当前这一层的局部导数 $\frac{dy}{dx}$，就可以继续把梯度往前传。反向传播的本质，就是不断重复这个过程。</p>
+<h2 id="符号约定与维度说明"><a href="#符号约定与维度说明" class="headerlink" title="符号约定与维度说明"></a>符号约定与维度说明</h2><p>&emsp;&emsp;在具体推导之前，先把常用符号统一下来。设第 $l$ 层的输入为上一层激活值 $a^{(l-1)}$，则当前层的线性组合与激活值分别写成：</p>
+<p>$$<br>z^{(l)} &#x3D; W^{(l)}a^{(l-1)} + b^{(l)}<br>$$</p>
+<p>$$<br>a^{(l)} &#x3D; g^{(l)}(z^{(l)})<br>$$</p>
+<p>其中：</p>
+<ul>
+<li>$W^{(l)}$ 表示第 $l$ 层权重矩阵</li>
+<li>$b^{(l)}$ 表示第 $l$ 层偏置向量</li>
+<li>$z^{(l)}$ 表示激活函数之前的线性输出</li>
+<li>$a^{(l)}$ 表示经过激活函数后的输出</li>
+</ul>
+<p>&emsp;&emsp;区分 $z^{(l)}$ 和 $a^{(l)}$ 很重要，因为反向传播里误差项定义在 $z^{(l)}$ 上，而不是直接定义在 $W^{(l)}$ 上。这样做的好处，是整层参数的梯度都能通过同一个误差项统一表达。</p>
+<h2 id="两层神经网络的前向传播"><a href="#两层神经网络的前向传播" class="headerlink" title="两层神经网络的前向传播"></a>两层神经网络的前向传播</h2><p>&emsp;&emsp;下面以一个典型的两层全连接网络为例说明。输入为 $x$，隐藏层激活函数使用 sigmoid，输出层也使用 sigmoid：</p>
+<p>$$<br>z^{(1)} &#x3D; W^{(1)}x+b^{(1)}<br>$$</p>
+<p>$$<br>a^{(1)} &#x3D; \sigma(z^{(1)})<br>$$</p>
+<p>$$<br>z^{(2)} &#x3D; W^{(2)}a^{(1)}+b^{(2)}<br>$$</p>
+<p>$$<br>\hat{y} &#x3D; a^{(2)} &#x3D; \sigma(z^{(2)})<br>$$</p>
+<p>若采用均方误差损失：</p>
+<p>$$<br>\mathcal{L}&#x3D;\frac{1}{2}|\hat{y}-y|^{2}<br>$$</p>
+<p>那么整个计算过程可以理解为：</p>
+<p>输入 $x$ -&gt; 线性变换 -&gt; 非线性激活 -&gt; 线性变换 -&gt; 输出 $\hat{y}$ -&gt; 损失 $\mathcal{L}$</p>
+<h2 id="误差项的定义"><a href="#误差项的定义" class="headerlink" title="误差项的定义"></a>误差项的定义</h2><p>&emsp;&emsp;为了让推导更紧凑，通常定义第 $l$ 层的误差项为：</p>
+<p>$$<br>\delta^{(l)}&#x3D;\frac{\partial \mathcal{L}}{\partial z^{(l)}}<br>$$</p>
+<p>&emsp;&emsp;这个定义非常重要。因为参数 $W^{(l)}$ 和 $b^{(l)}$ 都直接作用在 $z^{(l)}$ 上，一旦我们求出了 $\delta^{(l)}$，参数梯度就会变得很容易写出。</p>
+<p>&emsp;&emsp;可以把 $\delta^{(l)}$ 理解为：<strong>当前层线性输出发生一个极小扰动时，损失函数会变化多少</strong>。误差项越大，说明这一层当前输出对最终损失越敏感；误差项越小，说明该层对损失的即时影响较弱。</p>
+<h2 id="输出层梯度推导"><a href="#输出层梯度推导" class="headerlink" title="输出层梯度推导"></a>输出层梯度推导</h2><p>&emsp;&emsp;对于输出层，有：</p>
+<p>$$<br>\delta^{(2)}&#x3D;\frac{\partial \mathcal{L}}{\partial z^{(2)}}&#x3D;\frac{\partial \mathcal{L}}{\partial a^{(2)}}\odot\frac{\partial a^{(2)}}{\partial z^{(2)}}<br>$$</p>
+<p>又因为</p>
+<p>$$<br>\mathcal{L}&#x3D;\frac{1}{2}|\hat{y}-y|^{2}<br>$$</p>
+<p>所以</p>
+<p>$$<br>\frac{\partial \mathcal{L}}{\partial a^{(2)}}&#x3D;\hat{y}-y<br>$$</p>
+<p>若激活函数为 sigmoid，则</p>
+<p>$$<br>\frac{\partial a^{(2)}}{\partial z^{(2)}}&#x3D;\sigma(z^{(2)})(1-\sigma(z^{(2)}))&#x3D;a^{(2)}(1-a^{(2)})<br>$$</p>
+<p>因此输出层误差项为：</p>
+<p>$$<br>\delta^{(2)}&#x3D;(\hat{y}-y)\odot a^{(2)}(1-a^{(2)})<br>$$</p>
+<p>&emsp;&emsp;这组公式说明，输出层梯度实际上由两部分共同决定：</p>
+<ol>
+<li>预测误差 $\hat{y}-y$</li>
+<li>输出层激活函数的局部导数</li>
+</ol>
+<p>&emsp;&emsp;这也是为什么输出层的激活函数和损失函数组合非常重要。如果输出层使用 sigmoid，而损失函数选择交叉熵，那么很多情况下公式可以进一步化简，误差项直接变为 $\delta^{(2)}&#x3D;\hat{y}-y$，训练往往比 <code>sigmoid + MSE</code> 更稳定。</p>
+<p>接下来求参数梯度：</p>
+<p>$$<br>\frac{\partial \mathcal{L}}{\partial W^{(2)}}&#x3D;\delta^{(2)}(a^{(1)})^{\top}<br>$$</p>
+<p>$$<br>\frac{\partial \mathcal{L}}{\partial b^{(2)}}&#x3D;\delta^{(2)}<br>$$</p>
+<p>&emsp;&emsp;这里可以看出一个很重要的结构：<strong>当前层参数的梯度 &#x3D; 当前层误差项 × 上一层输出</strong>。</p>
+<h2 id="隐藏层梯度推导"><a href="#隐藏层梯度推导" class="headerlink" title="隐藏层梯度推导"></a>隐藏层梯度推导</h2><p>&emsp;&emsp;隐藏层没有直接与损失函数相连，因此需要先从后一层把误差传回来：</p>
+<p>$$<br>\delta^{(1)}&#x3D;\frac{\partial \mathcal{L}}{\partial z^{(1)}}&#x3D;<br>\left((W^{(2)})^{\top}\delta^{(2)}\right)\odot \sigma’(z^{(1)})<br>$$</p>
+<p>若隐藏层激活函数也是 sigmoid，则</p>
+<p>$$<br>\delta^{(1)}&#x3D;\left((W^{(2)})^{\top}\delta^{(2)}\right)\odot a^{(1)}(1-a^{(1)})<br>$$</p>
+<p>类似地，可以得到第一层参数的梯度：</p>
+<p>$$<br>\frac{\partial \mathcal{L}}{\partial W^{(1)}}&#x3D;\delta^{(1)}x^{\top}<br>$$</p>
+<p>$$<br>\frac{\partial \mathcal{L}}{\partial b^{(1)}}&#x3D;\delta^{(1)}<br>$$</p>
+<p>&emsp;&emsp;这就是全连接神经网络中最经典的一组反向传播公式。更深层网络时，只需要继续把误差项向前传递即可：</p>
+<p>$$<br>\delta^{(l)}&#x3D;((W^{(l+1)})^{\top}\delta^{(l+1)})\odot g’(z^{(l)})<br>$$</p>
+<p>&emsp;&emsp;这个递推式非常关键，它揭示了反向传播的两个本质动作：</p>
+<ol>
+<li>先把后一层误差通过权重矩阵转回当前层</li>
+<li>再乘上当前层激活函数的局部导数</li>
+</ol>
+<p>&emsp;&emsp;前者描述了网络拓扑结构中的“影响回传”，后者描述了非线性单元本身对梯度流动的调制作用。</p>
+<h2 id="参数梯度为什么能写成统一形式"><a href="#参数梯度为什么能写成统一形式" class="headerlink" title="参数梯度为什么能写成统一形式"></a>参数梯度为什么能写成统一形式</h2><p>&emsp;&emsp;以第 $l$ 层为例：</p>
+<p>$$<br>z^{(l)} &#x3D; W^{(l)}a^{(l-1)} + b^{(l)}<br>$$</p>
+<p>对其中某一个权重 $w_{ij}^{(l)}$ 来说，$z_i^{(l)}$ 对它的偏导只等于上一层对应输入：</p>
+<p>$$<br>\frac{\partial z_i^{(l)}}{\partial w_{ij}^{(l)}} &#x3D; a_j^{(l-1)}<br>$$</p>
+<p>于是根据链式法则：</p>
+<p>$$<br>\frac{\partial \mathcal{L}}{\partial w_{ij}^{(l)}} &#x3D;<br>\frac{\partial \mathcal{L}}{\partial z_i^{(l)}}<br>\frac{\partial z_i^{(l)}}{\partial w_{ij}^{(l)}}<br>&#x3D; \delta_i^{(l)} a_j^{(l-1)}<br>$$</p>
+<p>将所有元素写成矩阵形式，就得到：</p>
+<p>$$<br>\frac{\partial \mathcal{L}}{\partial W^{(l)}} &#x3D; \delta^{(l)}(a^{(l-1)})^{\top}<br>$$</p>
+<p>&emsp;&emsp;偏置项更简单，因为偏置对线性输出的偏导恒等于 1，所以：</p>
+<p>$$<br>\frac{\partial \mathcal{L}}{\partial b^{(l)}} &#x3D; \delta^{(l)}<br>$$</p>
+<p>&emsp;&emsp;这也是为什么在代码实现中，权重梯度通常是一个外积或矩阵乘法，而偏置梯度通常是对 batch 维度做求和或平均。</p>
+<h2 id="参数更新公式"><a href="#参数更新公式" class="headerlink" title="参数更新公式"></a>参数更新公式</h2><p>&emsp;&emsp;当所有梯度计算完成后，就可以配合梯度下降更新参数。设学习率为 $\eta$，则有：</p>
+<p>$$<br>W^{(l)} \leftarrow W^{(l)}-\eta \frac{\partial \mathcal{L}}{\partial W^{(l)}}<br>$$</p>
+<p>$$<br>b^{(l)} \leftarrow b^{(l)}-\eta \frac{\partial \mathcal{L}}{\partial b^{(l)}}<br>$$</p>
+<p>&emsp;&emsp;这一步本身并不复杂，真正困难的是如何高效、准确地得到梯度，而这恰恰就是反向传播算法的价值所在。</p>
+<h2 id="损失函数与输出层的关系"><a href="#损失函数与输出层的关系" class="headerlink" title="损失函数与输出层的关系"></a>损失函数与输出层的关系</h2><p>&emsp;&emsp;反向传播公式本身不依赖某一种固定损失函数，但不同任务中，输出层与损失函数的搭配会直接影响梯度的数值性质。</p>
+<h3 id="二分类任务"><a href="#二分类任务" class="headerlink" title="二分类任务"></a>二分类任务</h3><p>&emsp;&emsp;输出层常使用 sigmoid。如果配合二元交叉熵，梯度形式更简洁，数值上也更稳定，是实践中最常见的组合。</p>
+<h3 id="多分类任务"><a href="#多分类任务" class="headerlink" title="多分类任务"></a>多分类任务</h3><p>&emsp;&emsp;输出层常使用 softmax，并与交叉熵搭配。这样可以直接建模各类别的概率分布，同时避免人为地把多个类别当作互不相关的独立二分类问题。</p>
+<h3 id="回归任务"><a href="#回归任务" class="headerlink" title="回归任务"></a>回归任务</h3><p>&emsp;&emsp;输出层通常使用线性单元，再配合均方误差或平均绝对误差。此时重点不在概率解释，而在预测连续值本身。</p>
+<h2 id="结合示意图理解推导流程"><a href="#结合示意图理解推导流程" class="headerlink" title="结合示意图理解推导流程"></a>结合示意图理解推导流程</h2><p>&emsp;&emsp;下面这组图对应了一个小型神经网络在前向传播和反向传播时的计算路径。先看前向传播的中间变量是如何层层计算出来的：</p>
+<h3 id="正向传播"><a href="#正向传播" class="headerlink" title="正向传播"></a>正向传播</h3><ul>
+<li>第一层</li>
+</ul>
+<img src="/images/course/backpropagation-process/backpropagation-process_img_001.png" width="600">
+
+<ul>
+<li>第二层</li>
+</ul>
+<p><img src="/images/course/backpropagation-process/backpropagation-process_img_002.png" alt="正向传播2"></p>
+<ul>
+<li>第三层</li>
+</ul>
+<p><img src="/images/course/backpropagation-process/backpropagation-process_img_003.png" alt="正向传播3"></p>
+<h3 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h3><ul>
+<li>从输出层开始计算预测误差</li>
+</ul>
+<p><img src="/images/course/backpropagation-process/backpropagation-process_img_004.png" alt="反向传播1"></p>
+<ul>
+<li>误差项向隐藏层传播</li>
+</ul>
+<p><img src="/images/course/backpropagation-process/backpropagation-process_img_005.png" alt="反向传播2"></p>
+<ul>
+<li>继续向前传播到更早一层</li>
+</ul>
+<p><img src="/images/course/backpropagation-process/backpropagation-process_img_006.png" alt="反向传播3"></p>
+<ul>
+<li>利用误差项计算参数梯度并执行更新</li>
+</ul>
+<p><img src="/images/course/backpropagation-process/backpropagation-process_img_007.png" alt="反向传播4"></p>
+<p><img src="/images/course/backpropagation-process/backpropagation-process_img_008.png" alt="反向传播5"></p>
+<p><img src="/images/course/backpropagation-process/backpropagation-process_img_009.png" alt="反向传播6"></p>
+<h2 id="手算示例：从误差到单个权重梯度"><a href="#手算示例：从误差到单个权重梯度" class="headerlink" title="手算示例：从误差到单个权重梯度"></a>手算示例：从误差到单个权重梯度</h2><p>&emsp;&emsp;如果刚接触反向传播，最容易困惑的地方通常不是公式本身，而是“为什么每一个权重都能通过链式法则拆开”。下面这个例子展示了一个两层网络中，如何一步一步求损失对单个权重的导数。</p>
+<img src="/images/course/backpropagation-process/backpropagation-process_img_010.png" width="600">
+
+<ul>
+<li>正向计算得到各个中间节点值</li>
+</ul>
+<img src="/images/course/backpropagation-process/backpropagation-process_img_011.png" width="800">
+
+<ul>
+<li>反向求损失对各参数的梯度</li>
+</ul>
+<img src="/images/course/backpropagation-process/backpropagation-process_img_012.png" width="800">
+
+<ul>
+<li>用学习率更新参数</li>
+</ul>
+<img src="/images/course/backpropagation-process/backpropagation-process_img_013.png" width="800">
+
+<ul>
+<li>以某一个具体权重为例展开求导</li>
+</ul>
+<img src="/images/course/backpropagation-process/backpropagation-process_img_014.png" width="800">
+
+<h2 id="实验：使用-NumPy-手写反向传播"><a href="#实验：使用-NumPy-手写反向传播" class="headerlink" title="实验：使用 NumPy 手写反向传播"></a>实验：使用 NumPy 手写反向传播</h2><p>&emsp;&emsp;下面用一个最小示例来验证：只要梯度推导正确，经过若干轮参数更新后，损失就会持续下降。这里用 <code>XOR</code> 数据做二分类，网络结构为 <code>2 -&gt; 4 -&gt; 1</code>。</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">np.random.seed(<span class="number">42</span>)</span><br><span class="line"></span><br><span class="line">X = np.array([</span><br><span class="line">    [<span class="number">0.0</span>, <span class="number">0.0</span>],</span><br><span class="line">    [<span class="number">0.0</span>, <span class="number">1.0</span>],</span><br><span class="line">    [<span class="number">1.0</span>, <span class="number">0.0</span>],</span><br><span class="line">    [<span class="number">1.0</span>, <span class="number">1.0</span>],</span><br><span class="line">])</span><br><span class="line">y = np.array([[<span class="number">0.0</span>], [<span class="number">1.0</span>], [<span class="number">1.0</span>], [<span class="number">0.0</span>]])</span><br><span class="line"></span><br><span class="line">W1 = np.random.randn(<span class="number">2</span>, <span class="number">4</span>) * <span class="number">0.5</span></span><br><span class="line">b1 = np.zeros((<span class="number">1</span>, <span class="number">4</span>))</span><br><span class="line">W2 = np.random.randn(<span class="number">4</span>, <span class="number">1</span>) * <span class="number">0.5</span></span><br><span class="line">b2 = np.zeros((<span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sigmoid</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1.0</span> / (<span class="number">1.0</span> + np.exp(-x))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sigmoid_grad</span>(<span class="params">a</span>):</span><br><span class="line">    <span class="keyword">return</span> a * (<span class="number">1.0</span> - a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lr = <span class="number">0.5</span></span><br><span class="line">epochs = <span class="number">5000</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epochs):</span><br><span class="line">    <span class="comment"># forward</span></span><br><span class="line">    z1 = X @ W1 + b1</span><br><span class="line">    a1 = sigmoid(z1)</span><br><span class="line">    z2 = a1 @ W2 + b2</span><br><span class="line">    y_hat = sigmoid(z2)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># mse loss</span></span><br><span class="line">    loss = np.mean(<span class="number">0.5</span> * (y_hat - y) ** <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># backward</span></span><br><span class="line">    delta2 = (y_hat - y) * sigmoid_grad(y_hat)</span><br><span class="line">    dW2 = a1.T @ delta2 / <span class="built_in">len</span>(X)</span><br><span class="line">    db2 = np.mean(delta2, axis=<span class="number">0</span>, keepdims=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    delta1 = (delta2 @ W2.T) * sigmoid_grad(a1)</span><br><span class="line">    dW1 = X.T @ delta1 / <span class="built_in">len</span>(X)</span><br><span class="line">    db1 = np.mean(delta1, axis=<span class="number">0</span>, keepdims=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># update</span></span><br><span class="line">    W2 -= lr * dW2</span><br><span class="line">    b2 -= lr * db2</span><br><span class="line">    W1 -= lr * dW1</span><br><span class="line">    b1 -= lr * db1</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> epoch % <span class="number">500</span> == <span class="number">0</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;epoch=<span class="subst">&#123;epoch:4d&#125;</span>, loss=<span class="subst">&#123;loss:<span class="number">.6</span>f&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;prediction:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(np.<span class="built_in">round</span>(y_hat, <span class="number">4</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="预期现象"><a href="#预期现象" class="headerlink" title="预期现象"></a>预期现象</h3><p>训练过程中，损失会逐步下降，例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">epoch=   0, loss=0.131245</span><br><span class="line">epoch= 500, loss=0.123607</span><br><span class="line">epoch=1000, loss=0.111904</span><br><span class="line">epoch=1500, loss=0.090152</span><br><span class="line">epoch=2000, loss=0.060981</span><br><span class="line">epoch=2500, loss=0.036587</span><br><span class="line">epoch=3000, loss=0.022264</span><br><span class="line">epoch=3500, loss=0.014411</span><br><span class="line">epoch=4000, loss=0.010008</span><br><span class="line">epoch=4500, loss=0.007387</span><br></pre></td></tr></table></figure>
+
+<p>最终预测值会逐步接近：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[[0.05]</span><br><span class="line"> [0.93]</span><br><span class="line"> [0.93]</span><br><span class="line"> [0.08]]</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这说明手写的梯度计算方向基本正确，否则损失通常不会稳定下降，更难拟合 XOR 这样线性不可分的问题。</p>
+<h2 id="实验中的关键实现细节"><a href="#实验中的关键实现细节" class="headerlink" title="实验中的关键实现细节"></a>实验中的关键实现细节</h2><h3 id="1-为什么代码里要缓存中间变量"><a href="#1-为什么代码里要缓存中间变量" class="headerlink" title="1. 为什么代码里要缓存中间变量"></a>1. 为什么代码里要缓存中间变量</h3><p>&emsp;&emsp;反向传播并不是凭空回传梯度，而是需要使用前向传播时得到的中间结果，例如 $z^{(l)}$、$a^{(l)}$。如果这些量不保存，反向阶段就必须重复计算，不仅效率低，还容易在实现时出错。</p>
+<h3 id="2-为什么-batch-训练要对梯度做平均"><a href="#2-为什么-batch-训练要对梯度做平均" class="headerlink" title="2. 为什么 batch 训练要对梯度做平均"></a>2. 为什么 batch 训练要对梯度做平均</h3><p>&emsp;&emsp;代码里使用了 <code>len(X)</code> 对 <code>dW</code> 做归一化，本质上是把一个 batch 中多个样本的梯度取平均。这样做可以让学习率更稳定，不会因为 batch 大小变化而导致梯度尺度剧烈波动。</p>
+<h3 id="3-为什么初始化不能全为-0"><a href="#3-为什么初始化不能全为-0" class="headerlink" title="3. 为什么初始化不能全为 0"></a>3. 为什么初始化不能全为 0</h3><p>&emsp;&emsp;如果一层神经元的权重全部初始化为相同数值，那么这一层各神经元在前向和反向阶段都会保持完全相同的状态，模型无法学到有区分性的特征。因此权重通常需要随机初始化，以打破对称性。</p>
+<h2 id="训练中常见问题与注意事项"><a href="#训练中常见问题与注意事项" class="headerlink" title="训练中常见问题与注意事项"></a>训练中常见问题与注意事项</h2><h3 id="1-为什么梯度会消失"><a href="#1-为什么梯度会消失" class="headerlink" title="1. 为什么梯度会消失"></a>1. 为什么梯度会消失</h3><p>&emsp;&emsp;当隐藏层大量使用 sigmoid 或 tanh 时，若输入落在饱和区间，导数会变得很小。反向传播时这些小导数不断相乘，前面层的梯度就会迅速衰减，导致训练困难。</p>
+<h3 id="2-为什么激活函数会影响训练难度"><a href="#2-为什么激活函数会影响训练难度" class="headerlink" title="2. 为什么激活函数会影响训练难度"></a>2. 为什么激活函数会影响训练难度</h3><p>&emsp;&emsp;因为误差项中总是包含激活函数导数 $g’(z)$。如果导数长期接近 0，梯度难以有效传回早期层；如果导数分布更稳定，如 ReLU 在激活区间的一阶导数为 1，则通常更利于深层网络训练。</p>
+<h3 id="3-为什么要先算误差项再算参数梯度"><a href="#3-为什么要先算误差项再算参数梯度" class="headerlink" title="3. 为什么要先算误差项再算参数梯度"></a>3. 为什么要先算误差项再算参数梯度</h3><p>&emsp;&emsp;因为同一层中所有参数的梯度都共享同一个误差项 $\delta^{(l)}$。先把误差项求出来，可以避免重复推导和重复计算，这是反向传播高效的关键。</p>
+<h3 id="4-为什么学习率会直接影响训练效果"><a href="#4-为什么学习率会直接影响训练效果" class="headerlink" title="4. 为什么学习率会直接影响训练效果"></a>4. 为什么学习率会直接影响训练效果</h3><p>&emsp;&emsp;学习率过大时，参数更新可能在最优点附近来回震荡，甚至直接发散；学习率过小时，虽然理论上也能收敛，但训练速度会非常慢。因此在实际训练中，学习率往往和初始化方式、优化器、batch size 一起联动调整。</p>
+<h3 id="5-为什么要做梯度检查"><a href="#5-为什么要做梯度检查" class="headerlink" title="5. 为什么要做梯度检查"></a>5. 为什么要做梯度检查</h3><p>&emsp;&emsp;当手写反向传播时，最容易出现的是矩阵维度错误、转置方向错误以及求和轴错误。此时可以用数值微分做梯度检查，即用很小的扰动近似计算：</p>
+<p>$$<br>\frac{\partial \mathcal{L}}{\partial w} \approx \frac{\mathcal{L}(w+\epsilon)-\mathcal{L}(w-\epsilon)}{2\epsilon}<br>$$</p>
+<p>&emsp;&emsp;如果数值梯度和反向传播算出的解析梯度接近，说明实现通常是正确的。梯度检查开销较大，不适合正式训练，但非常适合在调试阶段定位错误。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>&emsp;&emsp;反向传播不是一个脱离网络结构之外的“额外技巧”，而是<strong>链式法则在神经网络中的系统化实现</strong>。其核心步骤可以概括为：</p>
+<ol>
+<li>先完成前向传播，保存每层的线性输出和激活值。</li>
+<li>从损失函数出发，计算输出层误差项。</li>
+<li>按照链式法则逐层向前传播误差项。</li>
+<li>使用“误差项 × 上一层输出”得到参数梯度。</li>
+<li>结合梯度下降或其他优化器更新参数。</li>
+</ol>
+<p>&emsp;&emsp;理解了这一过程，再去学习自动求导、卷积网络训练、循环神经网络和 Transformer 优化时，会更容易把握“梯度是怎样在模型中流动”的本质。</p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.0" async></script><a class="article-share-link" data-url="https://deeplearner.top/2022/02/28/course/DeepLearning%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-7-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/" data-id="cmo2ot9xf0017yyca16z22ytq" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASYAAAEmCAAAAADqr2IGAAAEj0lEQVR42u3a227jOBAFQP//T2eAeZ3YOadb2jWd0pPhyBRZCkD25fGIr6+/17+fn92Z3P/szn/vT8Zsn/K448KECRMmTG/J9PXyenbP6+k+uychTl5SjpuP9myNmDBhwoTpM5ja4ZLjwmvE17/Kl52D5q8NEyZMmDD9TqZkwbNwtD1MtHfOwnJMmDBhwvQ7mdrtfLPB5ynd5EViwoQJE6bfzLQZrk0TJ+O0Sd6W7MZcOCZMmDBhejOmTePO6Z//o/4mTJgwYcL0PzF9lddmnDy9m2/Y7dyGq8aECRMmTMcyte2nm2advAjaNvq0Da/5Ey+YCiZMmDBhehum15tlkjxNRogmFG/qbZK6nc83BwJMmDBhwnQU0x3NNJviaJ6QTYLqWTn2m9EwYcKECdOxTMkUZ9twEgDPWm3asmVyCKhDZUyYMGHCdAjTVenXfSPpbMOevfK2pIoJEyZMmM5lyrfefBl5ObMNg9sC5GYtT3PhmDBhwoTpKKYkIJxt/xugfcPQrI316T8NJkyYMGE6lmmWTm3D1DrTXCaF2wRu25aECRMmTJjOZZq1xdxd4CwaaMojyzARjAkTJkyYjmXKQ80Erm1OnQWlm0LsJmWMCRMmTJhOZMpLmEmImLfCzMqZyfj5AaJIamPChAkTpmOZ2vJeu5FvCpZt82vbWrRJZ2PChAkTplOYNlPJG1vbKbbNN3l4/JhdmDBhwoTpWKa8hHlHAJnz5U02Rb/SLHjGhAkTJkxHMW1aZNoUbVtW3KSAZ9t/1N+ECRMmTJiOYmpbc2ZFynzzvipde1WRFRMmTJgwfQbTpmkmDyn3jUH7b25JBGPChAkTpsOZNo07sw34Dqb2oFPAYcKECROmN2Yqqp2jY0QSgs5Gu7gdJ8mFY8KECROmA5nyjbNNzs7OJrNG1WtTvT/kwjFhwoQJ01FMm1JfEuhuypzJ1R4dWqxHPlFMmDBhwvSWTJsmm035s03CXrDI+0JfTJgwYcL09kztIxOm5M6E5uJFlk/HhAkTJkynM+XNNG2A2i5m86x9aviHF48JEyZMmI5lagdN7s9HaLfqpHiZvJjhEQQTJkyYMH0EU4KyCUfzJO9shrM1RnPGhAkTJkzHMrVtnXf0tLQbfwu3OaBgwoQJE6bPYGqLfO0GvA9E25e0x8KECRMmTKcz5VOZBavJN/cliPO/RhE8JkyYMGE6kCkvWLYlwAT09VPye64qskZJXkyYMGHCdBRTXrZsgfLRZu07+evcpLAxYcKECdMnMbUNN5uq6WYBmxacPAD+prMJEyZMmDAdyLQB2tC0090s7DIaTJgwYcJ0INNXeW0ev0/m5r9tg/Mf0tOYMGHChOlYpqv6VdpFbsqfbQlz8xkTJkyYMH0GU77gPME66/zMW4XaF5AXbp+OiQkTJkyYDmfKN+m20Nimg69K0e5fYVH7xYQJEyZMH8F0bYBaNInGf20PK8WvMGHChAkTpjIFvE8Et3CzgwsmTJgwYfoMpjzJ2263bbCaN8hehRUdUDBhwoQJ07FMs8ad/cI2B4X9N5umW0yYMGHCdAjTHyOtbF0E0loTAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa fa-tag"></i>深度学习笔记</a><a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"><i class="fa fa-tag"></i>神经网络</a><a href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/"><i class="fa fa-tag"></i>反向传播</a><a href="/tags/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/"><i class="fa fa-tag"></i>梯度下降</a></div><div class="post-nav"><a class="pre" href="/2022/05/19/course/Python-1-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90matplotlib%E4%BD%BF%E7%94%A8/">Python 数据分析基础：Matplotlib 可视化入门</a><a class="next" href="/2022/02/28/course/DeepLearning%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-6-%E6%B7%B1%E5%BA%A6%E5%89%8D%E9%A6%88%E7%BD%91%E7%BB%9C2/">【DeepLearning】神经网络：深度前馈网络（二）</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/%E4%BB%AA%E5%99%A8%E4%BB%AA%E8%A1%A8%E7%A7%91%E5%AD%A6%E4%B8%8E%E5%85%89%E7%94%B5%E5%B7%A5%E7%A8%8B/">仪器仪表科学与光电工程</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B/">课程</a><span class="category-list-count">7</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/face-detection-recognition/">计算机视觉专题：人脸检测与人脸识别</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/generative-adversarial-networks-gan/">生成模型专题：生成对抗网络（GAN）原理与实践</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/ocr-optical-character-recognition/">场景文字理解：OCR 基础、检测与识别方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/natural-language-processing-nlp/">自然语言处理导论：基础方法、表示学习与典型应用</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/semantic-segmentation/">计算机视觉专题：语义分割原理与经典模型</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/target-detection/">计算机视觉专题：目标检测基础与经典检测器</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/tf-idf-algorithm/">文本表示基础：TF-IDF 与文本分类入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8A-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/">AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.0"><script type="text/javascript" src="/js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript">window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    processEscapes: true
+  },
+  chtml: {
+    fontURL: '/js/chtml/fonts/woff-v2'
+  },
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  }
+};
+</script><script type="text/javascript" src="/js/mathjax3.js" async></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div><!-- hexo injector body_end start -->
+<script src="/assets/prism-bundle.js"></script>
+<script src="/assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>
