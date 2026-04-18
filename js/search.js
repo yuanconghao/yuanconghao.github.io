@@ -1,5 +1,12 @@
 var searchFunc = function(path, search_id, content_id) {
     'use strict';
+    var $input = document.getElementById(search_id);
+    var $resultContent = document.getElementById(content_id);
+
+    if (!$input || !$resultContent) {
+        return;
+    }
+
     $.ajax({
         url: path,
         dataType: "xml",
@@ -12,8 +19,6 @@ var searchFunc = function(path, search_id, content_id) {
                     url: $( "url" , this).text()
                 };
             }).get();
-            var $input = document.getElementById(search_id);
-            var $resultContent = document.getElementById(content_id);
             $input.addEventListener('input', function(){
                 var str='<ul class=\"search-result-list\">';
                 var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
