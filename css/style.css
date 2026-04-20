@@ -277,6 +277,13 @@ div {
   align-items: stretch;
 }
 
+.home-hero-copy,
+.home-hero-panel,
+.home-about-copy,
+.home-about-actions {
+  min-width: 0;
+}
+
 .home-eyebrow,
 .home-section-eyebrow {
   margin: 0 0 12px;
@@ -325,6 +332,7 @@ div {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  max-width: 100%;
   min-height: 42px;
   padding: 0 16px;
   border: 1px solid rgba(23, 33, 43, 0.12);
@@ -548,13 +556,15 @@ div {
 
 .home-story-meta {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .home-story-kicker,
 .home-story-date {
+  min-width: 0;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -573,6 +583,7 @@ div {
   margin: 14px 0 0;
   font-size: 23px;
   line-height: 1.28;
+  overflow-wrap: anywhere;
 }
 
 .home-story-title a {
@@ -655,6 +666,10 @@ div {
   transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 
+.home-update-row > * {
+  min-width: 0;
+}
+
 .home-update-lane {
   color: var(--home-accent);
   font-size: 12px;
@@ -669,6 +684,7 @@ div {
   font-size: 15px;
   font-weight: 600;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .home-update-date {
@@ -689,6 +705,7 @@ div {
   margin: 0;
   font-size: 21px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .home-principle-description {
