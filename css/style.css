@@ -43,6 +43,12 @@ body {
   padding-top: 20px;
 }
 
+/* Keep full-width rows stable in the no-sidebar layout on mobile browsers. */
+#layout > .pure-u-1.pure-u-md-4-4 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
 a,
 button.submit {
   color: #6E7173;
