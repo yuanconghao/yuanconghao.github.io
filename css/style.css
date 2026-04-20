@@ -43,9 +43,15 @@ body {
   padding-top: 20px;
 }
 
-/* Keep full-width rows stable in the no-sidebar layout on mobile browsers. */
-#layout > .pure-u-1.pure-u-md-4-4 {
-  flex: 0 0 100%;
+/* Avoid Pure's flex row quirks on single-column pages, especially in mobile WebKit. */
+#layout.layout-single-column {
+  display: block;
+}
+
+#layout.layout-single-column > .pure-u-1.pure-u-md-4-4 {
+  display: block;
+  width: 100%;
+  flex: none;
   max-width: 100%;
 }
 
