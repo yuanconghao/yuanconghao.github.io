@@ -12,15 +12,127 @@ ga('create','UA-83251621-1','auto');ga('send','pageview');
   })();
 </script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">论文解读：机器学习辅助与实时反馈控制 InAs/GaAs 量子点生长</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/essay/"><i class="fa fa-pencil"> 随笔</i></a><a href="/course/"><i class="fa fa-book"> 课程</i></a><a class="current" href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">论文解读：机器学习辅助与实时反馈控制 InAs/GaAs 量子点生长</h1><div class="post-meta">created:2026-04-13</div><div class="post-meta">updated:2026-04-17</div><a class="disqus-comment-count" href="/research/inas-gaas-qd-ml-feedback/#waline"><span class="waline-comment-count" id="/research/inas-gaas-qd-ml-feedback/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="toc-number">1.</span> <span class="toc-text">论文基本信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AF%E8%AF%AD%E4%B8%8E%E7%BC%A9%E5%86%99%E8%AF%B4%E6%98%8E"><span class="toc-number">2.</span> <span class="toc-text">术语与缩写说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF%E4%B8%8E%E9%97%AE%E9%A2%98%E5%AE%9A%E4%B9%89"><span class="toc-number">3.</span> <span class="toc-text">研究背景与问题定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E7%BB%84%E8%A3%85%E9%87%8F%E5%AD%90%E7%82%B9%E7%9A%84%E5%AF%86%E5%BA%A6%E6%8E%A7%E5%88%B6%E9%9C%80%E6%B1%82"><span class="toc-number">3.1.</span> <span class="toc-text">自组装量子点的密度控制需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E5%B7%A5%E8%89%BA%E6%B5%81%E7%A8%8B%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">3.2.</span> <span class="toc-text">传统工艺流程的局限性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E6%96%87%E6%8F%90%E5%87%BA%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">3.3.</span> <span class="toc-text">本文提出的解决方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%8E%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="toc-number">4.</span> <span class="toc-text">方法与系统架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AD%E7%8E%AF%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E6%80%BB%E4%BD%93%E8%AE%BE%E8%AE%A1"><span class="toc-number">4.1.</span> <span class="toc-text">闭环控制系统总体设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3D-ResNet-50%EF%BC%9A%E9%9D%A2%E5%90%91%E6%97%B6%E5%BA%8F%E8%A7%86%E9%A2%91%E7%9A%84%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96"><span class="toc-number">4.2.</span> <span class="toc-text">3D ResNet-50：面向时序视频的特征提取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E9%A6%88%E6%8E%A7%E5%88%B6%E9%80%BB%E8%BE%91"><span class="toc-number">4.3.</span> <span class="toc-text">反馈控制逻辑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="toc-number">5.</span> <span class="toc-text">核心实验结果</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E6%80%A7%E8%83%BD%E9%AA%8C%E8%AF%81"><span class="toc-number">5.1.</span> <span class="toc-text">模型性能验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%A8%E9%87%8F%E7%A8%8B%E7%9A%84%E5%AF%86%E5%BA%A6%E9%97%AD%E7%8E%AF%E8%B0%83%E6%8E%A7"><span class="toc-number">5.2.</span> <span class="toc-text">跨量程的密度闭环调控</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E%E5%90%8C%E7%B1%BB%E5%B7%A5%E4%BD%9C%E7%9A%84%E6%9C%AC%E8%B4%A8%E5%B7%AE%E5%BC%82"><span class="toc-number">5.3.</span> <span class="toc-text">与同类工作的本质差异</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E8%AE%BA%E5%B1%80%E9%99%90%E6%80%A7%E4%B8%8E%E4%BD%9C%E8%80%85%E8%AE%A8%E8%AE%BA"><span class="toc-number">6.</span> <span class="toc-text">方法论局限性与作者讨论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E6%9C%AF%E4%BB%B7%E5%80%BC%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%90%AF%E7%A4%BA"><span class="toc-number">7.</span> <span class="toc-text">学术价值与领域启示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E5%8E%9F%E4%BD%8D%E7%9B%91%E6%B5%8B%E5%88%B0%E5%8E%9F%E4%BD%8D%E7%8A%B6%E6%80%81%E4%BC%B0%E8%AE%A1"><span class="toc-number">7.1.</span> <span class="toc-text">从原位监测到原位状态估计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%86%E5%9F%9F%E7%9F%A5%E8%AF%86%E4%B8%8E%E6%95%B0%E6%8D%AE%E6%95%88%E7%8E%87%E7%9A%84%E5%B9%B3%E8%A1%A1"><span class="toc-number">7.2.</span> <span class="toc-text">领域知识与数据效率的平衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E8%A1%A8%E5%BE%81%E8%AF%86%E5%88%AB%E5%88%B0%E9%9D%A2%E5%90%91%E5%99%A8%E4%BB%B6%E6%8C%87%E6%A0%87%E7%9A%84%E9%97%AD%E7%8E%AF%E6%8E%A7%E5%88%B6"><span class="toc-number">7.3.</span> <span class="toc-text">从表征识别到面向器件指标的闭环控制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AA%E6%9D%A5%E7%A0%94%E7%A9%B6%E6%96%B9%E5%90%91%E5%B1%95%E6%9C%9B"><span class="toc-number">8.</span> <span class="toc-text">未来研究方向展望</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">10.</span> <span class="toc-text">参考文献</span></a></li></ol></div></div><div class="post-content"><h2 id="论文基本信息"><a href="#论文基本信息" class="headerlink" title="论文基本信息"></a>论文基本信息</h2><ul>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">论文解读：机器学习辅助与实时反馈控制 InAs/GaAs 量子点生长</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/essay/"><i class="fa fa-pencil"> 随笔</i></a><a href="/course/"><i class="fa fa-book"> 课程</i></a><a class="current" href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">论文解读：机器学习辅助与实时反馈控制 InAs/GaAs 量子点生长</h1><div class="post-meta">created:2026-04-13</div><div class="post-meta">updated:2026-04-23</div><a class="disqus-comment-count" href="/research/inas-gaas-qd-ml-feedback/#waline"><span class="waline-comment-count" id="/research/inas-gaas-qd-ml-feedback/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%AE%BA%E6%96%87%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="toc-number">1.</span> <span class="toc-text">1 论文基本信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%96%91%E9%97%AE%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">2 疑问点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E8%A1%8C%E4%B8%9A%E8%83%8C%E6%99%AF%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%95%BF%E8%BF%99%E4%BA%9B%E2%80%9D%E7%82%B9%E2%80%9D"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 行业背景：为什么要长这些”点”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B%EF%BC%9A%E5%A6%82%E4%BD%95%E2%80%9C%E7%9B%91%E6%8E%A7%E2%80%9D%E7%94%9F%E9%95%BF%E7%9A%84%EF%BC%9F"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 实验过程：如何“监控”生长的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%89%A9%E7%90%86%E5%8F%82%E6%95%B0%E5%9B%BA%E5%AE%9A%EF%BC%8C%E4%BB%8D%E9%9C%80%E8%A6%81%E2%80%9C%E9%A2%84%E6%B5%8B%E2%80%9D%EF%BC%9F"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 为什么物理参数固定，仍需要“预测”？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="toc-number">3.</span> <span class="toc-text">3 论文解读</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E7%A0%94%E7%A9%B6%E6%A0%B8%E5%BF%83%E5%86%85%E5%AE%B9%E7%90%86%E8%A7%A3"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 研究核心内容理解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-1-%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF%E4%B8%8E%E6%8C%91%E6%88%98"><span class="toc-number">3.1.1.</span> <span class="toc-text">3.1.1 研究背景与挑战</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88%EF%BC%9A3D-ResNet-50-%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 核心技术方案：3D ResNet 50 模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%AE%9E%E6%97%B6%E5%8F%8D%E9%A6%88%E6%8E%A7%E5%88%B6%E9%80%BB%E8%BE%91"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 实时反馈控制逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E4%B8%BB%E8%A6%81%E5%AE%9E%E9%AA%8C%E6%88%90%E6%9E%9C%E4%B8%8E%E7%BB%93%E6%9E%9C"><span class="toc-number">3.4.</span> <span class="toc-text">3.4 主要实验成果与结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">4 实验方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 模型设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%AE%9E%E9%AA%8C%E6%B5%81%E7%A8%8B"><span class="toc-number">4.2.</span> <span class="toc-text">4.2 实验流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-1-%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="toc-number">4.2.1.</span> <span class="toc-text">4.2.1 数据预处理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-2-%E6%9E%84%E5%BB%BA3D-ResNet-50%E6%A8%A1%E5%9E%8B"><span class="toc-number">4.2.2.</span> <span class="toc-text">4.2.2 构建3D ResNet 50模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-3-%E8%AE%AD%E7%BB%83%E4%B8%8E%E5%A2%9E%E5%BC%BA%E7%AD%96%E7%95%A5"><span class="toc-number">4.2.3.</span> <span class="toc-text">4.2.3 训练与增强策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-4-%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E4%B8%8E%E5%AF%BC%E5%87%BA"><span class="toc-number">4.2.4.</span> <span class="toc-text">4.2.4 推理加速与导出</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="toc-number">4.3.</span> <span class="toc-text">4.3 实验结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%BB%93%E8%AE%BA"><span class="toc-number">5.</span> <span class="toc-text">5 结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%A1%8D%E7%94%9F%E7%A0%94%E7%A9%B6%E4%B8%8E%E5%88%9B%E6%96%B0%E6%96%B9%E5%90%91"><span class="toc-number">6.</span> <span class="toc-text">6 衍生研究与创新方向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AF%E8%AF%AD%E4%B8%8E%E7%BC%A9%E5%86%99%E8%AF%B4%E6%98%8E"><span class="toc-number">7.</span> <span class="toc-text">术语与缩写说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">8.</span> <span class="toc-text">参考文献</span></a></li></ol></div></div><div class="post-content"><h2 id="1-论文基本信息"><a href="#1-论文基本信息" class="headerlink" title="1 论文基本信息"></a>1 论文基本信息</h2><ul>
 <li><strong>标题</strong>：<em>Machine-learning-assisted and real-time-feedback-controlled growth of InAs&#x2F;GaAs quantum dots</em></li>
 <li><strong>期刊</strong>：<em>Nature Communications</em> 15, 2818 (2024)</li>
 <li><strong>DOI</strong>：<a target="_blank" rel="noopener" href="https://www.nature.com/articles/s41467-024-47087-w">10.1038&#x2F;s41467-024-47087-w</a></li>
+<li><strong>核心目标</strong>：建立分子束外延（MBE）原位表征与材料生长状态之间的实时连接，通过机器学习（ML）取代传统的“试错法”优化量子点（QD）密度。</li>
 <li><strong>关键词</strong>：MBE, Quantum Dots, RHEED, 3D ResNet, Real-time Feedback Control</li>
+<li><strong>材料体系</strong>: InAs&#x2F;GaAs<ul>
+<li>**InAs (砷化铟) 与 GaAs (砷化镓)**：两者均为 III-V 族化合物半导体。</li>
+<li><strong>S-K 生长模式</strong>：由于 InAs 与 GaAs 之间存在晶格失配，材料生长会经历从 2D 浸润层到 3D 岛状结构的转变，从而自组装形成量子点。</li>
+<li><strong>应用驱动</strong>：高密度 QDs 适用于量子点激光器，而低密度 QDs（单量子点可寻址）则是单光子源的核心。</li>
+</ul>
+</li>
 </ul>
 <img src="/images/research/inas-gaas-qd-ml-feedback/fig1.png" width="600">
 
 <hr>
+<h2 id="2-疑问点"><a href="#2-疑问点" class="headerlink" title="2 疑问点"></a>2 疑问点</h2><h3 id="2-1-行业背景：为什么要长这些”点”"><a href="#2-1-行业背景：为什么要长这些”点”" class="headerlink" title="2.1 行业背景：为什么要长这些”点”"></a>2.1 行业背景：为什么要长这些”点”</h3><p>光电工程中，半导体量子点（Quantum Dots, QDs）被誉为“人造原子”。</p>
+<ul>
+<li>核心用途：高密度的量子点适合做<strong>量子点激光器</strong>，而低密度的量子点则是研制<strong>单光子源</strong>（量子信息、量子计算关键）的理想材料。</li>
+<li>生长难题：量子点的生长实在原子层级进行的，通常使用“分子束外延（MBE）”技术，控制原子密度，影响因素有<strong>衬底温度、材料比例、生长速率</strong>等。</li>
+<li>现状：过去主要靠资深专家“手感”和不断“试错”，这篇论文的意义在于：用AI取代这种“手感”，实现自动化精准控制。</li>
+</ul>
+<h3 id="2-2-实验过程：如何“监控”生长的？"><a href="#2-2-实验过程：如何“监控”生长的？" class="headerlink" title="2.2 实验过程：如何“监控”生长的？"></a>2.2 实验过程：如何“监控”生长的？</h3><ul>
+<li>数据采集：RHEED技术，在MBE设备里，RHEED（反射高能电子衍射）装置进行采集。</li>
+<li>原理：向生长中的薄膜表面打一束电子，根据反射回来的衍射图案（亮斑、条纹）来推断表面形貌信息。</li>
+<li>视觉特征：<ul>
+<li>条纹状（Streaky）：对应平整的表面或浸润层阶段 。</li>
+<li>斑点状（Spotty）：对应量子点的成核与形成过程 。</li>
+</ul>
+</li>
+</ul>
+<img src="/images/research/inas-gaas-qd-ml-feedback/fig2.png" width="800">
+
+<h3 id="2-3-为什么物理参数固定，仍需要“预测”？"><a href="#2-3-为什么物理参数固定，仍需要“预测”？" class="headerlink" title="2.3 为什么物理参数固定，仍需要“预测”？"></a>2.3 为什么物理参数固定，仍需要“预测”？</h3><p>温度、材料比例、生长速率固定为什么结果不同？</p>
+<p>  计算科学的“确定性”思维，到物理学角度，量子点成核的随机过程。</p>
+<ul>
+<li>系统的非理想型与参数漂移，MBE机器并不是一个完美的物理模拟器，存在不可忽视的不稳定性和不确定性。<ul>
+<li>传感器误差：即使温度显示500°C，真实腔体内的实际衬底表面温度坑因为加热丝老化、热电偶接触位置的微小变化而发生1-2°C的偏差。</li>
+<li>束流波动：材料比例依赖于蒸发源的束流强度。随着坩埚内材料的消耗，即便设置同样的加热功率，实际喷射出来的原子流量也会发生微小漂移。</li>
+<li>预测的必要性：实时预测能检测并纠正这些偏离预期的微小偏差 。</li>
+</ul>
+</li>
+<li>物理过程的非线性与复杂性<ul>
+<li>并非简单的函数关系：量子点密度是衬底温度、材料比例、生长速率等大量变量的复杂函数 。</li>
+<li>难以建模：要建立一个能完美描述这些生长物理过程的综合解析模型是一个极其困难的、甚至无法解决的问题（Intractable problem）</li>
+<li>实时连接的价值：因为没有完美的公式，所以必须在原位表征（RHEED）与生长状态之间建立实时连接，通过“看”实际长成什么样来反推参数是否合适 。</li>
+</ul>
+</li>
+<li>成核过程的随机性，从物理学角度，量子点成核是个随机过程<ul>
+<li>浸润层坍塌：在Stranski-Krastanow（先层状生长再岛状生长）模式下，原子先铺成薄膜，然后突然由于应力坍缩成岛状 。这个“坍缩”的瞬间以及成核的位置具有统计随机性。</li>
+<li>实时监控意义：AI 预测不是为了验证公式，而是为了捕捉这种随机性中的演变趋势。</li>
+</ul>
+</li>
+<li>提高可复用性，传统方法主要依赖研究人员的技能和经验，通过耗时的的“试错法”来寻找参数<ul>
+<li>打破“手感”依赖：即便同一台机器，今天长的和明天长的可能就不一样。</li>
+<li>自动修正：AI 通过实时预测，可以在生长初期发现“今天的情况似乎往高密度发展了”，从而立即干预（比如升温），确保最终结果能回到目标值，极大地提高了生长的可重复性 。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">把 MBE 生长想象成在狂风中驾驶帆船：</span><br><span class="line">材料比例和环境是你的舵和帆。</span><br><span class="line">实时预测就是你的雷达和传感器。</span><br><span class="line">虽然设定了航向，但海浪和风向（系统噪声、随机成核）随时在变。如果只靠固定的舵位（固定参数），你永远无法精准降落在特定的坐标点。预测的本质是为了实现“闭环控制”，抵消现实环境中的各种扰动。</span><br></pre></td></tr></table></figure>
+
+<img src="/images/research/inas-gaas-qd-ml-feedback/table1.png" width="800">
+
+<h2 id="3-论文解读"><a href="#3-论文解读" class="headerlink" title="3 论文解读"></a>3 论文解读</h2><h3 id="3-1-研究核心内容理解"><a href="#3-1-研究核心内容理解" class="headerlink" title="3.1 研究核心内容理解"></a>3.1 研究核心内容理解</h3><h4 id="3-1-1-研究背景与挑战"><a href="#3-1-1-研究背景与挑战" class="headerlink" title="3.1.1 研究背景与挑战"></a>3.1.1 研究背景与挑战</h4><ul>
+<li>传统痛点：在MBE生长过程中，量子点密度的控制是一个多变量优化问题，传统上依赖研究人员的经验和耗时的“试错法”。</li>
+<li>技术局限：现有的机器学习辅助生长多为“事后”分析，且往往基于静态的反射高能电子衍射（RHEED）图像，未能充分利用生长过程中的时域维度信息。</li>
+</ul>
+<h3 id="3-2-核心技术方案：3D-ResNet-50-模型"><a href="#3-2-核心技术方案：3D-ResNet-50-模型" class="headerlink" title="3.2 核心技术方案：3D ResNet 50 模型"></a>3.2 核心技术方案：3D ResNet 50 模型</h3><p>研究团队开发并应用了两个结构相同的3D ResNet 50模型，直接以RHEED视频流作为输入：</p>
+<ul>
+<li>量子点模型（QDs model）:实时判定量子点是否已经形成（输出yes or no）</li>
+<li>密度模型（Density model）:将量子点密度分为四个等级：zero、low、middle、high</li>
+<li>3D卷积优势：将连续的8帧RHEED图像组合成3D矩阵，利用3D卷积提取空间和时间维度信息，比传统的2D CNN更能捕捉视频中的动态特征。</li>
+</ul>
+<img src="/images/research/inas-gaas-qd-ml-feedback/fig3.png" width="800">
+
+<h3 id="3-3-实时反馈控制逻辑"><a href="#3-3-实时反馈控制逻辑" class="headerlink" title="3.3 实时反馈控制逻辑"></a>3.3 实时反馈控制逻辑</h3><p>系统通过LabVIEW程序实现全自动控制，只要分两个阶段：</p>
+<ul>
+<li>阶段1（形成前介入）：在量子点形成前，根据密度模型的预测值实时调节衬底温度。如果预测密度高于目标，则升高温度；反之，则降低温度。</li>
+<li>阶段2（形成后闭环）：一旦量子点模型检测到形成，系统持续监测，直到密度模型输出达到预设目标，立即关闭铟（ln）源快门停止生长。</li>
+</ul>
+<h3 id="3-4-主要实验成果与结果"><a href="#3-4-主要实验成果与结果" class="headerlink" title="3.4 主要实验成果与结果"></a>3.4 主要实验成果与结果</h3><p>系统成功实现了跨量级密度的精准调控 ：</p>
+<ul>
+<li>模型准确率：量子点形成判定准确率达 94.4%，密度分类准确率达95.1%.<br>低密度实验 (Fig. 4)：以 “low” 为目标，温度从起始位置调升约 $44^{\circ}C$，最终实现 $3.8 \times 10^{8} \mathrm{cm^{-2}}$ 的低密度生长 。</li>
+<li>高密度实验 (Fig. 5)：以 “high” 为目标，温度调降约 $24^{\circ}C$，成功生长出密度为 $1.4 \times 10^{11} \mathrm{cm^{-2}}$ 的量子点 。</li>
+</ul>
+<img src="/images/research/inas-gaas-qd-ml-feedback/fig4.png" width="800">
+<img src="/images/research/inas-gaas-qd-ml-feedback/fig5.png" width="800">
+
+<h2 id="4-实验方法"><a href="#4-实验方法" class="headerlink" title="4 实验方法"></a>4 实验方法</h2><h3 id="4-1-模型设计"><a href="#4-1-模型设计" class="headerlink" title="4.1 模型设计"></a>4.1 模型设计</h3><p>采用 3D ResNet 50 架构，利用 3D 卷积核和批归一化操作提取 RHEED 视频序列中的空间与时间特征 。</p>
+<h3 id="4-2-实验流程"><a href="#4-2-实验流程" class="headerlink" title="4.2 实验流程"></a>4.2 实验流程</h3><h4 id="4-2-1-数据预处理"><a href="#4-2-1-数据预处理" class="headerlink" title="4.2.1 数据预处理"></a>4.2.1 数据预处理</h4><ul>
+<li>图像剪裁：从 $1920 \times 1200$ 的原始图像中裁剪出 RHEED 特征区域并压缩至 $300 \times 300$ 。</li>
+<li>灰度转换与打包：将连续 8 帧图像转换为单通道灰度图并缝合成 3D 矩阵作为输入 。</li>
+</ul>
+<h4 id="4-2-2-构建3D-ResNet-50模型"><a href="#4-2-2-构建3D-ResNet-50模型" class="headerlink" title="4.2.2 构建3D ResNet 50模型"></a>4.2.2 构建3D ResNet 50模型</h4><ul>
+<li>环境：在 Ubuntu 系统下利用 Python 3.9 和 PyTorch 框架构建， INVIDIA 3090显卡 。</li>
+<li>特性：相比 2D CNN，该模型能更好地捕捉 RHEED 图案随时间推移的亮度与斑点演化动态 。</li>
+</ul>
+<h4 id="4-2-3-训练与增强策略"><a href="#4-2-3-训练与增强策略" class="headerlink" title="4.2.3 训练与增强策略"></a>4.2.3 训练与增强策略</h4><ul>
+<li>训练集：利用 120 个标记好的 RHEED 视频进行模型迭代 。</li>
+<li>拟合监控：通过 Valid Trend 和 Valid Change 曲线监控模型收敛性，确保模型稳定捕捉初始状态信息。</li>
+</ul>
+<h4 id="4-2-4-推理加速与导出"><a href="#4-2-4-推理加速与导出" class="headerlink" title="4.2.4 推理加速与导出"></a>4.2.4 推理加速与导出</h4><ul>
+<li>转换：将训练好的模型转换为 ONNX 格式。</li>
+<li>加速：在 LabVIEW 环境中使用 TensorRT 推理引擎加速，在TensorRT加速下，推理速度约为每秒1个样本，满足实时生长控制需求。（优化毫秒级？）</li>
+</ul>
+<h3 id="4-3-实验结果"><a href="#4-3-实验结果" class="headerlink" title="4.3 实验结果"></a>4.3 实验结果</h3><ul>
+<li>低密度生长：设定目标为 “Low” 时，系统自动将温度调升 $44^{\circ}C$ 以抑制成核，最终获得密度为 $3.8 \times 10^8 \mathrm{cm^{-2}}$ 的样品 。</li>
+<li>高密度生长：目标为 “High” 时，系统自动降温 $24^{\circ}C$ 以促进成核，最终密度达到 $1.4 \times 10^{11} \mathrm{cm^{-2}}$ 。</li>
+<li>稳健性：模型能有效适应不同的设备晃动特性（Wobble characteristics） 。</li>
+</ul>
+<h2 id="5-结论"><a href="#5-结论" class="headerlink" title="5 结论"></a>5 结论</h2><ul>
+<li>技术范式转移：该工作实现了从“经验试错”到“实时反馈控制”的转变 。</li>
+<li>效率提升：显著缩短了工艺参数优化周期，提升了 MBE 生长的可重复性与成品率 。</li>
+<li>普适性：该方法论具有高度可扩展性，有望推广至多种材料的制备过程，革新半导体制造工业 。</li>
+</ul>
+<h2 id="6-衍生研究与创新方向"><a href="#6-衍生研究与创新方向" class="headerlink" title="6 衍生研究与创新方向"></a>6 衍生研究与创新方向</h2><ul>
+<li>从分类到回归：实现密度的连续数值预测（Fine-grained density regulation），而非四档离散分级 。</li>
+<li>多目标协同优化：结合量子点尺寸、形状均匀性等多个指标进行综合反馈 。</li>
+<li>缺陷原位修复：利用此类网络进行早期生长缺陷的检测、识别与自动修复 。</li>
+<li>多模态感知：集成热成像、质谱等多维度传感器元数据（System metadata），实现更深层次的生长“理解” 。</li>
+</ul>
 <h2 id="术语与缩写说明"><a href="#术语与缩写说明" class="headerlink" title="术语与缩写说明"></a>术语与缩写说明</h2><table>
 <thead>
 <tr>
@@ -50,16 +162,6 @@ ga('create','UA-83251621-1','auto');ga('send','pageview');
 <td align="left">原子力显微镜，用于表面形貌的离线纳米级表征</td>
 </tr>
 <tr>
-<td align="left"><strong>ResNet</strong></td>
-<td align="left">Residual Network</td>
-<td align="left">残差网络，一类深度卷积神经网络架构</td>
-</tr>
-<tr>
-<td align="left"><strong>CNN</strong></td>
-<td align="left">Convolutional Neural Network</td>
-<td align="left">卷积神经网络</td>
-</tr>
-<tr>
 <td align="left"><strong>SPS</strong></td>
 <td align="left">Single Photon Source</td>
 <td align="left">单光子源，量子信息领域的核心器件</td>
@@ -81,154 +183,11 @@ ga('create','UA-83251621-1','auto');ga('send','pageview');
 </tr>
 </tbody></table>
 <hr>
-<h2 id="研究背景与问题定义"><a href="#研究背景与问题定义" class="headerlink" title="研究背景与问题定义"></a>研究背景与问题定义</h2><h3 id="自组装量子点的密度控制需求"><a href="#自组装量子点的密度控制需求" class="headerlink" title="自组装量子点的密度控制需求"></a>自组装量子点的密度控制需求</h3><p>在 MBE 中，InAs&#x2F;GaAs 自组装量子点通过 S-K 模式形成。<strong>量子点密度</strong>是决定器件性能的关键指标：</p>
-<ul>
-<li>**低密度 ($&lt; 10^9 \mathrm{cm^{-2}}$)**：适用于 SPS 等量子信息器件，要求单量子点可寻址。</li>
-<li>**高密度 ($&gt; 10^{10} \mathrm{cm^{-2}}$)**：适用于 QD 激光器，需要高面密度以提供足够的光学增益。</li>
-</ul>
-<h3 id="传统工艺流程的局限性"><a href="#传统工艺流程的局限性" class="headerlink" title="传统工艺流程的局限性"></a>传统工艺流程的局限性</h3><p>量子点成核是一个对衬底温度、In 通量和 V&#x2F;III 比等参数极为敏感的动力学过程。传统工艺流程遵循<strong>开环模式</strong>：</p>
-<ol>
-<li>设定生长参数 → 完成外延 → 离线 AFM 表征 → 根据结果在下一炉次中修正参数。</li>
-<li>这种”事后观测、逐次试错”的模式周期长、复现性差，且无法在生长过程中应对微环境波动。</li>
-</ol>
-<h3 id="本文提出的解决方案"><a href="#本文提出的解决方案" class="headerlink" title="本文提出的解决方案"></a>本文提出的解决方案</h3><p>该研究将深度学习模型嵌入 MBE 控制环路，实现了从”事后分析”到”原位闭环控制”的范式跨越：</p>
-<table>
-<thead>
-<tr>
-<th align="left">维度</th>
-<th align="left">传统开环模式</th>
-<th align="left">本文闭环模式</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><strong>表征手段</strong></td>
-<td align="left">人工判读 RHEED 静态图样</td>
-<td align="left">AI 追踪 RHEED 动态视频流</td>
-</tr>
-<tr>
-<td align="left"><strong>决策反馈</strong></td>
-<td align="left">事后 AFM 表征，调整下一炉次</td>
-<td align="left">原位实时反馈，动态调整当前生长</td>
-</tr>
-<tr>
-<td align="left"><strong>密度控制</strong></td>
-<td align="left">依赖专家经验，重复性受限</td>
-<td align="left">目标驱动，自动调节衬底温度</td>
-</tr>
-<tr>
-<td align="left"><strong>可调范围</strong></td>
-<td align="left">较窄，难以精准命中目标</td>
-<td align="left">覆盖$10^8$ 到 $10^{11} \mathrm{cm^{-2}}$ 宽量程</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="方法与系统架构"><a href="#方法与系统架构" class="headerlink" title="方法与系统架构"></a>方法与系统架构</h2><h3 id="闭环控制系统总体设计"><a href="#闭环控制系统总体设计" class="headerlink" title="闭环控制系统总体设计"></a>闭环控制系统总体设计</h3><p>文章的核心贡献在于将 3D ResNet 深度学习模型嵌入到 LabVIEW 工艺控制环路中，构建了”表征在环 - 模型在环 - 控制在环”的闭环系统。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A[MBE Chamber] --&gt;|Real-time Video| B(RHEED Pattern)</span><br><span class="line">    B --&gt; C&#123;3D ResNet Models&#125;</span><br><span class="line">    C --&gt;|State Identification| D[QDs Model: Formed?]</span><br><span class="line">    C --&gt;|Density Estimation| E[Density Model: High/Mid/Low?]</span><br><span class="line">    D &amp; E --&gt; F[Feedback Controller]</span><br><span class="line">    F --&gt;|Target: User Defined| G&#123;Comparison&#125;</span><br><span class="line">    G --&gt;|Deviation| H[Adjust Substrate Temp]</span><br><span class="line">    H --&gt;|Modulated Command| A</span><br></pre></td></tr></table></figure>
-<img src="/images/research/inas-gaas-qd-ml-feedback/fig2.png" width="800">
-
-<h3 id="3D-ResNet-50：面向时序视频的特征提取"><a href="#3D-ResNet-50：面向时序视频的特征提取" class="headerlink" title="3D ResNet-50：面向时序视频的特征提取"></a>3D ResNet-50：面向时序视频的特征提取</h3><blockquote>
-<p>[!IMPORTANT]<br><strong>为何选择 3D CNN 而非传统 2D CNN？</strong><br>量子点成核伴随着 RHEED 衍射点阵的动态演化，时间维度中隐含了点阵强度变化的<strong>速率特征</strong>，这对识别成核初期至关重要。单帧图像无法捕获此类时序信息。</p>
-</blockquote>
-<ul>
-<li><strong>输入</strong>：经裁剪与灰度归一化处理的 RHEED 连续帧序列。</li>
-<li><strong>模型输出</strong>：<ul>
-<li><code>QDs model</code>：二分类（量子点已形成 &#x2F; 尚未形成）。</li>
-<li><code>Density model</code>：四分类（Zero &#x2F; Low &#x2F; Middle &#x2F; High）。</li>
-</ul>
-</li>
-<li><strong>数据集构建</strong>：基于 <strong>120 段高质量实验视频</strong>，通过数据增强扩充训练集，而非依赖超大规模数据。</li>
-</ul>
-<h3 id="反馈控制逻辑"><a href="#反馈控制逻辑" class="headerlink" title="反馈控制逻辑"></a>反馈控制逻辑</h3><p>系统根据 Density 模型预测的”当前密度档位”与用户设定的”目标密度档位”之间的偏差，实时调节衬底加热器功率：</p>
-<ul>
-<li>当前密度 <strong>高于</strong> 目标 → <strong>升高</strong>衬底温度（抑制成核）。</li>
-<li>当前密度 <strong>低于</strong> 目标 → <strong>降低</strong>衬底温度（促进成核）。</li>
-<li>达到目标密度信号 → 关闭 In 源阀门，终止量子点沉积。</li>
-</ul>
-<hr>
-<h2 id="核心实验结果"><a href="#核心实验结果" class="headerlink" title="核心实验结果"></a>核心实验结果</h2><h3 id="模型性能验证"><a href="#模型性能验证" class="headerlink" title="模型性能验证"></a>模型性能验证</h3><p>在 TensorRT 加速部署环境下，系统实现了约 <strong>1 sample&#x2F;s</strong> 的推理速度，模型响应延迟远小于工艺演化时间常数，满足闭环要求。</p>
-<table>
-<thead>
-<tr>
-<th align="left">模型</th>
-<th align="left">任务类型</th>
-<th align="left">验证准确率</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">QDs model</td>
-<td align="left">二分类（成核判别）</td>
-<td align="left">~94.4%</td>
-</tr>
-<tr>
-<td align="left">Density model</td>
-<td align="left">四分类（密度分级）</td>
-<td align="left">~95.1%</td>
-</tr>
-</tbody></table>
-<img src="/images/research/inas-gaas-qd-ml-feedback/fig3.png" width="800">
-
-<h3 id="跨量程的密度闭环调控"><a href="#跨量程的密度闭环调控" class="headerlink" title="跨量程的密度闭环调控"></a>跨量程的密度闭环调控</h3><p>以参考样品（密度约 $1.5 \times 10^{10},\mathrm{cm^{-2}}$，Middle 档）为起点，作者演示了向不同目标密度的闭环迁移：</p>
-<table>
-<thead>
-<tr>
-<th align="left">目标密度区间</th>
-<th align="left">温度调整策略</th>
-<th align="left">最终实现密度</th>
-<th align="left">典型应用场景</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><strong>Low</strong></td>
-<td align="left">逐步升温（$+44,^\circ\mathrm{C}$）</td>
-<td align="left">$\sim 3.8 \times 10^{8},\mathrm{cm^{-2}}$</td>
-<td align="left">单光子源</td>
-</tr>
-<tr>
-<td align="left"><strong>High</strong></td>
-<td align="left">逐步降温（$-24,^\circ\mathrm{C}$）</td>
-<td align="left">$\sim 1.4 \times 10^{11},\mathrm{cm^{-2}}$</td>
-<td align="left">量子点激光器</td>
-</tr>
-</tbody></table>
-<p>可调范围覆盖了近三个数量级（$10^8 \sim 10^{11},\mathrm{cm^{-2}}$），满足从量子信息到光电器件的不同应用需求。</p>
-<img src="/images/research/inas-gaas-qd-ml-feedback/fig4.png" width="800">
-
-<h3 id="与同类工作的本质差异"><a href="#与同类工作的本质差异" class="headerlink" title="与同类工作的本质差异"></a>与同类工作的本质差异</h3><p>许多”AI for Materials”研究的工作范式仍停留在<strong>离线预测</strong>层面——先完成实验，再离线训练模型，最后给出”下一次如何调整参数”的建议。而本文实现了真正意义上的<strong>原位闭环</strong>：表征、模型推理与工艺控制在同一生长过程中实时协同运作。</p>
-<hr>
-<h2 id="方法论局限性与作者讨论"><a href="#方法论局限性与作者讨论" class="headerlink" title="方法论局限性与作者讨论"></a>方法论局限性与作者讨论</h2><p>论文对研究的局限性做了坦诚的讨论，这也反映了工程落地的真实复杂度：</p>
-<ul>
-<li><strong>标签粒度较粗</strong>：密度分级采用四档离散分类，尚未实现连续数值回归。</li>
-<li><strong>数据集规模有限</strong>：仅基于 120 段实验视频，数据多样性可能制约模型的泛化边界。</li>
-<li><strong>人工标注引入误差</strong>：视频帧的成核时刻标注依赖专家主观判断，存在一致性问题。</li>
-<li><strong>响应时间为秒级</strong>：当前约 1 s&#x2F;sample 的推理速度对于更快速的动力学过程可能不足。</li>
-<li><strong>实验存在失败率</strong>：闭环控制并非 100% 成功，部分炉次未能达到目标密度。</li>
-</ul>
-<hr>
-<h2 id="学术价值与领域启示"><a href="#学术价值与领域启示" class="headerlink" title="学术价值与领域启示"></a>学术价值与领域启示</h2><h3 id="从原位监测到原位状态估计"><a href="#从原位监测到原位状态估计" class="headerlink" title="从原位监测到原位状态估计"></a>从原位监测到原位状态估计</h3><p>本文代表了<strong>智能外延（Intelligent Epitaxy）</strong>的重要趋势。未来的实验仪器不应仅是”记录信号”，而应通过 AI 将高维原始信号（如 RHEED 视频流）实时解译为可供控制器消费的物理状态变量。这一思路可推广至：</p>
-<ul>
-<li>其他 III-V 族半导体异质结构的 MBE &#x2F; MOCVD 生长；</li>
-<li>薄膜沉积过程中的缺陷早期识别；</li>
-<li>光谱、温度、腔压等多模态信号的实时状态融合。</li>
-</ul>
-<h3 id="领域知识与数据效率的平衡"><a href="#领域知识与数据效率的平衡" class="headerlink" title="领域知识与数据效率的平衡"></a>领域知识与数据效率的平衡</h3><p>作者并未采用百万级数据集暴力训练，而是结合<strong>精心设计的实验方案</strong>与<strong>针对性的数据增强策略</strong>，以 120 段高质量视频达到了 &gt;94% 的分类精度。这说明在科研场景中，<strong>领域先验驱动的数据集设计</strong>往往比盲目扩大数据规模更为高效。</p>
-<h3 id="从表征识别到面向器件指标的闭环控制"><a href="#从表征识别到面向器件指标的闭环控制" class="headerlink" title="从表征识别到面向器件指标的闭环控制"></a>从表征识别到面向器件指标的闭环控制</h3><p>更深层的价值在于，本文将控制目标从”识别当前状态”提升到了”为达到特定器件指标而主动调控工艺”。这种<strong>目标驱动的闭环范式</strong>是智能制造在精密材料制备领域的核心发展方向。</p>
-<hr>
-<h2 id="未来研究方向展望"><a href="#未来研究方向展望" class="headerlink" title="未来研究方向展望"></a>未来研究方向展望</h2><p>基于本文的方法框架，以下几个方向值得进一步探索：</p>
-<ol>
-<li><strong>从分类到回归</strong>：实现对量子点密度的连续数值预测，同时引入尺寸分布、形貌均匀性等多目标输出。</li>
-<li><strong>多变量协同控制</strong>：将可控变量从单一衬底温度扩展到 In 通量、V&#x2F;III 比、沉积速率等多参数联合优化。</li>
-<li><strong>器件级闭环</strong>：将控制目标从中间物理量（密度）提升到最终器件性能指标（如光致发光谱线宽、单光子纯度等）。</li>
-<li><strong>物理信息融合</strong>：将外延动力学模型（速率方程、表面扩散方程、应变演化模型）与数据驱动的神经网络结合（Physics-Informed Neural Networks），以减少标签依赖并增强模型的物理可解释性。</li>
-</ol>
-<hr>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这篇论文最核心的贡献，不在于”将 3D ResNet 应用于 RHEED 图样识别”这一技术细节本身，而在于<strong>它将机器学习从材料生长的离线分析工具，推进为原位闭环控制系统的决策核心</strong>。</p>
-<p>对于光电材料制备与精密科学仪器系统而言，这标志着从”经验驱动的逐次试错”向”数据驱动的智能制造”的重要范式转变。</p>
-<hr>
 <h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
 <li>Nature Communications 原文：<a target="_blank" rel="noopener" href="https://www.nature.com/articles/s41467-024-47087-w">Machine-learning-assisted and real-time-feedback-controlled growth of InAs&#x2F;GaAs quantum dots</a></li>
 <li>PubMed 页面：<a target="_blank" rel="noopener" href="https://pubmed.ncbi.nlm.nih.gov/38553435/">https://pubmed.ncbi.nlm.nih.gov/38553435/</a></li>
 </ol>
-</div><script type="text/javascript" src="/js/share.js?v=1.0.1" async></script><a class="article-share-link" data-url="https://deeplearner.top/research/inas-gaas-qd-ml-feedback/" data-id="cmo6txskt003gjjcafuxd2hmp" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJklEQVR42u3bQY7CMAwFUO5/aeYAiPK/U0YieVlVDDR9XVi243k84vV8Wa+fv37/9frdna/vdtvCwMD4Wcbzcs0Yyf0TdvJsGBgY5zCSULgeQN8Brl/T9S4YGBgY19sn92lDJwYGBsZdjLzETWrPPEBjYGCczJilaG2ITP769VocAwPjBxl51/3/r79yvoGBgfFTjGe5rgNoHi7zBDF6KgwMjK0ZbalZlJRlgTorfTEwMM5k5IH1rtGxdsgs6hpiYGBsx5i1+JOhsTxwz17f270wMDA2YuSFaLtlERzbo8rk3WBgYGzEWBnGakNk3phbgmFgYGzHmA1JtEFwfTS/+HcgDAyMrRltktcOciU7Dp8HAwPjAEY76JBvvxLWi+9jYGAczGiTuXaYLMd/+C0GBsYBjDbtaxt2ecI3HLbAwMDYmnFv+dqOZVwH09l9MDAw9mMkh455UG4L4JXjBwwMjHMYbeKVlLhtuXvbM2BgYGzNyEvQlet8FGOY22JgYGzNKJpZo+PGNpUcDrliYGAcwBgOjy5H+llB+6FfiIGBcQCjbd/n6d16EhmdbGBgYGzEWG/rr5yatqOxRVKIgYGxESNfeZrYNtfWx8swMDBOYKwE2YS0kkQWLwsDA+MARhv4ZqEzL4OHpSwGBgbG6DBgNuDVjrRiYGBg5IPySZqY75sfM2BgYJzAyIe02sOAPHC34x0YGBjnMNpeVh40V8rgZEcMDIwDGH/p+7wq4GB/6gAAAABJRU5ErkJggg==">分享</a><div class="post-nav"><a class="pre" href="/research/physics-informed-ml-mpc-batch-crystallization/">论文解读：Physics-Informed Machine Learning for MPC 在批式结晶中的应用</a><a class="next" href="/2025/03/10/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8B%E9%80%9A%E4%B9%89Prompt%E5%9B%9B%E5%8D%81%E5%BC%8F/">AIGC-LLM-辟邪剑谱之通义Prompt四十式</a></div></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/%E4%BB%AA%E5%99%A8%E4%BB%AA%E8%A1%A8%E7%A7%91%E5%AD%A6%E4%B8%8E%E5%85%89%E7%94%B5%E5%B7%A5%E7%A8%8B/">仪器仪表科学与光电工程</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B/">课程</a><span class="category-list-count">7</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/face-detection-recognition/">计算机视觉专题：人脸检测与人脸识别</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/generative-adversarial-networks-gan/">生成模型专题：生成对抗网络（GAN）原理与实践</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/natural-language-processing-nlp/">自然语言处理导论：基础方法、表示学习与典型应用</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/ocr-optical-character-recognition/">场景文字理解：OCR 基础、检测与识别方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/semantic-segmentation/">计算机视觉专题：语义分割原理与经典模型</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/tf-idf-algorithm/">文本表示基础：TF-IDF 与文本分类入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/target-detection/">计算机视觉专题：目标检测基础与经典检测器</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8A-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/">AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.1" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.1" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.1"><script type="text/javascript" src="/js/search.js?v=1.0.1"></script><script>var search_path = 'search.xml';
+</div><script type="text/javascript" src="/js/share.js?v=1.0.1" async></script><a class="article-share-link" data-url="https://deeplearner.top/research/inas-gaas-qd-ml-feedback/" data-id="cmob9w2k4003gnqca4blgc07h" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJklEQVR42u3bQY7CMAwFUO5/aeYAiPK/U0YieVlVDDR9XVi243k84vV8Wa+fv37/9frdna/vdtvCwMD4Wcbzcs0Yyf0TdvJsGBgY5zCSULgeQN8Brl/T9S4YGBgY19sn92lDJwYGBsZdjLzETWrPPEBjYGCczJilaG2ITP769VocAwPjBxl51/3/r79yvoGBgfFTjGe5rgNoHi7zBDF6KgwMjK0ZbalZlJRlgTorfTEwMM5k5IH1rtGxdsgs6hpiYGBsx5i1+JOhsTxwz17f270wMDA2YuSFaLtlERzbo8rk3WBgYGzEWBnGakNk3phbgmFgYGzHmA1JtEFwfTS/+HcgDAyMrRltktcOciU7Dp8HAwPjAEY76JBvvxLWi+9jYGAczGiTuXaYLMd/+C0GBsYBjDbtaxt2ecI3HLbAwMDYmnFv+dqOZVwH09l9MDAw9mMkh455UG4L4JXjBwwMjHMYbeKVlLhtuXvbM2BgYGzNyEvQlet8FGOY22JgYGzNKJpZo+PGNpUcDrliYGAcwBgOjy5H+llB+6FfiIGBcQCjbd/n6d16EhmdbGBgYGzEWG/rr5yatqOxRVKIgYGxESNfeZrYNtfWx8swMDBOYKwE2YS0kkQWLwsDA+MARhv4ZqEzL4OHpSwGBgbG6DBgNuDVjrRiYGBg5IPySZqY75sfM2BgYJzAyIe02sOAPHC34x0YGBjnMNpeVh40V8rgZEcMDIwDGH/p+7wq4GB/6gAAAABJRU5ErkJggg==">分享</a><div class="post-nav"><a class="pre" href="/research/physics-informed-ml-mpc-batch-crystallization/">论文解读：Physics-Informed Machine Learning for MPC 在批式结晶中的应用</a><a class="next" href="/2025/03/10/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8B%E9%80%9A%E4%B9%89Prompt%E5%9B%9B%E5%8D%81%E5%BC%8F/">AIGC-LLM-辟邪剑谱之通义Prompt四十式</a></div></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/%E4%BB%AA%E5%99%A8%E4%BB%AA%E8%A1%A8%E7%A7%91%E5%AD%A6%E4%B8%8E%E5%85%89%E7%94%B5%E5%B7%A5%E7%A8%8B/">仪器仪表科学与光电工程</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B/">课程</a><span class="category-list-count">7</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/face-detection-recognition/">计算机视觉专题：人脸检测与人脸识别</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/generative-adversarial-networks-gan/">生成模型专题：生成对抗网络（GAN）原理与实践</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/ocr-optical-character-recognition/">场景文字理解：OCR 基础、检测与识别方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/natural-language-processing-nlp/">自然语言处理导论：基础方法、表示学习与典型应用</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/semantic-segmentation/">计算机视觉专题：语义分割原理与经典模型</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/tf-idf-algorithm/">文本表示基础：TF-IDF 与文本分类入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/target-detection/">计算机视觉专题：目标检测基础与经典检测器</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8A-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/">AIGC-Agent-LangChain开发（上）LangChain、LangGraph区别与基础入门</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.1" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.1" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.1"><script type="text/javascript" src="/js/search.js?v=1.0.1"></script><script>var search_path = 'search.xml';
 if (search_path.length == 0) {
    search_path = 'search.xml';
 }
