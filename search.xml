@@ -4,6 +4,43 @@
   
     
     <entry>
+      <title>研究方向：AI 驱动材料生长实时控制</title>
+      <link href="//research/ai-driven-mbe-control/"/>
+      <url>//research/ai-driven-mbe-control/</url>
+      
+        <content type="html"><![CDATA[<div class="protected-post-teaser"><p>深度解析 AI 在 MBE 领域的演进路径：从基于 3D ResNet 的实时闭环控制，到针对跨材料体系的迁移学习，最终迈向融合材料物理本质与实验条件的物理启发式多模态建模 (SciML)。</p></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> 研究 </category>
+          
+          <category> AI </category>
+          
+          <category> MBE </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> RHEED </tag>
+            
+            <tag> 3D ResNet </tag>
+            
+            <tag> 迁移学习 </tag>
+            
+            <tag> 物理启发机器学习 </tag>
+            
+            <tag> 半导体 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>论文解读：3D ResNet 与视频动作识别</title>
       <link href="//2026/05/06/3d-resnet-paper-reading/"/>
       <url>//2026/05/06/3d-resnet-paper-reading/</url>
@@ -427,41 +464,6 @@
             <tag> Transformer </tag>
             
             <tag> Bert </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>论文解读：Physics-Informed Machine Learning for MPC 在批式结晶中的应用</title>
-      <link href="//research/physics-informed-ml-mpc-batch-crystallization/"/>
-      <url>//research/physics-informed-ml-mpc-batch-crystallization/</url>
-      
-        <content type="html"><![CDATA[<h2 id="论文基本信息"><a href="#论文基本信息" class="headerlink" title="论文基本信息"></a>论文基本信息</h2><ul><li><strong>标题</strong>：<em>Physics-informed machine learning for MPC: Application to a batch crystallization process</em></li><li><strong>期刊</strong>：<em>Chemical Engineering Research and Design</em>, Volume 192, 2023, Pages 556–569</li><li><strong>DOI</strong>：<a href="https://doi.org/10.1016/j.cherd.2023.02.048">10.1016&#x2F;j.cherd.2023.02.048</a></li><li><strong>原文链接</strong>：<a href="https://www.sciencedirect.com/science/article/pii/S0263876223001442">ScienceDirect</a></li><li><strong>关键词</strong>：PIRNN, MPC, Population Balance Model, Batch Crystallization, Physics-informed Learning</li></ul><hr><h2 id="术语与缩写说明"><a href="#术语与缩写说明" class="headerlink" title="术语与缩写说明"></a>术语与缩写说明</h2><table><thead><tr><th align="left">缩写</th><th align="left">全称</th><th align="left">释义</th></tr></thead><tbody><tr><td align="left"><strong>MPC</strong></td><td align="left">Model Predictive Control</td><td align="left">模型预测控制，一种基于模型滚动优化的先进控制策略</td></tr><tr><td align="left"><strong>PBM</strong></td><td align="left">Population Balance Model</td><td align="left">粒数衡算模型，用于描述粒子群体（如晶体）的数量、尺寸分布演化</td></tr><tr><td align="left"><strong>RNN</strong></td><td align="left">Recurrent Neural Network</td><td align="left">循环神经网络，擅长处理时序数据的神经网络架构</td></tr><tr><td align="left"><strong>PIRNN</strong></td><td align="left">Physics-Informed Recurrent Neural Network</td><td align="left">物理信息驱动的循环神经网络，在 RNN 中嵌入物理约束</td></tr><tr><td align="left"><strong>CSD</strong></td><td align="left">Crystal Size Distribution</td><td align="left">晶体粒径分布，结晶过程的核心质量指标</td></tr><tr><td align="left"><strong>NMS</strong></td><td align="left">Number Mean Size</td><td align="left">数均粒径，反映晶体群体的平均尺寸</td></tr><tr><td align="left"><strong>CV</strong></td><td align="left">Coefficient of Variation</td><td align="left">变异系数，衡量粒径分布的离散程度</td></tr><tr><td align="left"><strong>MSE</strong></td><td align="left">Mean Squared Error</td><td align="left">均方误差，模型预测精度的常用评估指标</td></tr><tr><td align="left"><strong>S-K</strong></td><td align="left">Stranski-Krastanov</td><td align="left">一种晶格失配驱动的异质外延生长模式</td></tr></tbody></table><hr><h2 id="研究背景与问题定义"><a href="#研究背景与问题定义" class="headerlink" title="研究背景与问题定义"></a>研究背景与问题定义</h2><h3 id="批式结晶过程的控制需求"><a href="#批式结晶过程的控制需求" class="headerlink" title="批式结晶过程的控制需求"></a>批式结晶过程的控制需求</h3><p>本文的研究对象是<strong>阿司匹林的非晶种批式结晶过程</strong>。在这类过程中，控制策略直接影响：</p><ul><li>晶体粒径分布（CSD）；</li><li>产品纯度与收率；</li><li>下游过滤等固液分离效率；</li><li>最终药物制剂的一致性与稳定性。</li></ul><p>MPC 是处理此类多约束、多目标优化问题的成熟框架，但其有效性依赖于一个核心前提：<strong>必须具备足够准确且可在线运行的过程预测模型</strong>。</p><h3 id="纯机理建模路线的局限性"><a href="#纯机理建模路线的局限性" class="headerlink" title="纯机理建模路线的局限性"></a>纯机理建模路线的局限性</h3><p>以 PBM 为代表的第一性原理模型具有强可解释性，但在实际应用中面临以下困难：</p><ul><li>建模复杂度高，参数辨识困难；</li><li>可能遗漏真实过程中的复杂机理（如二次成核、聚并等）；</li><li>在线求解 PBM 的计算代价较高，难以满足 MPC 的实时性要求。</li></ul><h3 id="纯数据驱动路线的局限性"><a href="#纯数据驱动路线的局限性" class="headerlink" title="纯数据驱动路线的局限性"></a>纯数据驱动路线的局限性</h3><p>RNN 等黑盒模型虽然建模灵活，但在过程工业场景中面临：</p><ul><li>实验数据获取成本高，可用批次数据稀缺；</li><li>超出训练分布时泛化能力差；</li><li>可能生成违反物理规律的预测（如负浓度、负粒径等）。</li></ul><h3 id="本文提出的核心问题"><a href="#本文提出的核心问题" class="headerlink" title="本文提出的核心问题"></a>本文提出的核心问题</h3><p><strong>当实验数据不充足，同时又需要将机器学习模型嵌入 MPC 实现闭环控制时，如何构建兼具数据效率与物理一致性的预测模型？</strong></p><p>作者给出的路线是：既不走纯机理建模，也不走纯黑盒数据驱动，而是将<strong>机理模型、物理约束、时序网络与 MPC</strong> 融合为一条可落地的中间路线。</p><hr><h2 id="方法架构：PIRNN-模型设计"><a href="#方法架构：PIRNN-模型设计" class="headerlink" title="方法架构：PIRNN 模型设计"></a>方法架构：PIRNN 模型设计</h2><p>作者提出的 <strong>Physics-Informed Recurrent Neural Network（PIRNN）</strong> 通过四个层次实现物理与数据的融合。</p><h3 id="机理建模层：批式结晶-PBM"><a href="#机理建模层：批式结晶-PBM" class="headerlink" title="机理建模层：批式结晶 PBM"></a>机理建模层：批式结晶 PBM</h3><p>首先建立基于 PBM 的半经验第一性原理模型，描述晶体成核与生长的动力学过程，并叠加质量衡算与能量衡算。该机理模型为后续的”物理注入”提供了可嵌入的数学关系。</p><h3 id="时序学习层：RNN-状态演化建模"><a href="#时序学习层：RNN-状态演化建模" class="headerlink" title="时序学习层：RNN 状态演化建模"></a>时序学习层：RNN 状态演化建模</h3><p>由于结晶过程本质上是动态系统，作者选用 RNN 学习状态变量随时间的演化规律，而非进行静态输入-输出映射。</p><h3 id="物理注入层：约束嵌入与正则化"><a href="#物理注入层：约束嵌入与正则化" class="headerlink" title="物理注入层：约束嵌入与正则化"></a>物理注入层：约束嵌入与正则化</h3><p>物理知识通过两种方式注入 RNN：</p><ul><li><strong>损失函数正则化</strong>：将机理方程作为训练阶段的附加正则项，使网络输出在拟合数据的同时尽量满足物理方程。</li><li><strong>硬约束嵌入</strong>：在模型结构中直接施加物理约束（如状态变量的非负性），防止生成不合理的预测值。</li></ul><p>训练目标函数由此从单一的”数据拟合误差最小化”扩展为：</p><p>$$<br>\mathcal{L}<em>{\text{total}} &#x3D; \mathcal{L}</em>{\text{data}} + \lambda \cdot \mathcal{L}_{\text{physics}}<br>$$</p><p>即<strong>同时优化数据一致性与物理一致性</strong>。</p><img src="/images/research/physics-informed-ml-mpc-batch-crystallization/fig1.png" width="800"><h3 id="三类模型的对照实验设计"><a href="#三类模型的对照实验设计" class="headerlink" title="三类模型的对照实验设计"></a>三类模型的对照实验设计</h3><p>论文有意识地构建了三种模型进行系统对比：</p><table><thead><tr><th align="left">模型</th><th align="left">数据依赖</th><th align="left">物理依赖</th><th align="left">对应的现实场景</th></tr></thead><tbody><tr><td align="left"><strong>纯 RNN</strong></td><td align="left">完全依赖数据</td><td align="left">无</td><td align="left">数据充足，机理未知</td></tr><tr><td align="left"><strong>Pure PIRNN</strong></td><td align="left">不使用观测数据</td><td align="left">完全依赖物理</td><td align="left">数据极度稀缺，机理可靠</td></tr><tr><td align="left"><strong>Partial PIRNN</strong></td><td align="left">使用部分观测数据</td><td align="left">同时利用机理模型</td><td align="left">数据与机理均部分可用（最常见场景）</td></tr></tbody></table><hr><h2 id="MPC-控制目标与优化指标"><a href="#MPC-控制目标与优化指标" class="headerlink" title="MPC 控制目标与优化指标"></a>MPC 控制目标与优化指标</h2><h3 id="多目标优化设计"><a href="#多目标优化设计" class="headerlink" title="多目标优化设计"></a>多目标优化设计</h3><p>论文的 MPC 控制目标并非简单的温度跟踪，而是兼顾<strong>产品质量与能耗</strong>的多目标优化：</p><ul><li><strong>最大化数均粒径（NMS）</strong>：使晶体平均尺寸更大。</li><li><strong>最小化变异系数（CV）</strong>：使粒径分布更集中、均匀性更好。</li><li><strong>最小化能耗</strong>：控制夹套温度偏离环境温度带来的能量消耗。</li></ul><p>其中，NMS 与 CV 的定义基于 CSD 的矩量：</p><p>$$<br>\mathrm{NMS} &#x3D; \frac{\mu_1}{\mu_0}, \quad \mathrm{CV} &#x3D; \sqrt{\frac{\mu_2 \mu_0}{\mu_1^2} - 1}<br>$$</p><p>控制目标可概括为：<strong>在能耗约束下，生长出更大且更均匀的晶体产品。</strong></p><h3 id="控制仿真条件"><a href="#控制仿真条件" class="headerlink" title="控制仿真条件"></a>控制仿真条件</h3><ul><li>批次总时长：600 min</li><li>采样周期：30 min</li><li>操纵变量：夹套温度</li><li>MPC 在每个采样时刻基于模型预测进行滚动优化</li></ul><hr><h2 id="核心实验结果"><a href="#核心实验结果" class="headerlink" title="核心实验结果"></a>核心实验结果</h2><h3 id="纯-RNN-的预测性能基线"><a href="#纯-RNN-的预测性能基线" class="headerlink" title="纯 RNN 的预测性能基线"></a>纯 RNN 的预测性能基线</h3><p>在数据充足条件下，纯数据驱动 RNN 在验证集与测试集上的 MSE 分别约为：</p><table><thead><tr><th align="left">数据集</th><th align="left">MSE</th></tr></thead><tbody><tr><td align="left">验证集</td><td align="left">$1.96 \times 10^{-6}$</td></tr><tr><td align="left">测试集</td><td align="left">$2.86 \times 10^{-6}$</td></tr></tbody></table><p>表明在训练数据充分覆盖的情况下，黑盒模型具备学习结晶动态的能力。</p><h3 id="PIRNN-的数据效率优势"><a href="#PIRNN-的数据效率优势" class="headerlink" title="PIRNN 的数据效率优势"></a>PIRNN 的数据效率优势</h3><p>论文的核心结论在于：<strong>当训练数据不充足时，PIRNN 凭借物理先验仍能维持较好的预测与控制性能。</strong></p><p>通过开环与闭环仿真验证：</p><ul><li>使用更少训练数据的 PIRNN，仍能获得与纯数据驱动 RNN 相近的预测精度；</li><li>在闭环 MPC 场景下，PIRNN 的控制表现与纯 RNN 接近。</li></ul><p>这一结论的实际意义在于：<strong>在真实实验中，最昂贵的往往不是算力，而是数据获取成本</strong>。</p><h3 id="闭环-MPC-性能对比"><a href="#闭环-MPC-性能对比" class="headerlink" title="闭环 MPC 性能对比"></a>闭环 MPC 性能对比</h3><p>将四种模型分别嵌入 MPC 进行闭环仿真对比：</p><table><thead><tr><th align="left">模型</th><th align="left">闭环控制表现</th></tr></thead><tbody><tr><td align="left">纯 RNN</td><td align="left">接近基准</td></tr><tr><td align="left">Partial PIRNN</td><td align="left">接近基准</td></tr><tr><td align="left">Pure PIRNN</td><td align="left">接近基准</td></tr><tr><td align="left">第一性原理模型（基准）</td><td align="left">——</td></tr></tbody></table><p>结果表明，PIRNN 已具备承担 MPC 预测模型角色的能力。论文还指出，在批次最后 30 分钟，控制器会适当提高夹套温度，以在维持产品质量的同时降低能耗——体现了 MPC 多目标权衡的特性。</p><h3 id="最终晶体粒径分布验证"><a href="#最终晶体粒径分布验证" class="headerlink" title="最终晶体粒径分布验证"></a>最终晶体粒径分布验证</h3><p>论文展示的最终 CSD 结果呈<strong>单峰分布</strong>，且基于 PIRNN 的 MPC 与第一性原理模型基准所得分布高度一致，说明 PIRNN 不仅在单点指标上表现良好，在最终产品分布层面也给出了可信的控制结果。</p><hr><h2 id="方法论局限性与作者讨论"><a href="#方法论局限性与作者讨论" class="headerlink" title="方法论局限性与作者讨论"></a>方法论局限性与作者讨论</h2><h3 id="仿真验证的理想化假设"><a href="#仿真验证的理想化假设" class="headerlink" title="仿真验证的理想化假设"></a>仿真验证的理想化假设</h3><p>论文明确假设：用于 PIRNN 训练的第一性原理模型与作为”真实系统”的仿真环境之间<strong>不存在模型失配</strong>。在真实工厂或实验装置中，以下因素可能导致性能退化：</p><ul><li>模型参数随批次漂移；</li><li>传感器噪声与测量延迟；</li><li>未建模的机理（如二次成核、晶体聚并）；</li><li>原料纯度波动与环境扰动；</li><li>执行器约束与响应时滞。</li></ul><h3 id="物理先验的可靠性边界"><a href="#物理先验的可靠性边界" class="headerlink" title="物理先验的可靠性边界"></a>物理先验的可靠性边界</h3><p>Physics-informed 方法的有效性取决于注入的物理知识本身是否准确。如果先验模型存在系统性偏差，物理约束反而可能误导学习过程。因此，物理先验的选择需满足：</p><ul><li>先验关系在目标操作域内可靠；</li><li>约束条件设置合理，不过度限制模型表达能力；</li><li>与实际观测数据不存在根本性矛盾。</li></ul><h3 id="缺乏真实实验闭环验证"><a href="#缺乏真实实验闭环验证" class="headerlink" title="缺乏真实实验闭环验证"></a>缺乏真实实验闭环验证</h3><p>论文已搭建起完整的方法框架，但从”方法论可行性验证”到”工业可用性确认”之间，仍需在真实实验装置上进行在线闭环验证。</p><hr><h2 id="学术价值与领域启示"><a href="#学术价值与领域启示" class="headerlink" title="学术价值与领域启示"></a>学术价值与领域启示</h2><h3 id="面向数据稀缺场景的建模范式"><a href="#面向数据稀缺场景的建模范式" class="headerlink" title="面向数据稀缺场景的建模范式"></a>面向数据稀缺场景的建模范式</h3><p>本文抓住了过程工业中机器学习应用的核心痛点：<strong>数据获取成本高昂</strong>。许多研究默认数据可大量采集，但现实中实验耗时长、过程变量不完全可观测、且存在批次漂移等干扰。本文直接以”少数据条件下如何实现 ML + 闭环控制”为主线，具有很强的工程务实性。</p><h3 id="面向控制而非面向预测"><a href="#面向控制而非面向预测" class="headerlink" title="面向控制而非面向预测"></a>面向控制而非面向预测</h3><p>许多过程建模研究止步于”预测指标表现良好”。本文从设计之初即将模型置于 MPC 闭环场景下审视，其评价标准不是单步预测误差，而是<strong>嵌入控制器后的闭环行为是否可靠</strong>——这更贴近工程落地的实际需求。</p><h3 id="机理模型与神经网络的协同关系"><a href="#机理模型与神经网络的协同关系" class="headerlink" title="机理模型与神经网络的协同关系"></a>机理模型与神经网络的协同关系</h3><p>本文展示了一种成熟的系统工程思路——机理模型与数据驱动模型并非对立，而是互补：</p><ul><li><strong>机理模型</strong>提供方向性约束与物理一致性保障；</li><li><strong>数据驱动模型</strong>提供灵活的非线性拟合能力；</li><li><strong>物理约束</strong>划定安全边界，防止不合理预测；</li><li><strong>MPC 框架</strong>将上述能力转化为可执行的实时控制动作。</li></ul><h3 id="对材料制备与光电过程控制的推广价值"><a href="#对材料制备与光电过程控制的推广价值" class="headerlink" title="对材料制备与光电过程控制的推广价值"></a>对材料制备与光电过程控制的推广价值</h3><p>虽然本文的研究对象是药物结晶，但其方法论可直接推广至：</p><ul><li><strong>晶体生长与薄膜沉积</strong>：同样面临数据稀缺、机理不完整、需在线控制的挑战。</li><li><strong>智能仪器与自主实验系统</strong>：传感器信号丰富但标注数据有限时，物理先验可有效补充。</li><li><strong>外延、退火等半导体工艺</strong>：需要将有限的在线观测转化为可用于闭环控制的状态估计与决策模型。</li></ul><hr><h2 id="未来研究方向展望"><a href="#未来研究方向展望" class="headerlink" title="未来研究方向展望"></a>未来研究方向展望</h2><p>基于本文的方法框架，以下方向值得进一步探索：</p><ol><li><strong>真实系统验证</strong>：在存在模型失配、传感器噪声和批次漂移的真实实验装置上验证 PIRNN-MPC 的鲁棒性。</li><li><strong>在线自适应学习</strong>：将 PIRNN 与在线学习、贝叶斯更新或 batch-to-batch adaptation 机制结合，使模型随运行持续改进。</li><li><strong>跨领域迁移应用</strong>：将该框架迁移至晶体生长、外延沉积或多物理场耦合控制等材料与光电工艺场景。</li><li><strong>物理先验的自动化选择</strong>：研究如何根据可用数据与先验知识的质量，自动调整物理注入强度（如正则化系数 $\lambda$ 的自适应策略）。</li></ol><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这篇论文的核心启示在于：<strong>在复杂科学与工程过程中，真正可用的智能控制系统往往既非纯物理驱动，亦非纯数据驱动，而是将两者融合于同一闭环框架之中。</strong></p><p>对于材料制备、半导体工艺、光电系统与精密仪器领域而言，这种”物理先验 + 数据驱动 + 闭环控制”的融合范式将具有越来越重要的方法论价值。</p><hr><h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol><li>ScienceDirect 原文：<a href="https://www.sciencedirect.com/science/article/pii/S0263876223001442">Physics-informed machine learning for MPC: Application to a batch crystallization process</a></li><li>DOI：<a href="https://doi.org/10.1016/j.cherd.2023.02.048">10.1016&#x2F;j.cherd.2023.02.048</a></li></ol>]]></content>
-      
-      
-      <categories>
-          
-          <category> 研究 </category>
-          
-          <category> 仪器仪表科学与光电工程 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Physics-informed ML </tag>
-            
-            <tag> MPC </tag>
-            
-            <tag> 结晶 </tag>
-            
-            <tag> Process Control </tag>
-            
-            <tag> 论文解读 </tag>
             
         </tags>
       
