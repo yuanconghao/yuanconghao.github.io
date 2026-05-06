@@ -3,6 +3,34 @@ var searchFunc = function(path, search_id, content_id) {
     var $input = document.getElementById(search_id);
     var $resultContent = document.getElementById(content_id);
 
+    var normalizeSearchUrl = function(url) {
+        if (!url) {
+            return '/';
+        }
+
+        url = url.trim();
+
+        if (/^(https?:)?\/\//i.test(url)) {
+            var protocolRelativePost = url.match(/^\/\/(\d{4}\/.*)$/);
+            if (protocolRelativePost) {
+                return '/' + protocolRelativePost[1];
+            }
+
+            var absoluteSameSitePost = url.match(/^https?:\/\/[^\/]+\/(\d{4}\/.*)$/i);
+            if (absoluteSameSitePost) {
+                return '/' + absoluteSameSitePost[1];
+            }
+
+            return url;
+        }
+
+        if (url.charAt(0) !== '/') {
+            url = '/' + url;
+        }
+
+        return url.replace(/^\/{2,}(?=\d{4}\/)/, '/');
+    };
+
     if (!$input || !$resultContent) {
         return;
     }
@@ -32,7 +60,7 @@ var searchFunc = function(path, search_id, content_id) {
                     var content_index = [];
                     var data_title = data.title.trim().toLowerCase();
                     var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
-                    var data_url = data.url;
+                    var data_url = normalizeSearchUrl(data.url);
                     var index_title = -1;
                     var index_content = -1;
                     var first_occur = -1;
