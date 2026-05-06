@@ -989,6 +989,32 @@ div {
 .post .post-preview {
   clear: both;
   margin-top: var(--post-gap-meta-content);
+  position: relative;
+}
+.post .post-preview.is-protected .post-cover-gallery,
+.post .post-preview.is-protected .post-summary {
+  filter: blur(4px);
+  opacity: 0.8;
+  pointer-events: none;
+  user-select: none;
+}
+.post .post-protected-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(2px);
+  border-radius: 12px;
+  z-index: 10;
+  color: #9a7b00;
+  font-size: 48px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
 }
 .post .post-preview-single {
   display: grid;
@@ -2948,4 +2974,93 @@ html[data-dark=true] img {
 .waline-comment-content-author {
   text-align: end;
   margin-bottom: 6px;
+}
+
+.post-lock-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  color: #9a7b00;
+  font-size: 0.9em;
+  vertical-align: middle;
+}
+
+.protected-post-teaser {
+  color: #666;
+}
+
+.post-protect {
+  clear: both;
+  margin-top: 40px;
+}
+
+.post-protect-card {
+  border: 1px solid #e2d6a3;
+  background: #fffdf4;
+  border-radius: 8px;
+  padding: 24px 22px;
+  margin-bottom: 24px;
+}
+
+.post-protect-icon {
+  color: #9a7b00;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.post-protect-title {
+  margin: 0 0 8px;
+  font-size: 22px;
+  color: #5a4a00;
+}
+
+.post-protect-text,
+.post-protect-hint,
+.post-protect-error {
+  margin: 8px 0 0;
+}
+
+.post-protect-hint {
+  color: #7a6b2b;
+}
+
+.post-protect-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.post-protect-input {
+  flex: 1 1 240px;
+  min-width: 220px;
+  padding: 10px 12px;
+  border: 1px solid #d9cfaa;
+  border-radius: 6px;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.post-protect-button {
+  padding: 10px 16px;
+  border: 1px solid #b39b3c;
+  background: #b39b3c;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.post-protect-button[disabled] {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.post-protect-error {
+  color: #b14b3b;
+  min-height: 20px;
+}
+
+.post-protect.is-unlocked .post-protect-card {
+  display: none;
 }
