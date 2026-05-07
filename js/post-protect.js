@@ -95,6 +95,12 @@
                 content.innerHTML = html;
                 content.hidden = false;
                 container.classList.add('is-unlocked');
+
+                if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+                    MathJax.typesetPromise([content]).catch(function(err) {
+                        console.error('MathJax typeset failed:', err);
+                    });
+                }
             } catch (e) {
                 error.textContent = '密码错误，或文章数据无法解密。';
             } finally {
