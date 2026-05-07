@@ -1,0 +1,686 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="汇总光电技术、材料分析、半导体物理及 AI 辅助科学计算中常用的专业术语与缩写，便于查阅与交叉引用。"><title>光电、材料与半导体专业术语辞典 | DeepLearner</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.1"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">光电、材料与半导体专业术语辞典</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/essay/"><i class="fa fa-pencil"> 随笔</i></a><a href="/course/"><i class="fa fa-book"> 课程</i></a><a class="current" href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/tools/"><i class="fa fa-wrench"> 工具</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">光电、材料与半导体专业术语辞典</h1><div class="post-meta">created:2026-04-12</div><div class="post-meta">updated:2026-05-07<span> | </span><span class="category"><a href="/categories/%E7%A0%94%E7%A9%B6/">研究</a></span></div><a class="disqus-comment-count" href="/research/technical-glossary/#waline"><span class="waline-comment-count" id="/research/technical-glossary/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%85%89%E7%94%B5%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%85%89%E5%AD%90%E5%AD%A6"><span class="toc-number">1.</span> <span class="toc-text">1. 光电技术与光子学</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%9D%90%E6%96%99%E5%88%86%E6%9E%90%E4%B8%8E%E8%A1%A8%E5%BE%81"><span class="toc-number">2.</span> <span class="toc-text">2. 材料分析与表征</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8D%8A%E5%AF%BC%E4%BD%93%E7%89%A9%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">3. 半导体物理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-MBE-%E7%94%9F%E9%95%BF%E6%8A%80%E6%9C%AF"><span class="toc-number">4.</span> <span class="toc-text">4. MBE 生长技术</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-AI-ML-%E4%B8%8E%E7%A7%91%E5%AD%A6%E8%AE%A1%E7%AE%97"><span class="toc-number">5.</span> <span class="toc-text">5. AI &#x2F; ML 与科学计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%BF%87%E7%A8%8B%E6%8E%A7%E5%88%B6%E4%B8%8E%E7%BB%93%E6%99%B6"><span class="toc-number">6.</span> <span class="toc-text">6. 过程控制与结晶</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%B8%B8%E8%A7%81%E6%9D%90%E6%96%99%E7%BC%A9%E5%86%99"><span class="toc-number">7.</span> <span class="toc-text">7. 常见材料缩写</span></a></li></ol></div></div><div class="post-content"><p>本文档汇总了光电技术、材料分析、半导体物理及 AI 辅助科学计算中的常用术语与缩写，按领域分类列出，供研究笔记交叉引用。</p>
+<h2 id="1-光电技术与光子学"><a href="#1-光电技术与光子学" class="headerlink" title="1. 光电技术与光子学"></a>1. 光电技术与光子学</h2><table>
+<thead>
+<tr>
+<th align="left">缩写</th>
+<th align="left">全称</th>
+<th align="left">释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>QD</strong></td>
+<td align="left">Quantum Dot</td>
+<td align="left">量子点，纳米尺度的半导体结构，具有分立的量子化能级</td>
+</tr>
+<tr>
+<td align="left"><strong>SPS</strong></td>
+<td align="left">Single Photon Source</td>
+<td align="left">单光子源，量子信息与量子计算领域的核心器件</td>
+</tr>
+<tr>
+<td align="left"><strong>T2SL</strong></td>
+<td align="left">Type-II Superlattice</td>
+<td align="left">II 类超晶格，能带排列为 “broken-gap”（如 InAs&#x2F;GaSb），电子与空穴空间分离，广泛用于红外探测</td>
+</tr>
+<tr>
+<td align="left"><strong>HEMT</strong></td>
+<td align="left">High Electron Mobility Transistor</td>
+<td align="left">高电子迁移率晶体管，InAs&#x2F;AlSb 量子阱结构的典型应用方向</td>
+</tr>
+<tr>
+<td align="left"><strong>QW</strong></td>
+<td align="left">Quantum Well</td>
+<td align="left">量子阱，一种通过宽窄禁带交替堆叠形成的载流子限域结构</td>
+</tr>
+<tr>
+<td align="left"><strong>QD Laser</strong></td>
+<td align="left">Quantum Dot Laser</td>
+<td align="left">量子点激光器，高密度量子点阵列的核心应用方向</td>
+</tr>
+<tr>
+<td align="left"><strong>Direct Bandgap</strong></td>
+<td align="left">—</td>
+<td align="left">直接带隙，导带底与价带顶在 k 空间同一位置，允许高效光发射与吸收（多数 III-V 材料）</td>
+</tr>
+<tr>
+<td align="left"><strong>Indirect Bandgap</strong></td>
+<td align="left">—</td>
+<td align="left">间接带隙，导带底与价带顶位于不同 k 位置（如 Si, Ge），光电效率较低</td>
+</tr>
+<tr>
+<td align="left"><strong>6.1 Å Family</strong></td>
+<td align="left">—</td>
+<td align="left">6.1 埃家族，晶格常数约 6.1 Å 的一组 III-V 材料（InAs, GaSb, AlSb），可近乎无应变异质外延</td>
+</tr>
+</tbody></table>
+<h2 id="2-材料分析与表征"><a href="#2-材料分析与表征" class="headerlink" title="2. 材料分析与表征"></a>2. 材料分析与表征</h2><table>
+<thead>
+<tr>
+<th align="left">缩写</th>
+<th align="left">全称</th>
+<th align="left">释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>RHEED</strong></td>
+<td align="left">Reflection High-Energy Electron Diffraction</td>
+<td align="left">反射式高能电子衍射，以掠射电子束原位监测薄膜表面结构</td>
+</tr>
+<tr>
+<td align="left"><strong>AFM</strong></td>
+<td align="left">Atomic Force Microscopy</td>
+<td align="left">原子力显微镜，用于生长后表面形貌的纳米级离线表征</td>
+</tr>
+<tr>
+<td align="left"><strong>RMS</strong></td>
+<td align="left">Root Mean Square</td>
+<td align="left">均方根粗糙度（AFM 测量），数值越低表面越平整</td>
+</tr>
+<tr>
+<td align="left"><strong>XRD</strong></td>
+<td align="left">X-Ray Diffraction</td>
+<td align="left">X 射线衍射，用于表征晶体质量与结构</td>
+</tr>
+<tr>
+<td align="left"><strong>FWHM</strong></td>
+<td align="left">Full Width at Half Maximum</td>
+<td align="left">半高全宽（XRD 峰宽），越窄说明晶体质量越高</td>
+</tr>
+<tr>
+<td align="left"><strong>SEM</strong></td>
+<td align="left">Scanning Electron Microscopy</td>
+<td align="left">扫描电子显微镜，用于观察材料表面微观形貌</td>
+</tr>
+<tr>
+<td align="left"><strong>TEM</strong></td>
+<td align="left">Transmission Electron Microscopy</td>
+<td align="left">透射电子显微镜，用于原子级界面结构分析</td>
+</tr>
+<tr>
+<td align="left"><strong>EDX &#x2F; EDS</strong></td>
+<td align="left">Energy Dispersive X-ray Spectroscopy</td>
+<td align="left">能量色散 X 射线谱，用于材料元素成分分析</td>
+</tr>
+<tr>
+<td align="left"><strong>PL</strong></td>
+<td align="left">Photoluminescence</td>
+<td align="left">光致发光，通过激光激发测量材料发光特性，评估光学质量</td>
+</tr>
+<tr>
+<td align="left"><strong>Specular Spot</strong></td>
+<td align="left">—</td>
+<td align="left">镜面反射点，RHEED 图案中心的零级衍射斑，其强度振荡反映逐层生长动力学</td>
+</tr>
+<tr>
+<td align="left"><strong>Streaky Pattern</strong></td>
+<td align="left">—</td>
+<td align="left">条纹状 RHEED 图案，表明平整的二维表面</td>
+</tr>
+<tr>
+<td align="left"><strong>Spotty Pattern</strong></td>
+<td align="left">—</td>
+<td align="left">斑点状 RHEED 图案，表明表面粗糙化或三维岛形成</td>
+</tr>
+<tr>
+<td align="left"><strong>Surface Reconstruction</strong></td>
+<td align="left">—</td>
+<td align="left">表面重构，超高真空中表面原子因悬挂键最小化而发生重排</td>
+</tr>
+</tbody></table>
+<h2 id="3-半导体物理"><a href="#3-半导体物理" class="headerlink" title="3. 半导体物理"></a>3. 半导体物理</h2><table>
+<thead>
+<tr>
+<th align="left">缩写</th>
+<th align="left">全称</th>
+<th align="left">释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>III-V</strong></td>
+<td align="left">—</td>
+<td align="left">由 III 族（Al, Ga, In）与 V 族（N, P, As, Sb, Bi）元素形成的化合物半导体</td>
+</tr>
+<tr>
+<td align="left"><strong>II-VI</strong></td>
+<td align="left">—</td>
+<td align="left">由 II 族（Zn, Cd, Hg）与 VI 族（S, Se, Te）元素形成的化合物半导体（如 HgCdTe）</td>
+</tr>
+<tr>
+<td align="left"><strong>S-K</strong></td>
+<td align="left">Stranski-Krastanov</td>
+<td align="left">一种晶格失配驱动的异质外延生长模式：先形成二维浸润层，后转化为三维岛状</td>
+</tr>
+<tr>
+<td align="left"><strong>V&#x2F;III Ratio</strong></td>
+<td align="left">V&#x2F;III Ratio</td>
+<td align="left">第 V 族与第 III 族元素的束流通量比，MBE 中关键的化学计量比控制参数</td>
+</tr>
+<tr>
+<td align="left"><strong>Band Gap</strong></td>
+<td align="left">—</td>
+<td align="left">禁带宽度，价带顶与导带底之间的能量差，决定光吸收与发射波长</td>
+</tr>
+<tr>
+<td align="left"><strong>Band Offset</strong></td>
+<td align="left">—</td>
+<td align="left">能带偏移，异质界面上能带边的对齐方式（Type-I &#x2F; Type-II &#x2F; broken-gap）</td>
+</tr>
+<tr>
+<td align="left"><strong>Conduction Band Offset</strong></td>
+<td align="left">—</td>
+<td align="left">导带偏移，两种材料导带边的能量差，决定电子限域强度</td>
+</tr>
+<tr>
+<td align="left"><strong>Lattice Constant</strong></td>
+<td align="left">—</td>
+<td align="left">晶格常数，晶体单胞的边长，晶格失配是异质外延中应变与缺陷的来源</td>
+</tr>
+<tr>
+<td align="left"><strong>Lattice Mismatch</strong></td>
+<td align="left">—</td>
+<td align="left">晶格失配，薄膜与衬底晶格常数的差异（如 InAs&#x2F;GaAs 约 7%），驱动 S-K 自组装</td>
+</tr>
+<tr>
+<td align="left"><strong>Strain</strong></td>
+<td align="left">—</td>
+<td align="left">应变，由晶格失配引起的弹性变形，影响能带结构与生长模式</td>
+</tr>
+<tr>
+<td align="left"><strong>Segregation</strong></td>
+<td align="left">—</td>
+<td align="left">偏析，特定原子种（如 Sb）倾向于浮在生长表面而非嵌入生长层，导致界面展宽</td>
+</tr>
+<tr>
+<td align="left"><strong>Wetting Layer</strong></td>
+<td align="left">—</td>
+<td align="left">浸润层，S-K 生长中在形成三维岛之前形成的二维薄膜</td>
+</tr>
+<tr>
+<td align="left"><strong>Carrier Mobility</strong></td>
+<td align="left">—</td>
+<td align="left">载流子迁移率，衡量载流子在电场下的运动速度，InAs 因高电子迁移率而备受青睐</td>
+</tr>
+<tr>
+<td align="left"><strong>Electronegativity</strong></td>
+<td align="left">—</td>
+<td align="left">电负性，衡量原子吸引电子的能力，影响键的极性与能带排列</td>
+</tr>
+<tr>
+<td align="left"><strong>Wide Bandgap</strong></td>
+<td align="left">—</td>
+<td align="left">宽禁带材料（如 SiC, GaN, AlN），具有高击穿电场与高温工作能力</td>
+</tr>
+</tbody></table>
+<h2 id="4-MBE-生长技术"><a href="#4-MBE-生长技术" class="headerlink" title="4. MBE 生长技术"></a>4. MBE 生长技术</h2><table>
+<thead>
+<tr>
+<th align="left">缩写</th>
+<th align="left">全称</th>
+<th align="left">释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>MBE</strong></td>
+<td align="left">Molecular Beam Epitaxy</td>
+<td align="left">分子束外延，超高真空下以分子束沉积薄膜的逐层生长技术</td>
+</tr>
+<tr>
+<td align="left"><strong>UHV</strong></td>
+<td align="left">Ultra-High Vacuum</td>
+<td align="left">超高真空，MBE 腔体工作环境，通常低于 10⁻¹⁰ Torr</td>
+</tr>
+<tr>
+<td align="left"><strong>Effusion Cell</strong></td>
+<td align="left">—</td>
+<td align="left">喷射炉（克努森池），用于加热蒸发源材料以产生分子束</td>
+</tr>
+<tr>
+<td align="left"><strong>Cracker Cell</strong></td>
+<td align="left">—</td>
+<td align="left">裂解炉，将多原子分子（As₄, Sb₄）裂解为更活泼的二聚体（As₂, Sb₂）</td>
+</tr>
+<tr>
+<td align="left"><strong>Shutter</strong></td>
+<td align="left">—</td>
+<td align="left">快门，源炉前的机械挡板，用于快速启闭分子束流</td>
+</tr>
+<tr>
+<td align="left"><strong>BEP</strong></td>
+<td align="left">Beam Equivalent Pressure</td>
+<td align="left">束流当量压力，用真空规测量的等效束流强度</td>
+</tr>
+<tr>
+<td align="left"><strong>Substrate Temperature</strong></td>
+<td align="left">—</td>
+<td align="left">衬底温度，控制表面原子迁移率与成核动力学的关键参数</td>
+</tr>
+<tr>
+<td align="left"><strong>Buffer Layer</strong></td>
+<td align="left">—</td>
+<td align="left">缓冲层，在活性层之前生长的平整表面与捕获缺陷的初始薄膜</td>
+</tr>
+<tr>
+<td align="left"><strong>As Overpressure</strong></td>
+<td align="left">—</td>
+<td align="left">砷过压，为防止 V 族表面热分解而维持的过量 As 束流</td>
+</tr>
+<tr>
+<td align="left"><strong>RHEED Oscillation</strong></td>
+<td align="left">—</td>
+<td align="left">RHEED 强度振荡，逐层生长时镜面反射点强度的周期性变化，可用于原位测量生长速率</td>
+</tr>
+</tbody></table>
+<h2 id="5-AI-ML-与科学计算"><a href="#5-AI-ML-与科学计算" class="headerlink" title="5. AI &#x2F; ML 与科学计算"></a>5. AI &#x2F; ML 与科学计算</h2><table>
+<thead>
+<tr>
+<th align="left">缩写</th>
+<th align="left">全称</th>
+<th align="left">释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>3D ResNet</strong></td>
+<td align="left">3D Residual Network</td>
+<td align="left">三维残差网络，使用 3D 卷积同时提取视频数据的空间与时间特征</td>
+</tr>
+<tr>
+<td align="left"><strong>Conv3D</strong></td>
+<td align="left">3D Convolution</td>
+<td align="left">三维卷积，沿空间 (H, W) 与时间 (T) 维度滑动卷积核</td>
+</tr>
+<tr>
+<td align="left"><strong>BatchNorm3D</strong></td>
+<td align="left">3D Batch Normalization</td>
+<td align="left">三维批量归一化，对 3D 特征图进行归一化以稳定训练</td>
+</tr>
+<tr>
+<td align="left"><strong>ONNX</strong></td>
+<td align="left">Open Neural Network Exchange</td>
+<td align="left">开放神经网络交换格式，用于在不同框架间移植 ML 模型</td>
+</tr>
+<tr>
+<td align="left"><strong>TensorRT</strong></td>
+<td align="left">—</td>
+<td align="left">NVIDIA 深度学习推理优化引擎，将模型优化为高效 GPU 推理</td>
+</tr>
+<tr>
+<td align="left"><strong>FP16</strong></td>
+<td align="left">16-bit Floating Point</td>
+<td align="left">16 位浮点混合精度训练，节省显存并加速计算</td>
+</tr>
+<tr>
+<td align="left"><strong>CLIP</strong></td>
+<td align="left">Contrastive Language-Image Pre-training</td>
+<td align="left">对比语言-图像预训练，学习跨模态的对齐嵌入空间</td>
+</tr>
+<tr>
+<td align="left"><strong>R-CLIP</strong></td>
+<td align="left">RHEED-Physics CLIP</td>
+<td align="left">针对 RHEED 视觉特征与物理参数对齐的适配架构</td>
+</tr>
+<tr>
+<td align="left"><strong>MLP</strong></td>
+<td align="left">Multilayer Perceptron</td>
+<td align="left">多层感知器，前馈神经网络的基本形式</td>
+</tr>
+<tr>
+<td align="left"><strong>GNN</strong></td>
+<td align="left">Graph Neural Network</td>
+<td align="left">图神经网络，在图形结构数据上操作的网络结构</td>
+</tr>
+<tr>
+<td align="left"><strong>RNN</strong></td>
+<td align="left">Recurrent Neural Network</td>
+<td align="left">循环神经网络，通过隐藏状态处理序列数据</td>
+</tr>
+<tr>
+<td align="left"><strong>PIRNN</strong></td>
+<td align="left">Physics-Informed RNN</td>
+<td align="left">物理信息循环神经网络，将物理方程约束融入 RNN 训练</td>
+</tr>
+<tr>
+<td align="left"><strong>Transfer Learning</strong></td>
+<td align="left">—</td>
+<td align="left">迁移学习，将源域知识迁移至目标域以降低标注需求</td>
+</tr>
+<tr>
+<td align="left"><strong>Fine-tuning</strong></td>
+<td align="left">—</td>
+<td align="left">微调，冻结预训练模型的底层，仅训练高层以适配新任务</td>
+</tr>
+<tr>
+<td align="left"><strong>Few-shot Learning</strong></td>
+<td align="left">—</td>
+<td align="left">少样本学习，在极少量标注样本下学习的能力</td>
+</tr>
+<tr>
+<td align="left"><strong>Active Learning</strong></td>
+<td align="left">—</td>
+<td align="left">主动学习，模型主动选择最有信息量的样本请求标注</td>
+</tr>
+<tr>
+<td align="left"><strong>Contrastive Learning</strong></td>
+<td align="left">—</td>
+<td align="left">对比学习，拉近正样本对、推远负样本对的表征学习方法</td>
+</tr>
+<tr>
+<td align="left"><strong>Self-Supervised Learning</strong></td>
+<td align="left">—</td>
+<td align="left">自监督学习，从数据自身结构构造监督信号，无需人工标注</td>
+</tr>
+<tr>
+<td align="left"><strong>Masked Video Modeling</strong></td>
+<td align="left">—</td>
+<td align="left">掩码视频建模，随机遮挡视频帧&#x2F;区域并训练模型预测缺失部分</td>
+</tr>
+<tr>
+<td align="left"><strong>MC Dropout</strong></td>
+<td align="left">Monte Carlo Dropout</td>
+<td align="left">蒙特卡洛 Dropout，推理时保持 Dropout 进行多次前向采样以估计预测不确定性</td>
+</tr>
+<tr>
+<td align="left"><strong>UCB</strong></td>
+<td align="left">Upper Confidence Bound</td>
+<td align="left">上置信边界，采集函数：score &#x3D; mean + β × variance</td>
+</tr>
+<tr>
+<td align="left"><strong>EI</strong></td>
+<td align="left">Expected Improvement</td>
+<td align="left">预期改进，基于当前最优值之上概率提升的采集函数</td>
+</tr>
+<tr>
+<td align="left"><strong>SciML</strong></td>
+<td align="left">Scientific Machine Learning</td>
+<td align="left">科学机器学习，将物理定律与数据驱动方法融合的范式</td>
+</tr>
+<tr>
+<td align="left"><strong>Physics-Informed Learning</strong></td>
+<td align="left">—</td>
+<td align="left">物理信息学习，将物理知识（微分方程、守恒律）融入 ML 训练的通用范式</td>
+</tr>
+</tbody></table>
+<h2 id="6-过程控制与结晶"><a href="#6-过程控制与结晶" class="headerlink" title="6. 过程控制与结晶"></a>6. 过程控制与结晶</h2><table>
+<thead>
+<tr>
+<th align="left">缩写</th>
+<th align="left">全称</th>
+<th align="left">释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>MPC</strong></td>
+<td align="left">Model Predictive Control</td>
+<td align="left">模型预测控制，基于模型滚动优化的先进控制策略</td>
+</tr>
+<tr>
+<td align="left"><strong>CSD</strong></td>
+<td align="left">Crystal Size Distribution</td>
+<td align="left">晶体粒径分布，结晶过程核心质量指标</td>
+</tr>
+<tr>
+<td align="left"><strong>NMS</strong></td>
+<td align="left">Number Mean Size</td>
+<td align="left">数均粒径，CSD 矩量定义的晶体平均尺寸</td>
+</tr>
+<tr>
+<td align="left"><strong>CV</strong></td>
+<td align="left">Coefficient of Variation</td>
+<td align="left">变异系数，量化粒径分布展宽 &#x2F; 均匀性</td>
+</tr>
+<tr>
+<td align="left"><strong>PBM</strong></td>
+<td align="left">Population Balance Model</td>
+<td align="left">粒数衡算模型，描述粒子群体的成核、生长与聚并动力学</td>
+</tr>
+<tr>
+<td align="left"><strong>Nucleation</strong></td>
+<td align="left">—</td>
+<td align="left">成核，从溶液中形成第一个稳定晶核的过程</td>
+</tr>
+<tr>
+<td align="left"><strong>Agglomeration</strong></td>
+<td align="left">—</td>
+<td align="left">聚并，小晶体碰撞粘合形成更大颗粒的过程</td>
+</tr>
+</tbody></table>
+<h2 id="7-常见材料缩写"><a href="#7-常见材料缩写" class="headerlink" title="7. 常见材料缩写"></a>7. 常见材料缩写</h2><table>
+<thead>
+<tr>
+<th align="left">缩写</th>
+<th align="left">全称</th>
+<th align="left">释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>InAs</strong></td>
+<td align="left">Indium Arsenide</td>
+<td align="left">砷化铟，窄禁带 III-V 半导体，高电子迁移率</td>
+</tr>
+<tr>
+<td align="left"><strong>GaAs</strong></td>
+<td align="left">Gallium Arsenide</td>
+<td align="left">砷化镓，经典 III-V 半导体，常用衬底材料</td>
+</tr>
+<tr>
+<td align="left"><strong>GaSb</strong></td>
+<td align="left">Gallium Antimonide</td>
+<td align="left">锑化镓，III-V 半导体，与 InAs 构成 Type-II 能带对齐</td>
+</tr>
+<tr>
+<td align="left"><strong>AlSb</strong></td>
+<td align="left">Aluminum Antimonide</td>
+<td align="left">锑化铝，宽禁带 III-V 半导体，高导带偏移</td>
+</tr>
+<tr>
+<td align="left"><strong>InAsSb</strong></td>
+<td align="left">Indium Arsenide Antimonide</td>
+<td align="left">砷锑化铟，三元 III-V 合金，禁带宽度可通过组分调谐</td>
+</tr>
+<tr>
+<td align="left"><strong>InSb</strong></td>
+<td align="left">Indium Antimonide</td>
+<td align="left">锑化铟，窄禁带 III-V 半导体，用于中远红外探测</td>
+</tr>
+<tr>
+<td align="left"><strong>GaN</strong></td>
+<td align="left">Gallium Nitride</td>
+<td align="left">氮化镓，宽禁带 III-V 半导体，用于光电器件与功率电子</td>
+</tr>
+<tr>
+<td align="left"><strong>SiC</strong></td>
+<td align="left">Silicon Carbide</td>
+<td align="left">碳化硅，宽禁带半导体，用于高温高功率场景</td>
+</tr>
+<tr>
+<td align="left"><strong>HgCdTe</strong></td>
+<td align="left">Mercury Cadmium Telluride</td>
+<td align="left">碲镉汞，经典 II-VI 红外探测材料</td>
+</tr>
+<tr>
+<td align="left"><strong>Al</strong></td>
+<td align="left">Aluminum</td>
+<td align="left">铝，III 族元素，提供阳离子位点</td>
+</tr>
+<tr>
+<td align="left"><strong>Ga</strong></td>
+<td align="left">Gallium</td>
+<td align="left">镓，III 族元素，提供阳离子位点</td>
+</tr>
+<tr>
+<td align="left"><strong>In</strong></td>
+<td align="left">Indium</td>
+<td align="left">铟，III 族元素，提供阳离子位点</td>
+</tr>
+<tr>
+<td align="left"><strong>N</strong></td>
+<td align="left">Nitrogen</td>
+<td align="left">氮，V 族元素，提供阴离子位点</td>
+</tr>
+<tr>
+<td align="left"><strong>P</strong></td>
+<td align="left">Phosphorus</td>
+<td align="left">磷，V 族元素，提供阴离子位点</td>
+</tr>
+<tr>
+<td align="left"><strong>As</strong></td>
+<td align="left">Arsenic</td>
+<td align="left">砷，V 族元素，提供阴离子位点，高挥发性</td>
+</tr>
+<tr>
+<td align="left"><strong>Sb</strong></td>
+<td align="left">Antimony</td>
+<td align="left">锑，V 族元素，提供阴离子位点，易偏析</td>
+</tr>
+<tr>
+<td align="left"><strong>Bi</strong></td>
+<td align="left">Bismuth</td>
+<td align="left">铋，V 族元素，提供阴离子位点</td>
+</tr>
+</tbody></table>
+<hr>
+<p>本文档会随研究推进持续更新，各研究笔记中的术语表可链接回此页面进行交叉引用。</p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.1" async></script><a class="article-share-link" data-url="https://deeplearner.top/research/technical-glossary/" data-id="cmov2rifb000fh8cagl10dytu" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACLElEQVR42u3bwY6DMAyE4b7/S9PLHlaqcGc8YVdxfk4VpYGPg+XY7uslH9ev4+7b+oyyZn2XBQcMGDC2ZVzlUd9Av+Xdyp/r3N23XgEGDBgnMOowevdZ/1V9pn59SoiHAQMGDCVE1utIQVN+ZTBgwIChM9xwWV/zbwEXBgwYmzCSFK13pbLFfWQvDgMGjA0ZerHs7z8/0t+AAQPGVozLPPTgqDQD8uf5WRMGDBijGU8PRrgFu+R5YMCAMZvhjlPkgdh9NUayCAMGjHGMtemgPvKltAeMkA0DBozRjLVJW68loDc7jYogDBgwRjPcgS09TLuNT2PMAgYMGKMZ7kP0iv756EZzEwsDBowRDDd1613pDsL2UlgYMGCcwNBDnlt06yWL9sYYBgwYQxlJUpiU2PQWghSaYcCAMZqRFNHy9DEf+IABA8YJDLd5qQ9h9Ga3ekMbMGDAmM1wm5R6cNRbob3RChgwYJzDcEe+knExd4WoXggDBoxBDD2wukUxhadscY2GAQwYMA5g9M4kxTh3y/olxYQBA8YxjN7jusU4txWxIM+FAQPGaMZzAxZu4vhlBRgwYAxl9BqKbvmsxzPKczBgwBjNSIKdUsTv8fLmAQwYMOYx3KHVJKVTfuteDwMGjHMYqzaudUjNX80tEgYMGDBazQMlBVxWnoMBAwaMuFjWHKGQ26UwYMA4gZE0A9wNsL6C/b8BGDBgDGX0all5Y9JtJ+TjGjBgwNiQ8QZVkZNhOudPqgAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/MBE/"><i class="fa fa-tag"></i>MBE</a><a href="/tags/%E6%9C%AF%E8%AF%AD/"><i class="fa fa-tag"></i>术语</a><a href="/tags/%E5%8D%8A%E5%AF%BC%E4%BD%93%E7%89%A9%E7%90%86/"><i class="fa fa-tag"></i>半导体物理</a><a href="/tags/%E6%9D%90%E6%96%99%E5%88%86%E6%9E%90/"><i class="fa fa-tag"></i>材料分析</a><a href="/tags/%E5%85%89%E7%94%B5%E6%8A%80%E6%9C%AF/"><i class="fa fa-tag"></i>光电技术</a></div><div class="post-nav"><a class="pre" href="/research/inas-gaas-qd-ml-feedback/">论文解读：机器学习辅助与实时反馈控制 InAs/GaAs 量子点生长</a><a class="next" href="/2025/03/10/AIGC-LLM-%E8%BE%9F%E9%82%AA%E5%89%91%E8%B0%B1%E4%B9%8B%E9%80%9A%E4%B9%89Prompt%E5%9B%9B%E5%8D%81%E5%BC%8F/">AIGC-LLM-辟邪剑谱之通义Prompt四十式</a></div></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">9</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B/">课程</a><span class="category-list-count">7</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/05/07/CLIP-Learning-Transferable-Visual-Models/">论文解读：CLIP-从自然语言监督中学习可迁移的视觉模型</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/05/06/3d-resnet-paper-reading/">论文解读：3D ResNet 与视频动作识别</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/05/01/Claude-Code%E5%AE%89%E8%A3%85%E4%B8%8EDeepSeek%E7%AC%AC%E4%B8%89%E6%96%B9API%E9%85%8D%E7%BD%AE/">Claude Code 安装与 DeepSeek 第三方 API 配置教程</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/face-detection-recognition/">计算机视觉专题：人脸检测与人脸识别</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/generative-adversarial-networks-gan/">生成模型专题：生成对抗网络（GAN）原理与实践</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/ocr-optical-character-recognition/">场景文字理解：OCR 基础、检测与识别方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/semantic-segmentation/">计算机视觉专题：语义分割原理与经典模型</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/natural-language-processing-nlp/">自然语言处理导论：基础方法、表示学习与典型应用</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/target-detection/">计算机视觉专题：目标检测基础与经典检测器</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/tf-idf-algorithm/">文本表示基础：TF-IDF 与文本分类入门</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-flask"> 元素周期表</i></div><ul></ul><a href="https://pt.ziziyi.com/" title="元素周期表" target="_blank" rel="noopener noreferrer">元素周期表</a><ul></ul><a href="https://ptable.com/#%E6%80%A7%E8%B4%A8/%E7%B3%BB%E5%88%97" title="元素性质" target="_blank" rel="noopener noreferrer">元素性质</a><ul></ul><a href="https://ptable.com/#%E7%94%B5%E5%AD%90%E5%B1%82/%E6%B0%A7%E5%8C%96%E6%95%B0" title="电子层" target="_blank" rel="noopener noreferrer">电子层</a><ul></ul><a href="https://ptable.com/#%E5%90%8C%E4%BD%8D%E7%B4%A0/%E6%80%BB%E8%AE%A1" title="同位素" target="_blank" rel="noopener noreferrer">同位素</a><ul></ul><a href="https://ptable.com/#%E5%8C%96%E5%90%88%E7%89%A9" title="元素化合物" target="_blank" rel="noopener noreferrer">元素化合物</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.1" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.1" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.1"><script type="text/javascript" src="/js/search.js?v=1.0.1"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/post-protect.js?v=1.0.1"></script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript">window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    processEscapes: true
+  },
+  chtml: {
+    fontURL: '/js/chtml/fonts/woff-v2'
+  },
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  }
+};
+</script><script type="text/javascript" src="/js/mathjax3.js" async></script><style>/* Mermaid 科研风格主题 CSS */
+.mermaid {
+  font-family: "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: transparent;
+  margin: 1.5em auto;
+  text-align: center;
+}
+.mermaid svg {
+  max-width: 100%;
+  border-radius: 6px;
+}
+.mermaid .node rect,
+.mermaid .node polygon,
+.mermaid .node circle {
+  filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.1));
+  rx: 6;
+  ry: 6;
+}
+.mermaid .edgeLabel {
+  font-size: 12px;
+  background-color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.mermaid .label {
+  font-size: 13px;
+  font-weight: 500;
+}</style><script type="text/javascript" src="/js/mermaid.min.js"></script><script>(function() {
+  var done = false;
+  var initMermaid = function() {
+    if (done || !window.mermaid) return;
+    
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      securityLevel: 'loose',
+      fontFamily: '"Helvetica Neue", Arial, "PingFang SC", sans-serif',
+      themeVariables: {
+        primaryColor: '#e8eef6',
+        primaryBorderColor: '#4a76a8',
+        primaryTextColor: '#1a1a2e',
+        secondaryColor: '#f0f4f0',
+        secondaryBorderColor: '#6b9080',
+        secondaryTextColor: '#2d3436',
+        tertiaryColor: '#fdf6ec',
+        tertiaryBorderColor: '#c4a35a',
+        tertiaryTextColor: '#2d3436',
+        lineColor: '#5a6c7d',
+        textColor: '#2d3436',
+        nodeBkg: '#e8eef6',
+        nodeBorder: '#4a76a8',
+        mainBkg: '#e8eef6',
+        labelBackground: '#ffffff',
+        edgeLabelBackground: '#ffffff',
+        fontSize: '14px',
+        fontFamily: '"Helvetica Neue", Arial, sans-serif'
+      }
+    });
+    
+    var candidates = document.querySelectorAll('pre, figure.highlight, .highlight, [class*="mermaid"]');
+    var foundCount = 0;
+
+    candidates.forEach(function(el) {
+      if (el.getAttribute('data-mermaid-processed')) return;
+      if (el.querySelector('svg')) return;
+      
+      var text = "";
+      // 尝试从 Prism 的行结构中提取文本并强制换行
+      var lines = el.querySelectorAll('.line, tr');
+      if (lines.length > 0) {
+        var textParts = [];
+        lines.forEach(function(l) {
+            var t = l.innerText || l.textContent || "";
+            if (t.trim()) textParts.push(t.replace(/\n/g, ''));
+        });
+        text = textParts.join('\n');
+      } else {
+        text = (el.innerText || el.textContent || '').trim();
+      }
+
+      var keywords = /^(graph|flowchart|sequenceDiagram|gantt|classDiagram|stateDiagram|erDiagram|pie|journey|gitGraph|info|mindmap|timeline)/i;
+      
+      if (keywords.test(text.trim()) || el.classList.contains('mermaid') || el.classList.contains('language-mermaid')) {
+        var container = document.createElement('div');
+        container.className = 'mermaid';
+        container.textContent = text;
+        el.setAttribute('data-mermaid-processed', 'true');
+        
+        el.parentNode.insertBefore(container, el);
+        el.style.display = 'none';
+        foundCount++;
+      }
+    });
+
+    if (foundCount > 0) {
+      done = true;
+      console.log('[Mermaid] Rescued ' + foundCount + ' blocks');
+      mermaid.init(undefined, '.mermaid');
+    }
+  };
+
+  if (document.readyState === 'complete') {
+    initMermaid();
+  } else {
+    window.addEventListener('load', initMermaid);
+  }
+  setTimeout(initMermaid, 1500);
+})();
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.1"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.1"></script></div><!-- hexo injector body_end start -->
+<script src="/assets/prism-bundle.js"></script>
+<script src="/assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>
