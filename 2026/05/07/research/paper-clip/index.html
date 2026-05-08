@@ -1,0 +1,301 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Just Do It"><title>论文解读：CLIP - 从自然语言监督中学习可迁移的视觉模型 | DeepLearner</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.1"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">论文解读：CLIP - 从自然语言监督中学习可迁移的视觉模型</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/essay/"><i class="fa fa-pencil"> 随笔</i></a><a href="/course/"><i class="fa fa-book"> 课程</i></a><a href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/tools/"><i class="fa fa-wrench"> 工具</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">论文解读：CLIP - 从自然语言监督中学习可迁移的视觉模型</h1><div class="post-meta">created:2026-05-07</div><div class="post-meta">updated:2026-05-08<span> | </span><span class="category"><a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a></span></div><a class="disqus-comment-count" href="/2026/05/07/research/paper-clip/#waline"><span class="waline-comment-count" id="/2026/05/07/research/paper-clip/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%83%8C%E6%99%AF%E4%B8%8E%E5%8A%A8%E6%9C%BA"><span class="toc-number">1.</span> <span class="toc-text">一、背景与动机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BC%A0%E7%BB%9F%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E7%9A%84%E4%B8%89%E2%BC%A4%E7%97%9B%E7%82%B9"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 传统计算机视觉的三⼤痛点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%A0%B8%E5%BF%83%E6%80%9D%E8%B7%AF%EF%BC%9A%E4%BB%8E%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E4%B8%AD%E5%AD%A6%E4%B9%A0%E8%A7%86%E8%A7%89"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 核心思路：从自然语言中学习视觉</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%96%B9%E6%B3%95%EF%BC%9A%E5%AF%B9%E6%AF%94%E8%AF%AD%E8%A8%80-%E5%9B%BE%E5%83%8F%E9%A2%84%E8%AE%AD%E7%BB%83"><span class="toc-number">2.</span> <span class="toc-text">二、方法：对比语言-图像预训练</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%95%B0%E6%8D%AE%E9%9B%86%EF%BC%9AWIT-WebImageText"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 数据集：WIT (WebImageText)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 对比学习目标函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 模型架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E8%AE%AD%E7%BB%83%E8%A7%84%E6%A8%A1"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 训练规模</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%9B%B6%E6%A0%B7%E6%9C%AC%E6%8E%A8%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">三、零样本推理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E9%9B%B6%E6%A0%B7%E6%9C%AC%E6%8E%A8%E7%90%86%E6%B5%81%E7%A8%8B"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 零样本推理流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-prompt-%E5%B7%A5%E7%A8%8B%E5%92%8C-Ensembling"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 prompt 工程和 Ensembling</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E9%9B%B6%E6%A0%B7%E6%9C%AC%E6%80%A7%E8%83%BD%E4%BA%AE%E7%82%B9"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 零样本性能亮点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0%EF%BC%9A%E7%BA%BF%E6%80%A7%E6%8E%A2%E6%B5%8B%E8%AF%84%E4%BC%B0"><span class="toc-number">4.</span> <span class="toc-text">四、表征学习：线性探测评估</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E4%B8%8E%E6%9C%80%E5%85%88%E8%BF%9B%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 与最先进模型的对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E4%B8%BA%E4%BD%95-CLIP-%E8%A1%A8%E5%BE%81%E6%9B%B4%E5%A5%BD%EF%BC%9F"><span class="toc-number">4.2.</span> <span class="toc-text">4.2 为何 CLIP 表征更好？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%B2%81%E6%A3%92%E6%80%A7%EF%BC%9A%E5%88%86%E5%B8%83%E5%81%8F%E7%A7%BB%E4%B8%8B%E7%9A%84%E8%A1%A8%E7%8E%B0"><span class="toc-number">5.</span> <span class="toc-text">五、鲁棒性：分布偏移下的表现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E6%9C%89%E6%95%88%E7%A8%B3%E5%81%A5%E6%80%A7-Effective-Robustness"><span class="toc-number">5.1.</span> <span class="toc-text">5.1 有效稳健性 (Effective Robustness)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E2%80%9C%E9%80%82%E5%BA%94-ImageNet%E2%80%9D%E7%9A%84%E4%BB%A3%E4%BB%B7"><span class="toc-number">5.2.</span> <span class="toc-text">5.2 “适应 ImageNet”的代价</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-Few-Shot-%E4%B8%8E%E9%B2%81%E6%A3%92%E6%80%A7"><span class="toc-number">5.3.</span> <span class="toc-text">5.3 Few-Shot 与鲁棒性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%AE%9E%E9%AA%8C%E5%8F%91%E7%8E%B0%E6%8B%BE%E9%81%97"><span class="toc-number">6.</span> <span class="toc-text">六、实验发现拾遗</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E4%B8%8E%E4%BA%BA%E7%B1%BB%E5%AF%B9%E7%85%A7%E5%AE%9E%E9%AA%8C"><span class="toc-number">6.1.</span> <span class="toc-text">6.1 与人类对照实验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-about%E6%95%B0%E6%8D%AE%E6%B3%84%E9%9C%B2%E7%9A%84%E6%A3%80%E9%AA%8C"><span class="toc-number">6.2.</span> <span class="toc-text">6.2 about数据泄露的检验</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">7.</span> <span class="toc-text">七、局限性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E4%BB%BB%E5%8A%A1%E5%B1%82%E9%9D%A2"><span class="toc-number">7.1.</span> <span class="toc-text">7.1 任务层面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E6%96%B9%E6%B3%95%E5%B1%82%E9%9D%A2"><span class="toc-number">7.2.</span> <span class="toc-text">7.2 方法层面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E5%BA%94%E2%BD%A4%E5%B1%82%E9%9D%A2"><span class="toc-number">7.3.</span> <span class="toc-text">7.3 应⽤层面</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E7%A4%BE%E4%BC%9A%E5%BD%B1%E5%93%8D%E4%B8%8E%E5%81%8F%E8%A7%81"><span class="toc-number">8.</span> <span class="toc-text">八、社会影响与偏见</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E4%BA%BA%E5%8F%A3%E7%BB%9F%E8%AE%A1%E5%81%8F%E8%A7%81"><span class="toc-number">8.1.</span> <span class="toc-text">8.1 人口统计偏见</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E6%A0%87%E7%AD%BE%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%95%8F%E6%84%9F%E6%80%A7"><span class="toc-number">8.2.</span> <span class="toc-text">8.2 标签设计的敏感性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-%E7%9B%91%E6%8E%A7%E4%B8%8E%E9%9A%90%E7%A7%81"><span class="toc-number">8.3.</span> <span class="toc-text">8.3 监控与隐私</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E5%85%B3%E9%94%AE%E6%B4%9E%E5%AF%9F%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">九、关键洞察与总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E2%BC%BC%E8%B4%A1%E7%8C%AE"><span class="toc-number">9.1.</span> <span class="toc-text">核⼼贡献</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%80%E6%9C%AF%E8%B7%AF%E7%BA%BF%E5%9B%BE"><span class="toc-number">9.2.</span> <span class="toc-text">技术路线图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%BD%AD%E5%BE%85%E8%A7%A3%E5%86%B3%E7%9A%84%E2%BD%85%E5%90%91"><span class="toc-number">9.3.</span> <span class="toc-text">⽭待解决的⽅向</span></a></li></ol></li></ol></div></div><div class="post-content"><p>论文：Learning Transferable Visual Models From Natural Language Supervision (Radford et al., OpenAI, 2021)</p>
+<p>论文地址：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2103.00020">https://arxiv.org/pdf/2103.00020</a><br>代码：<a target="_blank" rel="noopener" href="https://github.com/OpenAI/CLIP">https://github.com/OpenAI/CLIP</a></p>
+<span id="more"></span>
+
+<h2 id="一、背景与动机"><a href="#一、背景与动机" class="headerlink" title="一、背景与动机"></a>一、背景与动机</h2><h3 id="1-1-传统计算机视觉的三⼤痛点"><a href="#1-1-传统计算机视觉的三⼤痛点" class="headerlink" title="1.1 传统计算机视觉的三⼤痛点"></a>1.1 传统计算机视觉的三⼤痛点</h3><p>尽管深度学习⾰命了计算机视觉，但在 CLIP 论文发表时（2021年初），主流⽅法存在三个核⼼问题：</p>
+<ol>
+<li><strong>标注数据集昂贵且狭窄</strong>：ImageNet 数据集的构建需要 25,000+ ⼯作者标注 1400 万张图像覆盖 22,000 个物体类别。即便如此，它也只能监督有 限的预定义视觉概念。</li>
+<li><strong>模型通⽤性差</strong>：标准视觉模型是”单任务专家”——⽐如 ImageNet 模型只能识别 1000 个类别，换⼀个任务就需要重新构建数据集、添加输出头、微调模 型。</li>
+<li><strong>基准性能与实际性能脱节（稳健性差距）</strong>：模型在基准测试上表现优秀甚至超越⼈类，但在真实场景或分布偏移（distribution shift）下性能急剧下降。论⽂将这种现 象称为”作弊式学习”——模型学会了考试题的答案，但没学会真正的视觉理解。</li>
+</ol>
+<h3 id="1-2-核心思路：从自然语言中学习视觉"><a href="#1-2-核心思路：从自然语言中学习视觉" class="headerlink" title="1.2 核心思路：从自然语言中学习视觉"></a>1.2 核心思路：从自然语言中学习视觉</h3><p>CLIP 的核⼼思想⾮常直接——利⽤互联⽹上⼤量存在的”图像-⽂本”配对数据作为监督信号，让模型学会将视觉概念与⾃然语⾔描述关联起来。</p>
+<p>这样的好处：</p>
+<ul>
+<li><strong>不需要⼈⼯标注</strong>：互联⽹上有⼤量免费且多样的图像-⽂本对（如 Instagram 图⽚+描述、新闻图⽚+标题）</li>
+<li><strong>不受类别数量限制</strong>：⾃然语⾔可以描述任意视觉概念</li>
+<li><strong>零样本泛化</strong>：训练完成后，只需提供新任务的类别名称（或描述），模型就能进⾏分类，不需要额外 训练数据</li>
+<li><strong>学习到更鲁棒的特征</strong>：由于没有直接针对特定基准训练，模型不会过拟合特定分布的偏置</li>
+</ul>
+<hr>
+<h2 id="二、方法：对比语言-图像预训练"><a href="#二、方法：对比语言-图像预训练" class="headerlink" title="二、方法：对比语言-图像预训练"></a>二、方法：对比语言-图像预训练</h2><h3 id="2-1-数据集：WIT-WebImageText"><a href="#2-1-数据集：WIT-WebImageText" class="headerlink" title="2.1 数据集：WIT (WebImageText)"></a>2.1 数据集：WIT (WebImageText)</h3><p>CLIP 使⽤了⼀个⾃建的数据集 <strong>WIT (WebImageText)</strong>，包含 <strong>4 亿对（图像, ⽂本）</strong>，从互联⽹上收集。</p>
+<p>构建⽅式：</p>
+<ul>
+<li>以 Wikipedia 中出现⾄少 100 次的单词作为查询词</li>
+<li>加上⾼互信息（pointwise mutual information）的单词对作为查询词</li>
+<li>补充所有 WordNet synsets</li>
+<li>每个查询词最多保留 20,000 对 (image, text)</li>
+<li>总词数与 GPT-2 训练的 WebText 数据集规模相当</li>
+</ul>
+<h3 id="2-2-对比学习目标函数"><a href="#2-2-对比学习目标函数" class="headerlink" title="2.2 对比学习目标函数"></a>2.2 对比学习目标函数</h3><p>CLIP 的核⼼训练⽬标：给定⼀个 batch 的 N 个 (image, text) 对，模型需要预测哪 N 个配对是真实的。</p>
+<p>具体来说：</p>
+<ol>
+<li>通过图像编码器提取图像特征 $I_f$，通过⽂本编码器提取⽂本特征 $T_f$</li>
+<li>分别通过线性投影映射到联合多模态嵌⼊空间：$I_e &#x3D; \text{L2_Normalize}(W_i \cdot I_f)$，$T_e &#x3D; \text{L2_Normalize}(W_t \cdot T_f)$</li>
+<li>计算成对余弦相似度，乘以可学习的温度参数 $\tau$：$\text{logits} &#x3D; I_e \cdot T_e^T \times \exp(\tau)$</li>
+<li><strong>对称交叉熵损失</strong>：图像到⽂本 + ⽂本到图像的交叉熵损失取平均</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CLIP 核心训练的 Numpy 伪代码</span></span><br><span class="line"><span class="attr">I_f</span> = image_encoder(I)      <span class="comment"># [n, d_i]</span></span><br><span class="line"><span class="attr">T_f</span> = text_encoder(T)        <span class="comment"># [n, d_t]</span></span><br><span class="line"><span class="attr">I_e</span> = l2_normalize(np.dot(I_f, W_i), axis=<span class="number">1</span>)  <span class="comment"># [n, d_e]</span></span><br><span class="line"><span class="attr">T_e</span> = l2_normalize(np.dot(T_f, W_t), axis=<span class="number">1</span>)  <span class="comment"># [n, d_e]</span></span><br><span class="line"><span class="attr">logits</span> = np.dot(I_e, T_e.T) * np.exp(t)        <span class="comment"># [n, n]</span></span><br><span class="line"><span class="attr">labels</span> = np.arange(n)</span><br><span class="line"><span class="attr">loss_i</span> = cross_entropy_loss(logits, labels, axis=<span class="number">0</span>)</span><br><span class="line"><span class="attr">loss_t</span> = cross_entropy_loss(logits, labels, axis=<span class="number">1</span>)</span><br><span class="line"><span class="attr">loss</span> = (loss_i + loss_t) / <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>为什么选对比学习而不是生成式？</strong></p>
+<p>论⽂实验证明：</p>
+<ul>
+<li>预测 BoW (Bag-of-Words) 的基线⽐ Transformer 语⾔模型 <strong>快 3 倍</strong></li>
+<li>CLIP 的对比⽬标⼜⽐预测 BoW <strong>快 4 倍</strong></li>
+<li>总体上，CLIP 对⽐⽬标⽐图像描述⽣成 (image-to-caption) <strong>⾼效 4-10 倍</strong></li>
+</ul>
+<p>原因：预测图⽚配⻚的准确完整⽂本是⼀个⾮常困难的任务（描述⽅式⼏乎⽆限），⽽只需要判断”哪个⽂本 与这张图最匹配”是⼀个更简单、更有效的代理任务。</p>
+<h3 id="2-3-模型架构"><a href="#2-3-模型架构" class="headerlink" title="2.3 模型架构"></a>2.3 模型架构</h3><p><strong>图像编码器</strong>：两种选择</p>
+<ul>
+<li><strong>ResNet</strong>：采⽤ ResNet-50, ResNet-101, 以及遵循 EfficientNet 的 scaled 版本（RN50x4, RN50x16, RN50x64），计算量按宽、深、分辨率等⽐例分配</li>
+<li><strong>Vision Transformer (ViT)</strong>：采⽤ ViT-B&#x2F;32, ViT-B&#x2F;16, ViT-L&#x2F;14，在 patch + position embedding 后添加了额外的 layer normalization</li>
+</ul>
+<p><strong>文本编码器</strong>：Transformer</p>
+<ul>
+<li>基于 GPT-2 的 63M-parameter 12 层 512 宽的 Transformer，8 个注意⼒头</li>
+<li>词汇量：49,152 (BPE)，最⼤序列⻓度：76</li>
+<li>使⽤ masked self-attention（保留了使⽤预训练语⾔模型初始化的可能性）</li>
+<li>取 [EOS] token 对应最⾼层的激活值作为⽂本特征表⽰</li>
+<li>使⽤ layer normalization 后线性投影到多模态空间</li>
+</ul>
+<div align="center">
+<img src="/images/essay/clip/clip_fig1.png" width="1000px"/>
+</div>
+
+<h3 id="2-4-训练规模"><a href="#2-4-训练规模" class="headerlink" title="2.4 训练规模"></a>2.4 训练规模</h3><ul>
+<li>训练时间：在 <strong>256 个 GPU 上训练 2 周</strong>（与当时最⼤规模的视觉模型相当）</li>
+<li>CLIP 系列模型从 RN50 到 RN50x64，计算量跨越 44 倍</li>
+<li>零样本性能随模型计算量呈 log-log 线性提升</li>
+</ul>
+<hr>
+<h2 id="三、零样本推理"><a href="#三、零样本推理" class="headerlink" title="三、零样本推理"></a>三、零样本推理</h2><h3 id="3-1-零样本推理流程"><a href="#3-1-零样本推理流程" class="headerlink" title="3.1 零样本推理流程"></a>3.1 零样本推理流程</h3><p>CLIP 实现零样本分类的步骤：</p>
+<ol>
+<li><strong>构造分类器</strong>：将每个类别的名称转成句⼦（如 “a photo of a {label}”），通过文本编码器得到类别嵌入向量</li>
+<li><strong>计算相似度</strong>：输入图像通过图像编码器得到图像嵌入，与所有类别嵌入计算余弦相似度</li>
+<li><strong>softmax 分类</strong>：选择相似度最高的类别作为预测结果</li>
+</ol>
+<p>这使得 CLIP 可以<em>零样本</em>应⽤于任意的视觉分类任务，不需要任何该任务 的训练数据。</p>
+<h3 id="3-2-prompt-工程和-Ensembling"><a href="#3-2-prompt-工程和-Ensembling" class="headerlink" title="3.2 prompt 工程和 Ensembling"></a>3.2 prompt 工程和 Ensembling</h3><p>CLIP 发现零样本性能对⽂本 prompt 的措辞很敏感。简单的类别名（如 “dog”）不如完 整的句⼦效果好。</p>
+<p><strong>Prompt 工程示例：</strong></p>
+<ul>
+<li>细粒度分类：<code>&quot;A photo of a {label}, a type of pet.&quot;</code>（Oxford-IIIT Pets）</li>
+<li>食物分类：<code>&quot;A photo of {label}, a type of food.&quot;</code>（Food101）</li>
+<li>OCR 数据集：在⽂本或数字周围加引号</li>
+<li>卫星图像：<code>&quot;A satellite photo of {label}.&quot;</code></li>
+<li>ImageNet：使⽤ 80 种不同的 prompt 模板进⾏集成</li>
+</ul>
+<p><strong>Prompt Ensembling</strong>：</p>
+<ul>
+<li>⽣成多个零样本分类器（⽐如使⽤不同上下⽂ prompt），在 <strong>嵌⼊空间</strong> 上进⾏平均</li>
+<li>好处：只需缓存平均后的⽂本嵌⼊，推理开销与使⽤单个分类器相同</li>
+</ul>
+<p>效果：<strong>Prompt 工程 + ensembling 在 ImageNet 上额外提升近 5% 精度</strong>。</p>
+<h3 id="3-3-零样本性能亮点"><a href="#3-3-零样本性能亮点" class="headerlink" title="3.3 零样本性能亮点"></a>3.3 零样本性能亮点</h3><ul>
+<li><strong>ImageNet 零样本准确率 76.2%</strong> ：与原始 ResNet-50 在有监督训练下的表现相当，但没使⽤任何 ImageNet 训练样本</li>
+<li><strong>在 27 个数据集上与 ResNet-50 线性分类器对⽐</strong>：零样本 CLIP 在 16 个数据集上表现更好</li>
+<li><strong>零样本 ≈ 4-shot 线性分类器</strong>：在相同特征空间上，零样本 CLIP 匹配 4-shot 逻辑回归的性能。在某些数据集上，需要 16-184 个有标签样本&#x2F;类别才能匹配 CLIP 的零样本效果</li>
+<li><strong>在 aYahoo 上 98.4%</strong> （远超 Visual N-Grams 的 72.4%）、<strong>SUN 上 58.5%</strong> （远超 23.0%）</li>
+</ul>
+<hr>
+<h2 id="四、表征学习：线性探测评估"><a href="#四、表征学习：线性探测评估" class="headerlink" title="四、表征学习：线性探测评估"></a>四、表征学习：线性探测评估</h2><p>除了零样本迁移，论⽂也通过线性探测（linear probe）评估了 CLIP 学习到的表征质量。</p>
+<h3 id="4-1-与最先进模型的对比"><a href="#4-1-与最先进模型的对比" class="headerlink" title="4.1 与最先进模型的对比"></a>4.1 与最先进模型的对比</h3><p>在 Kornblith et al. 的 12 个数据集上：</p>
+<ul>
+<li>CLIP 最⾼分模型 (ViT-L&#x2F;14) 超越所有对比⽅法（包括 Noisy Student EfficientNet-L2, BiT-M, SimCLRv2, BYOL, MoCo）</li>
+<li>CLIP 模型是<strong>计算效率最高</strong>的：相⽐其他⽅法，在相同前向传播计算量下，CLIP 模型的线性探测性能明显更⾼</li>
+</ul>
+<p>在更⼴泛的 27 个数据集上，结论更加显著：</p>
+<ul>
+<li>最好的 CLIP 模型在 21&#x2F;27 个数据集上超越 Noisy Student EfficientNet-L2</li>
+<li>尤其在 <strong>OCR</strong> (SST2, HatefulMemes)、<strong>地理定位</strong> (Country211)、<strong>动作识别</strong> (Kinetics700, UCF101)、<strong>细粒度分类</strong> (Stanford Cars, GTSRB) 上表现突出</li>
+</ul>
+<h3 id="4-2-为何-CLIP-表征更好？"><a href="#4-2-为何-CLIP-表征更好？" class="headerlink" title="4.2 为何 CLIP 表征更好？"></a>4.2 为何 CLIP 表征更好？</h3><p>论⽂推测关键原因在于<strong>监督信号的宽度</strong>：</p>
+<ul>
+<li>ImageNet 只有 1000 个类别，对⻋辆只有⼀个 “car” 标签</li>
+<li>这导致监督表征将不同⻋型的内部差异压缩，在细粒度下游任务上表现差</li>
+<li>CLIP 的⾃然语⾔监督天然包含了更细粒度的语义信息</li>
+</ul>
+<hr>
+<h2 id="五、鲁棒性：分布偏移下的表现"><a href="#五、鲁棒性：分布偏移下的表现" class="headerlink" title="五、鲁棒性：分布偏移下的表现"></a>五、鲁棒性：分布偏移下的表现</h2><h3 id="5-1-有效稳健性-Effective-Robustness"><a href="#5-1-有效稳健性-Effective-Robustness" class="headerlink" title="5.1 有效稳健性 (Effective Robustness)"></a>5.1 有效稳健性 (Effective Robustness)</h3><p>CLIP 最令⼈振奋的发现之⼀是<strong>零样本模型在分布偏移下的表现远优于监督模型</strong>。</p>
+<p>论⽂在 7 个评估⾃然分布偏移的数据集上进⾏测试：ImageNetV2, ImageNet Sketch, ImageNet-R, ImageNet-A, ObjectNet, Youtube-BB, ImageNet-Vid。</p>
+<p>核⼼发现：</p>
+<ul>
+<li>零样本 CLIP 将”稳健性差距（robustness gap）”<strong>缩⼩了 75%</strong></li>
+<li>对⽐同样 ImageNet 准确率的 ResNet-101，CLIP 在 ObjectNet 上提⾼了 <strong>+51.2%</strong>，在 ImageNet-A 上提⾼了 <strong>+74.4%</strong></li>
+<li>所有零样本 CLIP 模型的<strong>有效稳健性</strong>（ImageNet 准确率 vs 分布偏移准确率的对应关系）都⾮常接近理想 $y&#x3D;x$ 线</li>
+</ul>
+<h3 id="5-2-“适应-ImageNet”的代价"><a href="#5-2-“适应-ImageNet”的代价" class="headerlink" title="5.2 “适应 ImageNet”的代价"></a>5.2 “适应 ImageNet”的代价</h3><p>让 CLIP 适应 ImageNet（训练线性分类器）后：</p>
+<ul>
+<li>ImageNet 准确率提⾼ <strong>9.2%</strong> （达到 85.4%，匹配 2018 年 SOTA）</li>
+<li>但在 7 个分布偏移数据集上的平均准确率<strong>略有下降</strong></li>
+<li>这意味着监督适应带来的提升可能主要是”学会了 ImageNet 特有的偏置”，⽽不是通⽤视觉理解的 增强</li>
+</ul>
+<p><strong>启发</strong>：减少模型接触数据集的分布特 定信息，虽然可能降低在该数据集上的分数，但能提升泛化能⼒。CLIP 零样本评估⽐标准 ImageNet 基准<strong>更能代表模型的真实能⼒</strong>。</p>
+<h3 id="5-3-Few-Shot-与鲁棒性"><a href="#5-3-Few-Shot-与鲁棒性" class="headerlink" title="5.3 Few-Shot 与鲁棒性"></a>5.3 Few-Shot 与鲁棒性</h3><ul>
+<li>少样本 CLIP（线性探测）⽐标准 ImageNet 模型更鲁棒，但不如零样本 CLIP 鲁棒</li>
+<li>随着适应数据增加，有效稳健性逐渐降低</li>
+<li>这表明：<strong>最小化分布特定的训练数据量 → 更高的有效稳健性</strong>，但代价是降低数据集特定的性能</li>
+</ul>
+<hr>
+<h2 id="六、实验发现拾遗"><a href="#六、实验发现拾遗" class="headerlink" title="六、实验发现拾遗"></a>六、实验发现拾遗</h2><h3 id="6-1-与人类对照实验"><a href="#6-1-与人类对照实验" class="headerlink" title="6.1 与人类对照实验"></a>6.1 与人类对照实验</h3><p>在 Oxford-IIIT Pets 数据集上的⼈类对照实验：</p>
+<table>
+<thead>
+<tr>
+<th>设置</th>
+<th>⼈类准确率</th>
+<th>CLIP 准确率</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>零样本</td>
+<td>53.7%</td>
+<td><strong>93.5%</strong></td>
+</tr>
+<tr>
+<td>单样本</td>
+<td>75.7%</td>
+<td>-</td>
+</tr>
+<tr>
+<td>双样本</td>
+<td>75.7%</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<p>关键发现：</p>
+<ul>
+<li>⼈类零样本时犹豫不确定的图像，在获得 1 个示例后准确率⼤幅提升——⼈类”知道⾃⼰不知道什么”</li>
+<li>CLIP 的零样本强但少样本提升有限，与⼈类形成鲜明对⽐——说明 CLIP 并未有效利⽤先验知识进⾏ 少样本学习</li>
+<li>在 <strong>最难类别上的排序</strong>，⼈类和 CLIP 差异较⼩（CLIP 难的任务⼈也难）</li>
+</ul>
+<h3 id="6-2-about数据泄露的检验"><a href="#6-2-about数据泄露的检验" class="headerlink" title="6.2 about数据泄露的检验"></a>6.2 about数据泄露的检验</h3><p>论⽂仔细检验了预训练数据和下游评估数据之间的重叠问题：</p>
+<ul>
+<li>35 个数据集中，9 个完全⽆重叠（⼈造&#x2F;专⽤数据集如 MNIST, CLEVR, GTSRB）</li>
+<li>中位数重叠率 <strong>2.2%</strong> ，平均重叠率 <strong>3.2%</strong></li>
+<li>最⼤的整体准确率提升仅为 <strong>0.6%</strong> （Birdsnap），⼤多数 &lt;0.1%</li>
+<li>结论：数据泄露并未显著影响 CLIP 的零样本性能</li>
+</ul>
+<hr>
+<h2 id="七、局限性"><a href="#七、局限性" class="headerlink" title="七、局限性"></a>七、局限性</h2><p>论⽂坦诚地讨论了 CLIP 的多⽅⾯局限性：</p>
+<h3 id="7-1-任务层面"><a href="#7-1-任务层面" class="headerlink" title="7.1 任务层面"></a>7.1 任务层面</h3><table>
+<thead>
+<tr>
+<th>弱点</th>
+<th>表现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>抽象&#x2F;系统化任务</td>
+<td>计数(CLEVRCounts)仅略好于随机猜测</td>
+</tr>
+<tr>
+<td>复杂推理</td>
+<td>预测”最近⻋的距离”(KITTI Distance)接近随机</td>
+</tr>
+<tr>
+<td>⾮常细粒度的分类</td>
+<td>⻋型号、⻜机型号、花种区分能⼒远弱于专⼯模型</td>
+</tr>
+<tr>
+<td>分布外数据</td>
+<td>MNIST ⼿写数字仅 88%（远低于⼈类 99.75% 和专⼯模型）</td>
+</tr>
+</tbody></table>
+<h3 id="7-2-方法层面"><a href="#7-2-方法层面" class="headerlink" title="7.2 方法层面"></a>7.2 方法层面</h3><ul>
+<li><strong>计算资源需求巨⼤</strong>：约需要 1000 倍⽬前的计算量才能达到整体 SOTA，在当前硬件下不可⾏</li>
+<li><strong>数据效率低</strong>：32 个 epoch 处理 128 亿张图⽚，不解决深度学习的数据效率问题</li>
+<li><strong>Prompt 依赖</strong>：零样本分类器对 prompt 措辞敏感，需要反复”prompt 工程”</li>
+<li><strong>验证集泄漏</strong>：虽然声称零样本，开发过程中反复查询验证集来指导模型开发</li>
+<li><strong>评估数据集选择</strong>：部分与 CLIP 的能⼒共同适应（co-adapted）</li>
+</ul>
+<h3 id="7-3-应⽤层面"><a href="#7-3-应⽤层面" class="headerlink" title="7.3 应⽤层面"></a>7.3 应⽤层面</h3><ul>
+<li>许多复杂视觉概念和任务<strong>难以仅通过⽂本描述来指定</strong></li>
+<li>零样本到少样本过渡时<strong>性能反降</strong>（与⼈类学习⽅式相反）</li>
+<li>存在社会偏见问题（⻅下⽂）</li>
+</ul>
+<hr>
+<h2 id="八、社会影响与偏见"><a href="#八、社会影响与偏见" class="headerlink" title="八、社会影响与偏见"></a>八、社会影响与偏见</h2><p>论⽂⽤了相当篇幅分析 CLIP 的社会影响：</p>
+<h3 id="8-1-人口统计偏见"><a href="#8-1-人口统计偏见" class="headerlink" title="8.1 人口统计偏见"></a>8.1 人口统计偏见</h3><ul>
+<li>零样本 CLIP 在 FairFace 种族分类上准确率仅为 <strong>58.3%</strong> （远低于专⼯模型的 93.7%）</li>
+<li>⽽在性别分类上达到 <strong>95.9%</strong> ，说明模型对不同属性的掌握程度不均匀</li>
+<li>在”非白人”群体上准确率反⽽更⾼（91.3%），但在不同种族亚群上存在差异</li>
+</ul>
+<h3 id="8-2-标签设计的敏感性"><a href="#8-2-标签设计的敏感性" class="headerlink" title="8.2 标签设计的敏感性"></a>8.2 标签设计的敏感性</h3><p>论⽂进⾏了⼀项颇具启发性的实验：</p>
+<ul>
+<li>当标签集包含 “thief”, “criminal”, “animal”, “gorilla” 等贬义标签时，0-20 岁⼈群的约 <strong>32.3%</strong> 被归类到这些不当标签</li>
+<li>当加⼊ “child” 标签后，这⼀⽐例降到 <strong>8.7%</strong></li>
+<li>这揭示了<strong>类别设计</strong>对 CLIP 模型⾏为的深远影响——任⼚开发者可以定义任意类别，模型就会产⽣结果</li>
+</ul>
+<h3 id="8-3-监控与隐私"><a href="#8-3-监控与隐私" class="headerlink" title="8.3 监控与隐私"></a>8.3 监控与隐私</h3><ul>
+<li>CCTV 粗糙分类（停车场、校园……）准确率 91.8%，但添加 “close” 干扰选项后降到 51.1%</li>
+<li>零样本名⼈脸识别：100 类别 top-1 准确率 59.2%（与⾕歌 Celeb Rec 等⽣产级模型⽐仍有差距）</li>
+<li>潜在⻛险：CLIP 降低了构建定制化监控应⽤的门槛</li>
+</ul>
+<hr>
+<h2 id="九、关键洞察与总结"><a href="#九、关键洞察与总结" class="headerlink" title="九、关键洞察与总结"></a>九、关键洞察与总结</h2><h3 id="核⼼贡献"><a href="#核⼼贡献" class="headerlink" title="核⼼贡献"></a>核⼼贡献</h3><ol>
+<li><strong>证明大规模自然语言监督可以学习高质量、可迁移的视觉表征</strong>——将 NLP 的”预训练 + 任务无关”范式成功移植到计算机视觉</li>
+<li><strong>对比学习⽬标远⾼效于预 测&#x2F;生成⽅法</strong>——相⽐图像描述⽣成，效率提升 4-10 倍</li>
+<li><strong>零样本评估更接近真实能⼒</strong>——不针对特定基准优化，表现更具代表性，有效稳健性提升 75%</li>
+<li><strong>开放更灵活的任务交互⽅式</strong>——仅通过修改 prompt ⽂本即可定制分类器</li>
+</ol>
+<h3 id="技术路线图"><a href="#技术路线图" class="headerlink" title="技术路线图"></a>技术路线图</h3><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">互联⽹图像+⾃然语⾔描述（400M 对）</span><br><span class="line">    ↓</span><br><span class="line">对⽐图像-⽂本预训练（256 GPU,<span class="number"> 2 </span>weeks）</span><br><span class="line">    ↓</span><br><span class="line">通⽤视觉-语⾔联合嵌入空间</span><br><span class="line">    ↓</span><br><span class="line">零样本/少样本适应下游任务</span><br></pre></td></tr></table></figure>
+
+<h3 id="⽭待解决的⽅向"><a href="#⽭待解决的⽅向" class="headerlink" title="⽭待解决的⽅向"></a>⽭待解决的⽅向</h3><ul>
+<li>提升模型在抽象推理、计数、结构化任务上的能⼒</li>
+<li>改善数据效率和计算效率</li>
+<li>发展更好的 prompt ⾃动化⽅法，减少⼿⼯ prompt 工程</li>
+<li>结合自我监督、自训练方法弥补数据效率短板</li>
+<li>⽣态监测和缓解社会偏见</li>
+</ul>
+<p>总体来看，CLIP 不仅提出了⼀种具体的技术⽅案，更是开创了”⾃然语⾔监督学习”的新范式，为后续的多模态模型（如 DALL·E、Stable Diffusion 等图像⽣成模型，以及 GPT-4V 等多模态⼤语⾔模型）奠定了基础。</p>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.1" async></script><a class="article-share-link" data-url="https://deeplearner.top/2026/05/07/research/paper-clip/" data-id="cuidu40r91cnfOw7OFxhoA0BL" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACL0lEQVR42u3aQW6EMAwF0Ln/pelmdgj0bTOVSB6rqsOEPCq5duzPJ76O03X+9Hxn8mmy/mMXBgbGaxnH7XW/lWe/27sfAwNjH8ZVBMtDar6V5CXme8PAwMC4uicKghf399JKDAwMjISRwO4Z86dgYGDszEhStPtFe+VossLDtTgGBsYLGfmp+////JP+BgYGxqsYR/HKv1UNx739fFfAwMBYmtFrK+Ztg0nRm6ekGBgYOzCqR2CTMFpds3eEh4GBsR6jWjTmoTMfy8jxl9/CwMBYlJGEtvxwv4ecNEQxMDB2YFQbAPPonq+ZpKHNPgYGBsYLGXkAfbYQzX9f+AtgYGAszZgfrk1SwB7pshbHwMBYiFHddK8ErY695mnlp/fuMTAwXsVoDowWS9B5Ghq9XAwMjEUZ82P9apOgd3hXmA3BwMBYlJH3DfLHF9qNrQM4DAyMfRi947BekzIZ2iiHWgwMjG0YSarXe3CyTrVhUP4fgoGBsQQjT+zmZWq+xfJ+MDAwNmBURxx6KWM+uF8e78DAwNiAkVy9EFwtU5PEsZDbYmBgLMHoDUnMC93qgVr0LQwMjOUYR/HKmwGTMa8fJoUYGBgvZEzGVfMkbzJyUX0iBgbGqox54Tq5Jw/Eo1ocAwNjCUYS+PIWY+81jYbYMDAwMIpty96IRt5GfSDgYmBgbMNICt1fDJxhYGDsyag2A3rDXr3xjmgEFgMDY2nGqHRsJXxJIM6bnRgYGEsz/gANBjzirl8CJgAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/"><i class="fa fa-tag"></i>计算机视觉</a><a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/"><i class="fa fa-tag"></i>深度学习模型</a><a href="/tags/NLP/"><i class="fa fa-tag"></i>NLP</a><a href="/tags/%E5%A4%9A%E6%A8%A1%E6%80%81/"><i class="fa fa-tag"></i>多模态</a><a href="/tags/CLIP/"><i class="fa fa-tag"></i>CLIP</a><a href="/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/"><i class="fa fa-tag"></i>对比学习</a><a href="/tags/%E9%9B%B6%E6%A0%B7%E6%9C%AC%E5%AD%A6%E4%B9%A0/"><i class="fa fa-tag"></i>零样本学习</a><a href="/tags/Vision-Transformer/"><i class="fa fa-tag"></i>Vision Transformer</a></div><div class="post-nav"><a class="next" href="/research/ai-driven-mbe-control/">研究方向：AI 驱动材料生长实时控制</a></div><div class="nofancybox" id="waline"></div><script src="//unpkg.com/@waline/client@v2/dist/waline.js"></script><link rel="stylesheet" type="text/css" href="//unpkg.com/@waline/client@v2/dist/waline.css"><script>let metaInfo = ['nick', 'mail', 'link']
+let requiredMeta = 'nick'.split(',').filter(item => {
+  return metaInfo.indexOf(item) > -1
+})
+Waline.init({
+  el: '#waline',
+  comment: true,
+  serverURL: 'https://waline-deeplearner.vercel.app',
+  pageSize: '10',
+  wordLimit: '500',
+  requiredMeta,
+})
+</script></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">9</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B/">课程</a><span class="category-list-count">7</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/05/01/Claude-Code%E5%AE%89%E8%A3%85%E4%B8%8EDeepSeek%E7%AC%AC%E4%B8%89%E6%96%B9API%E9%85%8D%E7%BD%AE/">Claude Code 安装与 DeepSeek 第三方 API 配置教程</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/face-detection-recognition/">计算机视觉专题：人脸检测与人脸识别</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/ocr-optical-character-recognition/">场景文字理解：OCR 基础、检测与识别方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/generative-adversarial-networks-gan/">生成模型专题：生成对抗网络（GAN）原理与实践</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/tf-idf-algorithm/">文本表示基础：TF-IDF 与文本分类入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/target-detection/">计算机视觉专题：目标检测基础与经典检测器</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/semantic-segmentation/">计算机视觉专题：语义分割原理与经典模型</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/natural-language-processing-nlp/">自然语言处理导论：基础方法、表示学习与典型应用</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-flask"> 元素周期表</i></div><ul></ul><a href="https://pt.ziziyi.com/" title="元素周期表" target="_blank" rel="noopener noreferrer">元素周期表</a><ul></ul><a href="https://ptable.com/#%E6%80%A7%E8%B4%A8/%E7%B3%BB%E5%88%97" title="元素性质" target="_blank" rel="noopener noreferrer">元素性质</a><ul></ul><a href="https://ptable.com/#%E7%94%B5%E5%AD%90%E5%B1%82/%E6%B0%A7%E5%8C%96%E6%95%B0" title="电子层" target="_blank" rel="noopener noreferrer">电子层</a><ul></ul><a href="https://ptable.com/#%E5%90%8C%E4%BD%8D%E7%B4%A0/%E6%80%BB%E8%AE%A1" title="同位素" target="_blank" rel="noopener noreferrer">同位素</a><ul></ul><a href="https://ptable.com/#%E5%8C%96%E5%90%88%E7%89%A9" title="元素化合物" target="_blank" rel="noopener noreferrer">元素化合物</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.1" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.1" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.1"><script type="text/javascript" src="/js/search.js?v=1.0.1"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/post-protect.js?v=1.0.1"></script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript">window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    processEscapes: true
+  },
+  chtml: {
+    fontURL: '/js/chtml/fonts/woff-v2'
+  },
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  }
+};
+</script><script type="text/javascript" src="/js/mathjax3.js" async></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.1"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.1"></script></div><!-- hexo injector body_end start -->
+<script src="/assets/prism-bundle.js"></script>
+<script src="/assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>
