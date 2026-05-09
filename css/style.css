@@ -503,7 +503,6 @@ div {
 .home-path-card {
   position: relative;
   display: block;
-  min-height: 100%;
   padding: 22px 22px 24px;
   text-decoration: none;
   color: inherit;
@@ -571,7 +570,6 @@ div {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  min-height: 100%;
   transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 
