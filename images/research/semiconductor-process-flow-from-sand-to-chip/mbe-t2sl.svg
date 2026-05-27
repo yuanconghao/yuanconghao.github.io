@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="620" viewBox="0 0 1280 620" role="img" aria-label="MBE 生长二类超晶格材料示意">
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.chamber{fill:#e5e7eb;stroke:#334155;stroke-width:3}.src{fill:#fff;stroke:#475569;stroke-width:2}.beam{stroke:#0284c7;stroke-width:4;stroke-dasharray:8 8}.beam2{stroke:#dc2626;stroke-width:4;stroke-dasharray:8 8}.beam3{stroke:#7c3aed;stroke-width:4;stroke-dasharray:8 8}.sub{fill:#1e293b}.layer1{fill:#93c5fd}.layer2{fill:#fca5a5}.layer3{fill:#c4b5fd}.txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",Arial,sans-serif;fill:#111827;font-size:22px;font-weight:700}.small{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",Arial,sans-serif;fill:#374151;font-size:16px}.arrow{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#334155"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="620"/>
+  <text class="txt" x="42" y="54" font-size="30">二类超晶格材料生长：MBE 用“束流 + 快门”逐层搭积木</text>
+  <text class="small" x="42" y="84">UHV 环境下，In、Ga、As、Sb 等源炉产生分子束；快门时序决定界面，RHEED 原位监控表面重构和生长速率。</text>
+
+  <ellipse class="chamber" cx="415" cy="335" rx="300" ry="220"/>
+  <rect class="src" x="140" y="210" width="96" height="58" rx="10"/><text class="small" x="170" y="246">In</text>
+  <rect class="src" x="178" y="420" width="96" height="58" rx="10"/><text class="small" x="207" y="456">Ga</text>
+  <rect class="src" x="560" y="205" width="96" height="58" rx="10"/><text class="small" x="588" y="241">As</text>
+  <rect class="src" x="602" y="425" width="96" height="58" rx="10"/><text class="small" x="629" y="461">Sb</text>
+  <line class="beam" x1="236" y1="238" x2="405" y2="332"/>
+  <line class="beam2" x1="274" y1="449" x2="405" y2="352"/>
+  <line class="beam3" x1="560" y1="235" x2="430" y2="333"/>
+  <line class="beam2" x1="602" y1="452" x2="430" y2="352"/>
+  <rect class="sub" x="340" y="345" width="160" height="26" rx="6"/>
+  <rect class="layer1" x="340" y="323" width="160" height="10"/>
+  <rect class="layer2" x="340" y="313" width="160" height="10"/>
+  <rect class="layer1" x="340" y="303" width="160" height="10"/>
+  <rect class="layer2" x="340" y="293" width="160" height="10"/>
+  <text class="small" x="350" y="398">加热 GaSb 衬底</text>
+  <text class="small" x="334" y="422">周期：InAs / GaSb / InSb-like 界面</text>
+  <line x1="250" y1="155" x2="585" y2="145" stroke="#111827" stroke-width="3"/>
+  <circle cx="250" cy="155" r="8" fill="#111827"/><text class="small" x="266" y="150">RHEED 电子束</text>
+  <path d="M585 145 L625 120 L626 170 Z" fill="#111827"/>
+  <text class="small" x="585" y="110">荧光屏图样</text>
+
+  <rect x="790" y="140" width="410" height="175" fill="#fff" stroke="#94a3b8" stroke-width="2" rx="14"/>
+  <text class="txt" x="820" y="178">快门时序示例</text>
+  <text class="small" x="820" y="210">InAs 层：开 In + As</text>
+  <text class="small" x="820" y="238">界面层：短时开 In + Sb，抑制 As 记忆效应</text>
+  <text class="small" x="820" y="266">GaSb 层：开 Ga + Sb</text>
+  <text class="small" x="820" y="294">每个周期厚度通常为数纳米量级</text>
+
+  <rect x="790" y="360" width="410" height="175" fill="#fff" stroke="#94a3b8" stroke-width="2" rx="14"/>
+  <text class="txt" x="820" y="398">生长难点</text>
+  <text class="small" x="820" y="430">界面粗糙、As/Sb 交换与残余背景压</text>
+  <text class="small" x="820" y="458">应变平衡与失配位错</text>
+  <text class="small" x="820" y="486">组分漂移、源炉瞬态、掺杂记忆效应</text>
+  <text class="small" x="820" y="514">从单点器件到 FPA 的片内均匀性</text>
+</svg>

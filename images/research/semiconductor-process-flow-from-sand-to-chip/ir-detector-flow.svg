@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="580" viewBox="0 0 1280 580" role="img" aria-label="二类超晶格红外探测器工艺流程">
+  <defs>
+    <style>
+      .bg{fill:#fbfbf7}.box{fill:#fff;stroke:#334155;stroke-width:2;rx:14}.blue{fill:#dbeafe;stroke:#2563eb;stroke-width:2;rx:14}.green{fill:#dcfce7;stroke:#16a34a;stroke-width:2;rx:14}.orange{fill:#ffedd5;stroke:#ea580c;stroke-width:2;rx:14}.txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",Arial,sans-serif;fill:#111827;font-size:21px;font-weight:700}.small{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",Arial,sans-serif;fill:#374151;font-size:15px}.arrow{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#arrow)}.metal{fill:#facc15}.pass{fill:#a7f3d0}.abs{fill:#fca5a5}.bar{fill:#93c5fd}.sub{fill:#475569}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#334155"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="580"/>
+  <text class="txt" x="42" y="54" font-size="30">二类超晶格红外探测器：从外延片到焦平面阵列</text>
+  <text class="small" x="42" y="84">材料生长决定吸收波长和暗电流底线；微纳加工决定像元隔离、表面漏电、互连和阵列良率。</text>
+
+  <rect class="blue" x="52" y="145" width="180" height="95"/><text class="txt" x="83" y="183">外延片</text><text class="small" x="73" y="214">GaSb 衬底 + T2SL</text>
+  <path class="arrow" d="M232 192 H291"/>
+  <rect class="blue" x="298" y="145" width="180" height="95"/><text class="txt" x="325" y="183">台面光刻</text><text class="small" x="325" y="214">定义像元/隔离区</text>
+  <path class="arrow" d="M478 192 H537"/>
+  <rect class="green" x="544" y="145" width="180" height="95"/><text class="txt" x="582" y="183">刻蚀隔离</text><text class="small" x="570" y="214">湿法或 ICP-RIE</text>
+  <path class="arrow" d="M724 192 H783"/>
+  <rect class="green" x="790" y="145" width="180" height="95"/><text class="txt" x="826" y="183">侧壁钝化</text><text class="small" x="820" y="214">SiO2/SiNx/S 处理</text>
+  <path class="arrow" d="M970 192 H1029"/>
+  <rect class="orange" x="1036" y="145" width="190" height="95"/><text class="txt" x="1068" y="183">金属互连</text><text class="small" x="1064" y="214">接触窗口 + Ti/Pt/Au</text>
+
+  <path class="arrow" d="M1131 240 V304"/>
+  <rect class="orange" x="1036" y="322" width="190" height="95"/><text class="txt" x="1065" y="360">铟柱/倒装</text><text class="small" x="1057" y="391">Hybridize 到 ROIC</text>
+  <path class="arrow" d="M1036 370 H977"/>
+  <rect class="box" x="790" y="322" width="180" height="95"/><text class="txt" x="824" y="360">衬底处理</text><text class="small" x="815" y="391">减薄/去衬底/AR</text>
+  <path class="arrow" d="M790 370 H731"/>
+  <rect class="box" x="544" y="322" width="180" height="95"/><text class="txt" x="579" y="360">封装制冷</text><text class="small" x="572" y="391">真空腔体/冷屏/窗口</text>
+  <path class="arrow" d="M544 370 H485"/>
+  <rect class="box" x="298" y="322" width="180" height="95"/><text class="txt" x="331" y="360">阵列测试</text><text class="small" x="323" y="391">暗电流/响应率/NETD</text>
+
+  <g transform="translate(62,455)">
+    <text class="txt" x="0" y="-16">像元截面示意</text>
+    <rect class="sub" x="0" y="70" width="360" height="28"/>
+    <rect class="bar" x="52" y="48" width="256" height="22"/>
+    <rect class="abs" x="52" y="20" width="256" height="28"/>
+    <rect class="bar" x="52" y="0" width="256" height="20"/>
+    <path d="M52 0 V98 M308 0 V98" stroke="#334155" stroke-width="2"/>
+    <rect class="pass" x="25" y="0" width="24" height="98"/><rect class="pass" x="311" y="0" width="24" height="98"/>
+    <rect class="metal" x="118" y="-16" width="124" height="16" rx="4"/>
+    <text class="small" x="370" y="16">上接触/势垒层</text>
+    <text class="small" x="370" y="44">T2SL 吸收层</text>
+    <text class="small" x="370" y="70">下接触/缓冲层</text>
+    <text class="small" x="370" y="96">GaSb 衬底或 ROIC 侧</text>
+  </g>
+</svg>

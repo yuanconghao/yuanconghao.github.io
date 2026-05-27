@@ -1,0 +1,542 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="介绍光与电磁波的关系，梳理电磁波谱的基本参数，并细分可见光、红外光、紫外光、X 光和伽马射线的主要波段。"><title>光与电磁波谱：基本概念、参数与波段细分 | DeepLearner</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.1"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">光与电磁波谱：基本概念、参数与波段细分</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/essay/"><i class="fa fa-pencil"> 随笔</i></a><a href="/course/"><i class="fa fa-book"> 课程</i></a><a class="current" href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/tools/"><i class="fa fa-wrench"> 工具</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">光与电磁波谱：基本概念、参数与波段细分</h1><div class="post-meta">created:2026-05-25</div><div class="post-meta">updated:2026-05-27<span> | </span><span class="category"><a href="/categories/%E7%A0%94%E7%A9%B6/">研究</a></span></div><a class="disqus-comment-count" href="/research/regions-of-the-electromagnetic-spectrum/#waline"><span class="waline-comment-count" id="/research/regions-of-the-electromagnetic-spectrum/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%85%89%E4%B8%8E%E6%B3%A2%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.</span> <span class="toc-text">1 光与波的关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%85%89%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 光是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E7%94%B5%E7%A3%81%E6%B3%A2%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 电磁波是什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%94%B5%E7%A3%81%E6%B3%A2%E8%B0%B1%E5%9F%BA%E6%9C%AC%E5%8F%82%E6%95%B0"><span class="toc-number">2.</span> <span class="toc-text">2 电磁波谱基本参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%90%84%E7%A7%8D%E5%85%89%E7%9A%84%E6%B3%A2%E6%AE%B5%E7%BB%86%E5%88%86"><span class="toc-number">3.</span> <span class="toc-text">3 各种光的波段细分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%8F%AF%E8%A7%81%E5%85%89%E7%BB%86%E5%88%86%E6%B3%A2%E6%AE%B5"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 可见光细分波段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E7%BA%A2%E5%A4%96%E5%85%89%E8%AF%A6%E7%BB%86%E6%B3%A2%E6%AE%B5"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 红外光详细波段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E7%B4%AB%E5%A4%96%E5%85%89%E8%AF%A6%E7%BB%86%E6%B3%A2%E6%AE%B5"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 紫外光详细波段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-X-%E5%85%89%E8%AF%A6%E7%BB%86%E6%B3%A2%E6%AE%B5"><span class="toc-number">3.4.</span> <span class="toc-text">3.4 X 光详细波段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E4%BC%BD%E9%A9%AC%E5%B0%84%E7%BA%BF%E6%B3%A2%E6%AE%B5"><span class="toc-number">3.5.</span> <span class="toc-text">3.5 伽马射线波段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">5.</span> <span class="toc-text">参考资料</span></a></li></ol></div></div><div class="post-content"><p>“光”在日常语言中通常指人眼能看见的可见光，例如红光、绿光、蓝光。但在物理学中，光属于电磁波的一种；更广义地说，电磁波谱中的许多辐射形式都可以看作不同波段的“光”，例如红外光、紫外光、X 光和伽马射线。</p>
+<p>本文只围绕光与电磁波本身展开，分为三部分：</p>
+<ol>
+<li>光与波的关系：光是什么，电磁波是什么。</li>
+<li>电磁波谱基本参数：不同电磁波段的波长、频率、可见性、能量趋势、主要特征和常见用途。</li>
+<li>各种光的波段细分：可见光、红外光、紫外光、X 光和伽马射线。</li>
+</ol>
+<hr>
+<h2 id="1-光与波的关系"><a href="#1-光与波的关系" class="headerlink" title="1 光与波的关系"></a>1 光与波的关系</h2><h3 id="1-1-光是什么"><a href="#1-1-光是什么" class="headerlink" title="1.1 光是什么"></a>1.1 光是什么</h3><p>光是一种电磁辐射。狭义的光通常指<strong>可见光</strong>，也就是人眼能够直接感知的电磁波，波长大约在 $380\ \mathrm{nm}$ 到 $700\ \mathrm{nm}$ 之间。广义的光则可以包括红外光、紫外光、X 光、伽马射线等不同波段的电磁辐射。</p>
+<p>光具有明显的波动性质。它能够发生反射、折射、干涉、衍射和偏振等现象：</p>
+<table>
+<thead>
+<tr>
+<th align="left">波动现象</th>
+<th align="left">含义</th>
+<th align="left">常见例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">反射</td>
+<td align="left">光遇到界面后返回原介质</td>
+<td align="left">镜子成像、水面反光</td>
+</tr>
+<tr>
+<td align="left">折射</td>
+<td align="left">光进入不同介质后传播方向改变</td>
+<td align="left">筷子插入水中看起来弯折</td>
+</tr>
+<tr>
+<td align="left">干涉</td>
+<td align="left">两束相干光叠加形成明暗变化</td>
+<td align="left">双缝干涉、薄膜彩色条纹</td>
+</tr>
+<tr>
+<td align="left">衍射</td>
+<td align="left">光通过小孔或绕过障碍物后发生扩展</td>
+<td align="left">狭缝衍射、光栅分光</td>
+</tr>
+<tr>
+<td align="left">偏振</td>
+<td align="left">光的电场振动方向具有特定取向</td>
+<td align="left">偏振太阳镜、液晶显示器</td>
+</tr>
+</tbody></table>
+<p>光也具有粒子性。现代物理认为，光的能量以一个个离散的量子形式存在，这些能量量子称为<strong>光子</strong>。单个光子的能量由频率决定：</p>
+<p>$$<br>E &#x3D; h f &#x3D; \frac{h c}{\lambda}<br>$$</p>
+<p>其中：</p>
+<ul>
+<li>$E$：光子能量</li>
+<li>$h$：普朗克常数</li>
+<li>$f$：频率</li>
+<li>$c$：真空光速</li>
+<li>$\lambda$：波长</li>
+</ul>
+<p>这个公式说明：波长越短，频率越高，单个光子的能量越大。可见光、红外光、紫外光、X 光和伽马射线的差别，本质上就是波长、频率和光子能量不同。</p>
+<p>因此，光既不是简单的“波”，也不是普通意义上的“粒子”。更准确地说，光具有<strong>波粒二象性</strong>：在传播和叠加时表现出波动性，在吸收、发射和能量交换时表现出粒子性。</p>
+<h3 id="1-2-电磁波是什么"><a href="#1-2-电磁波是什么" class="headerlink" title="1.2 电磁波是什么"></a>1.2 电磁波是什么</h3><p>电磁波是变化的电场和变化的磁场相互耦合后向空间传播形成的波。它不需要空气、水或固体这样的物质介质，在真空中也可以传播。</p>
+<p>在真空中，电磁波传播速度约为：</p>
+<p>$$<br>c &#x3D; 3.0 \times 10^8\ \mathrm{m&#x2F;s}<br>$$</p>
+<p>电磁波是一种横波。电场方向、磁场方向和传播方向三者两两垂直：</p>
+<ul>
+<li>电场 $E$ 垂直于传播方向；</li>
+<li>磁场 $B$ 垂直于传播方向；</li>
+<li>电场 $E$ 与磁场 $B$ 彼此垂直。</li>
+</ul>
+<p>电磁波的三个基本参数是波速、波长和频率，它们满足：</p>
+<p>$$<br>c &#x3D; \lambda f<br>$$</p>
+<p>其中：</p>
+<ul>
+<li>$c$：波速，真空中约为 $3.0 \times 10^8\ \mathrm{m&#x2F;s}$</li>
+<li>$\lambda$：波长，表示相邻两个波峰之间的距离</li>
+<li>$f$：频率，表示每秒振动的次数</li>
+</ul>
+<p>在真空中，电磁波速度基本相同，因此波长和频率成反比：波长越长，频率越低；波长越短，频率越高。</p>
+<p>按照波长从长到短排列，电磁波谱大致为：</p>
+<p><strong>无线电波 → 微波 → 红外光 → 可见光 → 紫外光 → X 光 → 伽马射线</strong></p>
+<hr>
+<h2 id="2-电磁波谱基本参数"><a href="#2-电磁波谱基本参数" class="headerlink" title="2 电磁波谱基本参数"></a>2 电磁波谱基本参数</h2><p>电磁波谱的边界并不是绝对固定的。不同教材、工程标准和应用场景会采用略有差异的划分。下表给出常用的近似范围，便于建立整体认识。</p>
+<table>
+<thead>
+<tr>
+<th align="left">电磁波类型</th>
+<th align="left">波长 (Wavelength) <br><em>(常用单位)</em></th>
+<th align="left">频率 (Frequency) <br><em>(Hz)</em></th>
+<th align="left">能量 (Energy) <br><em>(J)</em></th>
+<th align="left">主要特征</th>
+<th align="left">常见用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>无线电波</strong><br>(Radio)</td>
+<td align="left">$&gt; 10 \text{ cm}$ <br>$(&gt; 0.1 \text{ m})$</td>
+<td align="left">$&lt; 3 \times 10^9$ <br>$(&lt; 3 \text{ GHz})$</td>
+<td align="left">$&lt; 2 \times 10^{-24}$</td>
+<td align="left">波长最长，绕射能力强，适合远距离传播</td>
+<td align="left">广播、电视、无线通信、导航、射电天文</td>
+</tr>
+<tr>
+<td align="left"><strong>微波</strong><br>(Microwave)</td>
+<td align="left">$1 \text{ mm} \sim 10 \text{ cm}$ <br>$(10^3 \mu\text{m} \sim 10^5 \mu\text{m})$</td>
+<td align="left">$3 \times 10^9 \sim 3 \times 10^{11}$ <br>$(3 \text{ GHz} \sim 300 \text{ GHz})$</td>
+<td align="left">$2 \times 10^{-24} \sim 2 \times 10^{-22}$</td>
+<td align="left">方向性较好，能与天线、雷达系统和极性分子相互作用</td>
+<td align="left">手机通信、Wi-Fi、卫星通信、雷达、微波炉</td>
+</tr>
+<tr>
+<td align="left"><strong>红外线</strong><br>(Infrared)</td>
+<td align="left">$0.7 \mu\text{m} \sim 1000 \mu\text{m}$ <br>$(700 \text{ nm} \sim 1 \text{ mm})$</td>
+<td align="left">$3 \times 10^{11} \sim 4 \times 10^{14}$</td>
+<td align="left">$2 \times 10^{-22} \sim 3 \times 10^{-19}$</td>
+<td align="left">与热辐射、分子振动、物体温度密切相关</td>
+<td align="left">热成像、夜视、遥控器、红外测温、光纤通信</td>
+</tr>
+<tr>
+<td align="left"><strong>可见光</strong><br>(Optical)</td>
+<td align="left">$400 \text{ nm} \sim 700 \text{ nm}$ <br>$(0.4 \mu\text{m} \sim 0.7 \mu\text{m})$</td>
+<td align="left">$4 \times 10^{14} \sim 7.5 \times 10^{14}$</td>
+<td align="left">$3 \times 10^{-19} \sim 5 \times 10^{-19}$</td>
+<td align="left">能被人眼感知，不同波长对应不同颜色</td>
+<td align="left">照明、显示、摄影、显微镜、望远镜、光学测量</td>
+</tr>
+<tr>
+<td align="left"><strong>紫外线</strong><br>(UV)</td>
+<td align="left">$10 \text{ nm} \sim 400 \text{ nm}$ <br>$(0.01 \mu\text{m} \sim 0.4 \mu\text{m})$</td>
+<td align="left">$7.5 \times 10^{14} \sim 3 \times 10^{16}$</td>
+<td align="left">$5 \times 10^{-19} \sim 2 \times 10^{-17}$</td>
+<td align="left">光子能量高，可引发荧光、光化学反应和杀菌作用</td>
+<td align="left">紫外消毒、荧光检测、光刻、固化、天文观测</td>
+</tr>
+<tr>
+<td align="left"><strong>X射线</strong><br>(X-ray)</td>
+<td align="left">$0.01 \text{ nm} \sim 10 \text{ nm}$ <br>$(10 \text{ pm} \sim 10 \text{ nm})$</td>
+<td align="left">$3 \times 10^{16} \sim 3 \times 10^{19}$</td>
+<td align="left">$2 \times 10^{-17} \sim 2 \times 10^{-14}$</td>
+<td align="left">波长很短，穿透能力强，可与内层电子和晶体结构相互作用</td>
+<td align="left">医学影像、CT、安检、X 射线衍射、材料分析</td>
+</tr>
+<tr>
+<td align="left"><strong>伽马射线</strong><br>(Gamma-ray)</td>
+<td align="left">$&lt; 0.01 \text{ nm}$ <br>$(&lt; 10 \text{ pm})$</td>
+<td align="left">$&gt; 3 \times 10^{19}$</td>
+<td align="left">$&gt; 2 \times 10^{-14}$</td>
+<td align="left">能量最高，穿透能力和电离能力强，常来自核过程和高能天体</td>
+<td align="left">放射治疗、核医学、辐照灭菌、核物理、伽马天文</td>
+</tr>
+</tbody></table>
+<p><img src="/images/research/regions-of-the-electromagnetic-spectrum/spectrum.png" alt="电磁波谱"></p>
+<p>从表中可以看到，电磁波谱有三个连续变化的趋势：</p>
+<ul>
+<li><strong>波长趋势</strong>：从无线电波到伽马射线，波长越来越短。</li>
+<li><strong>频率趋势</strong>：从无线电波到伽马射线，频率越来越高。</li>
+<li><strong>能量趋势</strong>：从无线电波到伽马射线，单个光子的能量越来越大。</li>
+</ul>
+<p>需要特别注意：只有可见光能被人眼直接感知，其他波段虽然不可见，但仍然是真实存在的电磁波，可以通过天线、探测器、胶片、半导体传感器或闪烁体等方式被检测到。</p>
+<hr>
+<h2 id="3-各种光的波段细分"><a href="#3-各种光的波段细分" class="headerlink" title="3 各种光的波段细分"></a>3 各种光的波段细分</h2><h3 id="3-1-可见光细分波段"><a href="#3-1-可见光细分波段" class="headerlink" title="3.1 可见光细分波段"></a>3.1 可见光细分波段</h3><p>可见光是人眼可以感知的电磁波。不同波长刺激视网膜中的视锥细胞后，会形成不同的颜色感受。</p>
+<table>
+<thead>
+<tr>
+<th align="left">颜色</th>
+<th align="left">大致波长范围</th>
+<th align="left">大致频率范围</th>
+<th align="left">视觉特征</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">紫光</td>
+<td align="left">380-450 nm</td>
+<td align="left">670-790 THz</td>
+<td align="left">波长最短，接近紫外光</td>
+</tr>
+<tr>
+<td align="left">蓝光</td>
+<td align="left">450-495 nm</td>
+<td align="left">610-670 THz</td>
+<td align="left">冷色调，天空散射光以蓝色为主</td>
+</tr>
+<tr>
+<td align="left">绿光</td>
+<td align="left">495-570 nm</td>
+<td align="left">530-610 THz</td>
+<td align="left">人眼对绿光较敏感</td>
+</tr>
+<tr>
+<td align="left">黄光</td>
+<td align="left">570-590 nm</td>
+<td align="left">510-530 THz</td>
+<td align="left">亮度感较强，常用于警示和照明</td>
+</tr>
+<tr>
+<td align="left">橙光</td>
+<td align="left">590-620 nm</td>
+<td align="left">480-510 THz</td>
+<td align="left">介于黄光和红光之间</td>
+</tr>
+<tr>
+<td align="left">红光</td>
+<td align="left">620-700 nm</td>
+<td align="left">430-480 THz</td>
+<td align="left">波长最长，接近红外光</td>
+</tr>
+</tbody></table>
+<p>可见光的边界不是绝对值。不同人的视觉灵敏度不同，同一波长在不同亮度和环境下的颜色感受也可能发生变化。</p>
+<h3 id="3-2-红外光详细波段"><a href="#3-2-红外光详细波段" class="headerlink" title="3.2 红外光详细波段"></a>3.2 红外光详细波段</h3><p>红外光位于可见红光之外，波长比可见光长，通常与热辐射和分子振动有关。温度高于绝对零度的物体都会辐射电磁波，室温物体的热辐射主要集中在红外区域。</p>
+<p>红外光常见细分如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">红外波段</th>
+<th align="left">英文缩写</th>
+<th align="left">大致波长范围</th>
+<th align="left">主要特征</th>
+<th align="left">常见用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">近红外</td>
+<td align="left">NIR</td>
+<td align="left">0.7-1.4 µm</td>
+<td align="left">接近可见光，部分材料透过性较好</td>
+<td align="left">遥控、夜视、光纤通信、近红外成像</td>
+</tr>
+<tr>
+<td align="left">短波红外</td>
+<td align="left">SWIR</td>
+<td align="left">1.4-3 µm</td>
+<td align="left">对水分、材料成分较敏感</td>
+<td align="left">水分检测、材料分选、低照度成像</td>
+</tr>
+<tr>
+<td align="left">中波红外</td>
+<td align="left">MWIR</td>
+<td align="left">3-5 µm</td>
+<td align="left">大气透过窗口之一，热目标对比明显</td>
+<td align="left">热成像、目标探测、气体检测</td>
+</tr>
+<tr>
+<td align="left">长波红外</td>
+<td align="left">LWIR</td>
+<td align="left">8-14 µm</td>
+<td align="left">室温物体热辐射强，大气透过窗口之一</td>
+<td align="left">红外热像仪、安防监控、测温</td>
+</tr>
+<tr>
+<td align="left">远红外</td>
+<td align="left">FIR</td>
+<td align="left">14 µm-1 mm</td>
+<td align="left">接近太赫兹波段，常与低频分子振动相关</td>
+<td align="left">光谱分析、低温物理、太赫兹研究</td>
+</tr>
+</tbody></table>
+<p>红外波段在实际应用中常受到“大气窗口”影响。水汽、二氧化碳等气体会吸收某些红外波长，因此中波红外和长波红外中透过率较高的区域常被用于热成像和远距离探测。</p>
+<h3 id="3-3-紫外光详细波段"><a href="#3-3-紫外光详细波段" class="headerlink" title="3.3 紫外光详细波段"></a>3.3 紫外光详细波段</h3><p>紫外光位于可见紫光之外，波长比可见光短，光子能量更高。它能引发荧光、光化学反应，也可能损伤皮肤和眼睛。</p>
+<p>紫外光常见细分如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">紫外波段</th>
+<th align="left">英文缩写</th>
+<th align="left">大致波长范围</th>
+<th align="left">主要特征</th>
+<th align="left">常见用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">近紫外</td>
+<td align="left">NUV</td>
+<td align="left">300-400 nm</td>
+<td align="left">靠近可见紫光，常用于荧光激发</td>
+<td align="left">荧光检测、防伪、紫外摄影</td>
+</tr>
+<tr>
+<td align="left">UVA</td>
+<td align="left">UVA</td>
+<td align="left">315-400 nm</td>
+<td align="left">穿透皮肤较深，能引发晒黑和光老化</td>
+<td align="left">荧光检测、固化、医学光疗</td>
+</tr>
+<tr>
+<td align="left">UVB</td>
+<td align="left">UVB</td>
+<td align="left">280-315 nm</td>
+<td align="left">生物作用明显，可导致晒伤</td>
+<td align="left">维生素 D 合成、皮肤医学研究</td>
+</tr>
+<tr>
+<td align="left">UVC</td>
+<td align="left">UVC</td>
+<td align="left">100-280 nm</td>
+<td align="left">杀菌作用强，太阳 UVC 大多被大气吸收</td>
+<td align="left">紫外消毒、空气和水处理</td>
+</tr>
+<tr>
+<td align="left">真空紫外</td>
+<td align="left">VUV</td>
+<td align="left">10-200 nm</td>
+<td align="left">易被空气吸收，常需真空环境</td>
+<td align="left">光谱研究、等离子体诊断、表面处理</td>
+</tr>
+<tr>
+<td align="left">极紫外</td>
+<td align="left">EUV</td>
+<td align="left">10-121 nm</td>
+<td align="left">波长极短，接近软 X 光</td>
+<td align="left">EUV 光刻、太阳物理、等离子体物理</td>
+</tr>
+</tbody></table>
+<p>这些划分之间存在重叠。例如 UVA、UVB、UVC 是常见的生物效应和辐射防护分类；NUV、VUV、EUV 则更多用于光谱学、光源和工程应用分类。</p>
+<h3 id="3-4-X-光详细波段"><a href="#3-4-X-光详细波段" class="headerlink" title="3.4 X 光详细波段"></a>3.4 X 光详细波段</h3><p>X 光波长比紫外光更短，光子能量更高，能够穿透许多物质。它与物质相互作用时，常涉及原子内层电子、电子云密度和晶体结构。</p>
+<p>X 光常见细分如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">X 光波段</th>
+<th align="left">大致波长范围</th>
+<th align="left">大致能量范围</th>
+<th align="left">主要特征</th>
+<th align="left">常见用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">软 X 光</td>
+<td align="left">0.1-10 nm</td>
+<td align="left">0.1-10 keV</td>
+<td align="left">能量相对较低，容易被空气和薄材料吸收</td>
+<td align="left">表面分析、软 X 射线显微、天文观测</td>
+</tr>
+<tr>
+<td align="left">硬 X 光</td>
+<td align="left">0.01-0.1 nm</td>
+<td align="left">10-100 keV</td>
+<td align="left">穿透能力更强，适合体材料和人体组织成像</td>
+<td align="left">医学影像、CT、安检、工业探伤、XRD</td>
+</tr>
+<tr>
+<td align="left">高能 X 光</td>
+<td align="left">小于 0.01 nm</td>
+<td align="left">大于 100 keV</td>
+<td align="left">能量更高，接近伽马射线范围</td>
+<td align="left">高能物理、厚材料检测、同步辐射实验</td>
+</tr>
+</tbody></table>
+<p>X 光与伽马射线在波长和能量上可能重叠。二者的区别有时不只看能量，还看来源：X 光通常来自原子内层电子跃迁或高速电子减速辐射；伽马射线通常来自原子核跃迁、粒子反应或宇宙高能过程。</p>
+<h3 id="3-5-伽马射线波段"><a href="#3-5-伽马射线波段" class="headerlink" title="3.5 伽马射线波段"></a>3.5 伽马射线波段</h3><p>伽马射线位于电磁波谱的最高能端，波长极短，频率极高，穿透能力和电离能力都很强。它通常来自放射性衰变、核反应、粒子湮灭以及高能天体过程。</p>
+<p>伽马射线常见细分如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">伽马射线波段</th>
+<th align="left">大致能量范围</th>
+<th align="left">大致频率范围</th>
+<th align="left">主要来源</th>
+<th align="left">常见用途或研究对象</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">低能伽马射线</td>
+<td align="left">约 100 keV-1 MeV</td>
+<td align="left">约 24 EHz-240 EHz</td>
+<td align="left">放射性核素衰变、核能级跃迁</td>
+<td align="left">核医学成像、放射性示踪、谱学分析</td>
+</tr>
+<tr>
+<td align="left">中能伽马射线</td>
+<td align="left">约 1-10 MeV</td>
+<td align="left">约 240 EHz-2.4 ZHz</td>
+<td align="left">核反应、粒子湮灭、高能天体</td>
+<td align="left">放射治疗、核物理研究、天体观测</td>
+</tr>
+<tr>
+<td align="left">高能伽马射线</td>
+<td align="left">约 10 MeV-100 GeV</td>
+<td align="left">约 2.4 ZHz-24 YHz</td>
+<td align="left">宇宙射线相互作用、脉冲星、活动星系核</td>
+<td align="left">高能天体物理、粒子物理</td>
+</tr>
+<tr>
+<td align="left">甚高能伽马射线</td>
+<td align="left">大于 100 GeV</td>
+<td align="left">大于 24 YHz</td>
+<td align="left">超新星遗迹、黑洞喷流、极端宇宙事件</td>
+<td align="left">切伦科夫望远镜观测、宇宙线起源研究</td>
+</tr>
+</tbody></table>
+<p>伽马射线能量很高，应用时必须考虑辐射防护。医学、工业和科研中使用伽马射线时，通常需要屏蔽、剂量控制和严格的安全规范。</p>
+<hr>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>光是电磁波的一种。狭义的光是可见光，广义的光可以包括红外光、紫外光、X 光和伽马射线等不同波段的电磁辐射。电磁波由相互垂直的电场和磁场组成，在真空中以光速传播，并满足 $c &#x3D; \lambda f$。</p>
+<p>电磁波谱按照波长从长到短排列，可分为无线电波、微波、红外光、可见光、紫外光、X 光和伽马射线。随着波长变短，频率升高，光子能量也升高。理解这些基本参数，有助于理解为什么不同波段会对应不同的自然现象、探测方式和应用场景。</p>
+<hr>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://science.nasa.gov/ems/#radio-waves">NASA Science: Tour of the Electromagnetic Spectrum - Radio Waves</a></li>
+<li><a target="_blank" rel="noopener" href="https://imagine.gsfc.nasa.gov/science/toolbox/spectrum_chart.html">NASA Imagine the Universe!: The Electromagnetic Spectrum Chart</a></li>
+</ol>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.1" async></script><a class="article-share-link" data-url="https://deeplearner.top/research/regions-of-the-electromagnetic-spectrum/" data-id="cuidAX92WwfW3SstOzaa1lHSi" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACw0lEQVR42u3aQW4CMRAEQP7/aSLlFIksdI9tSKTaEyKBdfngHXrmdouv+/f18/Xj9fjXx89efcPVf16tYfOFh4eHN1p6u+jn7+dLTO6bb/EvK8HDw8M7xssfBvUNymM93+7oLnh4eHgf5eUHff79CRsPDw/vv/Puo2sWZKxvNx4eHt45XhsKtMFBGwq3a9iQteDh4eF1WUHdAPvs6+P9PTw8PLxRYJqHs8/bY7OgIW+VXa4WDw8P7wBvZQSqbYzl0e2sUC5+MeDh4eEt8JIDfRYB5Ad93hJr74iHh4d3gtfe5kSDKv9U8ui6fDzg4eHhbeLlA6n5gZ4c321rbfjIwcPDwzvAy3/8r4xYJdFGHmfUA694eHh4B3g5e2Up66MAwzACDw8PbytvpeXfxr5tST3blMvJCDw8PLxNvFk4u2tMKi+Rl+IJPDw8vK28NkrII928FM7DjqSddllS4+Hh4W3l5ZHubNCqHU3IxwhebDEeHh7eAV57fLeDU+sl8vpoAh4eHt5eXh4irBfNewcXou3Gw8PDO8Bri9T8sZFHvXkpn5fXeHh4eO/kJQNVs8HTltFGGJcrxMPDw9vKa4/gvcHE7F5JyY6Hh4f3Hl5bBLdNr3ZT2gdGnXPg4eHhjXjR8Tr60lmwOwsjbrMLDw8PbxMvb0ft+lS73FmTDA8PD28XLy+m81GqWQg7K9ZfvIOHh4f3Fl4eE8wweTCRtN+KcVU8PDy8Tbw2XEgGntpSeD1iiKJnPDw8vE28e3klvDbenZXy0SAXHh4e3gHe7PCdldczQDJAgIeHh/d+Xv6z//nezEKE2cBrMUyAh4eHd4y3d+iqjSFaRvEYw8PDw/soLw8C2nZanTrnm46Hh4f3B3ht0JA3yWaNrhfrxMPDwzvGa1tT66Vze/d8y/Dw8PBO82YNsFljLBlEyD+7Eljg4eHhjXhfGGRK3xYpjGUAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/%E5%85%89%E5%AD%A6/"><i class="fa fa-tag"></i>光学</a><a href="/tags/%E7%94%B5%E7%A3%81%E6%B3%A2/"><i class="fa fa-tag"></i>电磁波</a><a href="/tags/%E7%94%B5%E7%A3%81%E6%B3%A2%E8%B0%B1/"><i class="fa fa-tag"></i>电磁波谱</a></div><div class="post-nav"><a class="next" href="/2026/05/07/research/paper-clip/">论文解读：CLIP - 从自然语言监督中学习可迁移的视觉模型</a></div></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">9</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B/">课程</a><span class="category-list-count">7</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/05/01/Claude-Code%E5%AE%89%E8%A3%85%E4%B8%8EDeepSeek%E7%AC%AC%E4%B8%89%E6%96%B9API%E9%85%8D%E7%BD%AE/">Claude Code 安装与 DeepSeek 第三方 API 配置教程</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/cv-04-face-detection-recognition/">【计算机视觉】人脸检测与人脸识别</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/cv-05-semantic-segmentation/">【计算机视觉】语义分割：原理与经典模型</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/cv-06-target-detection/">【计算机视觉】目标检测：基础与经典检测器</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/gan-01-fundamentals/">【生成模型】GAN：生成对抗网络原理与实践</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/nlp-02-tf-idf-algorithm/">【自然语言处理】文本表示：TF-IDF 与文本分类入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/ocr-01-fundamentals/">【OCR】场景文字理解：基础、检测与识别方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/nlp-01-fundamentals/">【自然语言处理】基础方法、表示学习与典型应用</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-flask"> 元素周期表</i></div><ul></ul><a href="https://pt.ziziyi.com/" title="元素周期表" target="_blank" rel="noopener noreferrer">元素周期表</a><ul></ul><a href="https://ptable.com/#%E6%80%A7%E8%B4%A8/%E7%B3%BB%E5%88%97" title="元素性质" target="_blank" rel="noopener noreferrer">元素性质</a><ul></ul><a href="https://ptable.com/#%E7%94%B5%E5%AD%90%E5%B1%82/%E6%B0%A7%E5%8C%96%E6%95%B0" title="电子层" target="_blank" rel="noopener noreferrer">电子层</a><ul></ul><a href="https://ptable.com/#%E5%90%8C%E4%BD%8D%E7%B4%A0/%E6%80%BB%E8%AE%A1" title="同位素" target="_blank" rel="noopener noreferrer">同位素</a><ul></ul><a href="https://ptable.com/#%E5%8C%96%E5%90%88%E7%89%A9" title="元素化合物" target="_blank" rel="noopener noreferrer">元素化合物</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.1" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.1" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.1"><script type="text/javascript" src="/js/search.js?v=1.0.1"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/post-protect.js?v=1.0.1"></script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript">window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    processEscapes: true
+  },
+  chtml: {
+    fontURL: '/js/chtml/fonts/woff-v2'
+  },
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  }
+};
+</script><script type="text/javascript" src="/js/mathjax3.js" async></script><style>/* Mermaid 科研风格主题 CSS */
+.mermaid {
+  font-family: "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: transparent;
+  margin: 1.5em auto;
+  text-align: center;
+}
+.mermaid svg {
+  max-width: 100%;
+  border-radius: 6px;
+}
+.mermaid .node rect,
+.mermaid .node polygon,
+.mermaid .node circle {
+  filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.1));
+  rx: 6;
+  ry: 6;
+}
+.mermaid .edgeLabel {
+  font-size: 12px;
+  background-color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.mermaid .label {
+  font-size: 13px;
+  font-weight: 500;
+}</style><script type="text/javascript" src="/js/mermaid.min.js"></script><script>(function() {
+  var done = false;
+  var initMermaid = function() {
+    if (done || !window.mermaid) return;
+    
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      securityLevel: 'loose',
+      fontFamily: '"Helvetica Neue", Arial, "PingFang SC", sans-serif',
+      themeVariables: {
+        primaryColor: '#e8eef6',
+        primaryBorderColor: '#4a76a8',
+        primaryTextColor: '#1a1a2e',
+        secondaryColor: '#f0f4f0',
+        secondaryBorderColor: '#6b9080',
+        secondaryTextColor: '#2d3436',
+        tertiaryColor: '#fdf6ec',
+        tertiaryBorderColor: '#c4a35a',
+        tertiaryTextColor: '#2d3436',
+        lineColor: '#5a6c7d',
+        textColor: '#2d3436',
+        nodeBkg: '#e8eef6',
+        nodeBorder: '#4a76a8',
+        mainBkg: '#e8eef6',
+        labelBackground: '#ffffff',
+        edgeLabelBackground: '#ffffff',
+        fontSize: '14px',
+        fontFamily: '"Helvetica Neue", Arial, sans-serif'
+      }
+    });
+    
+    var candidates = document.querySelectorAll('pre, figure.highlight, .highlight, [class*="mermaid"]');
+    var foundCount = 0;
+
+    candidates.forEach(function(el) {
+      if (el.getAttribute('data-mermaid-processed')) return;
+      if (el.querySelector('svg')) return;
+      
+      var text = "";
+      // 尝试从 Prism 的行结构中提取文本并强制换行
+      var lines = el.querySelectorAll('.line, tr');
+      if (lines.length > 0) {
+        var textParts = [];
+        lines.forEach(function(l) {
+            var t = l.innerText || l.textContent || "";
+            if (t.trim()) textParts.push(t.replace(/\n/g, ''));
+        });
+        text = textParts.join('\n');
+      } else {
+        text = (el.innerText || el.textContent || '').trim();
+      }
+
+      var keywords = /^(graph|flowchart|sequenceDiagram|gantt|classDiagram|stateDiagram|erDiagram|pie|journey|gitGraph|info|mindmap|timeline)/i;
+      
+      if (keywords.test(text.trim()) || el.classList.contains('mermaid') || el.classList.contains('language-mermaid')) {
+        var container = document.createElement('div');
+        container.className = 'mermaid';
+        container.textContent = text;
+        el.setAttribute('data-mermaid-processed', 'true');
+        
+        el.parentNode.insertBefore(container, el);
+        el.style.display = 'none';
+        foundCount++;
+      }
+    });
+
+    if (foundCount > 0) {
+      done = true;
+      console.log('[Mermaid] Rescued ' + foundCount + ' blocks');
+      mermaid.init(undefined, '.mermaid');
+    }
+  };
+
+  if (document.readyState === 'complete') {
+    initMermaid();
+  } else {
+    window.addEventListener('load', initMermaid);
+  }
+  setTimeout(initMermaid, 1500);
+})();
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.1"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.1"></script></div><!-- hexo injector body_end start -->
+<script src="/assets/prism-bundle.js"></script>
+<script src="/assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>

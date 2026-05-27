@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560" role="img" aria-label="光刻和图形转移流程">
+  <defs>
+    <style>
+      .bg{fill:#fbfdff}.wafer{fill:#dbeafe;stroke:#1d4ed8;stroke-width:2}.film{fill:#fde68a}.pr{fill:#f9a8d4}.mask{fill:#111827}.open{fill:#f8fafc}.etch{fill:#c7d2fe}
+      .txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",Arial,sans-serif;fill:#111827;font-size:22px;font-weight:700}.sub{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",Arial,sans-serif;fill:#374151;font-size:16px}.label{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",Arial,sans-serif;fill:#111827;font-size:15px}
+      .arrow{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#334155"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="560"/>
+  <text class="txt" x="42" y="55" font-size="30">光刻不是“拍照”这么简单：它把版图坐标转移到材料层</text>
+  <text class="sub" x="42" y="86">关键变量：曝光波长、数值孔径 NA、光刻胶化学、对准 overlay、焦深、随机缺陷、刻蚀后图形保持。</text>
+
+  <g transform="translate(58,140)">
+    <text class="txt" x="0" y="-28">1 涂胶</text>
+    <rect class="wafer" x="0" y="60" width="170" height="42" rx="10"/>
+    <rect class="film" x="0" y="40" width="170" height="22"/>
+    <rect class="pr" x="0" y="18" width="170" height="22"/>
+    <text class="label" x="18" y="130">晶圆 + 薄膜 + 光刻胶</text>
+  </g>
+  <path class="arrow" d="M244 210 H322"/>
+  <g transform="translate(345,140)">
+    <text class="txt" x="0" y="-28">2 对准/曝光</text>
+    <rect class="mask" x="14" y="0" width="145" height="18" rx="3"/>
+    <rect class="open" x="42" y="0" width="25" height="18"/>
+    <rect class="open" x="98" y="0" width="25" height="18"/>
+    <path d="M54 24 L36 86 M110 24 L94 86" stroke="#f59e0b" stroke-width="4"/>
+    <rect class="wafer" x="0" y="104" width="170" height="42" rx="10"/>
+    <rect class="film" x="0" y="84" width="170" height="22"/>
+    <rect class="pr" x="0" y="62" width="170" height="22"/>
+    <text class="label" x="9" y="174">掩模/投影镜头/EUV 或 DUV</text>
+  </g>
+  <path class="arrow" d="M528 210 H606"/>
+  <g transform="translate(628,140)">
+    <text class="txt" x="0" y="-28">3 显影</text>
+    <rect class="wafer" x="0" y="104" width="170" height="42" rx="10"/>
+    <rect class="film" x="0" y="84" width="170" height="22"/>
+    <rect class="pr" x="0" y="62" width="35" height="22"/>
+    <rect class="pr" x="70" y="62" width="35" height="22"/>
+    <rect class="pr" x="140" y="62" width="30" height="22"/>
+    <text class="label" x="23" y="174">留下胶图形</text>
+  </g>
+  <path class="arrow" d="M812 210 H890"/>
+  <g transform="translate(912,140)">
+    <text class="txt" x="0" y="-28">4 刻蚀/注入</text>
+    <rect class="wafer" x="0" y="104" width="170" height="42" rx="10"/>
+    <rect class="film" x="0" y="84" width="35" height="22"/>
+    <rect class="film" x="70" y="84" width="35" height="22"/>
+    <rect class="film" x="140" y="84" width="30" height="22"/>
+    <rect class="pr" x="0" y="62" width="35" height="22"/>
+    <rect class="pr" x="70" y="62" width="35" height="22"/>
+    <rect class="pr" x="140" y="62" width="30" height="22"/>
+    <text class="label" x="18" y="174">胶作掩膜，转移到薄膜</text>
+  </g>
+
+  <path class="arrow" d="M997 310 C997 375, 762 405, 650 405"/>
+  <g transform="translate(420,378)">
+    <text class="txt" x="0" y="-28">5 去胶/清洗/量测</text>
+    <rect class="wafer" x="0" y="58" width="230" height="48" rx="10"/>
+    <rect class="etch" x="0" y="34" width="48" height="24"/>
+    <rect class="etch" x="92" y="34" width="48" height="24"/>
+    <rect class="etch" x="184" y="34" width="46" height="24"/>
+    <text class="label" x="20" y="136">若 CD、overlay、缺陷合格，进入下一层循环</text>
+  </g>
+</svg>
