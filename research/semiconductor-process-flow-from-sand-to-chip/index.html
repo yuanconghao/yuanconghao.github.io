@@ -1,0 +1,778 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="一篇按五部分组织的半导体工艺导览：先把硅基 IC 制造拆成单晶硅片制造、IC 晶圆制造、晶圆封装测试三大段，再延伸到二类超晶格红外探测器的材料生长和器件工艺案例。"><title>从沙子到芯片：半导体工艺流程完整导览 | DeepLearner</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.1"><link rel="stylesheet" type="text/css" href="/static/css/normalize.css"><link rel="stylesheet" type="text/css" href="/static/css/pure-min.css"><link rel="stylesheet" type="text/css" href="/static/css/grids-responsive-min.css"><link rel="stylesheet" href="/static/css/font-awesome.min.css"><script type="text/javascript" src="/static/js/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-83251621-1','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'b207d9febf3295d375e6e9b42006f9eb';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/static/js/clipboard.min.js"></script><script type="text/javascript" src="/static/js/toastr.min.js"></script><link rel="stylesheet" href="/static/css/toastr.min.css"><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">从沙子到芯片：半导体工艺流程完整导览</h1><a id="logo" href="/.">DeepLearner</a><p class="description">Deep Learning &amp; AI · Optoelectronics · Materials Analysis · Semiconductor Physics</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/essay/"><i class="fa fa-pencil"> 随笔</i></a><a href="/course/"><i class="fa fa-book"> 课程</i></a><a class="current" href="/research/"><i class="fa fa-graduation-cap"> 研究</i></a><a href="/tools/"><i class="fa fa-wrench"> 工具</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/tagcloud/"><i class="fa fa-tags"> 标签</i></a><a href="/resource/"><i class="fa fa-cloud"> 资源</i></a><a href="/guestbook/"><i class="fa fa-wechat"> 留言</i></a><a href="/codeline/"><i class="fa fa-circle"> 码迹</i></a><a href="/resume/"><i class="fa fa-user"> 个人简历</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div class="content_container"><div class="post"><h1 class="post-title">从沙子到芯片：半导体工艺流程完整导览</h1><div class="post-meta">created:2026-05-26</div><div class="post-meta">updated:2026-05-28<span> | </span><span class="category"><a href="/categories/%E7%A0%94%E7%A9%B6/">研究</a></span></div><a class="disqus-comment-count" href="/research/semiconductor-process-flow-from-sand-to-chip/#waline"><span class="waline-comment-count" id="/research/semiconductor-process-flow-from-sand-to-chip/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%9A%E5%AF%BC%E8%A7%88%E4%BB%8B%E7%BB%8D%EF%BC%9A%E4%BB%8E%E6%B2%99%E5%AD%90%E5%88%B0%E5%AE%8C%E6%95%B4%E8%8A%AF%E7%89%87%E7%9A%84%E4%B8%89%E5%A4%A7%E5%B7%A5%E8%89%BA%E6%AE%B5"><span class="toc-number">1.</span> <span class="toc-text">第一部分：导览介绍：从沙子到完整芯片的三大工艺段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%85%A8%E5%B1%80%E8%AE%A4%E7%9F%A5%EF%BC%9A%E8%8A%AF%E7%89%87%E6%98%AF%E2%80%9C%E9%80%90%E5%B1%82%E7%9B%96%E6%A5%BC%E2%80%9D%E5%87%BA%E6%9D%A5%E7%9A%84"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 全局认知：芯片是“逐层盖楼”出来的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%E5%AF%B9%E5%BA%94%E8%A1%A8"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 完整流程对应表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E6%9C%80%E5%80%BC%E5%BE%97%E9%87%8D%E7%82%B9%E7%90%86%E8%A7%A3%E7%9A%84-8-%E4%B8%AA%E2%80%9C%E5%8D%A1%E8%84%96%E5%AD%90%E2%80%9D%E6%A0%B8%E5%BF%83%E9%9A%BE%E7%82%B9"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 最值得重点理解的 8 个“卡脖子”核心难点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%9A%E5%8D%95%E6%99%B6%E7%A1%85%E7%89%87%E5%88%B6%E9%80%A0"><span class="toc-number">2.</span> <span class="toc-text">第二部分：单晶硅片制造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E4%BB%8E%E6%B2%99%E5%AD%90%E5%88%B0%E7%94%B5%E5%AD%90%E7%BA%A7%E7%A1%85%EF%BC%9ASiO2-%E4%B8%8D%E6%98%AF%E8%8A%AF%E7%89%87%EF%BC%8C%E7%A1%85%E6%89%8D%E6%98%AF%E8%8A%AF%E7%89%87%E7%9A%84%E5%9F%BA%E5%BA%95"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 从沙子到电子级硅：SiO2 不是芯片，硅才是芯片的基底</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%A4%9A%E6%99%B6%E7%A1%85%E5%88%B0%E5%8D%95%E6%99%B6%E7%A1%85%EF%BC%9A%E8%AE%A9%E6%89%80%E6%9C%89%E5%8E%9F%E5%AD%90%E6%8E%92%E6%88%90%E5%90%8C%E4%B8%80%E4%B8%AA%E6%99%B6%E6%A0%BC"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 多晶硅到单晶硅：让所有原子排成同一个晶格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E7%A1%85%E9%94%AD%E5%88%B0%E6%99%B6%E5%9C%86%EF%BC%9A%E5%88%87%E7%89%87%E3%80%81%E7%A0%94%E7%A3%A8%E3%80%81%E6%8A%9B%E5%85%89%E3%80%81%E6%B8%85%E6%B4%97"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 硅锭到晶圆：切片、研磨、抛光、清洗</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86%EF%BC%9AIC-%E6%99%B6%E5%9C%86%E5%88%B6%E9%80%A0"><span class="toc-number">3.</span> <span class="toc-text">第三部分：IC 晶圆制造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E8%8A%AF%E7%89%87%E4%B8%8D%E6%98%AF%E5%85%88%E5%88%B6%E9%80%A0%EF%BC%8C%E8%80%8C%E6%98%AF%E5%85%88%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 芯片不是先制造，而是先设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%89%8D%E7%AB%AF%E6%99%B6%E5%9C%86%E5%88%B6%E9%80%A0%EF%BC%9A%E4%B8%80%E5%B1%82%E4%B8%80%E5%B1%82%E6%8A%8A%E5%99%A8%E4%BB%B6%E5%81%9A%E5%87%BA%E6%9D%A5"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 前端晶圆制造：一层一层把器件做出来</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-1-%E6%B8%85%E6%B4%97%EF%BC%9A%E8%AE%A9%E8%A1%A8%E9%9D%A2%E5%9B%9E%E5%88%B0%E5%8F%AF%E6%8E%A7%E7%8A%B6%E6%80%81"><span class="toc-number">3.2.1.</span> <span class="toc-text">3.2.1 清洗：让表面回到可控状态</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-2-%E6%B0%A7%E5%8C%96%E4%B8%8E%E4%BB%8B%E8%B4%A8%E5%B1%82%EF%BC%9A%E5%88%B6%E9%80%A0%E7%BB%9D%E7%BC%98%E8%BE%B9%E7%95%8C"><span class="toc-number">3.2.2.</span> <span class="toc-text">3.2.2 氧化与介质层：制造绝缘边界</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-3-%E8%96%84%E8%86%9C%E6%B2%89%E7%A7%AF%EF%BC%9A%E6%8A%8A%E6%9D%90%E6%96%99%E6%94%BE%E5%88%B0%E8%AF%A5%E6%94%BE%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-number">3.2.3.</span> <span class="toc-text">3.2.3 薄膜沉积：把材料放到该放的位置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-4-%E5%85%89%E5%88%BB%EF%BC%9A%E6%8A%8A%E7%89%88%E5%9B%BE%E5%8E%8B%E7%BC%A9%E6%8A%95%E5%BD%B1%E5%88%B0%E6%99%B6%E5%9C%86%E4%B8%8A"><span class="toc-number">3.2.4.</span> <span class="toc-text">3.2.4 光刻：把版图压缩投影到晶圆上</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-5-%E5%88%BB%E8%9A%80%EF%BC%9A%E6%8A%8A%E5%85%89%E5%88%BB%E8%83%B6%E5%9B%BE%E5%BD%A2%E8%BD%AC%E7%A7%BB%E5%88%B0%E7%9C%9F%E5%AE%9E%E6%9D%90%E6%96%99"><span class="toc-number">3.2.5.</span> <span class="toc-text">3.2.5 刻蚀：把光刻胶图形转移到真实材料</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-6-%E6%8E%BA%E6%9D%82%EF%BC%9A%E7%B2%BE%E7%A1%AE%E5%AE%89%E6%8E%92%E8%BD%BD%E6%B5%81%E5%AD%90"><span class="toc-number">3.2.6.</span> <span class="toc-text">3.2.6 掺杂：精确安排载流子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-7-CMP%EF%BC%9A%E6%8A%8A%E5%B1%B1%E4%B8%98%E7%A3%A8%E6%88%90%E5%B9%B3%E5%8E%9F"><span class="toc-number">3.2.7.</span> <span class="toc-text">3.2.7 CMP：把山丘磨成平原</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%99%B6%E4%BD%93%E7%AE%A1%E5%BD%A2%E6%88%90%EF%BC%9AFEOL"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 晶体管形成：FEOL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E4%BA%92%E8%BF%9E%E5%BD%A2%E6%88%90%EF%BC%9ABEOL"><span class="toc-number">3.4.</span> <span class="toc-text">3.4 互连形成：BEOL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E9%87%8F%E6%B5%8B%E3%80%81%E6%A3%80%E6%B5%8B%E4%B8%8E%E8%89%AF%E7%8E%87%EF%BC%9A%E5%88%B6%E9%80%A0%E7%9A%84%E9%97%AD%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%B3%BB%E7%BB%9F"><span class="toc-number">3.5.</span> <span class="toc-text">3.5 量测、检测与良率：制造的闭环神经系统</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86%EF%BC%9A%E6%99%B6%E5%9C%86%E5%B0%81%E8%A3%85%E6%B5%8B%E8%AF%95"><span class="toc-number">4.</span> <span class="toc-text">第四部分：晶圆封装测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%99%B6%E5%9C%86%E6%B5%8B%E8%AF%95"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 晶圆测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%88%87%E5%89%B2"><span class="toc-number">4.2.</span> <span class="toc-text">4.2 切割</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E8%B4%B4%E7%89%87%E4%B8%8E%E4%BA%92%E8%BF%9E"><span class="toc-number">4.3.</span> <span class="toc-text">4.3 贴片与互连</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E5%B0%81%E8%A3%85%E4%B8%8E%E7%BB%88%E6%B5%8B"><span class="toc-number">4.4.</span> <span class="toc-text">4.4 封装与终测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-%E4%B8%80%E5%BC%A0%E8%A1%A8%E7%9C%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%9A%84%E9%9A%BE%E7%82%B9%E5%92%8C%E7%A0%94%E7%A9%B6%E6%96%B9%E5%90%91"><span class="toc-number">4.5.</span> <span class="toc-text">4.5 一张表看全流程的难点和研究方向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">5.</span> <span class="toc-text">参考资料</span></a></li></ol></div></div><div class="post-content"><p>半导体制造常被一句话概括成“从沙子到芯片”。这句话很形象，但也容易让人误解：现代芯片不是把沙子直接压成 CPU，而是把含硅矿物转化为极高纯度的晶体材料，再在晶圆表面重复数百到上千个精密步骤，把材料、图形、掺杂、绝缘、金属互连和封装系统集成到一起。</p>
+<p>如果把整个链条拆开，可以先按硅基集成电路的制造对象分成三大工艺段：</p>
+<ol>
+<li><strong>单晶硅片制造</strong>：石英砂&#x2F;石英矿 → 冶金级硅 → 高纯多晶硅 → 单晶硅锭 → 切片、研磨、抛光、清洗 → 可进入晶圆厂的抛光晶圆。</li>
+<li><strong>IC 晶圆制造</strong>：电路设计和掩模版 → 清洗、氧化&#x2F;沉积、光刻、刻蚀、掺杂、CMP、量测 → 在晶圆上形成晶体管、接触孔和多层金属互连。</li>
+<li><strong>晶圆封装测试</strong>：晶圆测试 → 切割 → 贴片&#x2F;互连 → 封装 → 终测、老化和可靠性验证 → 可出货的芯片器件。</li>
+</ol>
+<p>在这三大工艺段内部，又可以看到三条同时推进的主线：</p>
+<ol>
+<li><strong>材料主线</strong>：石英砂&#x2F;石英矿 → 冶金级硅 → 高纯多晶硅 → 单晶硅锭 → 抛光晶圆 → 外延&#x2F;薄膜&#x2F;器件材料。</li>
+<li><strong>图形主线</strong>：电路设计 → 掩模版 → 光刻曝光 → 刻蚀&#x2F;注入&#x2F;沉积 → 多层图形叠加。</li>
+<li><strong>产品主线</strong>：晶圆级器件 → 晶圆测试 → 切割 → 封装 → 终测 → 模组&#x2F;整机。</li>
+</ol>
+<p>因此，本文按五个部分组织：第一部分做导览介绍；第二部分讲单晶硅片制造；第三部分讲 IC 晶圆制造；第四部分讲晶圆封装测试；第五部分用二类超晶格红外探测器作为案例，把“半导体材料生长 → 微纳加工 → 焦平面阵列器件”的路线串起来。</p>
+<hr>
+<!-- <img src="/images/research/semiconductor-process-flow-from-sand-to-chip/flow-overview.svg" width="600"> -->
+
+<h2 id="第一部分：导览介绍：从沙子到完整芯片的三大工艺段"><a href="#第一部分：导览介绍：从沙子到完整芯片的三大工艺段" class="headerlink" title="第一部分：导览介绍：从沙子到完整芯片的三大工艺段"></a>第一部分：导览介绍：从沙子到完整芯片的三大工艺段</h2><p>写这篇文章，想解决的不是“背一串工艺术语”，而是把半导体制造这条链路按真实对象拆开：先有晶圆这个材料平台，再在晶圆上制造层状器件结构，最后通过封装测试把裸芯片变成可交付的产品。这样看，“从沙子到芯片”就不是一句口号，而是一条可以逐段追踪的工艺路线。</p>
+<h3 id="1-1-全局认知：芯片是“逐层盖楼”出来的"><a href="#1-1-全局认知：芯片是“逐层盖楼”出来的" class="headerlink" title="1.1 全局认知：芯片是“逐层盖楼”出来的"></a>1.1 全局认知：芯片是“逐层盖楼”出来的</h3><p>现代芯片制造可以理解成：先做一片极纯、极平的硅晶圆，然后在晶圆表面反复执行 <strong>薄膜沉积 → 涂胶 → 光刻 → 刻蚀 → 掺杂&#x2F;离子注入 → 清洗&#x2F;检测&#x2F;CMP</strong>，一层一层堆出晶体管和金属互连，最后切割、封装、测试。ASML 对这个过程的概括是：芯片是在硅片上构建多层互连图案，完整制造会经历数百道步骤，从设计到量产可能长达数月；先进芯片可有多达约 100 层结构，并且层与层之间需要纳米级对准。</p>
+<p>我认为理解晶圆制造最关键的一点，是把芯片看成一个<strong>层状结构</strong>，而不是一张二维电路图。晶体管本身有衬底、阱区、沟道、栅介质、栅极、侧墙、源漏、接触孔等层次；晶体管上方还有介质层、通孔、金属线、阻挡层、钝化层等互连层。因此很多工艺步骤不是只做一次，而是围绕不同材料层、不同掩模层和不同结构深度反复出现。每一轮循环都只完成局部结构的一小部分，最后这些层才叠加成完整电路。</p>
+<p>我把硅基 IC 的主线压缩成三句话：</p>
+<ol>
+<li><strong>先造片</strong>：把高纯硅变成大直径、低缺陷、镜面级平坦的单晶硅片。</li>
+<li><strong>再造电路</strong>：在晶圆表面通过多次“沉积&#x2F;光刻&#x2F;刻蚀&#x2F;掺杂&#x2F;CMP&#x2F;量测”循环形成晶体管和互连。</li>
+<li><strong>最后成品化</strong>：通过晶圆测试、切割、封装和终测，把裸 die （裸晶）变成可使用、可交付、可可靠工作的芯片。</li>
+</ol>
+<h3 id="1-2-完整流程对应表"><a href="#1-2-完整流程对应表" class="headerlink" title="1.2 完整流程对应表"></a>1.2 完整流程对应表</h3><table>
+<thead>
+<tr>
+<th align="left">阶段</th>
+<th align="left">工艺步骤</th>
+<th align="left">主要目的</th>
+<th align="left">在层状结构中的位置</th>
+<th align="left">是否反复出现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>1</strong></td>
+<td align="left">沙子&#x2F;石英砂提纯</td>
+<td align="left">得到高纯度硅原料</td>
+<td align="left">晶圆材料来源</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left"><strong>2</strong></td>
+<td align="left">多晶硅制备</td>
+<td align="left">获得电子级多晶硅</td>
+<td align="left">单晶拉制原料</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left"><strong>3</strong></td>
+<td align="left">CZ 单晶拉制</td>
+<td align="left">制造单晶硅锭</td>
+<td align="left">晶圆基底前身</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left"><strong>4</strong></td>
+<td align="left">切片&#x2F;研磨&#x2F;抛光</td>
+<td align="left">制造镜面抛光晶圆</td>
+<td align="left">晶圆基底</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left"><strong>5</strong></td>
+<td align="left">清洗&#x2F;检测</td>
+<td align="left">保证晶圆表面洁净度</td>
+<td align="left">每层工艺前后的界面控制</td>
+<td align="left">是</td>
+</tr>
+<tr>
+<td align="left"><strong>6</strong></td>
+<td align="left">薄膜沉积&#x2F;氧化</td>
+<td align="left">铺设导体、绝缘体或半导体材料层</td>
+<td align="left">栅介质、介质层、阻挡层、金属层、钝化层等</td>
+<td align="left">是</td>
+</tr>
+<tr>
+<td align="left"><strong>7</strong></td>
+<td align="left">涂胶</td>
+<td align="left">旋涂光刻胶准备曝光</td>
+<td align="left">每一层图形化之前的临时掩膜</td>
+<td align="left">是</td>
+</tr>
+<tr>
+<td align="left"><strong>8</strong></td>
+<td align="left">光刻&#x2F;显影</td>
+<td align="left">将设计图案转移到光刻胶上</td>
+<td align="left">决定当前层的图形边界</td>
+<td align="left">是</td>
+</tr>
+<tr>
+<td align="left"><strong>9</strong></td>
+<td align="left">刻蚀</td>
+<td align="left">将图案转移到真实材料层</td>
+<td align="left">隔离槽、栅图形、接触孔、通孔、金属沟槽等</td>
+<td align="left">是</td>
+</tr>
+<tr>
+<td align="left"><strong>10</strong></td>
+<td align="left">离子注入&#x2F;退火</td>
+<td align="left">引入杂质改变电学性质</td>
+<td align="left">阱区、源漏、阈值调节等区域</td>
+<td align="left">多次出现</td>
+</tr>
+<tr>
+<td align="left"><strong>11</strong></td>
+<td align="left">CMP</td>
+<td align="left">平坦化当前层，为下一层做准备</td>
+<td align="left">STI、钨塞、铜互连、层间介质等</td>
+<td align="left">是</td>
+</tr>
+<tr>
+<td align="left"><strong>12</strong></td>
+<td align="left">量测&#x2F;检测</td>
+<td align="left">反馈 CD、overlay、膜厚、缺陷和电性</td>
+<td align="left">每一层工艺闭环</td>
+<td align="left">是</td>
+</tr>
+<tr>
+<td align="left"><strong>13</strong></td>
+<td align="left">多层金属互连</td>
+<td align="left">连接晶体管构成电路</td>
+<td align="left">BEOL 多层金属线和通孔</td>
+<td align="left">是</td>
+</tr>
+<tr>
+<td align="left"><strong>14</strong></td>
+<td align="left">晶圆测试</td>
+<td align="left">筛出坏 die，做电性分档</td>
+<td align="left">已完成晶圆上的 die</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left"><strong>15</strong></td>
+<td align="left">切割</td>
+<td align="left">将晶圆分割成单颗芯片</td>
+<td align="left">单颗裸 die</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left"><strong>16</strong></td>
+<td align="left">封装</td>
+<td align="left">保护芯片并实现外部电连接</td>
+<td align="left">封装体、基板、焊球、散热结构</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left"><strong>17</strong></td>
+<td align="left">最终测试</td>
+<td align="left">出货前的全面可靠性检测</td>
+<td align="left">成品芯片</td>
+<td align="left">否</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="1-3-最值得重点理解的-8-个“卡脖子”核心难点"><a href="#1-3-最值得重点理解的-8-个“卡脖子”核心难点" class="headerlink" title="1.3 最值得重点理解的 8 个“卡脖子”核心难点"></a>1.3 最值得重点理解的 8 个“卡脖子”核心难点</h3><ol>
+<li><strong>超高洁净度</strong><ul>
+<li>先进晶圆厂洁净室（Cleanroom）的洁净度需要比外界高出 10,000 倍以上。在 ISO Class 1 级别的洁净室中，哪怕一个 100nm 级别的微尘落到晶圆上，都可能导致整颗芯片失效。</li>
+</ul>
+</li>
+<li><strong>多层套刻对准（Overlay）</strong><ul>
+<li>先进芯片包含多达数十层甚至上百层极其复杂的“城市立交桥”结构，每层图形都必须与前一层实现纳米级精度的对准，对准误差稍大就会导致互连失效。</li>
+</ul>
+</li>
+<li><strong>极紫外光刻（EUV Lithography）</strong><ul>
+<li>EUV 光刻使用 13.5 nm 波长的光，涉及超高功率光源（通过高能激光击碎熔融锡滴产生等离子体）、反射式掩膜版、反射镜系统（因为普通玻璃会吸收EUV光）以及高真空环境，工艺随机缺陷（stochastic defects）极难控制。</li>
+</ul>
+</li>
+<li><strong>高深宽比刻蚀（High Aspect Ratio Etch）</strong><ul>
+<li>在 3D NAND（可能多达数百层堆叠）、DRAM 电容孔以及先进封装硅通孔（TSV）中，需要刻出深宽比达数十比一甚至上百比一的极深且极窄的纳米孔洞，对等离子体刻蚀的方向性和化学产物输运要求极高。</li>
+</ul>
+</li>
+<li><strong>薄膜沉积的原子级控制（Atomic Layer Precision）</strong><ul>
+<li>先进器件如 GAA 环绕栅晶体管和超薄介质层沉积，要求使用 ALD（原子层沉积）或外延（Epitaxy）技术，在晶圆表面以原子层或亚原子层精度控制薄膜的厚度和界面组分。</li>
+</ul>
+</li>
+<li><strong>良率提升（Yield Ramp）</strong><ul>
+<li>一片 300mm 晶圆上包含数百上千颗芯片，线宽涨落、对准偏差、残留杂质、CMP 划痕等任何一步的微小偏差累积都会导致芯片失效。良率的监控和爬坡是晶圆制造的核心竞争力。</li>
+</ul>
+</li>
+<li><strong>互连电阻与电迁移（RC Delay &amp; Electromigration）</strong><ul>
+<li>晶体管尺寸在缩小，但 BEOL 金属线变细会导致电阻急剧增大，引入电容延迟（RC 延迟）和严重发热。在高电流密度下，金属原子会被电子流推开导致“断路”，即电迁移效应。</li>
+</ul>
+</li>
+<li><strong>先进封装与异质集成（Advanced Packaging）</strong><ul>
+<li>传统摩尔定律放缓，AI 和高性能计算极度依赖将多个不同功能芯片（Chiplets）与 HBM 内存通过硅中介层或 3D 堆叠集成在一个封装体内。封装的材料热匹配、微凸点对准、散热和翘曲（Warpage）控制已成为限制芯片系统性能的关键环节。</li>
+</ul>
+</li>
+</ol>
+<p><strong>一句话总览</strong>：芯片制造 &#x3D; 把高纯沙子还原并拉制成镜面单晶硅片，在超洁净室中通过“沉积、光刻、刻蚀、注入、抛光、检测”这些循环步骤，逐层堆叠出底部的晶体管和上部的金属互连网络，最后经过切割、先进封装与可靠性测试，转变为功能完整的集成电路。</p>
+<hr>
+<h2 id="第二部分：单晶硅片制造"><a href="#第二部分：单晶硅片制造" class="headerlink" title="第二部分：单晶硅片制造"></a>第二部分：单晶硅片制造</h2><h3 id="2-1-从沙子到电子级硅：SiO2-不是芯片，硅才是芯片的基底"><a href="#2-1-从沙子到电子级硅：SiO2-不是芯片，硅才是芯片的基底" class="headerlink" title="2.1 从沙子到电子级硅：SiO2 不是芯片，硅才是芯片的基底"></a>2.1 从沙子到电子级硅：SiO2 不是芯片，硅才是芯片的基底</h3><p>沙子、石英砂或高纯石英的主要成分是二氧化硅 SiO2。集成电路的主体材料通常是单晶硅 Si，二者相差一个关键步骤：<strong>还原和提纯</strong>。</p>
+<p>工业上先把 SiO2 与碳源在电弧炉中高温反应，得到冶金级硅。这个材料对冶金、化工、光伏已经有价值，但对集成电路远远不够，因为芯片中的电学行为对杂质极其敏感。随后还要通过化学路线把硅转化成氯硅烷类中间体，再经精馏、沉积等步骤得到电子级多晶硅。</p>
+<p><strong>原理</strong>：半导体的载流子浓度往往由百万分之一甚至十亿分之一量级的杂质决定。硼、磷、砷等元素可以作为有意掺杂；金属杂质、氧碳污染、颗粒和水汽则会形成复合中心、漏电通道或介质击穿点。</p>
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>纯度：电子级硅要求极低的金属杂质和受控的碳、氧含量。</li>
+<li>批次一致性：后续晶圆电阻率、氧沉淀行为、缺陷密度都受原料影响。</li>
+<li>供应链：高纯硅、石英坩埚、特气、湿化学品都属于高门槛材料链。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>更低杂质的多晶硅制备与在线分析。</li>
+<li>低碳、低能耗的高纯硅路线。</li>
+<li>高纯石英坩埚、涂层坩埚与氧含量控制。</li>
+</ul>
+<h3 id="2-2-多晶硅到单晶硅：让所有原子排成同一个晶格"><a href="#2-2-多晶硅到单晶硅：让所有原子排成同一个晶格" class="headerlink" title="2.2 多晶硅到单晶硅：让所有原子排成同一个晶格"></a>2.2 多晶硅到单晶硅：让所有原子排成同一个晶格</h3><p>集成电路不能直接用多晶硅做大面积基底。多晶材料有晶界，晶界会散射载流子、聚集杂质、引入漏电。晶圆制造需要的是大直径、低缺陷、晶向明确的单晶硅锭。</p>
+<p>主流方法是 CZ 法，中文常称直拉法或柴可拉斯基法。过程可以简化为：</p>
+<ol>
+<li>把高纯多晶硅和少量掺杂剂放入石英坩埚。</li>
+<li>加热到硅熔点附近，使其成为熔体。</li>
+<li>用一个具有特定晶向的籽晶接触熔体表面。</li>
+<li>籽晶边旋转边缓慢上拉，熔体在籽晶下方按同一晶向凝固，形成圆柱形单晶硅棒。</li>
+</ol>
+<img src="/images/research/semiconductor-process-flow-from-sand-to-chip/siliconingot.jpg" width="600">
+
+<img src="/images/research/semiconductor-process-flow-from-sand-to-chip/cz-crystal-growth.png" width="500" style="display: block; margin: 1.5rem auto;">
+
+<p>SUMCO 对 CZ 过程的公开说明中提到，多晶硅会在约 1420 ℃熔化，并可加入硼、磷等少量杂质调节最终电阻率。</p>
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>晶体缺陷：空位、间隙原子、氧沉淀、位错、滑移线。</li>
+<li>直径控制：300 mm 晶圆要求单晶棒长距离保持稳定直径。</li>
+<li>氧含量：石英坩埚会向硅熔体引入氧，氧既可能有害，也可用于内吸杂。</li>
+<li>掺杂均匀性：不同元素在固液界面的分凝系数不同，沿晶棒长度方向浓度会变化。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>磁场直拉 MCZ，用磁场抑制熔体对流，改善氧和电阻率均匀性。</li>
+<li>低氧 FZ 浮区法，用于高功率、高电阻率或特殊器件。</li>
+<li>晶体生长数字孪生，模拟热场、流场、固液界面和缺陷形成。</li>
+</ul>
+<h3 id="2-3-硅锭到晶圆：切片、研磨、抛光、清洗"><a href="#2-3-硅锭到晶圆：切片、研磨、抛光、清洗" class="headerlink" title="2.3 硅锭到晶圆：切片、研磨、抛光、清洗"></a>2.3 硅锭到晶圆：切片、研磨、抛光、清洗</h3><p>单晶硅锭还不是晶圆。它要经过：</p>
+<ul>
+<li><strong>定向与切片</strong>：按照晶向切成薄片，常见直径有 150 mm、200 mm、300 mm。</li>
+<li><strong>倒角</strong>：处理边缘，减少破片和边缘缺陷。</li>
+<li><strong>研磨&#x2F;腐蚀</strong>：去除切割损伤层，调整厚度和平整度。</li>
+<li><strong>CMP 抛光</strong>：得到镜面级表面。</li>
+<li><strong>清洗与检测</strong>：去除颗粒、金属、有机物，检测翘曲、厚度、平坦度、微缺陷。</li>
+<li><strong>外延或特殊处理</strong>：有些晶圆还会做外延硅、SOI、退火、背损伤等。</li>
+</ul>
+<p>晶圆供应商 SUMCO 将硅晶圆生产概括为“单晶拉制、晶圆成形、特殊处理”三大阶段，其中晶圆成形包括 slicing、lapping、etching、polishing、inspection。</p>
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>表面粗糙度要接近原子尺度。</li>
+<li>TTV、bow、warp 等几何指标影响光刻焦深和套刻。</li>
+<li>纳米颗粒可能导致单个 die 或整片晶圆报废。</li>
+</ul>
+<hr>
+<h2 id="第三部分：IC-晶圆制造"><a href="#第三部分：IC-晶圆制造" class="headerlink" title="第三部分：IC 晶圆制造"></a>第三部分：IC 晶圆制造</h2><h3 id="3-1-芯片不是先制造，而是先设计"><a href="#3-1-芯片不是先制造，而是先设计" class="headerlink" title="3.1 芯片不是先制造，而是先设计"></a>3.1 芯片不是先制造，而是先设计</h3><p>晶圆厂拿到的不是“想法”，而是通过验证的版图数据和掩模版。</p>
+<p>典型设计流程包括：</p>
+<ol>
+<li><strong>产品定义</strong>：性能、功耗、成本、接口、可靠性目标。</li>
+<li><strong>架构设计</strong>：CPU&#x2F;GPU&#x2F;NPU、存储层级、模拟&#x2F;RF&#x2F;电源、传感器读出方式。</li>
+<li><strong>电路设计</strong>：逻辑综合、模拟电路、时序约束、版图。</li>
+<li><strong>验证</strong>：功能仿真、形式验证、时序收敛、功耗分析。</li>
+<li><strong>DFT&#x2F;DFM</strong>：可测试设计、可制造性设计、冗余和修复结构。</li>
+<li><strong>Tape-out</strong>：生成 GDSII&#x2F;OASIS 数据。</li>
+<li><strong>掩模版制造</strong>：把版图写到石英掩模版上，供光刻机投影使用。</li>
+</ol>
+<p>在先进工艺中，设计和制造强耦合。晶体管结构、标准单元库、金属层设计规则、光刻邻近效应修正 OPC、计算光刻、良率模型都会反过来约束设计。</p>
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>节点名称不等于真实栅长。现代“3 nm &#x2F; 2 nm”更接近工艺世代和密度标识。</li>
+<li>设计规则越来越复杂，版图不能只追求几何正确，还要适配光刻、刻蚀、CMP 和可靠性。</li>
+<li>先进封装让芯片设计扩展为 chiplet、interposer、HBM、热管理和系统协同设计。</li>
+</ul>
+<hr>
+<h3 id="3-2-前端晶圆制造：一层一层把器件做出来"><a href="#3-2-前端晶圆制造：一层一层把器件做出来" class="headerlink" title="3.2 前端晶圆制造：一层一层把器件做出来"></a>3.2 前端晶圆制造：一层一层把器件做出来</h3><p>前端制造，也叫 wafer fabrication，是把空白晶圆变成带有晶体管和互连的已加工晶圆。SIA 将其定义为把晶圆转化为复杂集成电路的阶段。这个过程不是“做一次”，而是多次循环。</p>
+<img src="/images/research/semiconductor-process-flow-from-sand-to-chip/lithography-loop.svg" width="1100">
+
+<p>一个典型层循环如下：</p>
+<ol>
+<li>清洗晶圆。</li>
+<li>生长或沉积一层材料。</li>
+<li>涂光刻胶。</li>
+<li>对准掩模并曝光。</li>
+<li>显影得到胶图形。</li>
+<li>刻蚀、离子注入或选择性沉积，把图形转移到真实材料。</li>
+<li>去胶、清洗。</li>
+<li>量测 CD、overlay、膜厚、缺陷。</li>
+<li>若合格，进入下一层。</li>
+</ol>
+<p>实际制造不是把这 9 步只走一遍。FEOL 中，隔离、阱区、栅极、源漏、接触孔分别需要不同的图形化和材料处理；BEOL 中，每一层金属线和每一层通孔也都要经历介质沉积、光刻、刻蚀、金属填充、CMP 和量测。先进逻辑芯片可能经历数百到上千个单步工艺。每一步看似只改变几纳米到几百纳米的材料，但所有误差会叠加到器件性能和良率上。</p>
+<h4 id="3-2-1-清洗：让表面回到可控状态"><a href="#3-2-1-清洗：让表面回到可控状态" class="headerlink" title="3.2.1 清洗：让表面回到可控状态"></a>3.2.1 清洗：让表面回到可控状态</h4><p>清洗的对象包括颗粒、自然氧化层、金属离子、有机物、光刻胶残留、刻蚀聚合物等。常见方法有湿法清洗、臭氧&#x2F;过氧化物体系、HF last、等离子体灰化、超临界干燥等。</p>
+<p><strong>原理</strong>：微电子工艺的很多反应发生在最表面几层原子。表面如果带有污染，后续薄膜会成核异常，界面态会增加，接触电阻和漏电也会恶化。</p>
+<p><strong>难点和方向</strong>：</p>
+<ul>
+<li>高选择性去除污染而不损伤低 k 介质、金属和高纵横比结构。</li>
+<li>减少水印、干燥塌陷、表面粗糙化。</li>
+<li>面向 3D NAND、GAA、背面供电的高深宽比清洗。</li>
+</ul>
+<h4 id="3-2-2-氧化与介质层：制造绝缘边界"><a href="#3-2-2-氧化与介质层：制造绝缘边界" class="headerlink" title="3.2.2 氧化与介质层：制造绝缘边界"></a>3.2.2 氧化与介质层：制造绝缘边界</h4><p>硅可以通过热氧化形成 SiO2。SiO2 与 Si 的界面质量优秀，是硅基 MOS 技术成功的基础。随着栅介质变薄，传统 SiO2 会出现量子隧穿漏电，因此先进节点采用 high-k 材料，如 HfO2 系列，并配合金属栅。</p>
+<p><strong>原理</strong>：MOSFET 的栅极通过绝缘层电场控制沟道载流子。介质层越薄，栅控越强，但漏电也越严重。high-k 的意义是在保持较大物理厚度的同时获得较小等效氧化层厚度 EOT。</p>
+<p><strong>难点和方向</strong>：</p>
+<ul>
+<li>等效氧化层厚度、界面态密度、可靠性之间的平衡。</li>
+<li>高 k&#x2F;金属栅的功函数调节和热稳定性。</li>
+<li>铁电 HfZrO、负电容、低功耗器件栅介质探索。</li>
+</ul>
+<h4 id="3-2-3-薄膜沉积：把材料放到该放的位置"><a href="#3-2-3-薄膜沉积：把材料放到该放的位置" class="headerlink" title="3.2.3 薄膜沉积：把材料放到该放的位置"></a>3.2.3 薄膜沉积：把材料放到该放的位置</h4><p>沉积可以分为物理气相沉积 PVD、化学气相沉积 CVD、低压 CVD、等离子体增强 CVD、原子层沉积 ALD、电化学沉积 ECD、外延生长等。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">核心思想</th>
+<th align="left">适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">PVD</td>
+<td align="left">溅射或蒸发，材料从靶材飞到晶圆</td>
+<td align="left">金属、阻挡层、种子层</td>
+</tr>
+<tr>
+<td align="left">CVD</td>
+<td align="left">气相前驱体在表面反应成膜</td>
+<td align="left">SiO2、SiN、poly-Si、W 等</td>
+</tr>
+<tr>
+<td align="left">ALD</td>
+<td align="left">自限性表面反应，一次循环一层或亚单层</td>
+<td align="left">高 k、阻挡层、三维结构包覆</td>
+</tr>
+<tr>
+<td align="left">ECD</td>
+<td align="left">电化学镀铜</td>
+<td align="left">铜互连填充</td>
+</tr>
+<tr>
+<td align="left">外延</td>
+<td align="left">新晶层延续衬底晶格</td>
+<td align="left">源漏 SiGe、III-V、SiC&#x2F;GaN 等</td>
+</tr>
+</tbody></table>
+<p>参考：<a target="_blank" rel="noopener" href="http://www.cnmec.net/eti.htm">http://www.cnmec.net/eti.htm</a></p>
+<img src="/images/research/semiconductor-process-flow-from-sand-to-chip/eti_2.jpg" width="600">
+
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>高深宽比结构中的 conformality 和 void-free 填充。</li>
+<li>膜应力、杂质、颗粒、界面反应。</li>
+<li>选择性沉积，即只在目标材料上生长，不在其他区域成核。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>Area-selective deposition。</li>
+<li>低温 ALD&#x2F;CVD，兼容后段互连和柔性&#x2F;异质集成。</li>
+<li>原子层级材料工程，服务 GAA、CFET、3D NAND 和先进封装。</li>
+</ul>
+<h4 id="3-2-4-光刻：把版图压缩投影到晶圆上"><a href="#3-2-4-光刻：把版图压缩投影到晶圆上" class="headerlink" title="3.2.4 光刻：把版图压缩投影到晶圆上"></a>3.2.4 光刻：把版图压缩投影到晶圆上</h4><p>光刻是把掩模版图形转移到光刻胶的过程。典型步骤是 HMDS 增粘、旋涂光刻胶、软烘、对准、曝光、后烘、显影、硬烘和检测。</p>
+<p>分辨率常用 Rayleigh 公式粗略理解：</p>
+<p>$$<br>CD \approx k_1 \frac{\lambda}{NA}<br>$$</p>
+<p>其中 CD 是临界尺寸，$\lambda$ 是曝光波长，NA 是数值孔径，$k_1$ 代表工艺、掩模、照明和计算光刻优化能力。DUV ArF 浸没式光刻使用 193 nm 光源；EUV 使用约 13.5 nm 极紫外光，但 EUV 不能用传统透镜，只能用多层反射镜系统。</p>
+<img src="/images/research/semiconductor-process-flow-from-sand-to-chip/euv-lithography.png" width="600" style="display: block; margin: 1.5rem auto;">
+
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>overlay：多层图形之间的套刻误差需要纳米级控制。</li>
+<li>随机缺陷：EUV 光子数少，光刻胶随机性、线边粗糙和缺陷更突出。</li>
+<li>掩模三维效应和 pellicle：EUV 掩模、保护膜、污染控制难度高。</li>
+<li>计算光刻：OPC、ILT、SMO 和光刻胶模型越来越重要。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>High-NA EUV。</li>
+<li>金属氧化物 EUV resist、干法光刻胶。</li>
+<li>AI 加速 OPC&#x2F;ILT 和工艺窗口预测。</li>
+<li>多束电子束掩模写入和无掩模直写。</li>
+</ul>
+<h4 id="3-2-5-刻蚀：把光刻胶图形转移到真实材料"><a href="#3-2-5-刻蚀：把光刻胶图形转移到真实材料" class="headerlink" title="3.2.5 刻蚀：把光刻胶图形转移到真实材料"></a>3.2.5 刻蚀：把光刻胶图形转移到真实材料</h4><p>刻蚀分湿法和干法。湿法依靠化学溶液，选择性好但各向同性强；干法依靠等离子体中的离子和自由基，能实现方向性刻蚀，是先进器件图形转移的核心。</p>
+<p>反应离子刻蚀 RIE 同时包含：</p>
+<ul>
+<li>化学作用：自由基与材料反应生成挥发性产物。</li>
+<li>物理作用：离子轰击增强方向性和表面反应。</li>
+</ul>
+<p>原子层刻蚀 ALE 则把刻蚀拆成“表面改性”和“去除”两个自限步骤，追求每个循环去除接近原子层厚度。</p>
+<img src="/images/research/semiconductor-process-flow-from-sand-to-chip/rie-etching.png" width="600" style="display: block; margin: 1.5rem auto;">
+
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>选择比：只刻目标层，不伤掩膜和停止层。</li>
+<li>各向异性：侧壁垂直、底部干净、少 footing&#x2F;notching。</li>
+<li>等离子损伤：离子轰击可能引入缺陷和电荷。</li>
+<li>高深宽比：3D NAND 深孔刻蚀、DRAM 电容孔、TSV 都极难。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>Cryogenic etch、pulsed plasma、ALE。</li>
+<li>选择性刻蚀，用于 GAA nanosheet release。</li>
+<li>原位端点检测和机器学习工艺控制。</li>
+</ul>
+<h4 id="3-2-6-掺杂：精确安排载流子"><a href="#3-2-6-掺杂：精确安排载流子" class="headerlink" title="3.2.6 掺杂：精确安排载流子"></a>3.2.6 掺杂：精确安排载流子</h4><p>硅本征载流子浓度很低。通过掺入五价元素如 P、As，形成 n 型；掺入三价元素如 B，形成 p 型。</p>
+<p>主流掺杂方法是离子注入：把杂质离子加速后打入晶圆，再通过退火修复晶格损伤并激活掺杂。早期工艺也大量使用扩散掺杂。</p>
+<img src="/images/research/semiconductor-process-flow-from-sand-to-chip/eti_5.jpg" width="600">
+<img src="/images/research/semiconductor-process-flow-from-sand-to-chip/eti_6.jpg" width="600">
+<img src="/images/research/semiconductor-process-flow-from-sand-to-chip/eti_7.jpg" width="600">
+
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>浅结：先进晶体管要求极浅、陡峭的掺杂分布。</li>
+<li>激活率和扩散：退火太弱激活不足，太强又会扩散变宽。</li>
+<li>通道效应：离子沿晶向深入，导致分布尾巴。</li>
+<li>随机掺杂涨落：器件变小后，一个杂质原子都可能影响阈值。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>毫秒&#x2F;激光退火。</li>
+<li>等离子体掺杂、单原子掺杂。</li>
+<li>无掺杂或低掺杂沟道器件，降低随机涨落。</li>
+</ul>
+<h4 id="3-2-7-CMP：把山丘磨成平原"><a href="#3-2-7-CMP：把山丘磨成平原" class="headerlink" title="3.2.7 CMP：把山丘磨成平原"></a>3.2.7 CMP：把山丘磨成平原</h4><p>CMP 是 chemical mechanical planarization，化学机械平坦化。它用抛光垫、浆料和压力，同时进行化学反应和机械去除。没有 CMP，多层互连会越堆越不平，光刻焦深无法承受。</p>
+<p><strong>典型应用</strong>：</p>
+<ul>
+<li>STI 浅沟槽隔离平坦化。</li>
+<li>钨塞、铜 damascene 工艺。</li>
+<li>层间介质 ILD 平坦化。</li>
+</ul>
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>dishing：金属区域被过度抛低。</li>
+<li>erosion：图形密度高区域整体下陷。</li>
+<li>划伤、颗粒、残留金属污染。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>面向低 k 介质和软材料的低损伤 CMP。</li>
+<li>高选择比浆料。</li>
+<li>原位终点检测和图形密度补偿。</li>
+</ul>
+<hr>
+<h3 id="3-3-晶体管形成：FEOL"><a href="#3-3-晶体管形成：FEOL" class="headerlink" title="3.3 晶体管形成：FEOL"></a>3.3 晶体管形成：FEOL</h3><p>FEOL 是 front-end-of-line，主要形成晶体管本体和隔离结构。一个高度简化的 CMOS 流程包括：</p>
+<ol>
+<li>STI 隔离：在硅中刻浅沟槽，填 SiO2，CMP 平坦化。</li>
+<li>阱区注入：形成 n-well、p-well。</li>
+<li>栅介质和栅电极：传统 poly-Si&#x2F;SiO2，先进节点 high-k&#x2F;metal gate。</li>
+<li>源漏工程：轻掺杂漏 LDD、侧墙 spacer、源漏注入或外延 SiGe&#x2F;Si:P。</li>
+<li>硅化物：降低接触电阻。</li>
+<li>接触孔：钨塞或其他金属连接晶体管到上层互连。</li>
+</ol>
+<p>器件结构从平面 MOSFET 发展到 FinFET，再发展到 GAA nanosheet&#x2F;nanoribbon。结构越立体，工艺越依赖选择性刻蚀、选择性外延、ALD 包覆和应力工程。</p>
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>短沟道效应：栅极对沟道控制不足。</li>
+<li>接触电阻：尺寸缩小后接触电阻成为性能瓶颈。</li>
+<li>变异性：线边粗糙、功函数涨落、随机缺陷。</li>
+<li>热预算：前面做好的结构不能被后续高温破坏。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>GAA、CFET、背面供电网络 BSPDN。</li>
+<li>2D 半导体沟道，如 MoS2、WSe2。</li>
+<li>单片 3D 集成和低温晶体管。</li>
+</ul>
+<img src="/images/research/semiconductor-process-flow-from-sand-to-chip/transistor.png" width="600">
+
+<hr>
+<h3 id="3-4-互连形成：BEOL"><a href="#3-4-互连形成：BEOL" class="headerlink" title="3.4 互连形成：BEOL"></a>3.4 互连形成：BEOL</h3><p>BEOL 是 back-end-of-line，主要做金属互连。晶体管本身只完成开关，真正的芯片需要数十亿晶体管之间高速、低损耗、可供电的连接网络。</p>
+<p>传统铝互连后来被铜互连取代。铜难以用常规干法直接刻蚀，因此采用 damascene 工艺：</p>
+<ol>
+<li>在介质层中刻沟槽和通孔。</li>
+<li>沉积阻挡层和种子层。</li>
+<li>电镀铜填充。</li>
+<li>CMP 去掉多余铜，留下嵌入介质中的金属线。</li>
+</ol>
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>RC 延迟：线宽缩小后电阻上升，线间电容导致延迟和串扰。</li>
+<li>电迁移：高电流密度下金属原子迁移导致断路或短路。</li>
+<li>低 k 介质脆弱：介电常数低但机械强度和热稳定性差。</li>
+<li>通孔可靠性：via 电阻和空洞成为良率杀手。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>Ru、Co、Mo 等替代互连材料。</li>
+<li>空气间隙、超低 k 介质。</li>
+<li>背面供电，把电源网络搬到晶圆背面，释放正面布线资源。</li>
+<li>光互连和片上&#x2F;封装内硅光。</li>
+</ul>
+<hr>
+<h3 id="3-5-量测、检测与良率：制造的闭环神经系统"><a href="#3-5-量测、检测与良率：制造的闭环神经系统" class="headerlink" title="3.5 量测、检测与良率：制造的闭环神经系统"></a>3.5 量测、检测与良率：制造的闭环神经系统</h3><p>没有量测，就没有先进制造。晶圆厂中的检测贯穿所有环节：</p>
+<ul>
+<li>膜厚：椭偏、反射谱、XRR。</li>
+<li>线宽 CD：CD-SEM、散射测量。</li>
+<li>overlay：光学或电子束套刻量测。</li>
+<li>缺陷：明场&#x2F;暗场光学检测、电子束复检。</li>
+<li>成分：SIMS、XPS、EDS、Raman。</li>
+<li>结构：TEM、FIB 截面。</li>
+<li>电性：PCM、WAT、CP probe。</li>
+</ul>
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>量测不能太慢，否则影响产能。</li>
+<li>量测本身不能破坏晶圆。</li>
+<li>很多缺陷是随机、稀有、埋藏或只在电性上表现出来。</li>
+<li>先进节点中，真正要控制的是三维结构和统计分布，而不是单一平均值。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>混合量测：把光学、电子束、电性和工艺数据融合。</li>
+<li>虚拟量测：用设备传感器预测无法实时测量的结果。</li>
+<li>工艺控制 AI：异常检测、漂移补偿、recipe 自优化。</li>
+<li>数字孪生 fab：把设备、材料、版图和良率模型连接起来。</li>
+</ul>
+<hr>
+<h2 id="第四部分：晶圆封装测试"><a href="#第四部分：晶圆封装测试" class="headerlink" title="第四部分：晶圆封装测试"></a>第四部分：晶圆封装测试</h2><p>晶圆完成前端工艺后，上面有许多重复 die。后端制造把这些 die 变成可以焊到电路板上的器件。</p>
+<h3 id="4-1-晶圆测试"><a href="#4-1-晶圆测试" class="headerlink" title="4.1 晶圆测试"></a>4.1 晶圆测试</h3><p>晶圆探针台用探针接触每个 die 的焊盘，执行电性测试，标记好 die 和坏 die。高端产品还会做速度分档、功耗分档和冗余修复。</p>
+<h3 id="4-2-切割"><a href="#4-2-切割" class="headerlink" title="4.2 切割"></a>4.2 切割</h3><p>用金刚石刀片或激光沿划片道切开晶圆，得到单颗 die。薄晶圆和脆性材料需要控制崩边、裂纹和污染。</p>
+<h3 id="4-3-贴片与互连"><a href="#4-3-贴片与互连" class="headerlink" title="4.3 贴片与互连"></a>4.3 贴片与互连</h3><p>die 需要固定到引线框架、基板或中介层上。互连方式包括：</p>
+<ul>
+<li><strong>wire bonding</strong>：金线&#x2F;铜线&#x2F;铝线键合，成熟、成本低。</li>
+<li><strong>flip chip</strong>：芯片倒装，通过焊球或铜柱连接，I&#x2F;O 密度高。</li>
+<li><strong>hybrid bonding</strong>：铜-铜直接键合和介质键合，适合 3D 堆叠。</li>
+</ul>
+<h3 id="4-4-封装与终测"><a href="#4-4-封装与终测" class="headerlink" title="4.4 封装与终测"></a>4.4 封装与终测</h3><p>封装提供机械保护、电连接、散热路径和环境隔离。封装后还要做终测、老化、温循、湿热、跌落、ESD、闩锁等可靠性验证。</p>
+<p><strong>技术难点</strong>：</p>
+<ul>
+<li>热管理：AI 加速器和高功率器件热通量极高。</li>
+<li>先进封装翘曲、应力和微凸点可靠性。</li>
+<li>chiplet 间高速互连、供电完整性和测试覆盖。</li>
+<li>异质集成中材料热膨胀系数不匹配。</li>
+</ul>
+<p><strong>研究方向</strong>：</p>
+<ul>
+<li>2.5D interposer、fan-out、CoWoS 类封装。</li>
+<li>3D 堆叠、hybrid bonding。</li>
+<li>玻璃基板、光电共封装 CPO。</li>
+<li>封装级热仿真、液冷和微流道冷却。</li>
+</ul>
+<hr>
+<h3 id="4-5-一张表看全流程的难点和研究方向"><a href="#4-5-一张表看全流程的难点和研究方向" class="headerlink" title="4.5 一张表看全流程的难点和研究方向"></a>4.5 一张表看全流程的难点和研究方向</h3><table>
+<thead>
+<tr>
+<th align="left">流程</th>
+<th align="left">核心目标</th>
+<th align="left">主要难点</th>
+<th align="left">研究方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">高纯硅</td>
+<td align="left">杂质极低、批次稳定</td>
+<td align="left">金属污染、氧碳控制、成本能耗</td>
+<td align="left">低碳提纯、在线杂质分析</td>
+</tr>
+<tr>
+<td align="left">单晶拉制</td>
+<td align="left">大直径低缺陷单晶</td>
+<td align="left">热场、氧含量、掺杂均匀性</td>
+<td align="left">MCZ&#x2F;FZ、晶体生长模拟</td>
+</tr>
+<tr>
+<td align="left">晶圆加工</td>
+<td align="left">平整洁净低缺陷表面</td>
+<td align="left">TTV、warp、颗粒、亚表面损伤</td>
+<td align="left">原子级抛光、低损伤清洗</td>
+</tr>
+<tr>
+<td align="left">沉积</td>
+<td align="left">可控膜厚、组成、覆盖性</td>
+<td align="left">高深宽比填充、应力、界面</td>
+<td align="left">ALD、选择性沉积、低温工艺</td>
+</tr>
+<tr>
+<td align="left">光刻</td>
+<td align="left">纳米图形定义</td>
+<td align="left">overlay、随机缺陷、掩模误差</td>
+<td align="left">High-NA EUV、计算光刻、AI OPC</td>
+</tr>
+<tr>
+<td align="left">刻蚀</td>
+<td align="left">图形转移</td>
+<td align="left">选择比、侧壁形貌、等离子损伤</td>
+<td align="left">ALE、选择性刻蚀、低损伤等离子</td>
+</tr>
+<tr>
+<td align="left">掺杂</td>
+<td align="left">控制载流子浓度</td>
+<td align="left">浅结、扩散、激活、随机涨落</td>
+<td align="left">激光退火、低掺杂沟道</td>
+</tr>
+<tr>
+<td align="left">CMP</td>
+<td align="left">多层平坦化</td>
+<td align="left">dishing、erosion、划伤</td>
+<td align="left">高选择比浆料、原位终点</td>
+</tr>
+<tr>
+<td align="left">互连</td>
+<td align="left">低 RC、高可靠连接</td>
+<td align="left">电迁移、via 电阻、低 k 损伤</td>
+<td align="left">新金属、背面供电、光互连</td>
+</tr>
+<tr>
+<td align="left">量测</td>
+<td align="left">反馈与良率控制</td>
+<td align="left">高速、无损、三维结构解析</td>
+<td align="left">虚拟量测、多模态数据融合</td>
+</tr>
+<tr>
+<td align="left">封装</td>
+<td align="left">保护、散热、系统互连</td>
+<td align="left">翘曲、热、微凸点、测试</td>
+<td align="left">chiplet、hybrid bonding、CPO</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.semiconductors.org/semiconductors-101/how-are-semiconductors-made/">Semiconductor Industry Association: How are Semiconductors Made?</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.semiconductors.org/semiconductors-101/how-are-semiconductors-made/stage-4-back-end-manufacturing/">SIA: Stage 4 Back-end Manufacturing</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.asml.com/en/technology/all-about-microchips">ASML: All about microchips</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.asml.com/en/technology/lithography-principles">ASML: Lithography principles</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.asml.com/en/products/euv-lithography-systems">ASML: EUV lithography systems</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.sumcosi.com/english/products/process/index.html">SUMCO: Production Processes</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.sumcosi.com/english/products/process/step_01.html">SUMCO: Monocrystalline pulling process</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.tel.com/product/index.html">Tokyo Electron: Products and Services in semiconductor production process</a></li>
+<li><a target="_blank" rel="noopener" href="https://newsroom.lamresearch.com/etch-essentials-semiconductor-manufacturing?web=1">Lam Research: Etch Essentials</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.lamresearch.com/products/our-processes/">Lam Research: Our Processes</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.thermofisher.com/sg/en/home/industrial/manufacturing-processing/manufacturing-processing-learning-center/electronics-information/semiconductor-analysis-imaging-metrology-information/semiconductor-fabrication-overview.html">Thermo Fisher: Semiconductor Fabrication Overview</a></li>
+<li><a target="_blank" rel="noopener" href="https://newsroom.intel.com/manufacturing/intel-leads-the-way-with-advanced-packaging">Intel Newsroom: Intel Leads the Way with Advanced Packaging</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.nist.gov/laboratories/tools-instruments/molecular-beam-epitaxy-mbe-facility">NIST: Molecular Beam Epitaxy Facility</a></li>
+<li><a target="_blank" rel="noopener" href="https://lase.ece.utexas.edu/introduction-mbe-growth">UT Austin: An Introduction to MBE Growth</a></li>
+<li><a target="_blank" rel="noopener" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7692601/">InAs&#x2F;InAsSb Type-II Strained-Layer Superlattice Infrared Photodetectors</a></li>
+<li><a target="_blank" rel="noopener" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3276608/">Growth and fabrication of InAs&#x2F;GaSb type II superlattice mid-wavelength infrared photodetectors</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.nature.com/articles/s41598-017-13016-9">Dark current reduction in microjunction-based double electron barrier type-II InAs&#x2F;InAsSb superlattice LWIR photodetectors</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.mdpi.com/2076-3417/12/24/12508">Complementary Barrier Infrared Detector Architecture for LWIR InAs&#x2F;InAsSb T2SL</a></li>
+</ol>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.1" async></script><a class="article-share-link" data-url="https://deeplearner.top/research/semiconductor-process-flow-from-sand-to-chip/" data-id="cuidvxT3zT68hNeIuw9dh73Ri" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrUlEQVR42u3awU7DMBAE0P7/T8MVBE1md70iSK+nijbBLwfbHc/rFb8+Ll9fv3P9/Xd3/nnVu09fGy88PDy8taFfD/TdoBPMNSy/9pf/i4eHh7fGS4ZyfdX1fZIHd/0ok0UCDw8P78m8fCjViT4ZAx4eHt7/4uWTeBJD9DbZeHh4eE/gVaOB5Nb5EJOYYz1rwcPDw4t5+SnSc96vnO/h4eHhjU/V58FrMqw8kiiPFg8PD2+BV90uJwM9e7cDd8bDw8M7yqtOwfk0PWEky090bIaHh4e3wJtP+r16QRL49jblh9c0PDw8vGJlqvf36jIzeZRRDIGHh4e3xpsfjFUrXNVFpbog4eHh4W3w5pWpXkmrF/VWYxE8PDy8Dd4kQq2WBqrfnC9ReHh4eH/Fm9cFehWuKuymE4GHh4d3iJcg8wrUXrw7Wkjw8PDwlnm9+PVUEJyXDPL3eHh4eGd519NruRhanPrz5aH5+PDw8PAWePnCkG+Le0WB3kFaFIvg4eHhLfMmcUBvGagWtsolLTw8PLw1Xl7oz5eNU7Wq3lKEh4eHt8GrHmX1AEngO/n0pnSFh4eHt8DrHXdtFP0nNYKbAzA8PDy8o7zq8X+15FqtWFW37NFvBTw8PLxDvHkYMY8kzhYaDse4eHh4eMUDsGpoW53Eq/FHL+bAw8PD2+b1wHmVqlpvTbbaN9fi4eHhrfGqpahJTFAF5FvwKHHBw8PDG/A+iq/8IGq+Oe5t3L99ioeHh7fAq0ar5Qi1tZwk8UT++PDw8PA2eL0SVVIUyAeaj6F82IaHh4e3xqse4ecLyaSUUK0a4OHh4T2f16ucTt5Xaw14eHh4T+DlccMk/K3e/9iWGg8PDy/mVYOAY3XS4hFX9YHi4eHhbfAO/OBvFQjyKDYPhUfne3h4eHj3vE9d+88UDk3spwAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/MBE/"><i class="fa fa-tag"></i>MBE</a><a href="/tags/%E5%8D%8A%E5%AF%BC%E4%BD%93%E5%B7%A5%E8%89%BA/"><i class="fa fa-tag"></i>半导体工艺</a><a href="/tags/%E6%99%B6%E5%9C%86%E5%88%B6%E9%80%A0/"><i class="fa fa-tag"></i>晶圆制造</a><a href="/tags/%E5%85%89%E5%88%BB/"><i class="fa fa-tag"></i>光刻</a><a href="/tags/%E4%BA%8C%E7%B1%BB%E8%B6%85%E6%99%B6%E6%A0%BC/"><i class="fa fa-tag"></i>二类超晶格</a><a href="/tags/%E7%BA%A2%E5%A4%96%E6%8E%A2%E6%B5%8B%E5%99%A8/"><i class="fa fa-tag"></i>红外探测器</a></div><div class="post-nav"><a class="next" href="/research/regions-of-the-electromagnetic-spectrum/">光与电磁波谱：基本概念、参数与波段细分</a></div></div></div></div><div class="pure-u-1 pure-u-md-1-4 pure-u-lg-1-5"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="关于"><img class="nofancybox" src="/images/blog/avatar_new.png"/></a><p>心外无物，知行合一</p><a class="info-icon" href="/resume/" title="个人简历" target="_blank" style="margin-inline:5px"> <i class="fa fa-share-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:conghaoyuan@gmail.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/conghaoyuan" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AIGC/">AIGC</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CV/">CV</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GUI/">GUI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/NLP/">NLP</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%97%E4%BA%BA/">数字人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="category-list-count">9</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6/">深度学习框架</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/">深度学习模型</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A0%94%E7%A9%B6/">研究</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B/">课程</a><span class="category-list-count">7</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/05/01/Claude-Code%E5%AE%89%E8%A3%85%E4%B8%8EDeepSeek%E7%AC%AC%E4%B8%89%E6%96%B9API%E9%85%8D%E7%BD%AE/">Claude Code 安装与 DeepSeek 第三方 API 配置教程</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/cv-04-face-detection-recognition/">【计算机视觉】人脸检测与人脸识别</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/cv-05-semantic-segmentation/">【计算机视觉】语义分割：原理与经典模型</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/cv-06-target-detection/">【计算机视觉】目标检测：基础与经典检测器</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/gan-01-fundamentals/">【生成模型】GAN：生成对抗网络原理与实践</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/nlp-02-tf-idf-algorithm/">【自然语言处理】文本表示：TF-IDF 与文本分类入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/ocr-01-fundamentals/">【OCR】场景文字理解：基础、检测与识别方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/course/nlp-01-fundamentals/">【自然语言处理】基础方法、表示学习与典型应用</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%8B-Agent%E5%AE%9E%E6%88%98%E4%B8%8EOpenClaw/">AIGC-Agent-LangChain开发（下）Agent实战：从 L2/L3/L4 到 OpenClaw</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/14/AIGC-Agent-LangChain%E5%BC%80%E5%8F%91-%E4%B8%AD-LangGraph%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%8A%B6%E6%80%81%E6%9C%BA%E4%B8%8E%E5%A4%9AAgent/">AIGC-Agent-LangChain开发（中）LangGraph专题：工作流、状态机与多Agent</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://conghaoyuan.github.io" title="Fern[个人早期博客]" target="_blank">Fern[个人早期博客]</a></div><div class="widget"><div class="widget-title"><i class="fa fa-flask"> 元素周期表</i></div><ul></ul><a href="https://pt.ziziyi.com/" title="元素周期表" target="_blank" rel="noopener noreferrer">元素周期表</a><ul></ul><a href="https://ptable.com/#%E6%80%A7%E8%B4%A8/%E7%B3%BB%E5%88%97" title="元素性质" target="_blank" rel="noopener noreferrer">元素性质</a><ul></ul><a href="https://ptable.com/#%E7%94%B5%E5%AD%90%E5%B1%82/%E6%B0%A7%E5%8C%96%E6%95%B0" title="电子层" target="_blank" rel="noopener noreferrer">电子层</a><ul></ul><a href="https://ptable.com/#%E5%90%8C%E4%BD%8D%E7%B4%A0/%E6%80%BB%E8%AE%A1" title="同位素" target="_blank" rel="noopener noreferrer">同位素</a><ul></ul><a href="https://ptable.com/#%E5%8C%96%E5%90%88%E7%89%A9" title="元素化合物" target="_blank" rel="noopener noreferrer">元素化合物</a></div><div class="widget"><div class="widget-title"><i class="fa fa-star"> 天文学</i></div><ul></ul><a href="/tools/tianwenli.html" title="天文历" target="_self">天文历</a></div><div class="widget"><div class="widget-title"><i class="fa fa-plus"> 数学小工具</i></div><ul></ul><a href="/tools/buy_house.html" title="丐版买房计算器" target="_self">丐版买房计算器</a><ul></ul><a href="/tools/equation_12.html" title="一元二次方程" target="_self">一元二次方程</a><ul></ul><a href="/tools/equation_line.html" title="直线方程" target="_self">直线方程</a><ul></ul><a href="/tools/equation_polynomial.html" title="多项式方程" target="_self">多项式方程</a><ul></ul><a href="/tools/regression_ridge.html" title="岭回归" target="_self">岭回归</a><ul></ul><a href="/tools/fourier_transform.html" title="傅里叶变换" target="_self">傅里叶变换</a><ul></ul><a href="/tools/gradient_descent.html" title="梯度下降" target="_self">梯度下降</a><ul></ul><a href="/tools/function_e.html" title="指数函数" target="_self">指数函数</a><ul></ul><a href="/tools/function_inverse_scale.html" title="反比例函数" target="_self">反比例函数</a><ul></ul><a href="/tools/function_log.html" title="对数函数" target="_self">对数函数</a><ul></ul><a href="/tools/function_sin.html" title="正弦函数" target="_self">正弦函数</a><ul></ul><a href="/tools/coord_grid.html" title="网格化坐标" target="_self">网格化坐标</a></div></div></div><div class="pure-u-1 pure-u-md-3-4 pure-u-lg-4-5"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">DeepLearner.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.1" async></script><script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.1" async></script><link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.1"><script type="text/javascript" src="/js/search.js?v=1.0.1"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/post-protect.js?v=1.0.1"></script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript">window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    processEscapes: true
+  },
+  chtml: {
+    fontURL: '/js/chtml/fonts/woff-v2'
+  },
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  }
+};
+</script><script type="text/javascript" src="/js/mathjax3.js" async></script><style>/* Mermaid 科研风格主题 CSS */
+.mermaid {
+  font-family: "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: transparent;
+  margin: 1.5em auto;
+  text-align: center;
+}
+.mermaid svg {
+  max-width: 100%;
+  border-radius: 6px;
+}
+.mermaid .node rect,
+.mermaid .node polygon,
+.mermaid .node circle {
+  filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.1));
+  rx: 6;
+  ry: 6;
+}
+.mermaid .edgeLabel {
+  font-size: 12px;
+  background-color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.mermaid .label {
+  font-size: 13px;
+  font-weight: 500;
+}</style><script type="text/javascript" src="/js/mermaid.min.js"></script><script>(function() {
+  var done = false;
+  var initMermaid = function() {
+    if (done || !window.mermaid) return;
+    
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      securityLevel: 'loose',
+      fontFamily: '"Helvetica Neue", Arial, "PingFang SC", sans-serif',
+      themeVariables: {
+        primaryColor: '#e8eef6',
+        primaryBorderColor: '#4a76a8',
+        primaryTextColor: '#1a1a2e',
+        secondaryColor: '#f0f4f0',
+        secondaryBorderColor: '#6b9080',
+        secondaryTextColor: '#2d3436',
+        tertiaryColor: '#fdf6ec',
+        tertiaryBorderColor: '#c4a35a',
+        tertiaryTextColor: '#2d3436',
+        lineColor: '#5a6c7d',
+        textColor: '#2d3436',
+        nodeBkg: '#e8eef6',
+        nodeBorder: '#4a76a8',
+        mainBkg: '#e8eef6',
+        labelBackground: '#ffffff',
+        edgeLabelBackground: '#ffffff',
+        fontSize: '14px',
+        fontFamily: '"Helvetica Neue", Arial, sans-serif'
+      }
+    });
+    
+    var candidates = document.querySelectorAll('pre, figure.highlight, .highlight, [class*="mermaid"]');
+    var foundCount = 0;
+
+    candidates.forEach(function(el) {
+      if (el.getAttribute('data-mermaid-processed')) return;
+      if (el.querySelector('svg')) return;
+      
+      var text = "";
+      // 尝试从 Prism 的行结构中提取文本并强制换行
+      var lines = el.querySelectorAll('.line, tr');
+      if (lines.length > 0) {
+        var textParts = [];
+        lines.forEach(function(l) {
+            var t = l.innerText || l.textContent || "";
+            if (t.trim()) textParts.push(t.replace(/\n/g, ''));
+        });
+        text = textParts.join('\n');
+      } else {
+        text = (el.innerText || el.textContent || '').trim();
+      }
+
+      var keywords = /^(graph|flowchart|sequenceDiagram|gantt|classDiagram|stateDiagram|erDiagram|pie|journey|gitGraph|info|mindmap|timeline)/i;
+      
+      if (keywords.test(text.trim()) || el.classList.contains('mermaid') || el.classList.contains('language-mermaid')) {
+        var container = document.createElement('div');
+        container.className = 'mermaid';
+        container.textContent = text;
+        el.setAttribute('data-mermaid-processed', 'true');
+        
+        el.parentNode.insertBefore(container, el);
+        el.style.display = 'none';
+        foundCount++;
+      }
+    });
+
+    if (foundCount > 0) {
+      done = true;
+      console.log('[Mermaid] Rescued ' + foundCount + ' blocks');
+      mermaid.init(undefined, '.mermaid');
+    }
+  };
+
+  if (document.readyState === 'complete') {
+    initMermaid();
+  } else {
+    window.addEventListener('load', initMermaid);
+  }
+  setTimeout(initMermaid, 1500);
+})();
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.1"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.1"></script></div><!-- hexo injector body_end start -->
+<script src="/assets/prism-bundle.js"></script>
+<script src="/assets/prism-plus.js" data-pjax=""></script>
+<!-- hexo injector body_end end --></body></html>
