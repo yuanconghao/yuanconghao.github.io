@@ -1,0 +1,41 @@
+{
+  "id": "standard",
+  "title": "标准 InAs/GaSb 超晶格生长",
+  "target": "按所选周期数完成生长并保持二维生长",
+  "description": "典型中波红外 MWIR InAs/GaSb 二类超晶格结构的高品质外延基准。学习使用 InSb 界面工程补偿拉应变以提升材料与光学质量。",
+  "recipe": {
+    "nPer": 120,
+    "inas": 2.43,
+    "gasb": 1.83,
+    "targetLam": 4.78
+  },
+  "conditions": {
+    "tSub": 380,
+    "cellTemp": {
+      "in": 780,
+      "ga": 900,
+      "al": 1050,
+      "as": 310,
+      "sb": 430
+    },
+    "alEnabled": false
+  },
+  "interface": {
+    "comp": true,
+    "insb": 0.18,
+    "soak": 2.0,
+    "switchDelay": 0.4
+  },
+  "expected": {
+    "lambdaRange": [4.4, 5.2],
+    "surfaceQualityMin": 85,
+    "rheed": "Streaky 2D",
+    "strain": "controlled",
+    "darkCurrentRisk": "low"
+  },
+  "evidence": [
+    "中波红外超晶格结构通常采用 120 个周期 InAs(8 ML, ~2.43 nm) / GaSb(6 ML, ~1.83 nm) 组合，其 50% 截止波长在 ~4.78 μm（文献报道可调谐至 5.15 μm）。",
+    "生长温度 380 ℃ 与气压比 As/In = 8.0、Sb/Ga = 3.0 是典型的外延低错晶面重构窗口，表面粗糙度 RMS 可低至 0.19 nm。",
+    "InSb 界面（约 0.18 nm）有效补偿了 InAs 拉应变，使 XRD 一阶卫星峰半峰宽（FWHM）低至 56 arcsec 左右，展现出极高的空间界面陡峭度与对称性。"
+  ]
+}

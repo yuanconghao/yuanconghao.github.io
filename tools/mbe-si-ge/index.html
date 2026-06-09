@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Si/Ge IV 族 MBE 工艺训练台</title>
+  <link rel="stylesheet" href="/tools/mbe-platform/platform.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Si/Ge IV 族 MBE 工艺训练台 <span class="band">· Octoplus 500 · 3" Si 晶圆 · Si/Ge 电子束 + B 掺杂 · 应变 SiGe 量子阱</span></h1>
+  <div class="sub">IV 族共价、单元素束流（无 III-V 配对）；训练 Ge 组分、压应变与临界厚度判断。复用 MBE 工艺训练台通用引擎。</div>
+
+  <div class="card timeline">
+    <div class="stages">
+      <span class="stg" id="stg_load">① Load</span>
+      <span class="stg" id="stg_deoxide">② Si 脱氧</span>
+      <span class="stg" id="stg_buffer">③ Si Buffer</span>
+      <span class="stg" id="stg_sl">④ Si/SiGe 超晶格</span>
+      <span class="stg" id="stg_cooldown">⑤ Cooldown</span>
+      <span class="stg" id="stg_report">⑥ Report</span>
+    </div>
+    <div class="track"><div class="prog" id="progBar"></div></div>
+  </div>
+
+  <div class="layout3">
+    <!-- 左栏：参数 / 设置 -->
+    <div class="area-ctrl col">
+      <div class="card">
+        <div class="sech">训练任务</div>
+        <select id="taskSelect" style="width:100%;padding:7px;border:1px solid var(--line);border-radius:8px;">
+          <option value="qw">应变 SiGe 量子阱叠层</option>
+          <option value="strain">临界厚度 / 应变弛豫训练</option>
+          <option value="dope">B 掺杂 SiGe 训练</option>
+        </select>
+        <div class="stat" style="margin-top:8px;"><span class="k">目标</span><span class="v" id="taskTarget" style="max-width:200px;">—</span></div>
+        <div class="btns">
+          <button id="play">开始生长</button>
+          <button id="reset" class="ghost">重置</button>
+          <button id="fast" class="ghost">加速看完</button>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--inas, #4E79A7)"></i>Si</span>
+          <span><i style="background:#59A14F"></i>Ge</span>
+          <span><i style="background:#8CB369"></i>SiGe</span>
+          <span><i style="background:#E15759"></i>B</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sech">① 叠层配方（默认=典型 SiGe QW，可微调）</div>
+        <div class="row"><label>周期数</label><input id="nPer" type="range" min="2" max="40" step="1" value="15"><span class="val"><span id="nPerV">15</span> 期</span></div>
+        <div class="row"><label>SiGe 阱厚</label><input id="sigeThick" type="range" min="1" max="15" step="0.1" value="6"><span class="val"><span id="sigeThickV">6.0 nm</span></span></div>
+        <div class="row"><label>Si 隔垒厚</label><input id="siThick" type="range" min="2" max="20" step="0.1" value="8"><span class="val"><span id="siThickV">8.0 nm</span></span></div>
+        <div class="row"><label>Ge 组分 x</label><input id="geFrac" type="range" min="0.05" max="0.8" step="0.01" value="0.30"><span class="val"><span id="geFracV">0.30</span></span></div>
+        <div class="hint">Ge 组分越高、阱越厚 → 压应变越大；超过临界厚度即弛豫产生失配位错。</div>
+      </div>
+
+      <div class="card">
+        <div class="sech">② 生长条件</div>
+        <div class="row"><label>衬底温度</label><input id="tSub" type="range" min="400" max="720" step="5" value="550"><span class="val"><span id="tSubV">550 ℃</span></span></div>
+        <div class="row"><label>Si 电子束功率</label><input id="powSi" type="range" min="50" max="110" step="1" value="80"><span class="val"><span id="powSiV">80 %</span></span></div>
+        <div class="row"><label>Ge 电子束功率</label><input id="powGe" type="range" min="20" max="90" step="1" value="55"><span class="val"><span id="powGeV">55 %</span></span></div>
+        <label class="switch" style="margin-top:6px;"><input id="dope" type="checkbox"><span class="track2"></span><span class="swlabel">B 掺杂 (p 型)</span></label>
+        <div class="row" id="tempBRow"><label>B 源温</label><input id="tempB" type="range" min="1000" max="1300" step="10" value="1150"><span class="val"><span id="tempBV">1150 ℃</span></span></div>
+      </div>
+
+      <div class="card">
+        <div class="sech">快门控制（IV 族单元素）</div>
+        <div class="btns" style="flex-wrap:wrap;">
+          <button class="shutter" id="shSi">Si</button>
+          <button class="shutter" id="shGe">Ge</button>
+          <button class="shutter" id="shB">B</button>
+        </div>
+        <div class="btns" style="flex-wrap:wrap;margin-top:6px;">
+          <button class="ghost" id="seq_si">序列:Si</button>
+          <button class="ghost" id="seq_sige">SiGe</button>
+          <button class="ghost" id="seq_ge">Ge</button>
+          <button class="ghost" id="seq_auto">自动</button>
+        </div>
+        <div class="stat" style="margin-top:6px;"><span class="k">当前束流</span><span class="v" id="chemNow">—</span></div>
+        <div class="stat"><span class="k">风险</span><span class="v badge good" id="chemRisk">—</span></div>
+      </div>
+    </div>
+
+    <!-- 中栏：监控渲染 -->
+    <div class="area-mid col">
+      <div class="card">
+        <div class="sech">生长腔截面（Si/Ge 电子束 + B 热源；紫=SiGe 阱；低质量→3D 岛/弛豫）</div>
+        <canvas id="chamber" width="680" height="320"></canvas>
+      </div>
+      <div class="subgrid">
+        <div class="card">
+          <div class="sech">iRHEED 衍射屏（2×1 条纹 ↔ 斑点）</div>
+          <canvas id="screen" width="330" height="220"></canvas>
+        </div>
+        <div class="card">
+          <div class="sech">应变累积 / 临界厚度</div>
+          <canvas id="strain" width="330" height="220"></canvas>
+          <div class="note">SiGe 阱逐周期累积压应变；越过红色<b>临界线</b>=弛豫/失配位错。</div>
+        </div>
+      </div>
+      <div class="subgrid">
+        <div class="card">
+          <div class="sech">Si/SiGe 周期堆叠总览</div>
+          <canvas id="stackMap" width="330" height="120"></canvas>
+        </div>
+        <div class="card">
+          <div class="sech">Ge 组分 / 能带 (SiGe 阱)</div>
+          <canvas id="band" width="330" height="160"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sech">RHEED 镜面强度振荡（每波峰≈一原子层；表面变糙→振荡变弱）</div>
+        <canvas id="rheed" width="680" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- 右栏：状态 / 诊断 -->
+    <div class="area-status col">
+      <div class="card epilist">
+        <div class="sech">PROCESS · 实时状态</div>
+        <div class="epigrid">
+          <div class="ecell"><div class="ek">SUB 衬底温度</div><div class="ev" id="eSub">—</div></div>
+          <div class="ecell"><div class="ek">SUBRot 转速</div><div class="ev" id="eRot">—</div></div>
+          <div class="ecell wide"><div class="ek">Si 源 (e-beam)</div><div class="ev sm" id="eSi">—</div></div>
+          <div class="ecell wide"><div class="ek">Ge 源 (e-beam)</div><div class="ev sm" id="eGe">—</div></div>
+          <div class="ecell"><div class="ek">B 掺杂源</div><div class="ev sm" id="eB">—</div></div>
+          <div class="ecell"><div class="ek">EpiStep</div><div class="ev" id="eStep">—</div></div>
+          <div class="ecell"><div class="ek">周期</div><div class="ev" id="ePeriod">—</div></div>
+          <div class="ecell"><div class="ek">当前层厚</div><div class="ev" id="eThick">—</div></div>
+          <div class="ecell"><div class="ek">已用时间</div><div class="ev" id="eElapsed">—</div></div>
+          <div class="ecell"><div class="ek">剩余时间</div><div class="ev" id="eRemain">—</div></div>
+          <div class="ecell wide"><div class="ek">当前步骤</div><div class="ev sm" id="eLabel">—</div></div>
+        </div>
+        <div class="epibar">
+          <span class="chip ok">Ion Pump OK</span><span class="chip ok">Cryo OK</span>
+          <span class="chip ok">QMS OK</span><span class="chip ok">QCM OK</span>
+        </div>
+        <div class="flux" id="fluxTable"></div>
+      </div>
+
+      <div class="card">
+        <div class="sech">诊断读数</div>
+        <div class="stat"><span class="k">综合评分</span><span class="v" id="scoreV">—</span></div>
+        <div class="stat"><span class="k">评级</span><span class="v badge good" id="scoreGrade">—</span></div>
+        <div class="stat"><span class="k">表面质量 Q</span><span class="v" id="qV">—</span></div>
+        <div class="stat"><span class="k">RHEED</span><span class="v badge good" id="rheedState">—</span></div>
+        <div class="stat"><span class="k">实际 Ge 组分 / 目标</span><span class="v"><span id="geActual">—</span> / <span id="geTarget">—</span></span></div>
+        <div class="stat"><span class="k">SiGe 带隙</span><span class="v" id="egV">—</span></div>
+        <div class="stat"><span class="k">失配</span><span class="v" id="misfitV">—</span></div>
+        <div class="stat"><span class="k">累积应变</span><span class="v" id="strainV">0</span></div>
+        <div class="stat"><span class="k">应变状态</span><span class="v badge good" id="strainStat">—</span></div>
+        <div class="stat"><span class="k">弛豫风险</span><span class="v badge good" id="relaxRisk">—</span></div>
+        <div class="note" id="relaxWhy">—</div>
+        <div class="note" id="surfaceDiag"></div>
+      </div>
+
+      <div class="card">
+        <div class="sech">评分构成 / 事件日志</div>
+        <div class="stat"><span class="k">配方</span><span class="v" id="partRecipe">0</span></div>
+        <div class="stat"><span class="k">表面</span><span class="v" id="partSurface">0</span></div>
+        <div class="stat"><span class="k">应变</span><span class="v" id="partStrain">0</span></div>
+        <div class="stat"><span class="k">Ge 组分</span><span class="v" id="partGe">0</span></div>
+        <div class="stat"><span class="k">操作</span><span class="v" id="partOps">0</span></div>
+        <div id="eventLog" class="note" style="margin-top:8px;max-height:120px;overflow:auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="summary">
+    <div class="sech">✅ 生长完成 · 训练复盘</div>
+    <div class="sumgrid">
+      <div class="sumcell"><div class="sk">叠层结构</div><div class="sv" id="sStruct">—</div></div>
+      <div class="sumcell"><div class="sk">综合评分</div><div class="sv hl" id="sScore">—</div></div>
+      <div class="sumcell"><div class="sk">总厚度</div><div class="sv" id="sThick">—</div></div>
+      <div class="sumcell"><div class="sk">平均 RHEED</div><div class="sv" id="sFlat">—</div></div>
+      <div class="sumcell"><div class="sk">累积应变/状态</div><div class="sv" id="sStrain">—</div></div>
+      <div class="sumcell"><div class="sk">实际 Ge 组分</div><div class="sv" id="sGe">—</div></div>
+      <div class="sumcell"><div class="sk">SiGe 带隙</div><div class="sv" id="sEg">—</div></div>
+      <div class="sumcell"><div class="sk">弛豫风险</div><div class="sv" id="sRisk">—</div></div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:14px;">
+    设备：Octoplus 500 · 3" Si 晶圆 · 8 热蒸发 + 2 电子束源 · 离子泵+低温冷凝泵 · RHEED · QMS · 晶振膜厚仪。本体源 Si/Ge（电子束），掺杂源 B。与 InAs/GaSb 炉子共用同一通用引擎与界面布局。
+  </div>
+</div>
+
+<script src="/tools/mbe-platform/engine.js"></script>
+<script src="./core.js"></script>
+<script src="./render.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>

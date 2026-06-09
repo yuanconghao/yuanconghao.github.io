@@ -914,6 +914,11 @@ div {
   font-size: 20px;
 }
 
+.tools-group-mbe .tools-group-icon {
+  background: rgba(15, 122, 104, 0.12);
+  color: var(--tools-green);
+}
+
 .tools-group-planet .tools-group-icon {
   background: rgba(36, 95, 157, 0.1);
   color: var(--tools-blue);

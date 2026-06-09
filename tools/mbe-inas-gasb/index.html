@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InAs/GaSb 二类超晶格 MBE 工艺训练台</title>
+  <link rel="stylesheet" href="/tools/mbe-platform/platform.css">
+</head>
+
+<body>
+  <div class="wrap">
+    <h1>InAs/GaSb 二类超晶格 MBE 工艺训练台 <span class="band">· 训练目标不是只看动画，而是通过 recipe、温度、束流、快门、RHEED 和应变反馈训练工艺判断能力。</span></h1>
+
+    <div class="card timeline">
+      <div class="stages">
+        <span class="stg" id="stg_load">Load</span>
+        <span class="stg" id="stg_deoxide">Deoxide</span>
+        <span class="stg" id="stg_buffer">GaSb Buffer</span>
+        <span class="stg" id="stg_calib">Interface Calib</span>
+        <span class="stg" id="stg_sl">SL Growth</span>
+        <span class="stg" id="stg_cooldown">Cooldown</span>
+        <span class="stg" id="stg_report">Report</span>
+      </div>
+      <div class="track">
+        <div class="prog" id="progBar"></div>
+      </div>
+      <div class="stage-line"><span id="stageTitle">--</span></div>
+    </div>
+
+    <div class="layout3">
+      <div class="area-ctrl col">
+        <div class="card taskbar">
+          <div class="sech">训练任务</div>
+          <div class="task-selects">
+            <label><span>任务</span>
+              <select id="taskSelect">
+                <option value="lwir">复现 12.6 μm LWIR 超晶格</option>
+                <option value="standard">标准 InAs/GaSb 超晶格生长</option>
+                <option value="rheed">RHEED 诊断训练</option>
+                <option value="strain">应变控制训练</option>
+              </select>
+            </label>
+          </div>
+          <div class="task-copy">
+            <div><b id="taskTitle">复现 12.8 μm LWIR 超晶格</b></div>
+            <div id="taskTarget">λc 12-13 μm, Q > 80, 应变可控</div>
+            <div class="task-evidence" id="taskEvidence">加载任务数据后显示复现依据。</div>
+          </div>
+          <div class="task-score"><span id="scoreV">-- / 100</span><span id="scoreGrade" class="v badge good">--</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="sech">A. Recipe 配方</div>
+          <div class="row"><label>周期数</label><input id="nPer" type="range" min="2" max="70" step="1" value="20"><span
+              class="val"><span id="nPerV">20</span> 期</span></div>
+          <div class="row"><label>InAs 主层</label><input id="inas" type="range" min="2" max="8" step="0.01"
+              value="5.21"><span class="val"><span id="inasV">5.21 nm</span></span></div>
+          <div class="row"><label>GaSb 垒层</label><input id="gasb" type="range" min="0.5" max="3" step="0.01"
+              value="1.39"><span class="val"><span id="gasbV">1.39 nm</span></span></div>
+          <div class="row"><label>目标 λc</label><input id="targetLam" type="range" min="3" max="16" step="0.1"
+              value="12.8"><span class="val"><span id="targetLamV">12.8 μm</span></span></div>
+          <div class="hint">增大 InAs 厚度通常使 Eg_eff 降低、截止波长变长，同时增加应变和暗电流敏感性。</div>
+          <div class="btns">
+            <button id="play">开始生长</button>
+            <button id="reset" class="ghost">重置</button>
+            <button id="fast" class="ghost">加速看完</button>
+          </div>
+          <div class="legend">
+            <span><i style="background:var(--inas)"></i>InAs</span>
+            <span><i style="background:var(--gasb)"></i>GaSb</span>
+            <span><i style="background:var(--insb)"></i>InSb-like</span>
+            <span><i style="background:var(--gaas)"></i>GaAs-like 风险</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sech">B. 温度与源炉控制</div>
+          
+          <div class="ctrl-group">
+            <div class="group-header">
+              <label>生长温度</label>
+              <span class="val" id="tSubV">380 ℃</span>
+            </div>
+            <input id="tSub" type="range" min="320" max="500" step="2" value="380">
+            <div class="group-feedback">
+              <span id="tSubStat" class="v badge good">合适</span>
+              <span id="tSubHint">推荐 370-410 ℃</span>
+            </div>
+          </div>
+          
+          <div class="ctrl-group">
+            <div class="group-header">
+              <label>In 炉温</label>
+              <span class="val" id="tempInV">780 ℃</span>
+            </div>
+            <input id="tempIn" type="range" min="740" max="820" step="1" value="780">
+            <div class="group-feedback">
+              <span id="tempInStat" class="v badge good">合适</span>
+              <span id="tempInHint">推荐 770-790 ℃</span>
+            </div>
+          </div>
+          
+          <div class="ctrl-group">
+            <div class="group-header">
+              <label>Ga 炉温</label>
+              <span class="val" id="tempGaV">900 ℃</span>
+            </div>
+            <input id="tempGa" type="range" min="860" max="940" step="1" value="900">
+            <div class="group-feedback">
+              <span id="tempGaStat" class="v badge good">合适</span>
+              <span id="tempGaHint">推荐 890-910 ℃</span>
+            </div>
+          </div>
+          
+          <div class="ctrl-group" id="alRow">
+            <div class="group-header">
+              <label>Al 炉温</label>
+              <span class="val" id="tempAlV">1050 ℃</span>
+            </div>
+            <input id="tempAl" type="range" min="1000" max="1120" step="1" value="1050">
+            <div class="group-feedback" id="tempAlRowHint">
+              <span id="tempAlStat" class="v badge good">合适</span>
+              <span id="tempAlHint">推荐 1030-1070 ℃</span>
+            </div>
+          </div>
+          
+          <div class="ctrl-group">
+            <div class="group-header">
+              <label>As 炉温</label>
+              <span class="val" id="tempAsV">310 ℃</span>
+            </div>
+            <input id="tempAs" type="range" min="280" max="350" step="1" value="310">
+            <div class="group-feedback">
+              <span id="tempAsStat" class="v badge good">合适</span>
+              <span><span id="tempAsHint">推荐 300-320 ℃</span> (As/In 比: <b id="asInV">--</b>)</span>
+            </div>
+          </div>
+          
+          <div class="ctrl-group">
+            <div class="group-header">
+              <label>Sb 炉温</label>
+              <span class="val" id="tempSbV">430 ℃</span>
+            </div>
+            <input id="tempSb" type="range" min="390" max="470" step="1" value="430">
+            <div class="group-feedback">
+              <span id="tempSbStat" class="v badge good">合适</span>
+              <span><span id="tempSbHint">推荐 420-440 ℃</span> (Sb/Ga 比: <b id="sbGaV">--</b>)</span>
+            </div>
+          </div>
+          
+          <div class="derived-metrics">
+            <div class="dcell"><span>As/In 束流比:</span> <b id="asInReadout">--</b></div>
+            <div class="dcell"><span>Sb/Ga 束流比:</span> <b id="sbGaReadout">--</b></div>
+            <div class="dcell"><span>InAs 速率:</span> <b id="inasRateReadout">-- nm/s</b></div>
+            <div class="dcell"><span>GaSb 速率:</span> <b id="gasbRateReadout">-- nm/s</b></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sech">C. 快门与束流控制</div>
+          <div class="shutters">
+            <button id="shIn" class="shutter">In</button>
+            <button id="shGa" class="shutter">Ga</button>
+            <button id="shAl" class="shutter">Al</button>
+            <button id="shAs" class="shutter">As</button>
+            <button id="shSb" class="shutter">Sb</button>
+          </div>
+          <div class="seqs">
+            <button id="seq_auto" class="ghost">Auto recipe</button>
+            <button id="seq_inas" class="ghost">InAs step</button>
+            <button id="seq_insb" class="ghost">InSb-like</button>
+            <button id="seq_gasb" class="ghost">GaSb step</button>
+            <button id="seq_soak" class="ghost">Sb soak</button>
+          </div>
+          <div class="stat"><span class="k">当前组合</span><span class="v" id="chemNow">--</span></div>
+          <div class="stat"><span class="k">组合风险</span><span class="v badge good" id="chemRisk">--</span></div>
+        </div>
+
+        <div class="card">
+          <div class="sech">D. 界面工程</div>
+          <label class="switch"><input id="comp" type="checkbox" checked><span class="track2"></span><span
+              class="swlabel">InSb-like 双界面补偿</span></label>
+          <div class="row" id="insbRow"><label>InSb 厚度</label><input id="insb" type="range" min="0" max="0.3"
+              step="0.005" value="0.02"><span class="val"><span id="insbV">0.020 nm</span></span></div>
+          <div class="row"><label>Sb soaking</label><input id="soak" type="range" min="0" max="5" step="0.1"
+              value="2.0"><span class="val"><span id="soakV">2.0 s</span></span></div>
+          <div class="row"><label>As/Sb 延迟</label><input id="switchDelay" type="range" min="0" max="2" step="0.1"
+              value="0.5"><span class="val"><span id="switchDelayV">0.5 s</span></span></div>
+          <div class="hint">InSb-like 界面用于补偿 InAs 拉应变；Ga + As 快门组合会形成 GaAs-like 界面，应尽量避免。<b id="insbHint">理论平衡约 --</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="area-mid col">
+        <div class="card chamber-card">
+          <div class="sech">中央数字孪生视图 · 炉源 / 快门 / 束流 / 层状截面</div>
+          <div class="mini-readout">
+            <span>Cycle <b id="cycleNow">--</b></span>
+            <span>Shutter <b id="shutterNow">--</b></span>
+            <span>Layer <b id="layerNow">--</b></span>
+          </div>
+          <canvas id="chamber" width="760" height="430"></canvas>
+          <div class="stack-overview">
+            <div class="sech" id="stackMapTitle">全栈压缩总览 · 主画布显示当前局部放大</div>
+            <canvas id="stackMap" width="760" height="120"></canvas>
+            <div class="note" id="stackMapNote">横向表示生长顺序：GaSb 衬底 → GaSb buffer → 周期序列；每个周期从左到右为 InSb-like / InAs /
+              InSb-like / GaSb，红框为当前周期。</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="sech">RHEED 图像</div>
+          <canvas id="screen" width="760" height="450"></canvas>
+        </div>
+        <div class="card">
+          <div class="sech">RHEED 镜面反射点强度（每一个波峰 = 长完一个完整原子层）</div>
+          <canvas id="rheed" width="760" height="180"></canvas>
+          <div class="note">逐层生长时，表面在"刚铺满（最平）↔ 铺到一半（最糙）"之间周期变化，镜面反射点强度随之振荡。<b>数振荡周期就能精确标定生长速率（ML/s）</b>——这正是 MBE 做到原子层精度的关键原位手段。</div>
+        </div>
+        <div class="card">
+          <div class="sech">应变累积 · 安全区 / 警告区 / 失配区</div>
+          <canvas id="strain" width="760" height="130"></canvas>
+        </div>
+      </div>
+
+      <div class="area-status col">
+        <div class="card epilist">
+          <div class="sech">PROCESS EPILIST</div>
+          <div class="epigrid">
+            <div class="ecell">
+              <div class="ek">SUB 温度</div>
+              <div class="ev" id="eSub">-- ℃</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">SUBRot</div>
+              <div class="ev" id="eRot">--</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">Ga cell</div>
+              <div class="ev" id="eGa">--</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">In cell</div>
+              <div class="ev" id="eIn">--</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">Al cell</div>
+              <div class="ev" id="eAl">--</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">Sb valve</div>
+              <div class="ev" id="eSb">--</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">As valve</div>
+              <div class="ev" id="eAs">--</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">EpiStep</div>
+              <div class="ev" id="eStep">--</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">周期</div>
+              <div class="ev" id="ePeriod">--</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">总厚度</div>
+              <div class="ev" id="eThick">--</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">已用</div>
+              <div class="ev" id="eElapsed">--</div>
+            </div>
+            <div class="ecell">
+              <div class="ek">剩余</div>
+              <div class="ev" id="eRemain">--</div>
+            </div>
+            <div class="ecell wide">
+              <div class="ek">当前步骤</div>
+              <div class="ev sm" id="eLabel">--</div>
+            </div>
+          </div>
+          <div class="epibar"><span class="chip ok">Comms OK</span><span class="chip ok">P-Loops OK</span><span
+              class="chip ok">Sensors OK</span></div>
+          <div class="flux" id="fluxTable"></div>
+        </div>
+
+        <div class="card diag">
+          <div class="sech">实时诊断</div>
+          <div class="diag-card">
+            <div class="diag-head"><span>表面质量</span><b id="qV">-- %</b></div>
+            <div><span id="rheedState" class="v badge good">--</span></div>
+            <p id="surfaceDiag">--</p>
+          </div>
+          <div class="diag-card">
+            <div class="diag-head"><span>界面质量</span><b id="intfAbrupt" class="v badge good">--</b></div>
+            <div class="twocol"><span>InSb-like <b id="intfInSb">--</b></span><span>GaAs-like <b
+                  id="intfGaAs">--</b></span></div>
+          </div>
+          <div class="diag-card">
+            <div class="diag-head"><span>应变状态</span><b id="strainV">0</b></div>
+            <div><span id="strainStat" class="v badge good">--</span></div>
+            <p id="strainDiag">--</p>
+          </div>
+          <div class="diag-card">
+            <div class="diag-head"><span>光学结果</span><b id="lam">-- μm</b></div>
+            <div class="twocol"><span>Eg <b id="eg">-- eV</b></span><span>匹配 <b id="lambdaMatch">--</b></span></div>
+            <p><span id="bandName">--</span> · <span id="opticalDiag">--</span></p>
+            <canvas id="band" width="360" height="180"></canvas>
+          </div>
+          <div class="diag-card">
+            <div class="diag-head"><span>器件风险</span><b id="darkRisk" class="v badge good">--</b></div>
+            <p id="darkWhy">--</p>
+          </div>
+        </div>
+
+        <div class="card score-card">
+          <div class="sech">评分拆解</div>
+          <div class="score-row"><span>Recipe 合理性</span><b id="partRecipe">--</b><em>/20</em></div>
+          <div class="score-row"><span>表面质量</span><b id="partSurface">--</b><em>/20</em></div>
+          <div class="score-row"><span>界面控制</span><b id="partInterface">--</b><em>/20</em></div>
+          <div class="score-row"><span>应变控制</span><b id="partStrain">--</b><em>/15</em></div>
+          <div class="score-row"><span>波长匹配</span><b id="partLambda">--</b><em>/15</em></div>
+          <div class="score-row"><span>操作规范</span><b id="partOps">--</b><em>/10</em></div>
+        </div>
+
+        <div class="card side-viz">
+          <div class="sech">标准快门时序参考</div>
+          <canvas id="timing" width="360" height="150"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card log-card">
+      <div class="sech">事件日志 / 错误提示 / 工艺助手</div>
+      <div id="eventLog" class="event-log"></div>
+    </div>
+
+    <div class="card" id="summary">
+      <div class="sech">训练报告 · 生长完成</div>
+      <div class="sumgrid">
+        <div class="sumcell">
+          <div class="sk">最终评分</div>
+          <div class="sv hl" id="sScore">--</div>
+        </div>
+        <div class="sumcell">
+          <div class="sk">超晶格结构</div>
+          <div class="sv" id="sStruct">--</div>
+        </div>
+        <div class="sumcell">
+          <div class="sk">总厚度</div>
+          <div class="sv" id="sThick">--</div>
+        </div>
+        <div class="sumcell">
+          <div class="sk">平均 RHEED 强度</div>
+          <div class="sv" id="sFlat">--</div>
+        </div>
+        <div class="sumcell">
+          <div class="sk">应变状态</div>
+          <div class="sv" id="sStrain">--</div>
+        </div>
+        <div class="sumcell">
+          <div class="sk">RHEED 状态</div>
+          <div class="sv" id="sMode">--</div>
+        </div>
+        <div class="sumcell">
+          <div class="sk">Eg_eff</div>
+          <div class="sv" id="sEg">--</div>
+        </div>
+        <div class="sumcell">
+          <div class="sk">截止波长</div>
+          <div class="sv hl" id="sLam">--</div>
+        </div>
+        <div class="sumcell">
+          <div class="sk">目标波段</div>
+          <div class="sv" id="sBand">--</div>
+        </div>
+        <div class="sumcell">
+          <div class="sk">暗电流风险</div>
+          <div class="sv" id="sRisk">--</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note footnote">
+      物理量为半物理规则模型，用于工艺训练与趋势理解，不作为定量外延设计工具。训练重点：InAs/GaSb 交替生长、InSb-like 界面、RHEED 反馈、应变补偿、截止波长与暗电流风险。
+    </div>
+  </div>
+
+  <script src="/tools/mbe-platform/engine.js"></script>
+  <script src="./core.js"></script>
+  <script src="./render.js"></script>
+  <script src="./app.js"></script>
+</body>
+
+</html>

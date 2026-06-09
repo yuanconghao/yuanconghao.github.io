@@ -1,0 +1,4 @@
+{ "id":"dope", "title":"B 掺杂 SiGe 训练", "target":"掺 B 条件下保持表面与应变质量",
+  "recipe":{"nPer":12,"siThick":10.0,"sigeThick":5.0,"geFrac":0.25},
+  "conditions":{"tSub":560,"powSi":82,"powGe":50,"dope":true},
+  "evidence":["B 热蒸发掺杂提供 p 型，注意掺杂不显著改变应变但影响表面与缺陷。"] }

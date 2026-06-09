@@ -4,6 +4,43 @@
   
     
     <entry>
+      <title>长波红外探测器全流程：InAs/GaSb 二类超晶格的材料生长原理与器件工艺</title>
+      <link href="//research/inas-gasb-lwir-detector/"/>
+      <url>//research/inas-gasb-lwir-detector/</url>
+      
+        <content type="html"><![CDATA[<p>读完 <a href="/research/inas-gasb-type-ii-superlattice-ir-detectors/">InAs&#x2F;GaSb II 类超晶格材料生长及红外探测器性能</a> 那篇论文解读后，我发现自己对很多细节”知其然不知其所以然”：为什么界面要做成双 InSb？应变平衡那个 $0.11559$ 的系数从哪来？M 型势垒到底压住了哪一种暗电流？台面刻蚀完为什么一定要钝化？</p><p>导师给的建议很实在：<strong>不要泛读整篇博士论文，而是挑一种探测器——长波红外探测器——从材料怎么长，到器件怎么做，一步一步吃透，尤其要把材料生长的原理搞清楚。</strong></p><p>所以这篇文章就是我的”长波红外探测器学习笔记”。它不绑定某一个具体器件，也不试图替代完整综述，而是以论文里的长波器件和通用 <strong>InAs&#x2F;GaSb 二类超晶格长波体系</strong> 为主线，把一条完整链路讲清楚：哪些问题由材料生长决定，哪些问题留给器件结构和工艺解决。</p><ol><li><strong>物理基础</strong>：长波红外是什么，怎么衡量探测器好坏，为什么偏偏选二类超晶格。</li><li><strong>材料生长（核心）</strong>：从 MBE 系统、衬底、成核动力学，到界面工程、应变平衡、能带设计，逐层剖析原理。</li><li><strong>器件工艺</strong>：从外延片到台面、钝化、电极、焦平面阵列的完整工艺流程。</li><li><strong>性能测试</strong>：用什么指标、怎么测、每个工艺步骤对应抑制了哪一种暗电流。</li><li><strong>延伸</strong>：把材料生长 → 器件性能 → AI 实时控制串成我自己的研究主线。</li></ol><blockquote><p>术语与缩写统一参见 <a href="/research/technical-glossary/">光电、材料与半导体专业术语辞典</a>，本文出现的 RHEED、MBE、T2SL、V&#x2F;III、MEE 等均可交叉查阅。</p></blockquote><blockquote><p><strong>来源约定</strong>：为了分清”论文结论”与”我补充的背景”，本文只在关键位置使用 📄 标记直接来自所解读博士论文（蒋洞微, 2016）的结果或参数；通用工艺&#x2F;物理知识和我的半定量推导，会在对应段落中用文字说明。未标注处为公认的基础物理。</p></blockquote><hr><h2 id="第一部分：长波红外探测的物理基础与材料选择"><a href="#第一部分：长波红外探测的物理基础与材料选择" class="headerlink" title="第一部分：长波红外探测的物理基础与材料选择"></a>第一部分：长波红外探测的物理基础与材料选择</h2><h3 id="1-1-什么是”长波红外”，为什么难"><a href="#1-1-什么是”长波红外”，为什么难" class="headerlink" title="1.1 什么是”长波红外”，为什么难"></a>1.1 什么是”长波红外”，为什么难</h3><p>红外按波长大致分段（详见 <a href="/research/regions-of-the-electromagnetic-spectrum/">光与电磁波谱</a>）：</p><table><thead><tr><th align="left">波段</th><th align="left">波长范围</th><th align="left">大气窗口</th><th align="left">典型应用</th></tr></thead><tbody><tr><td align="left">近红外 NIR</td><td align="left">0.78–1.1 μm</td><td align="left">—</td><td align="left">光纤通信、夜视增强</td></tr><tr><td align="left">短波红外 SWIR</td><td align="left">1–3 μm</td><td align="left">1–3 μm</td><td align="left">成分检测、安防</td></tr><tr><td align="left">中波红外 MWIR</td><td align="left">3–5 μm</td><td align="left">3–5 μm</td><td align="left">红外制导、预警</td></tr><tr><td align="left"><strong>长波红外 LWIR</strong></td><td align="left"><strong>8–14 μm</strong></td><td align="left"><strong>8–14 μm</strong></td><td align="left"><strong>热成像、遥感</strong></td></tr><tr><td align="left">甚长波红外 VLWIR</td><td align="left">&gt;14 μm</td><td align="left">部分透过</td><td align="left">深空探测、卫星遥感</td></tr></tbody></table><p>长波红外之所以重要，是因为 <strong>室温物体（约 300 K）的黑体辐射峰值恰好落在 8–14 μm</strong>（维恩位移定律 $\lambda_{peak} &#x3D; 2898&#x2F;T \approx 9.7\ \mu m$）。也就是说，人、车、建筑这些常温目标，主要”发光”就在长波。无源、被动、无需照明的热成像，本质上探测的就是这个波段。</p><p>但长波也是<strong>最难做</strong>的波段。难点的根源在于<strong>禁带极窄</strong>：</p><p>$$<br>\lambda_c\ (\mu m) &#x3D; \frac{hc}{E_g} &#x3D; \frac{1.24}{E_g\ (\text{eV})}<br>$$</p><p>要响应到 $\lambda_c &#x3D; 14\ \mu m$，材料有效禁带必须低到约 $E_g \approx 0.088\ \text{eV}$。这么窄的禁带带来一连串连锁问题：</p><ul><li><strong>热激发载流子多</strong>：禁带越窄，本征载流子浓度 $n_i \propto \exp(-E_g&#x2F;2k_BT)$ 越高，暗电流越大，必须深度制冷（通常 77 K 液氮温区）。</li><li><strong>隧穿更容易</strong>：窄禁带下带间隧穿（band-to-band tunneling）和陷阱辅助隧穿（TAT）概率指数级升高。</li><li><strong>对缺陷极敏感</strong>：任何一个深能级缺陷都可能在窄禁带中央形成高效复合中心。</li></ul><p>一句话：<strong>长波红外探测器的大部分工程权衡，都绕不开”窄禁带带来的暗电流”。</strong> 这条主线请记住，后面材料生长和器件工艺的许多设计，最终都能归到”压暗电流 &#x2F; 提量子效率”这两件事上。</p><h3 id="1-2-怎么衡量一个红外探测器的好坏"><a href="#1-2-怎么衡量一个红外探测器的好坏" class="headerlink" title="1.2 怎么衡量一个红外探测器的好坏"></a>1.2 怎么衡量一个红外探测器的好坏</h3><p>在深入材料之前，先建立”评价坐标系”。红外探测器的核心指标如下：</p><p><strong>① 截止波长 $\lambda_c$</strong>：器件能响应的最长波长，由有效禁带决定（上面那条公式）。</p><p><strong>② 响应度 $R_i$（Responsivity）</strong>：单位入射光功率产生的光电流，</p><p>$$<br>R_i &#x3D; \frac{\eta q \lambda}{hc}<br>$$</p><p>其中 $\eta$ 是量子效率，$q$ 是电子电荷。</p><p><strong>③ 量子效率 $\eta$（Quantum Efficiency）</strong>：一个入射光子产生并被电极收集到的电子-空穴对的概率。它由<strong>光子吸收 → 载流子产生 → 输运 → 电极收集</strong>四个环节串联决定，任何一环短板都会拉低 $\eta$。</p><p><strong>④ 暗电流 $J_{dark}$</strong>：无光照时器件中流过的电流，是噪声的主要来源。它由四个分量组成（这是全文的关键拼图）：</p><table><thead><tr><th align="left">暗电流分量</th><th align="left">物理来源</th><th align="left">主导温区</th><th align="left">工艺&#x2F;结构对策</th></tr></thead><tbody><tr><td align="left">扩散电流</td><td align="left">中性区少子扩散</td><td align="left">高温</td><td align="left">提高材料寿命、优化掺杂</td></tr><tr><td align="left">产生-复合电流（G-R）</td><td align="left">耗尽区 SRH 缺陷中心</td><td align="left">中温</td><td align="left">降缺陷、优化耗尽区与势垒</td></tr><tr><td align="left">隧穿电流</td><td align="left">带间隧穿 + 陷阱辅助隧穿</td><td align="left">低温</td><td align="left">大有效质量、降低电场、势垒设计</td></tr><tr><td align="left">表面漏电流</td><td align="left">刻蚀损伤、悬挂键、氧化</td><td align="left">全温区</td><td align="left"><strong>台面钝化</strong></td></tr></tbody></table><p><strong>⑤ 零偏阻抗面积积 $R_0A$</strong>：零偏压下微分电阻乘以结面积，单位 $\Omega\cdot cm^2$。它直接刻画零偏附近暗电流抑制水平——$R_0A$ 越大，通常说明暗电流越小。对长波器件来说，$R_0A$ 是判断器件是否进入可用区间的重要门槛之一。</p><p><strong>⑥ 探测率 $D^*$（Specific Detectivity）</strong>：归一化到单位面积和带宽后的信噪比，单位 $cm\cdot Hz^{1&#x2F;2}\cdot W^{-1}$。如果先看约翰逊噪声（热噪声）限制、暂不展开背景噪声和读出噪声，可以写成：</p><p>$$<br>D^* &#x3D; \frac{\lambda q \eta}{hc}\sqrt{\frac{R_0A}{4k_BT}}<br>$$</p><p>这条公式非常关键——它把<strong>量子效率 $\eta$</strong> 和 <strong>$R_0A$</strong> 这两个量同时摆进了一个式子里。这意味着探测器优化是个<strong>双目标问题</strong>：</p><blockquote><p><strong>提高 $D^*$ &#x3D; 一边把 $\eta$ 做高（管好载流子输运），一边把 $R_0A$ 做大（压住暗电流）。</strong></p></blockquote><p>后面你会看到，材料里的 M 型势垒主要是在 $R_0A$ 这条线上做文章，I 区厚度、Be 掺杂&#x2F;渐变掺杂则更多影响吸收和载流子收集，也就是 $\eta$ 这条线。真实器件里两者会互相牵连，但这个拆分有助于先建立判断框架。</p><h3 id="1-3-为什么选-InAs-GaSb-二类超晶格"><a href="#1-3-为什么选-InAs-GaSb-二类超晶格" class="headerlink" title="1.3 为什么选 InAs&#x2F;GaSb 二类超晶格"></a>1.3 为什么选 InAs&#x2F;GaSb 二类超晶格</h3><p>做长波，历史上有几条技术路线，各有软肋：</p><table><thead><tr><th align="left">材料体系</th><th align="left">类型</th><th align="left">长波软肋</th></tr></thead><tbody><tr><td align="left">HgCdTe（碲镉汞）</td><td align="left">II-VI 三元</td><td align="left">组分对禁带极度敏感，大面阵均匀性差、剧毒、贵</td></tr><tr><td align="left">InSb（锑化铟）</td><td align="left">III-V</td><td align="left">禁带固定（约 5.5 μm 截止），到不了长波</td></tr><tr><td align="left">QWIP（量子阱红外）</td><td align="left">III-V 子带跃迁</td><td align="left">不能正入射吸收、量子效率低</td></tr><tr><td align="left"><strong>InAs&#x2F;GaSb T2SL</strong></td><td align="left"><strong>III-V 超晶格</strong></td><td align="left"><strong>本文主角</strong></td></tr></tbody></table><p>InAs&#x2F;GaSb <a href="/research/technical-glossary/">二类超晶格（T2SL）</a> 的吸引力，可以归纳成五点，每一点都直击长波痛点：</p><ol><li><strong>有效带隙连续可调</strong>：通过改变 InAs&#x2F;GaSb 阱垒层厚度（原子层级），有效带隙可在 0–0.4 eV 间连续调，一套材料体系覆盖中波、长波、甚长波。</li><li><strong>大电子有效质量</strong>：超晶格的微带结构使电子有效质量显著大于同等禁带的 HgCdTe，而隧穿电流 $\propto \exp(-\sqrt{m^*})$，<strong>大有效质量直接压低隧穿暗电流</strong>。</li><li><strong>抑制俄歇复合</strong>：通过能带工程可拉开导带微带间距，抑制长波器件中破坏寿命的俄歇复合。</li><li><strong>厚度控制 vs 组分控制</strong>：超晶格靠”长几个原子层”调禁带，比 HgCdTe 靠”控组分”在大面阵上更均匀、更可重复——这是面阵化、产业化的关键优势。</li><li><strong>正入射吸收</strong>：不像 QWIP 需要光栅耦合，T2SL 可直接正入射吸收，量子效率上限更高。</li></ol><h3 id="1-4-二类超晶格的能带工程原理（长波的核心物理图像）"><a href="#1-4-二类超晶格的能带工程原理（长波的核心物理图像）" class="headerlink" title="1.4 二类超晶格的能带工程原理（长波的核心物理图像）"></a>1.4 二类超晶格的能带工程原理（长波的核心物理图像）</h3><p>这是整篇文章物理上最关键的地方：长波响应不是靠换一种固定窄禁带材料，而是靠人造周期结构把有效带隙调出来。</p><p><strong>第一步：理解”二类断隙（type-II broken-gap）能带排列”。</strong></p><p>把 InAs 和 GaSb 的能带边在同一个能量坐标上画出来，会发现一件反常的事：</p><ul><li><strong>InAs 的导带底，比 GaSb 的价带顶还要低</strong>（约低 0.15 eV）。</li></ul><p>这就是”断隙（broken-gap）”——两种材料的禁带在能量轴上<strong>根本不重叠</strong>。后果是：</p><ul><li><strong>电子</strong>倾向待在 InAs 层（那里导带最低）。</li><li><strong>空穴</strong>倾向待在 GaSb 层（那里价带最高）。</li><li>电子和空穴被<strong>空间上分到了不同的材料层里</strong>。</li></ul><p><strong>第二步：理解”微带（miniband）”如何形成有效带隙。</strong></p><p>单看一层 InAs、一层 GaSb，是有限量子阱；但把它们<strong>周期性地交替堆叠几十、上百个周期</strong>，就构成了一个人造的周期势场。根据布洛赫定理，周期势场会把原本分立的量子阱能级展宽成<strong>微带</strong>：</p><ul><li>InAs 中电子的局域态 → 展宽成<strong>电子微带 C1</strong>。</li><li>GaSb 中空穴的局域态 → 展宽成<strong>重空穴微带 HH1</strong>。</li></ul><p>超晶格的<strong>有效带隙</strong>就定义为这两条微带的间距：</p><p>$$<br>E_g^{\text{eff}} &#x3D; E_{C1} - E_{HH1}<br>$$</p><p><strong>第三步：理解”怎么调到长波”。</strong></p><p>关键变量是 <strong>InAs 层厚度</strong>。用最简单的量子阱图像理解：</p><ul><li>InAs 层<strong>越厚</strong> → 电子在阱中的局域能级<strong>越低</strong>（束缚得越浅、越接近阱底）→ 电子微带 C1 下移 → $E_g^{\text{eff}}$ 变小 → 截止波长变长。</li></ul><p>所以工程上”想往长波走，就把 InAs 层加厚”。论文里通过调 InAs 厚度，把截止波长从 4.5 μm 一路拉到 21 μm，正是这个原理。常见的长波结构如 $15,\text{ML InAs}&#x2F;7,\text{ML GaSb}$ 量级（ML &#x3D; 单原子层 monolayer）。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">    A[InAs 层加厚] --&gt; B[电子微带 C1 下移]</span><br><span class="line">    B --&gt; C[有效带隙 Eg_eff 变小]</span><br><span class="line">    C --&gt; D[截止波长 λc 变长 → 长波/甚长波]</span><br><span class="line">    E[GaSb 层 + AlSb 势垒] --&gt; F[空穴双势阱 / 电子势垒]</span><br><span class="line">    F --&gt; G[有效质量增大 → 隧穿暗电流下降]</span><br></pre></td></tr></table></figure><p><strong>为什么”电子空穴空间分离”反而是优点？</strong></p><p>直觉上，电子和空穴分在不同层，光吸收（需要电子从价带跃迁到导带）会变弱。但二类超晶格的妙处在于：</p><ul><li>电子波函数（InAs）和空穴波函数（GaSb）在<strong>界面附近有相当的交叠</strong>，所以吸收并不为零，仍能正入射吸收。</li><li>与此同时，空间分离<strong>延长了载流子寿命、抑制了俄歇复合</strong>——这对窄禁带长波器件是救命的。</li></ul><blockquote><p><strong>原理小结</strong>：二类超晶格用”断隙能带 + 周期势场微带”这套人造结构，把”调禁带”从单纯的化学组分问题，部分转化成了几何厚度问题。它可以在同一材料家族内调出长波所需的窄有效带隙，同时通过微带和有效质量设计降低部分暗电流通道。这正是它适合长波&#x2F;甚长波探测的根本原因。</p></blockquote><hr><h2 id="第二部分：长波-InAs-GaSb-超晶格的材料生长原理（核心）"><a href="#第二部分：长波-InAs-GaSb-超晶格的材料生长原理（核心）" class="headerlink" title="第二部分：长波 InAs&#x2F;GaSb 超晶格的材料生长原理（核心）"></a>第二部分：长波 InAs&#x2F;GaSb 超晶格的材料生长原理（核心）</h2><p>能带工程告诉我们”理想结构长什么样”——但理想结构要靠 <a href="/research/technical-glossary/">MBE（分子束外延）</a> 一个原子层一个原子层地真实长出来。这一部分是导师特别强调的重点：<strong>把材料生长的原理搞清楚。</strong></p><blockquote><p><strong>说明</strong>：本部分的生长原理（MBE 机制、成核动力学、RHEED 振荡、V&#x2F;III 比、界面&#x2F;应变物理）属于锑化物外延的通用知识；带 📄 标记的具体数值（温度窗口、束流比、应变系数、FWHM&#x2F;RMS 等）来自所解读论文的实测或优化参数。</p></blockquote><h3 id="2-1-MBE-系统：为什么长超晶格非它不可"><a href="#2-1-MBE-系统：为什么长超晶格非它不可" class="headerlink" title="2.1 MBE 系统：为什么长超晶格非它不可"></a>2.1 MBE 系统：为什么长超晶格非它不可</h3><p><a href="/research/technical-glossary/">MBE</a> 是一种在**超高真空（UHV，&lt;10⁻¹⁰ Torr）**下，用分子束逐层沉积薄膜的外延技术。长波超晶格对生长设备有几个苛刻要求，恰好都是 MBE 的强项：</p><table><thead><tr><th align="left">需求</th><th align="left">MBE 如何满足</th><th align="left">物理原理</th></tr></thead><tbody><tr><td align="left">单原子层厚度控制</td><td align="left"><a href="/research/technical-glossary/">快门（Shutter）</a>启闭精确到 0.1 s</td><td align="left">生长速率约 1 ML&#x2F;s，快门时间即层厚</td></tr><tr><td align="left">极高纯度</td><td align="left">UHV 环境，本底气体极少</td><td align="left">平均自由程 &gt;&gt; 腔体尺寸，分子束”直线飞行”不碰撞</td></tr><tr><td align="left">陡峭界面</td><td align="left">低生长温度 + 分子束可瞬时通断</td><td align="left">限制原子互扩散与偏析</td></tr><tr><td align="left">原位监控</td><td align="left"><a href="/research/technical-glossary/">RHEED</a> 掠射电子衍射</td><td align="left">实时反馈表面重构与生长速率</td></tr></tbody></table><p><strong>核心部件与原理：</strong></p><ul><li><strong><a href="/research/technical-glossary/">喷射炉 &#x2F; 克努森池（Effusion Cell）</a></strong>：加热固态源（In、Ga、Al、Sb、As）使其升华&#x2F;蒸发，产生定向分子束。温度决定<a href="/research/technical-glossary/">束流当量压力（BEP）</a>，进而决定生长速率。</li><li><strong><a href="/research/technical-glossary/">裂解炉（Cracker Cell）</a></strong>：V 族元素天然以四聚体（As₄、Sb₄）形式蒸发，但四聚体反应活性低、易在表面堆积。裂解炉把它们裂解成更活泼的二聚体 As₂、Sb₂，提升结晶质量。这对锑化物体系尤其重要。</li><li><strong>快门</strong>：源炉前的机械挡板，毫秒级启闭，是实现”原子层级精确堆叠”的执行器。InAs&#x2F;GaSb 交替、界面层插入，全靠快门时序编排。</li></ul><img src="/images/research/inas-gasb-type-ii-superlattice-ir-detectors/mbe_device.png" width="600"><img src="/images/research/inas-gasb-type-ii-superlattice-ir-detectors/mbe_growth.png" width="600"><h3 id="2-2-衬底选择：6-1-A-家族的”巧合”"><a href="#2-2-衬底选择：6-1-A-家族的”巧合”" class="headerlink" title="2.2 衬底选择：6.1 Å 家族的”巧合”"></a>2.2 衬底选择：6.1 Å 家族的”巧合”</h3><p>长波超晶格长在 <strong>GaSb 衬底</strong>上。原因藏在一个漂亮的材料学巧合里——<a href="/research/technical-glossary/">6.1 Å 家族</a>（详见 <a href="/research/periodic-table-iii-v-mbe/">元素周期表视角：III-V 族与 MBE</a>）：</p><table><thead><tr><th align="left">材料</th><th align="left">晶格常数 (Å)</th><th align="left">相对 GaSb 失配</th></tr></thead><tbody><tr><td align="left">InAs</td><td align="left">6.0583</td><td align="left">−0.62%（拉应变）</td></tr><tr><td align="left">GaSb</td><td align="left">6.0959</td><td align="left">0（衬底基准）</td></tr><tr><td align="left">AlSb</td><td align="left">6.1355</td><td align="left">+0.65%（压应变）</td></tr><tr><td align="left">InSb</td><td align="left">6.4794</td><td align="left">+6.3%（强压应变，界面用）</td></tr></tbody></table><p>InAs、GaSb、AlSb 三者晶格常数都在 6.1 Å 附近，<strong>彼此失配都很小</strong>，可以在 GaSb 衬底上近乎无应变地堆叠出复杂异质结构。这是 InAs&#x2F;GaSb&#x2F;AlSb 体系能做出 M 型势垒、多色结构等复杂能带设计的物质基础。</p><p>但请注意那个”近乎”——InAs 相对 GaSb 还有 −0.62% 的失配，是<strong>拉应变</strong>。几十上百个周期累积下来，拉应变会越积越多，最终导致位错、龟裂。<strong>如何抵消这份累积拉应变</strong>，是第 2.7、2.8 节要解决的核心难题。</p><h3 id="2-3-生长动力学：原子落到表面之后发生了什么"><a href="#2-3-生长动力学：原子落到表面之后发生了什么" class="headerlink" title="2.3 生长动力学：原子落到表面之后发生了什么"></a>2.3 生长动力学：原子落到表面之后发生了什么</h3><p>这是”材料生长原理”最底层的一问。一个原子从分子束飞到衬底表面后，并不是”啪”地钉在原地，而是经历一系列动力学过程：</p><ol><li><strong>吸附（Adsorption）</strong>：原子落到表面，成为吸附原子（adatom）。</li><li><strong>表面迁移（Surface Migration）</strong>：吸附原子在表面”溜达”，寻找能量最低的格点。迁移能力由衬底温度决定。</li><li><strong>成核与并入（Nucleation &amp; Incorporation）</strong>：原子在台阶边缘或与其他原子相遇成核，并入晶格。</li><li><strong>脱附（Desorption）</strong>：部分原子（尤其高挥发的 As、Sb）还没并入就又蒸发离开。</li></ol><p><strong>核心原理：表面迁移率由 Arrhenius 关系支配。</strong></p><p>吸附原子的表面扩散系数遵循阿伦尼乌斯定律：</p><p>$$<br>D &#x3D; D_0 \exp!\left(-\frac{E_a}{k_B T_{sub}}\right)<br>$$</p><p>其中 $E_a$ 是扩散激活能，$T_{sub}$ 是<a href="/research/technical-glossary/">衬底温度</a>。这条指数关系是理解一切生长温度效应的钥匙：</p><ul><li><strong>温度太低</strong> → $D$ 太小 → 原子来不及迁移到最优格点就被后续原子埋住 → 表面粗糙、缺陷多。</li><li><strong>温度太高</strong> → 迁移太剧烈，且 As&#x2F;Sb 大量脱附 → 化学计量比失衡、出现空位与三维岛。</li><li><strong>存在一个最优生长窗口</strong>：原子既有足够迁移率铺平表面，又不至于大量脱附。</li></ul><blockquote><p>这条 Arrhenius 定律不只是材料生长的原理，也正是我在 <a href="/research/ai-driven-mbe-control/">AI 驱动 MBE 控制</a> 里想嵌进损失函数的”物理约束”——让模型知道”温度升高时表面演化速率必须呈指数关联趋势”。原理与 AI 在这里接上了。</p></blockquote><p><strong>生长模式：层状生长 vs S-K 岛状生长。</strong></p><ul><li>对<strong>晶格匹配&#x2F;小失配</strong>体系（如本文的 InAs&#x2F;GaSb 超晶格），理想是<strong>逐层（layer-by-layer &#x2F; Frank–van der Merwe）生长</strong>，表面始终平整，<a href="/research/technical-glossary/">RHEED</a> 呈<a href="/research/technical-glossary/">条纹状（Streaky）</a>。</li><li>对<strong>大失配</strong>体系（如 InAs&#x2F;GaAs，失配约 7%），则走 <a href="/research/technical-glossary/">S-K（Stranski–Krastanov）</a> 模式：先长平整<a href="/research/technical-glossary/">浸润层</a>，应变积累到临界点后坍缩成三维岛（量子点），<a href="/research/technical-glossary/">RHEED</a> 由条纹转<a href="/research/technical-glossary/">斑点（Spotty）</a>。</li></ul><p><strong>做长波超晶格，我们要的是逐层生长，竭力避免 S-K 岛化</strong>——因为岛化意味着粗糙界面和缺陷，直接毁掉长波器件的暗电流和量子效率。这就是为什么界面和应变控制如此关键。</p><h3 id="2-4-起步工序：衬底脱氧与缓冲层，以及温度怎么校准"><a href="#2-4-起步工序：衬底脱氧与缓冲层，以及温度怎么校准" class="headerlink" title="2.4 起步工序：衬底脱氧与缓冲层，以及温度怎么校准"></a>2.4 起步工序：衬底脱氧与缓冲层，以及温度怎么校准</h3><p>外延不是直接从衬底表面开始的。GaSb 衬底暴露在空气中会形成一层自然氧化物，必须先<strong>热脱附</strong>去掉，露出洁净的原子级表面，否则氧化层会成为缺陷源。</p><p>随后生长 <strong>GaSb <a href="/research/technical-glossary/">缓冲层（Buffer Layer）</a></strong>：</p><ul><li><strong>作用</strong>：埋掉衬底残余缺陷、抚平表面、建立一个原子级平整的”起跑线”。</li><li><strong>典型窗口</strong>（📄 论文值）：生长温度约 $T_t + 110^\circ C$，Sb:Ga <a href="/research/technical-glossary/">束流比</a>约 9。</li></ul><p><strong>这里有个非常实用的原理：用表面重构当”温度计”。</strong></p><p>MBE 的衬底温度热电偶读数往往不准（接触位置、加热丝老化都会带来 1–2°C 偏差）。但物理给了我们一个绝对参照：<strong>GaSb 表面在特定温度会发生<a href="/research/technical-glossary/">表面重构（Surface Reconstruction）</a>转变</strong>——从 $(1\times5)$ 变到 $(1\times3)$。这个转变点温度记为 $T_t$，可以通过 <a href="/research/technical-glossary/">RHEED</a> 图案的变化精确观察到。</p><p>于是所有生长温度都<strong>相对 $T_t$ 标定</strong>（如缓冲层 $T_t+110^\circ C$、超晶格 $T_t-15^\circ C$），而不是相对热电偶读数。这样换了机器、换了衬底，工艺也能复现。</p><blockquote><p><strong>原理</strong>：表面原子为了最小化悬挂键能量会自发重排，重排花样（重构）随温度&#x2F;覆盖度变化。把这个相变点当锚，就把”不可靠的仪表读数”换成了”可靠的物理标尺”。</p></blockquote><h3 id="2-5-生长速率与束流校准：RHEED-振荡"><a href="#2-5-生长速率与束流校准：RHEED-振荡" class="headerlink" title="2.5 生长速率与束流校准：RHEED 振荡"></a>2.5 生长速率与束流校准：RHEED 振荡</h3><p>要精确堆叠”15 ML InAs &#x2F; 7 ML GaSb”，必须先知道每秒长几个 ML——即<strong>生长速率</strong>。校准手段是 <a href="/research/technical-glossary/">RHEED 振荡（RHEED Oscillation）</a>：</p><p><strong>原理</strong>：逐层生长时，表面平整度周期性变化。</p><ul><li>刚长完一整层 → 表面最平 → <a href="/research/technical-glossary/">镜面反射点（Specular Spot）</a>强度最高。</li><li>长到半层 → 表面一半旧层一半新层岛，最粗糙 → 镜面点强度最低。</li><li>再长满一层 → 强度回到最高。</li></ul><p>于是<strong>镜面点强度随时间周期振荡，一个振荡周期恰好对应长一个完整原子层</strong>。数振荡周期 &#x2F; 计时，就得到精确的 ML&#x2F;s 生长速率。这是 MBE 能做到原子层精度的根本保证之一。</p><p>V 族（As、Sb）束流则用**束流计（BEP）**监测，并随坩埚内材料消耗动态修正，保证 <a href="/research/technical-glossary/">V&#x2F;III 比</a> 稳定。</p><h3 id="2-6-V-III-束流比：表面化学的总阀门"><a href="#2-6-V-III-束流比：表面化学的总阀门" class="headerlink" title="2.6 V&#x2F;III 束流比：表面化学的总阀门"></a>2.6 V&#x2F;III 束流比：表面化学的总阀门</h3><p><a href="/research/technical-glossary/">V&#x2F;III 比</a>（V 族束流 &#x2F; III 族束流）是 MBE 中最关键的化学计量参数之一。</p><p><strong>原理</strong>：III 族原子（In、Ga、Al）落到表面后<strong>几乎不脱附</strong>——它们决定了生长速率。而 V 族原子（As、Sb）<strong>高挥发</strong>，需要维持一定<strong>过压</strong>才能保证表面阴离子位点被占满、不出现空位。</p><ul><li><strong>V&#x2F;III 太低</strong> → 表面 V 族不足 → 出现阴离子空位、富 III 族液滴 → 缺陷、粗糙。</li><li><strong>V&#x2F;III 太高</strong> → 过量 As&#x2F;Sb 堆积 → 反而引入点缺陷、加剧 Sb 偏析。</li><li><strong>存在最优窗口</strong>（📄 论文值）：超晶格 Sb&#x2F;Ga 比约 4、As&#x2F;In 比约 6。</li></ul><p>锑化物体系还有个特殊麻烦：<strong><a href="/research/technical-glossary/">Sb 偏析（Segregation）</a></strong>。Sb 原子倾向于”浮”在生长表面而不老老实实嵌进当前层，结果是它会被带到后续层里，<strong>把本该陡峭的界面展宽</strong>。这正好引出下一节——界面工程。</p><img src="/images/research/inas-gasb-type-ii-superlattice-ir-detectors/growth_parameters.png" width="600"><img src="/images/research/inas-gasb-type-ii-superlattice-ir-detectors/surface_morphology.png" width="600"><h3 id="2-7-界面工程：双-InSb-界面与-MEE（生长的真正核心难点）"><a href="#2-7-界面工程：双-InSb-界面与-MEE（生长的真正核心难点）" class="headerlink" title="2.7 界面工程：双 InSb 界面与 MEE（生长的真正核心难点）"></a>2.7 界面工程：双 InSb 界面与 MEE（生长的真正核心难点）</h3><p>为什么界面对 InAs&#x2F;GaSb 超晶格如此致命？因为 <strong>InAs 和 GaSb 之间”没有共同原子”（no-common-atom, NCA）</strong>：</p><ul><li>InAs 由 In（III）+ As（V）组成。</li><li>GaSb 由 Ga（III）+ Sb（V）组成。</li><li>阳离子从 In 换成 Ga，阴离子从 As 换成 Sb，<strong>界面上四种原子都在换</strong>。</li></ul><p>这就带来一个深刻问题：在界面那一层，到底是 In 配 Sb，还是 Ga 配 As？这决定了界面化学键的类型：</p><ul><li><strong>InSb-like 键</strong>：InSb 晶格常数 6.479 Å（远大于 GaSb）→ 界面引入<strong>压应变</strong>。</li><li><strong>GaAs-like 键</strong>：GaAs 晶格常数 5.653 Å（远小于 GaSb）→ 界面引入<strong>拉应变</strong>。</li></ul><p>而超晶格里有<strong>两类界面</strong>，物理环境完全不同：</p><ol><li><strong>InAs-on-GaSb 界面</strong>（在 GaSb 上长 InAs）。</li><li><strong>GaSb-on-InAs 界面</strong>（在 InAs 上长 GaSb）。</li></ol><p>如果放任不管，界面处容易形成混合键型，还会叠加 <a href="/research/technical-glossary/">Sb 偏析</a>带来的界面展宽。结果不是简单的”多一层少一层”，而是周期厚度、局域应变、电子&#x2F;空穴波函数交叠都会一起漂。<strong>界面工程的目标，就是把界面从一个不可控误差源，尽量变成可重复的结构单元。</strong></p><p><strong>论文采用的解决方案：用 MEE 主动构造双 InSb-like 界面。</strong></p><p><a href="/research/technical-glossary/">MEE（迁移增强外延，Migration Enhanced Epitaxy）</a> 是 MBE 的一种快门时序编排技巧：通过交替供给 III 族和 V 族束流，并在切换间留出迁移时间，让表面原子有机会移动到更稳定的格点。它的重点不是”多长一点材料”，而是控制界面形成时的表面覆盖、原子迁移和键合顺序。</p><p>具体到 InAs&#x2F;GaSb：通过关断&#x2F;开启 As、Sb、In、Ga 源的时序，在两个异质界面附近都尽量形成 InSb-like 键。也就是说，不把界面当作自然过渡层，而是把它当作一个需要设计和校准的”等效界面层”。这就是论文里说的”<strong>双 InSb 界面</strong>“。</p><p>这样做有两个目的：</p><ol><li><strong>提高界面可重复性</strong>：减少随机 GaAs-like &#x2F; InSb-like 混合界面和 Sb 偏析带来的界面展宽。界面越可控，超晶格周期、有效带隙和波函数交叠越容易复现。</li><li><strong>用界面应变补偿层应变</strong>：这就引出下一节的应变平衡。</li></ol><blockquote><p><strong>原理小结</strong>：NCA 界面是 InAs&#x2F;GaSb 体系区别于普通共阴离子或共阳离子超晶格的本质难点。MEE 的价值在于把”界面长成什么键”尽量从随机变量变成工艺变量；双 InSb-like 界面则同时服务于界面可重复性和应变补偿。</p></blockquote><h3 id="2-8-应变平衡：那个-0-11559-系数到底从哪来"><a href="#2-8-应变平衡：那个-0-11559-系数到底从哪来" class="headerlink" title="2.8 应变平衡：那个 0.11559 系数到底从哪来"></a>2.8 应变平衡：那个 0.11559 系数到底从哪来</h3><p>回到 2.2 节留下的问题：InAs 层相对 GaSb 是 −0.62% 的<strong>拉应变</strong>，几十上百周期累积会龟裂。怎么办？</p><p><strong>核心思路：用界面的压应变，去抵消 InAs 层带来的拉应变，让一个周期的平均应变尽量接近零（应变平衡 strain-balanced）。</strong></p><ul><li>InAs 层（占体积大头）→ 贡献<strong>拉应变</strong>。</li><li>InSb 界面层（晶格常数 6.479 Å，远大于 GaSb）→ 贡献<strong>压应变</strong>。</li></ul><p>如果 InSb-like 界面贡献的压应变能大致抵消 InAs 层贡献的拉应变，超晶格的平均晶格常数就会更接近 GaSb 衬底。这样可以显著降低随周期数累积的应变能，提高临界厚度，减少弛豫、位错和龟裂风险。注意这里说的是”降低风险”和”扩大工艺窗口”，不是数学意义上的无限周期生长。</p><p>下面这段属于我的半定量复核：用简化的应变平衡模型检查论文给出的 $0.11559$ 是否能从材料参数得到合理解释。它不是完整的界面原子级计算，但足够说明这个系数不是孤立经验数。</p><p><strong>第一步：写出简化的应变平衡（零平均应力）条件。</strong></p><p>一个周期由 InAs 阱、GaSb 垒和 InSb-like 界面层组成。在弹性连续近似下，应变平衡通常写作一个周期内”双轴弹性模量 × 失配 × 厚度”之和接近零，也就是周期平均面内应力接近零：</p><p>$$<br>\sum_i M_i, f_i, h_i \approx 0,\qquad<br>M_i &#x3D; C_{11}^{(i)} + C_{12}^{(i)} - \frac{2,(C_{12}^{(i)})^2}{C_{11}^{(i)}}<br>$$</p><p>其中 $f_i&#x3D;(a_i-a_{\text{GaSb}})&#x2F;a_{\text{GaSb}}$ 是相对 GaSb 衬底的失配，$h_i$ 是层厚，$M_i$ 是 (001) 面的双轴弹性模量。GaSb 层与衬底近似匹配（$f\approx0$），所以平衡主要发生在<strong>受拉的 InAs 层</strong>与<strong>受压的 InSb-like 界面层</strong>之间。</p><p><strong>第二步：只看失配比（粗估）。</strong></p><p>先忽略弹性模量差异，令 $|f_{\text{InAs}}|,n_{\text{InAs}} &#x3D; f_{\text{InSb}},n_{\text{InSb}}$：</p><p>$$<br>\frac{n_{\text{InSb}}}{n_{\text{InAs}}}<br>&#x3D;\frac{|f_{\text{InAs}}|}{f_{\text{InSb}}}<br>&#x3D;\frac{|6.0583-6.0959|}{|6.4794-6.0959|}<br>&#x3D;\frac{0.0376}{0.3835}\approx 0.098<br>$$</p><p>已经接近 0.116，但还差一截——差的正是弹性模量。</p><p><strong>第三步：加上双轴弹性模量加权。</strong></p><p>InAs 软、InSb 更软，同样的失配在两者中贡献的应力并不相等，必须用 $M_i$ 加权。代入常见 III-V 材料弹性常数（GPa；取值可参见 Vurgaftman 等人的 III-V 材料参数综述）：</p><table><thead><tr><th align="left">材料</th><th align="left">$C_{11}$</th><th align="left">$C_{12}$</th><th align="left">$M &#x3D; C_{11}+C_{12}-2C_{12}^2&#x2F;C_{11}$</th></tr></thead><tbody><tr><td align="left">InAs</td><td align="left">83.3</td><td align="left">45.3</td><td align="left">≈ 79.4</td></tr><tr><td align="left">InSb</td><td align="left">68.5</td><td align="left">37.4</td><td align="left">≈ 65.1</td></tr></tbody></table><p>$$<br>\frac{n_{\text{InSb}}}{n_{\text{InAs}}}<br>&#x3D;\frac{M_{\text{InAs}},|f_{\text{InAs}}|}{M_{\text{InSb}},f_{\text{InSb}}}<br>&#x3D;\frac{79.4\times0.617%}{65.1\times6.291%}\approx 0.12<br>$$</p><p>加权后从 0.098 升到约 0.12，论文给出的 <strong>$n_{\text{InSb}} &#x3D; 0.11559, n_{\text{InAs}}$</strong> 恰好落在这个范围内。剩下的数个百分点差异，来自弹性常数取值、InSb-like 界面的等效厚度定义，以及论文把厚度折算成 ML 时的具体约定；这些差异不改变量级和物理判断。</p><p><strong>所以 $0.11559$ 不是一个要死记的数字</strong>：它可以理解为”周期平均应力接近零”这一条件，在 InAs 拉应变、InSb-like 界面压应变及二者弹性模量共同作用下得到的应变平衡比。一句话物理含义：<strong>InAs 层越厚（累积拉应变越多），需要补偿的 InSb-like 界面压应变就越多。</strong> </p><blockquote><p><strong>边界说明</strong>：应变平衡只是把”周期平均应力”压到接近零，从而<strong>显著提高临界厚度、推迟弛豫</strong>；它并不能消除界面粗糙度、点缺陷和组分漂移这些与应变无关的限制。所以它扩大的是可生长周期数的窗口，而非”无限层”。</p></blockquote><p><strong>应变平衡做得好，材料质量会非常漂亮</strong>（📄 论文优化后样品）：</p><ul><li>XRD 一级卫星峰 <a href="/research/technical-glossary/">FWHM</a> &lt; 20 arcsec（峰越窄、周期越规整）。</li><li>10 μm × 10 μm 范围 <a href="/research/technical-glossary/">AFM RMS</a> ≈ 1.5 Å（接近原子级平整）。</li><li><a href="/research/technical-glossary/">HRTEM</a> 显示界面平整、周期均匀、体内无明显缺陷。</li></ul><h3 id="2-9-M-型势垒：在材料层面降低暗电流通道"><a href="#2-9-M-型势垒：在材料层面降低暗电流通道" class="headerlink" title="2.9 M 型势垒：在材料层面降低暗电流通道"></a>2.9 M 型势垒：在材料层面降低暗电流通道</h3><p>到这里我们能长出高质量的普通 InAs&#x2F;GaSb 超晶格了。但对长波器件来说，材料质量只是底座；还需要在<strong>能带结构上</strong>进一步降低暗电流通道。论文采用的一类结构就是 <strong>M 型势垒超晶格</strong>。</p><p>做法：在 GaSb 层中间插入一薄层 <strong>AlSb</strong>，形成</p><p>$$<br>\cdots, \text{InAs} &#x2F; \text{GaSb} &#x2F; \text{AlSb} &#x2F; \text{GaSb}, \cdots<br>$$</p><p>的单元（📄 论文一个典型长波优化结构是 $18,\text{ML InAs}&#x2F;5,\text{ML GaSb}&#x2F;5,\text{ML AlSb}&#x2F;5,\text{ML GaSb}$）。AlSb 的带边位置会重新塑造电子和空穴的量子态分布，使价带附近形成类似字母 <strong>M</strong> 的势形，因此被称为 M 型结构。</p><p><strong>它主要影响哪些暗电流？回到 1.2 节那张表：</strong></p><ul><li><strong>改变电子&#x2F;空穴微带结构</strong>：AlSb 插入后改变波函数局域和微带宽度，等效上提高部分输运方向的有效质量，降低隧穿概率。</li><li><strong>调节势垒和耗尽区输运</strong>：合理设计时，可以降低带间隧穿和陷阱辅助隧穿对暗电流的贡献。</li><li><strong>减少耗尽区有效复合通道</strong>：如果势垒设计降低了耗尽区中载流子浓度或复合中心参与输运的机会，就会表现为 G-R 暗电流降低。</li></ul><p>换句话说，M 型势垒不是把隧穿和 G-R 暗电流”解决掉”，而是在<strong>材料生长阶段</strong>先改变载流子的能带路径和有效质量，让后续器件在同样温度和偏压下更容易得到较高的 $R_0A$。</p><blockquote><p>注意分工：M 型势垒更偏向 $R_0A$ 这条线，但它也可能影响吸收和输运；I 区厚度、Be 掺杂&#x2F;渐变掺杂更偏向 $\eta$ 这条线，但同样会改变暗电流。真实优化不是单变量调参，而是在 $R_0A$ 和 $\eta$ 之间找平衡。</p></blockquote><h3 id="2-10-材料质量的闭环表征"><a href="#2-10-材料质量的闭环表征" class="headerlink" title="2.10 材料质量的闭环表征"></a>2.10 材料质量的闭环表征</h3><p>材料长完不能只靠”看起来不错”，必须用一整套表征手段闭环验证，每个性能提升都要能追溯到材料&#x2F;结构&#x2F;工艺参数：</p><table><thead><tr><th align="left">表征手段</th><th align="left">看什么</th><th align="left">对应的材料判据</th></tr></thead><tbody><tr><td align="left"><a href="/research/technical-glossary/">高分辨 XRD</a></td><td align="left">周期厚度、应变、卫星峰 FWHM</td><td align="left">FWHM &lt; 20 arcsec → 周期规整、应变平衡好</td></tr><tr><td align="left"><a href="/research/technical-glossary/">AFM</a></td><td align="left">表面均方根粗糙度 RMS</td><td align="left">RMS ≈ 1.5 Å → 表面原子级平整</td></tr><tr><td align="left"><a href="/research/technical-glossary/">HRTEM</a></td><td align="left">界面平整度、周期均匀性</td><td align="left">界面陡峭无互扩散 → 界面工程成功</td></tr><tr><td align="left"><a href="/research/technical-glossary/">PL（光致发光）</a></td><td align="left">发光峰位、半宽</td><td align="left">峰位对应有效带隙、半宽反映均匀性</td></tr><tr><td align="left">I-V 测试</td><td align="left">漏电、整流特性</td><td align="left">反映外延质量与工艺水平</td></tr></tbody></table><img src="/images/research/inas-gasb-type-ii-superlattice-ir-detectors/character_method.png" width="600"><p>至此，第二部分回答了导师最关心的”材料生长原理”：<strong>从 MBE 原理、成核动力学、温度校准、束流控制，到界面工程、应变平衡、M 型势垒能带设计，每一步都对应着”如何长得平、长得陡、不龟裂、暗电流低”这条主线。</strong> 接下来，这片高质量外延片要变成真正能用的探测器。</p><hr><h2 id="第三部分：从外延片到探测器——器件工艺流程"><a href="#第三部分：从外延片到探测器——器件工艺流程" class="headerlink" title="第三部分：从外延片到探测器——器件工艺流程"></a>第三部分：从外延片到探测器——器件工艺流程</h2><p>材料长好了，得到的是一片<strong>外延晶圆</strong>。但晶圆不是探测器——它还需要被刻成一个个像元、做上电极、钝化保护、最后和读出电路集成。这一部分把完整工艺流程讲清楚。</p><blockquote><p><strong>说明</strong>：论文对器件加工流程的描述较简（主要给出”清洗→光刻→刻蚀→钝化→蒸金属→封装”的工序名）。为把链路补完整，本部分的刻蚀路线、钝化方案对比、欧姆接触叠层、焦平面阵列集成等细节，多为行业通用工艺知识；带 📄 的结构&#x2F;性能数值才直接来自论文。</p></blockquote><h3 id="3-1-器件结构：把能带设计变成-PN-结"><a href="#3-1-器件结构：把能带设计变成-PN-结" class="headerlink" title="3.1 器件结构：把能带设计变成 PN 结"></a>3.1 器件结构：把能带设计变成 PN 结</h3><p>长波 InAs&#x2F;GaSb 探测器的核心是一个<strong>光电二极管结构</strong>。典型结构演进：</p><table><thead><tr><th align="left">结构</th><th align="left">组成</th><th align="left">特点</th></tr></thead><tbody><tr><td align="left">P-i-N &#x2F; N-i-P</td><td align="left">p 区 + 本征吸收区(I 区) + n 区</td><td align="left">经典结构，I 区是主吸收层</td></tr><tr><td align="left">n-M-π-p</td><td align="left">引入 M 型势垒</td><td align="left">长波&#x2F;甚长波主力，压暗电流</td></tr><tr><td align="left">nBn &#x2F; pBp</td><td align="left">单极势垒</td><td align="left">用势垒挡多子、不挡少子，压 G-R 和表面漏电</td></tr></tbody></table><p>几个关键设计量（📄 论文模拟给出的优化方向）：</p><ul><li><strong>I 区（吸收区）厚度</strong>：越厚吸收越多 → 量子效率越高。长波器件 I 区做到 4 μm 时 $\eta$ 可超 50%，理论上 &gt;6 μm 时未加增透膜也可接近 70%。但太厚会牺牲载流子收集，需折中。</li><li><strong>I 区 Be 掺杂改性</strong>：通过轻掺 Be 改变 I 区少子类型、增强内建电场和载流子输运 → 提升 $\eta$。这就是 $D^*$ 公式里 $\eta$ 那条腿的主要抓手。</li><li><strong>n&#x2F;p 区厚度与掺杂</strong>（📄 论文模拟值）：n 区约 0.4 μm、掺杂 $1$–$2\times10^{18},cm^{-3}$；p 区约 0.5 μm、掺杂 $2$–$4\times10^{18},cm^{-3}$；I 区改性掺杂 $&lt;5\times10^{16},cm^{-3}$。</li></ul><h3 id="3-2-工艺流程总览"><a href="#3-2-工艺流程总览" class="headerlink" title="3.2 工艺流程总览"></a>3.2 工艺流程总览</h3><p>从外延片到单元器件（乃至焦平面阵列），主线工序如下：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A[外延片 InAs/GaSb 超晶格] --&gt; B[清洗]</span><br><span class="line">    B --&gt; C[光刻定义台面图形]</span><br><span class="line">    C --&gt; D[台面刻蚀 Mesa Etch&lt;br/&gt;湿法 / ICP 干法]</span><br><span class="line">    D --&gt; E[表面钝化 Passivation&lt;br/&gt;压表面漏电流]</span><br><span class="line">    E --&gt; F[二次光刻开电极窗口]</span><br><span class="line">    F --&gt; G[金属蒸镀 + 剥离 Lift-off&lt;br/&gt;形成欧姆接触]</span><br><span class="line">    G --&gt; H&#123;单元器件 or 阵列?&#125;</span><br><span class="line">    H --&gt;|单元| I[I-V / 光谱 / 黑体测试]</span><br><span class="line">    H --&gt;|焦平面阵列| J[In 铟柱倒装互连 ROIC]</span><br><span class="line">    J --&gt; K[底充胶 + 衬底减薄/去除]</span><br><span class="line">    K --&gt; L[杜瓦封装 + 制冷 77K]</span><br><span class="line">    L --&gt; M[成像测试]</span><br></pre></td></tr></table></figure><p>下面逐步拆解每个关键工序的<strong>原理、难点、对策</strong>。</p><h3 id="3-3-台面刻蚀（Mesa-Etch）：把晶圆切成像元"><a href="#3-3-台面刻蚀（Mesa-Etch）：把晶圆切成像元" class="headerlink" title="3.3 台面刻蚀（Mesa Etch）：把晶圆切成像元"></a>3.3 台面刻蚀（Mesa Etch）：把晶圆切成像元</h3><p><strong>目的</strong>：探测器是阵列器件，每个像元必须电学隔离。台面刻蚀就是把像元之间的材料刻掉，刻穿 PN 结，形成一个个孤立的”台面（mesa）”。</p><p><strong>两条技术路线：</strong></p><table><thead><tr><th align="left">方式</th><th align="left">原理</th><th align="left">优点</th><th align="left">难点</th></tr></thead><tbody><tr><td align="left">湿法刻蚀</td><td align="left">化学腐蚀液（柠檬酸&#x2F;磷酸基）溶解材料</td><td align="left">损伤小、设备简单</td><td align="left">各向同性、侧壁钻蚀、均匀性差</td></tr><tr><td align="left">干法刻蚀（ICP&#x2F;RIE）</td><td align="left">等离子体物理轰击 + 化学反应（Cl&#x2F;BCl₃ 基）</td><td align="left">各向异性、侧壁陡直、适合小像元</td><td align="left"><strong>侧壁离子损伤 → 表面态 → 漏电</strong></td></tr></tbody></table><p><strong>核心难点：台面侧壁。</strong></p><p>刻蚀一旦把 PN 结的侧面<strong>裸露</strong>出来，问题就来了：</p><ul><li>侧壁有大量<strong>悬挂键</strong>（晶格被突然截断）。</li><li>侧壁暴露在空气中会<strong>氧化</strong>。</li><li>干法刻蚀还会引入<strong>离子轰击损伤</strong>。</li></ul><p>这些都会在窄禁带中形成<strong>表面态</strong>，给载流子提供额外的漏电路径，构成 1.2 节表里那条<strong>表面漏电流</strong>。对长波器件，禁带极窄，表面漏电流常常足以掩盖体材料和势垒设计带来的改进。这就是为什么刻蚀后必须认真做钝化。</p><h3 id="3-4-表面钝化（Passivation）：长波器件的关键工艺"><a href="#3-4-表面钝化（Passivation）：长波器件的关键工艺" class="headerlink" title="3.4 表面钝化（Passivation）：长波器件的关键工艺"></a>3.4 表面钝化（Passivation）：长波器件的关键工艺</h3><p><strong>目的</strong>：处理台面侧壁的悬挂键、氧化层和刻蚀损伤，尽量切断表面漏电通道。</p><p><strong>原理</strong>：用一层介质或化学处理，让侧壁原子的悬挂键被饱和、被隔绝氧化、被电学钝化，把表面态密度降下来。</p><p><strong>常见钝化方案：</strong></p><table><thead><tr><th align="left">方案</th><th align="left">机制</th><th align="left">特点</th></tr></thead><tbody><tr><td align="left">SU-8 &#x2F; 聚酰亚胺</td><td align="left">有机物覆盖隔绝</td><td align="left">工艺简单，长期稳定性一般</td></tr><tr><td align="left">SiO₂ &#x2F; Si₃N₄（PECVD）</td><td align="left">介质膜覆盖</td><td align="left">成熟，但与锑化物界面态可能偏高</td></tr><tr><td align="left">ALD Al₂O₃</td><td align="left">原子层沉积，覆盖共形、膜层致密</td><td align="left">近年来常见的研究方向之一，适合复杂侧壁覆盖</td></tr><tr><td align="left">硫化处理（(NH₄)₂S）</td><td align="left">化学钝化饱和悬挂键</td><td align="left">常作为沉积前预处理</td></tr></tbody></table><blockquote><p><strong>为什么反复强调钝化</strong>：第二部分辛辛苦苦把材料体内的隧穿和 G-R 暗电流压下去，如果钝化没做好，侧壁表面态仍然可能成为主要漏电通道。论文里反复强调台面刻蚀和钝化，原因就在这里：长波&#x2F;甚长波器件不只怕体材料缺陷，也非常怕被加工步骤重新引入表面缺陷。</p></blockquote><h3 id="3-5-金属电极：做出低电阻的欧姆接触"><a href="#3-5-金属电极：做出低电阻的欧姆接触" class="headerlink" title="3.5 金属电极：做出低电阻的欧姆接触"></a>3.5 金属电极：做出低电阻的欧姆接触</h3><p><strong>目的</strong>：把光生载流子从半导体引到外电路，需要<strong>欧姆接触（ohmic contact）</strong>——接触电阻低、且不引入额外势垒。</p><p><strong>工艺（剥离法 lift-off）：</strong></p><ol><li>二次光刻，在钝化层上开出电极窗口（露出 n 区&#x2F;p 区接触区）。</li><li>真空蒸镀金属叠层，典型如 <strong>Ti&#x2F;Pt&#x2F;Au</strong>（Ti 附着、Pt 阻挡扩散、Au 导电与键合）。</li><li><strong>剥离（lift-off）</strong>：溶掉光刻胶，胶上的金属随之被带走，只留窗口里的金属电极。</li></ol><p><strong>原理与难点</strong>：欧姆接触要求金属功函数与半导体匹配，或通过重掺杂使接触区势垒极薄、让载流子隧穿通过。锑化物表面易氧化，蒸金属前的<strong>去氧化层预处理</strong>直接决定接触电阻。</p><h3 id="3-6-焦平面阵列集成：从单元到成像器件"><a href="#3-6-焦平面阵列集成：从单元到成像器件" class="headerlink" title="3.6 焦平面阵列集成：从单元到成像器件"></a>3.6 焦平面阵列集成：从单元到成像器件</h3><p>单个像元能测光强，但<strong>成像</strong>需要成千上万像元 + 读出电路。这一步是工业级红外探测器的关键。论文里对阵列集成着墨不多，下面是为了把流程补完整而加入的通用工艺背景：</p><ol><li><strong>铟柱倒装互连（In bump &#x2F; flip-chip）</strong>：在每个像元和<strong>读出电路（ROIC, Readout Integrated Circuit）<strong>对应位置长出</strong>铟柱</strong>（铟软、可冷压焊），然后把探测器芯片翻转过来，与 ROIC 像元一一对压键合。一块 640×512 的阵列就有 32 万个铟柱要同时对准压合。<ul><li><strong>难点</strong>：对准精度、压合均匀性、热膨胀失配（探测器与 Si 读出电路 CTE 不同，降温到 77 K 时会产生巨大应力）。</li></ul></li><li><strong>底充胶（Underfill）</strong>：在探测器与 ROIC 间隙灌入环氧胶，分担热应力、防止铟柱在反复制冷循环中断裂。</li><li><strong>衬底减薄 &#x2F; 去除</strong>：阵列器件中常会对 GaSb 衬底做减薄，某些结构还会进一步去除衬底，目的包括：<ul><li>减小热质量、加快制冷。</li><li>缓解 CTE 失配应力。</li><li><strong>抑制像元间光学串扰</strong>（衬底中的横向传播和反射会把光学响应扩展到邻近像元）。</li></ul></li><li><strong>杜瓦封装 + 制冷</strong>：整个探测器组件装进真空杜瓦，配制冷机（斯特林或液氮）维持 77 K 工作温度。</li></ol><blockquote><p>串扰（crosstalk）是多色&#x2F;阵列器件的专门难题：一个像元被光激发后，载流子若跑到邻近像元的电极就造成串扰。论文用 NIPIN&#x2F;NIPIN-NIP 结构 + 偏压调制，把不同波段在不同偏压下提取，正是在器件结构层面控制串扰。</p></blockquote><h3 id="3-7-把工艺串回暗电流主线"><a href="#3-7-把工艺串回暗电流主线" class="headerlink" title="3.7 把工艺串回暗电流主线"></a>3.7 把工艺串回暗电流主线</h3><p>回头看，整个器件工艺其实就是 1.2 节那张暗电流表的”逐项施工”：</p><table><thead><tr><th align="left">工艺&#x2F;结构步骤</th><th align="left">对应抑制的暗电流分量</th><th align="left">服务的指标</th></tr></thead><tbody><tr><td align="left">高质量外延 + 应变平衡</td><td align="left">降低体内缺陷 → 压 G-R、提寿命</td><td align="left">$R_0A$、$\eta$</td></tr><tr><td align="left">M 型势垒（生长阶段）</td><td align="left">降低隧穿&#x2F;G-R 暗电流贡献</td><td align="left">$R_0A$</td></tr><tr><td align="left">I 区加厚 + Be 掺杂</td><td align="left">提高吸收与载流子收集</td><td align="left">$\eta$</td></tr><tr><td align="left">台面刻蚀</td><td align="left">（引入）侧壁表面态</td><td align="left">—</td></tr><tr><td align="left">表面钝化</td><td align="left">压表面漏电流</td><td align="left">$R_0A$</td></tr><tr><td align="left">欧姆接触</td><td align="left">降接触电阻、保收集效率</td><td align="left">$\eta$</td></tr><tr><td align="left">衬底减薄&#x2F;去除</td><td align="left">压光学串扰</td><td align="left">成像质量</td></tr></tbody></table><p><strong>一句话</strong>：材料生长主要决定体材料缺陷、能带结构和吸收层质量；器件工艺主要决定表面漏电、载流子引出和阵列集成。两者合起来，才会共同落到 $D^*$ 公式里的 $R_0A$ 和 $\eta$。</p><hr><h2 id="第四部分：性能测试与评价"><a href="#第四部分：性能测试与评价" class="headerlink" title="第四部分：性能测试与评价"></a>第四部分：性能测试与评价</h2><p>外延片成了器件，最后要用一整套电学&#x2F;光学测试验证性能：</p><table><thead><tr><th align="left">测试</th><th align="left">测什么</th><th align="left">提取的指标</th></tr></thead><tbody><tr><td align="left">变温 I-V</td><td align="left">暗电流随偏压、温度变化</td><td align="left">$R_0A$、主导暗电流机制（变温分析）</td></tr><tr><td align="left">光谱响应</td><td align="left">不同波长的响应强度</td><td align="left">截止波长$\lambda_c$、响应谱形</td></tr><tr><td align="left">黑体测试</td><td align="left">已知温度黑体辐照下的响应</td><td align="left">响应度$R_i$、量子效率 $\eta$</td></tr><tr><td align="left">噪声测试</td><td align="left">噪声电流谱密度</td><td align="left">结合$R_i$ 得探测率 $D^*$</td></tr></tbody></table><p><strong>变温 I-V 的妙用</strong>：通过测不同温度下的暗电流，并拟合其温度依赖（激活能），能反推出当前器件是被哪一种暗电流主导——</p><ul><li>低温段斜率对应<strong>隧穿</strong>（弱温度依赖）。</li><li>中温段对应<strong>产生-复合</strong>（激活能 ≈ $E_g&#x2F;2$）。</li><li>高温段对应<strong>扩散</strong>（激活能 ≈ $E_g$）。</li></ul><p>引入 M 型势垒后，如果拟合出的主导机制发生迁移，就说明势垒确实改变了载流子输运通道。<strong>测试不只是验收，更是诊断材料与结构设计是否奏效的反馈环。</strong></p><p>长波器件的一组典型优化结果（📄 论文）：截止波长约 14 μm、$R_0A$ 提升到 $75\ \Omega\cdot cm^2$、峰值探测率 $1.9\times10^{11}\ cm\cdot Hz^{1&#x2F;2}\cdot W^{-1}$、I 区 Be 掺杂 $1.5\times10^{16},cm^{-3}$ 时量子效率约 35%。</p><hr><h2 id="第五部分：串起来——材料、器件与-AI-实时控制"><a href="#第五部分：串起来——材料、器件与-AI-实时控制" class="headerlink" title="第五部分：串起来——材料、器件与 AI 实时控制"></a>第五部分：串起来——材料、器件与 AI 实时控制</h2><p>把这条链路完整走一遍，我最大的体会是：<strong>InAs&#x2F;GaSb 长波探测器的性能，对界面、应变、掺杂、势垒、钝化极其敏感，而这些恰恰都是 MBE 生长过程中难以完美复现的环节。</strong></p><ul><li>界面键型靠快门时序和表面覆盖状态控制，漂移会表现为界面展宽、周期厚度误差或有效带隙偏移。</li><li>应变平衡依赖 InAs 层厚、InSb-like 界面等效厚度和束流稳定性，偏离后会反映到 XRD 卫星峰位置、半峰宽和表面形貌上。</li><li>长波截止波长靠 InAs&#x2F;GaSb&#x2F;AlSb 层厚原子级控制，生长速率漂移会把响应谱带到目标窗口之外。</li></ul><p>这正是我研究主线 <a href="/research/ai-driven-mbe-control/">AI 驱动材料生长实时控制</a> 想解决的问题：</p><ul><li><strong>现在（论文方法）</strong>：长完用 XRD&#x2F;AFM&#x2F;PL&#x2F;I-V <strong>离线</strong>表征，发现周期、应变或器件性能不理想，通常只能回到下一炉重新调参。</li><li><strong>目标</strong>：用 <a href="/research/technical-glossary/">3D ResNet</a> 或时序模型实时读 <a href="/research/technical-glossary/">RHEED</a> 视频，先抓住可观测量：振荡周期与衰减、镜面点强度、条纹&#x2F;斑点转变、弥散背景、表面重构变化。再把这些信号和生长速率漂移、表面粗化、界面切换状态联系起来，最终闭环调节束流、温度和快门时序。</li></ul><blockquote><p>换句话说：<strong>这篇文章的第二部分（材料生长原理），就是我那套 AI 控制系统需要内化的”物理先验”。</strong> 模型不能只学”这段视频像不像好样品”，还要学为什么温度影响迁移、为什么 RHEED 振荡对应层状生长、为什么 V&#x2F;III 比会改变表面重构。把长波探测器吃透，既是补材料学的课，也是给 AI 课题打地基。</p></blockquote><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>沿一条主线把长波红外探测器走完：</p><ol><li><strong>物理基础</strong>：长波（8–14 μm）对应室温目标辐射，但窄禁带（$E_g\approx0.09$ eV）让暗电流极易失控；探测率 $D^*\propto \eta\sqrt{R_0A}$ 是双目标——既要量子效率高，又要暗电流低。</li><li><strong>材料生长（核心）</strong>：二类超晶格用”断隙能带 + 微带”把调禁带部分转化为调层厚；MBE 通过成核动力学、温度校准、束流控制争取逐层平整；MEE 双 InSb-like 界面把无共同原子界面变成可设计的工艺变量；$0.11559$ 系数对应应变平衡的半定量设计；M 型势垒在能带层面降低隧穿与 G-R 暗电流贡献。</li><li><strong>器件工艺</strong>：台面刻蚀切像元（但裸露侧壁引入表面漏电），表面钝化决定侧壁漏电能否被压住，欧姆接触引出载流子，铟柱倒装 + 衬底减薄完成焦平面阵列集成。</li><li><strong>测试闭环</strong>：变温 I-V 不只验收，更能诊断暗电流主导机制，反馈结构设计。</li><li><strong>延伸</strong>：材料对工艺极度敏感，恰是 AI 原位实时控制的用武之地。</li></ol><p>写完这篇，第二部分那些当初看不懂的细节——双 InSb 界面、$0.11559$、M 型势垒、为什么必须钝化——至少已经不再只是论文里的孤立结论，而是能放回”结构参数 → 材料质量 → 暗电流&#x2F;量子效率”这条链路里理解。这正是导师要的效果。</p><hr><h2 id="术语与缩写说明"><a href="#术语与缩写说明" class="headerlink" title="术语与缩写说明"></a>术语与缩写说明</h2><p>本文涉及的主要术语与缩写参见 <a href="/research/technical-glossary/">光电、材料与半导体专业术语辞典</a>，统一维护、交叉引用。相关文章：</p><ul><li><a href="/research/inas-gasb-type-ii-superlattice-ir-detectors/">论文解读：InAs&#x2F;GaSb II 类超晶格材料生长及红外探测器性能</a></li><li><a href="/research/periodic-table-iii-v-mbe/">元素周期表视角：III-V 族化合物半导体与 MBE 异质结构材料选择</a></li><li><a href="/research/regions-of-the-electromagnetic-spectrum/">光与电磁波谱：基本概念、参数与波段细分</a></li><li><a href="/research/ai-driven-mbe-control/">研究方向：AI 驱动材料生长实时控制</a></li></ul><hr><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol><li>蒋洞微. InAs&#x2F;GaSb II 类超晶格材料生长及其红外探测器性能[D]. 哈尔滨工业大学, 2016.</li><li>A. Rogalski, <em>Infrared and Terahertz Detectors</em>, 3rd ed., CRC Press.</li><li>D. L. Smith, C. Mailhiot, “Proposal for strained type II superlattice infrared detectors,” <em>J. Appl. Phys.</em> 62, 2545 (1987).</li><li>关于 6.1 Å 家族与锑化物能带工程的综述，可参阅 H. Kroemer, “The 6.1 Å family (InAs, GaSb, AlSb) and its heterostructures,” <em>Physica E</em> 20, 196 (2004).</li><li>I. Vurgaftman, J. R. Meyer, L. R. Ram-Mohan, “Band parameters for III-V compound semiconductors and their alloys,” <em>J. Appl. Phys.</em> 89, 5815 (2001).（弹性常数与能带参数参考）</li></ol><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script><link rel="stylesheet" href="/css/markmap.css"><script src="/js/markmap.js"></script>]]></content>
+      
+      
+      <categories>
+          
+          <category> 研究 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> InAs/GaSb </tag>
+            
+            <tag> II 类超晶格 </tag>
+            
+            <tag> MBE </tag>
+            
+            <tag> 暗电流 </tag>
+            
+            <tag> 长波红外 </tag>
+            
+            <tag> 材料生长 </tag>
+            
+            <tag> 器件工艺 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>论文解读：InAs/GaSb II 类超晶格材料生长及红外探测器性能</title>
       <link href="//research/inas-gasb-type-ii-superlattice-ir-detectors/"/>
       <url>//research/inas-gasb-type-ii-superlattice-ir-detectors/</url>
@@ -20,13 +57,13 @@
       
         <tags>
             
-            <tag> MBE </tag>
-            
-            <tag> 红外探测器 </tag>
-            
             <tag> InAs/GaSb </tag>
             
             <tag> II 类超晶格 </tag>
+            
+            <tag> 红外探测器 </tag>
+            
+            <tag> MBE </tag>
             
             <tag> 量子效率 </tag>
             
@@ -55,6 +92,8 @@
       
         <tags>
             
+            <tag> 红外探测器 </tag>
+            
             <tag> MBE </tag>
             
             <tag> 半导体工艺 </tag>
@@ -64,8 +103,6 @@
             <tag> 光刻 </tag>
             
             <tag> 二类超晶格 </tag>
-            
-            <tag> 红外探测器 </tag>
             
         </tags>
       
@@ -158,9 +195,9 @@
             
             <tag> 计算机视觉 </tag>
             
-            <tag> 深度学习模型 </tag>
-            
             <tag> NLP </tag>
+            
+            <tag> 深度学习模型 </tag>
             
             <tag> 多模态 </tag>
             
@@ -230,9 +267,9 @@
             
             <tag> 深度学习 </tag>
             
-            <tag> 3D ResNet </tag>
-            
             <tag> 深度学习模型 </tag>
+            
+            <tag> 3D ResNet </tag>
             
             <tag> 视频理解 </tag>
             
@@ -267,9 +304,9 @@
             
             <tag> RHEED </tag>
             
-            <tag> III-V 半导体 </tag>
-            
             <tag> MBE </tag>
+            
+            <tag> III-V 半导体 </tag>
             
             <tag> 元素周期表 </tag>
             
@@ -317,35 +354,6 @@
     
     
     <entry>
-      <title>【计算机视觉】人脸检测与人脸识别</title>
-      <link href="/2026/04/14/course/cv-04-face-detection-recognition/"/>
-      <url>/2026/04/14/course/cv-04-face-detection-recognition/</url>
-      
-        <content type="html"><![CDATA[<span id="more"></span><h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><h3 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1. 基本概念"></a>1. 基本概念</h3><p>人脸是个人重要的生物特征，业界很早就对人脸图像处理技术进行了研究。人脸图像处理包括人脸检测、人脸识别、人脸检索等。人脸检测是在输入图像中检测人脸的位置、大小；人脸识别是对人脸图像身份进行确认，人脸识别通常会先对人脸进行检测定位，再进行识别；人脸检索是根据输入的人脸图像，从图像库或视频库中检索包含该人脸的其它图像或视频。</p><h3 id="2-人脸检测与识别的应用"><a href="#2-人脸检测与识别的应用" class="headerlink" title="2. 人脸检测与识别的应用"></a>2. 人脸检测与识别的应用</h3><ul><li>实名认证</li><li>人脸考勤</li><li>刷脸支付、刷脸检票</li><li>公共安全：罪犯抓捕、失踪人员寻找</li></ul><h3 id="3-传统人脸检测与人脸识别方法"><a href="#3-传统人脸检测与人脸识别方法" class="headerlink" title="3. 传统人脸检测与人脸识别方法"></a>3. 传统人脸检测与人脸识别方法</h3><h4 id="1）人脸检测"><a href="#1）人脸检测" class="headerlink" title="1）人脸检测"></a>1）人脸检测</h4><ul><li>基于知识的人脸检测法。它将典型的人脸形成规则库对人脸进行编码。通常, 通过面部特征之间的关系进行人脸定位。</li><li>基于模板匹配的人脸检测法。存储几种标准的人脸模式, 用来分别描述整个人脸和面部特征;计算输入图像和存储的模式间的相互关系并用于检测。</li><li>基于特征的人脸检测法。是在姿态、视角或光照条件改变的情况下找到存在的结构特征, 然后使用这些特征确定人脸。</li><li>基于外观的人脸检测法。与模板匹配方法相反, 从训练图像集中进行学习从而获得模型(或模板) ,并将这些模型用于检测。</li></ul><h4 id="2）人脸识别"><a href="#2）人脸识别" class="headerlink" title="2）人脸识别"></a>2）人脸识别</h4><ul><li>几何特征分析法。首先，提取目标的特征，并将所有得到的特征值组合形成一个向量；然后利用某种距离公式进行比较匹配。</li><li>主成分分析法。提取出图像数据主成分，得到特征向量（特征脸）在进行比对和识别。主成分分析法原理简单，容易编程实现，并且识别效果较好；但该方法易受光照、尺度、旋转等因素影响。</li><li>弹性匹配法。属于动态模板匹配法的一种，模板可有多种表示方法，该方法受图像的形变影响小，且受光照、面部表情、图像尺寸等因素的干扰较小，不足之处在于识别速度慢。</li></ul><p>传统人脸检测、识别在特征提取、精确度、可扩展性方面均有诸多不足，进入深度学习时代后，逐渐被深度学习技术所取代。</p><h2 id="二、人脸数据集介绍"><a href="#二、人脸数据集介绍" class="headerlink" title="二、人脸数据集介绍"></a>二、人脸数据集介绍</h2><h3 id="1-SFC数据集"><a href="#1-SFC数据集" class="headerlink" title="1. SFC数据集"></a>1. SFC数据集</h3><p>Social Face Classification（社交人脸分类，简称SFC）数据集是从一个流行的社交网络中收集的人脸数据集，包括440万张经过标记的人脸，来自4030人，每个人有800到1200张人脸图像，其中每个身份的最新5%的脸图像被排除在外进行测试。这是根据图像的时间戳来完成的，以模拟通过老化进行的连续识别。</p><h3 id="2-LFW数据集"><a href="#2-LFW数据集" class="headerlink" title="2. LFW数据集"></a>2. LFW数据集</h3><p>Labeled Faces in the Wild（经标注的自然条件人脸，简称LFW）包含5749位名人的13323张网络照片，这些照片分为6000对人脸，分为10组。常用作无约束环境中进行人脸验证的基准数据集。</p><h3 id="3-YTF数据集"><a href="#3-YTF数据集" class="headerlink" title="3. YTF数据集"></a>3. YTF数据集</h3><p>YouTube Faces（YTF）收集了1595个主题的3425个YouTube视频（LFW中名人的子集）。这些视频被分成5000个视频对和10个分割，用于评估视频级别的人脸验证在SFC中，人脸识别是由人来标记的，通常包含大约3%的错误。SFC数据集照片在图像质量、光线和表情方面的变化甚至比LFW和YTF中名人的网络图像更大，后者通常是由专业摄影师而不是智能手机拍摄的。</p><h3 id="4-CelebA数据集"><a href="#4-CelebA数据集" class="headerlink" title="4. CelebA数据集"></a>4. CelebA数据集</h3><p>Large-scale CelebFaces Attributes (CelebA)数据集是由香港中文大学汤晓鸥教授实验室公布的大型人脸识别数据集。该数据集包含有200K张人脸图片，人脸属性有40多种，主要用于人脸属性的识别。</p><h3 id="5-WIDER-Face数据集"><a href="#5-WIDER-Face数据集" class="headerlink" title="5. WIDER Face数据集"></a>5. WIDER Face数据集</h3><p>2015年由香港中文大学发布，包含32203张图像、393703张人脸，在面部的尺寸、姿势、遮挡、表情、妆容和光照上都有很大的变化，自发布后广泛应用于评估性能比传统方法更强大的卷积神经网络。</p><h2 id="三、人脸检测"><a href="#三、人脸检测" class="headerlink" title="三、人脸检测"></a>三、人脸检测</h2><h3 id="1-MTCNN模型"><a href="#1-MTCNN模型" class="headerlink" title="1. MTCNN模型"></a>1. MTCNN模型</h3><p>Joint Face Detection and Alignment using  Multi-task Cascaded Convolutional Networks（基于多任务级联卷积网络的联合人脸检测与对准，MTCNN），是一个优秀的人脸检测模型，该模型通过三个阶段精心设计的深度卷积网络，以粗略到精细的方式检测面部位置。</p><h4 id="1）步骤"><a href="#1）步骤" class="headerlink" title="1）步骤"></a>1）步骤</h4><p>第一阶段：通过浅层CNN快速生成候选窗口。</p><p>第二阶段：通过更复杂的CNN拒绝大量非面部窗口来细化窗口。</p><p>第三阶段：使用更强大的CNN再次细化结果并输出五个面部标志位置。</p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_001.png" width="600"><h4 id="2）网络结构"><a href="#2）网络结构" class="headerlink" title="2）网络结构"></a>2）网络结构</h4><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_002.png" alt="MTCNN_图2"></p><ul><li>Proposal Network（P-Net）：提议网络，该完全卷积网络来获得候选面部窗口及其边界框回归向量。 然后基于估计的边界框回归向量校准候选者。 之后，我们采用非最大抑制（NMS）来合并高度重叠的候选者。</li><li>Refine Network（R-Net）：精炼网络（R-Net），它进一步拒绝大量错误候选者，使用边界框回归执行校准，并进行NMS。</li><li>Output Network（O-Net）：输出网络，这个阶段类似于第二阶段，但在这个阶段，我们的目标是识别更多监督的面部区域。 特别是，该网络将输出五个面部坐标点。</li></ul><h4 id="3）训练"><a href="#3）训练" class="headerlink" title="3）训练"></a>3）训练</h4><p>MTCNN利用三项任务来训练CNN探测器：</p><ul><li>面部&#x2F;非面部分类</li><li>边界框回归</li><li>面部标记定位</li></ul><p>① 面部分类。学习目标被制定为二类分类问题。 对于每个样本，使用交叉熵损失函数：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_003.png" alt="MTCNN_公式1"></p><p>其中$p_i$是网络产生的概率，表明样本是网络产生的概率，表明样本$x_i$是一个人脸。 符号 $y^{det}_i∈{0,1}$表示真实标签。</p><p>② 边界框回归。对于每个候选窗口，我们预测它与最近的真实值之间的偏移（即边界框的左边，顶部，高度和宽度）。 学习目标被指定为回归问题，我们对每个样本使用欧几里德损失$x_i$:</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_004.png" alt="MTCNN_公式2"></p><p>其中$\hat{y}_i^{box}$ 是真实坐标。 有四个坐标，包括左上角，高度和宽度，因此$y^{box}_i∈ \mathbb{R}^4$.</p><p>③ 面部标记定位。类似于边界框回归任务，面部标记检测被公式化为回归问题，我们最小化欧几里德损失：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_005.png" alt="MTCNN_公式3"></p><p>其中 $\hat{y}_i^{landmark}$是从网络获得的面部标记坐标，$y_i^{landmark}$是第i个样本的真实坐标。 有五个面部标志，包括左眼，右眼，鼻子，左嘴角和右嘴角，因此$y_i^{landmark} \in \mathbb{R}^1 0$.</p><p>④ 多源训练。由于在每个CNN中使用不同的任务，因此在学习过程中存在不同类型的训练图像，例如面部，非面部和部分对齐的面部。 在这种情况下，不使用一些损失函数（即，等式（1） - （3））。 例如，对于背景区域的样本，仅计算$L_i{det}$，而另外两个损失设置为0.这可以直接使用样本类型指示符来实现。 然后整体学习目标可以表述为：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_006.png" alt="MTCNN_公式4"></p><p>其中ܰN是训练样本的数量，$a_j$表示任务重要性。 在P-Net和R-Net中使用$(a_{det}&#x3D;1,a_{box}&#x3D;0.5,a_{landmark}&#x3D;0.5)$，而在O-Net中使用$(a_{det}&#x3D;1,a_{box}&#x3D;0.5,a_{landmark}&#x3D;1)$以获得更准确的面部标记本地化. $\beta_i^j \in{0,1}$ 是样本类型指示器。</p><h4 id="4）结论"><a href="#4）结论" class="headerlink" title="4）结论"></a>4）结论</h4><ul><li>查准率：95.04%</li><li>召回率：85.1%</li><li>速度：99 FPS</li></ul><h2 id="四、单样本学习模型"><a href="#四、单样本学习模型" class="headerlink" title="四、单样本学习模型"></a>四、单样本学习模型</h2><h3 id="1-孪生网络"><a href="#1-孪生网络" class="headerlink" title="1. 孪生网络"></a>1. 孪生网络</h3><h4 id="1）概述"><a href="#1）概述" class="headerlink" title="1）概述"></a>1）概述</h4><p>孪生网络（Siamese network）又称“连体网络”，有两个结构相同（两个网络可以是CNN，也可以是LSTM等），且共享权值的子网络。分别接受两个输入$x_1, x_2$，将其转换为某种向量$G_w(x_1), G_w(x_2)$，再通过某种距离度量的方式计算两个输出向量的距离$E_w$.如下图所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_007.png" alt="siamese_0"></p><p>“孪生网络”一词的由来：</p><figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">十九世纪泰国出生了一对连体婴儿，当时的医学技术无法使两人分离出来，于是两人顽强地生活了一生，<span class="number">1829</span>年被英国商人发现，进入马戏团，在全世界各地表演，<span class="number">1839</span>年他们访问美国北卡罗莱那州后来成为“玲玲马戏团” 的台柱，最后成为美国公民。<span class="number">1843年4月13</span>日跟英国一对姐妹结婚，恩生了<span class="number">10</span>个小孩，昌生了<span class="number">12</span>个，姐妹吵架时，兄弟就要轮流到每个老婆家住三天。<span class="number">1874</span>年恩因肺病去世，另一位不久也去世，两人均于<span class="number">63</span>岁离开人间。两人的肝至今仍保存在费城的马特博物馆内。从此之后“暹罗双胞胎”（Siamese twins）就成了连体人的代名词，也因为这对双胞胎让全世界都重视到这项特殊疾病。</span><br></pre></td></tr></table></figure><h4 id="2）孪生网络的用途"><a href="#2）孪生网络的用途" class="headerlink" title="2）孪生网络的用途"></a>2）孪生网络的用途</h4><p>孪生网络主要用于单样本或样本较少的模型训练，用于衡量两个输入数据的相似程度。孪生网络有两个输入（$x_1和x_2$），将两个输入到两个相同且权重共享的网络中，这两个网络分别将输入映射到新的空间，形成输入在新的空间中的表示。通过Loss的计算，评价两个输入的相似度。例如：</p><ul><li>词汇或文本的语义相似度分析；</li><li>QA中question和answer的匹配；</li><li>签名或人脸的比对、验证。</li></ul><p>例如，在人脸比对中，如果输入的两幅人脸图像$X_1和X_2$为同一个人，那么映射到新的空间的两个向量距离足够小；反之，如果$X_1和X_2$不为同一个人，两个向量距离足够大。</p><h4 id="3）损失函数"><a href="#3）损失函数" class="headerlink" title="3）损失函数"></a>3）损失函数</h4><p>孪生网络采用对比损失函数（contrastive loss），其表达式如下：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_008.png" alt="siamese_loss_1"></p><p>其中，$D_W$被定义为姐妹孪生网络的输出之间的欧氏距离。$D_W$欧式距离公式如下：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_009.png" alt="siamese_loss_2"></p><ul><li>$G_W$是其中一个姐妹网络的输出。$X_1$和$X_2$是输入数据对;</li><li>Y值为1或0。如果模型预测输入是相似的，那么Y的值为0，否则Y为1。当Y&#x3D;0时（输入是相似的），函数的值为前半部分；当Y&#x3D;1时（输入不相似），函数的值为后半部分；</li><li>max（）是表示0和$m-D_w$之间较大值的函数;</li><li>m是大于0的间隔值（margin value）。有一个边际价值表示超出该边际价值的不同对不会造成损失。这是有道理的，因为你只希望基于实际不相似对来优化网络，但网络认为是相当相似的。</li></ul><h3 id="2-三元网络（Triplet-Network）"><a href="#2-三元网络（Triplet-Network）" class="headerlink" title="2. 三元网络（Triplet Network）"></a>2. 三元网络（Triplet Network）</h3><h4 id="1）概述-1"><a href="#1）概述-1" class="headerlink" title="1）概述"></a>1）概述</h4><p>Triplet Network是Siamese Network的一种延伸，要解决的问题与Siamese Network的基本一致，主要用于单样本或样本较少的模型训练。与孪生网络不同的是，Triplet Network采用三个样本为一组：一个参考样本（也称为锚点样本），一个同类样本（正样本），一个异类样本（负样本）。Triplet Network网络将输入映射到某个特征空间中，使得参考样本与正样本距离足够小、与负样本足够大。</p><h4 id="2）网络结构-1"><a href="#2）网络结构-1" class="headerlink" title="2）网络结构"></a>2）网络结构</h4><p>Triplet Network结构图如下所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_010.png" alt="triplet_network_1"></p><ul><li>Triplet Network由3个相同的前馈神经网络（彼此共享参数）组成；</li><li>输入x为参考样本，$x^-$为负面样本，$x^+$为正面样本；</li><li>网络会输出两个值：参考样本与负面样本、正面样本的特征向量的距离。</li></ul><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_011.png" alt="triplet_network_2"></p><h4 id="3）损失函数-1"><a href="#3）损失函数-1" class="headerlink" title="3）损失函数"></a>3）损失函数</h4><p>Triplet Network的损失函数称为Triplet Loss（三元损失），包含参照样本、正面样本、负面样本之间的距离。$||f(A)-f(P)||^2$表示参照样本与正向样本的距离，$||f(A)-f(N)||^2$表示参照样本与负面样本的距离。我们希望参照样本与正向样本的距离足够小，与负面样本的距离足够大，即：</p><p>$$<br>||f(A)-f(P)||^2 &lt;&#x3D; ||f(A)-f(N)||^2<br>$$</p><p>为了避免两个表达式为0的情况（同时为0也满足该表达式），需要作出一些调整，参照样本与正向样本的距离值比起与负面样本的距离需大于某个常数值，所以表达式变为：</p><p>$$<br>||f(A)-f(P)||^2 + \alpha &lt;&#x3D; ||f(A)-f(N)||^2<br>$$</p><p>其中，$\alpha$为一个超参数，称为间隔（margin）。将等式右边移项到左边：</p><p>$$<br>||f(A)-f(P)||^2 - ||f(A)-f(N)||^2 + \alpha &lt;&#x3D; 0<br>$$</p><p>所以为了定义这个损失函数，我们取这个和0的最大值：</p><p>$$<br>L(A, P, N) &#x3D; max(||f(A)-f(P)||^2 - ||f(A)-f(N)||^2 + \alpha, 0)<br>$$</p><p>在训练中，为了使得效果更好，通常选择更难训练的三元组$(A, P, N)$进行训练。所谓难训练的三元组就是选择的三元组$d(A, P)$很接近$d(A, N)$，即$d(A, P) \approx d(A, N)$，在训练时竭力使式子右边部分变大，左边部分变小，使得左右至少有一个$\alpha$的距离。并且，比起随机选择的三元组，这样的三元组还可以增加模型的学习算法的计算效率。</p><h2 id="五、人脸识别"><a href="#五、人脸识别" class="headerlink" title="五、人脸识别"></a>五、人脸识别</h2><h3 id="1-DeepFace（2014）"><a href="#1-DeepFace（2014）" class="headerlink" title="1. DeepFace（2014）"></a>1. DeepFace（2014）</h3><h4 id="1）概述-2"><a href="#1）概述-2" class="headerlink" title="1）概述"></a>1）概述</h4><p>DeepFace是Facebook研究人员推出的人脸验证模型，是深度学习技术应用于人脸识别的先驱。模型深度9层，超过1.2亿个参数。在LFW数据集上识别率达到97.25%，接近人类识别能力。</p><h4 id="2）人脸对齐处理"><a href="#2）人脸对齐处理" class="headerlink" title="2）人脸对齐处理"></a>2）人脸对齐处理</h4><p>和大多数模型一样，DeepFace采用基准点检测器指导对齐过程。在该模型中，使用了一个相对简单的基准点检测器，经过多次迭代来优化输出。在每一次迭代中，通过训练支持向量回归器（SVR）从图像描述中预测点的结构来提取基准点。</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_012.png" alt="DeepFace_图1"></p><p>对齐步骤：</p><ul><li>检测人脸6个基准点（眼睛2个、鼻尖1个、嘴巴3个）</li><li>裁剪人脸部分</li><li>在裁剪出的人脸中，使用67个基准点进行三角剖分</li><li>将二维对齐裁剪图像转换为三维参考形状</li><li>对三维形状进行旋转，生成正面二维图像</li></ul><h4 id="3）网络结构"><a href="#3）网络结构" class="headerlink" title="3）网络结构"></a>3）网络结构</h4><p>DeepFace网络结构如下图所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_013.png" alt="DeepFace2"></p><ul><li>输入：152*152经过预处理3D对齐的3通道面部图像</li><li>第一层：卷积层（论文中称为C1），采用32个11*11卷积核进行卷积，输出32个142*142的特征图</li><li>第二层：池化层（M2），以步幅为2执行最大池化操作，输出32个71*71的特征图</li><li>第三层：卷积层（C3），采用16个9*9卷积核进行卷积，输出16个63*63的特征图</li></ul><p>以上三层主要提取底层特征，例如简单边沿、纹理。</p><ul><li>第四&#x2F;五&#x2F;六层：局部连接层（L4&#x2F;L5&#x2F;L6），滤波器组，像卷积层一样，应用滤波器组，但是特征映射中的每个位置都学习不同的滤波器组。局部层的使用不会影响特征提取的计算负担，但会影响训练参数的数量。</li><li>第七&#x2F;八层：全连接层（F7&#x2F;F8），用来捕获在面部图像的远处部分捕捉到的特征之间的相关性，例如眼睛的位置和形状以及嘴的位置和形状。最后一个全连接层在Softmax函数作用下产生K路输出。</li></ul><h4 id="4）效果"><a href="#4）效果" class="headerlink" title="4）效果"></a>4）效果</h4><ul><li><h5 id="LFW数据集实验效果"><a href="#LFW数据集实验效果" class="headerlink" title="LFW数据集实验效果"></a>LFW数据集实验效果</h5></li></ul><p>DeepFace在LFW数据集上实验准确率与效果图ROC（Receiver Operating Characteristic）曲线如下所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_014.png" alt="DeepFace_表3"></p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_015.png" alt="DeepFace_图3"></p><ul><li><h5 id="YTF数据集实验效果"><a href="#YTF数据集实验效果" class="headerlink" title="YTF数据集实验效果"></a>YTF数据集实验效果</h5></li></ul><p>DeepFace还在视频级人脸验证数据集上进行了进一步验证。YouTube视频帧的图像质量通常比网络照片差，主要是由于运动模糊或观看距离。为每对训练视频创建50对帧，每个视频一对，并根据视频训练对标记这些帧是否相同。DeepFace取得了91.4%的准确度，将先前的最佳方法的误差减少了50%以上。如下图所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_016.png" alt="DeepFace_表4"></p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_017.png" alt="DeepFace_图4"></p><h4 id="5）计算效率"><a href="#5）计算效率" class="headerlink" title="5）计算效率"></a>5）计算效率</h4><p>单核Intel 2.2GHz CPU，DeepFace每幅图像运行0.33秒，包括图像解码、人脸检测和对齐、前馈网络和最终分类输出。</p><h3 id="2-FaceNet（2015）"><a href="#2-FaceNet（2015）" class="headerlink" title="2. FaceNet（2015）"></a>2. FaceNet（2015）</h3><h4 id="1）概述-3"><a href="#1）概述-3" class="headerlink" title="1）概述"></a>1）概述</h4><p>FaceNet是Google研究人员2015年推出的人脸识比对模型。其思想是将人脸照片转换为128-D的向量，判断向量之间的距离（差异），如果距离大于某个值，则认为不是同一个人的人脸图像；如果距离小于某个值，则认为是同一个人的人脸图像。</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_018.png" alt="FaceNet_图1"></p><h4 id="2）模型结构"><a href="#2）模型结构" class="headerlink" title="2）模型结构"></a>2）模型结构</h4><p>FaceNet模型结构如下图所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_019.png" alt="FaceNet_图2"></p><ul><li>批量输入层：输入一个批次的样本；</li><li>深度CNN：用来提取数据特征，然后进行L2标准化，输出向量特征（嵌入）。该部分可以采用不同的CNN模型；作者原论文中给出了两种CNN结构，并对性能进行了对比；</li><li>三元损失函数：接收特征向量，构建三元损失函数，使得Anchor-Positive之间的距离足够小，Anchor-Negtive之间的距离足够大。</li></ul><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_020.png" alt="FaceNet_图3"></p><h4 id="3）损失函数-2"><a href="#3）损失函数-2" class="headerlink" title="3）损失函数"></a>3）损失函数</h4><p>FaceNet采用三元损失函数，表达式如下：</p><p>$$<br>||f(x_i^a)-f(x_i^p)||^2_2 + \alpha &lt;&#x3D; ||f(x_i^a)-f(x_i^n)||^2_2<br>$$</p><p>$$<br>\forall f(x_i^a), f(x_i^p), f(x_i^n) \in \Tau<br>$$</p><p>其中，$x^a_i$表示锚定样本（参考样本），$x^p_i$表示正样本，$x^n_i$表示负样本。$||f(x_i^a)-f(x_i^p)||_2$表示参考样本与正样本间距离的L2范数（欧式距离）。$\Tau$是训练集中所有可能的三元组的集合，具有基数N。训练优化的目标损失函数为：</p><p>$$<br>\sum_i^N[\ \ ||f(x_i^a)-f(x_i^p)||^2_2 - ||f(x_i^a)-f(x_i^n)||^2_2 + \alpha\ \ ]<br>$$</p><p>在训练过程中，为了让模型快速收敛，通常选择难训练的三元组样本进行训练，即$argmax \ x_i^p(||f(x_i^a)-f(x_i^p)||^2_2)$或$argmin \ x_i^n(||f(x_i^a)-f(x_i^n)||^2_2)$. 实际训练中，采用从小批量中选择argmin和argmax，而不是所有样本。</p><h4 id="4）效果与性能"><a href="#4）效果与性能" class="headerlink" title="4）效果与性能"></a>4）效果与性能</h4><h5 id="①-不同网络结构及参数"><a href="#①-不同网络结构及参数" class="headerlink" title="①  不同网络结构及参数"></a>①  不同网络结构及参数</h5><p><strong>网络结构一</strong>：22层，140M（1.4亿）个参数，1.6B（16亿）次左右浮点运算</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_021.png" alt="FaceNet表1"></p><p><strong>网络结构二</strong>：基于GoogLeNet的初始模型。参数量减少了约20倍（约为6.6M~7.5M），每个图像需要220M次浮点运算。</p><h5 id="②-不同图像质量的正确率"><a href="#②-不同图像质量的正确率" class="headerlink" title="② 不同图像质量的正确率"></a>② 不同图像质量的正确率</h5><p>下表是不同压缩率的JPEG图像和不同分辨率图像的正确率：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_022.png" alt="FaceNet表4"></p><h5 id="③-不同嵌入维度的正确率"><a href="#③-不同嵌入维度的正确率" class="headerlink" title="③ 不同嵌入维度的正确率"></a>③ 不同嵌入维度的正确率</h5><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_023.png" alt="FaceNet表5"></p><h5 id="④-不同数据集上准确率"><a href="#④-不同数据集上准确率" class="headerlink" title="④ 不同数据集上准确率"></a>④ 不同数据集上准确率</h5><ul><li>LFW数据集：使用额外的人脸对齐平均准确率达99.63%</li><li>YFB数据集：平均准确率95.18%</li></ul><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script><link rel="stylesheet" href="/css/markmap.css"><script src="/js/markmap.js"></script>]]></content>
-      
-      
-      <categories>
-          
-          <category> 课程 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 计算机视觉 </tag>
-            
-            <tag> 人脸识别 </tag>
-            
-            <tag> 人脸检测 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>【计算机视觉】语义分割：原理与经典模型</title>
       <link href="/2026/04/14/course/cv-05-semantic-segmentation/"/>
       <url>/2026/04/14/course/cv-05-semantic-segmentation/</url>
@@ -373,6 +381,35 @@
             <tag> Mask R-CNN </tag>
             
             <tag> DeepLab </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>【计算机视觉】人脸检测与人脸识别</title>
+      <link href="/2026/04/14/course/cv-04-face-detection-recognition/"/>
+      <url>/2026/04/14/course/cv-04-face-detection-recognition/</url>
+      
+        <content type="html"><![CDATA[<span id="more"></span><h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><h3 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1. 基本概念"></a>1. 基本概念</h3><p>人脸是个人重要的生物特征，业界很早就对人脸图像处理技术进行了研究。人脸图像处理包括人脸检测、人脸识别、人脸检索等。人脸检测是在输入图像中检测人脸的位置、大小；人脸识别是对人脸图像身份进行确认，人脸识别通常会先对人脸进行检测定位，再进行识别；人脸检索是根据输入的人脸图像，从图像库或视频库中检索包含该人脸的其它图像或视频。</p><h3 id="2-人脸检测与识别的应用"><a href="#2-人脸检测与识别的应用" class="headerlink" title="2. 人脸检测与识别的应用"></a>2. 人脸检测与识别的应用</h3><ul><li>实名认证</li><li>人脸考勤</li><li>刷脸支付、刷脸检票</li><li>公共安全：罪犯抓捕、失踪人员寻找</li></ul><h3 id="3-传统人脸检测与人脸识别方法"><a href="#3-传统人脸检测与人脸识别方法" class="headerlink" title="3. 传统人脸检测与人脸识别方法"></a>3. 传统人脸检测与人脸识别方法</h3><h4 id="1）人脸检测"><a href="#1）人脸检测" class="headerlink" title="1）人脸检测"></a>1）人脸检测</h4><ul><li>基于知识的人脸检测法。它将典型的人脸形成规则库对人脸进行编码。通常, 通过面部特征之间的关系进行人脸定位。</li><li>基于模板匹配的人脸检测法。存储几种标准的人脸模式, 用来分别描述整个人脸和面部特征;计算输入图像和存储的模式间的相互关系并用于检测。</li><li>基于特征的人脸检测法。是在姿态、视角或光照条件改变的情况下找到存在的结构特征, 然后使用这些特征确定人脸。</li><li>基于外观的人脸检测法。与模板匹配方法相反, 从训练图像集中进行学习从而获得模型(或模板) ,并将这些模型用于检测。</li></ul><h4 id="2）人脸识别"><a href="#2）人脸识别" class="headerlink" title="2）人脸识别"></a>2）人脸识别</h4><ul><li>几何特征分析法。首先，提取目标的特征，并将所有得到的特征值组合形成一个向量；然后利用某种距离公式进行比较匹配。</li><li>主成分分析法。提取出图像数据主成分，得到特征向量（特征脸）在进行比对和识别。主成分分析法原理简单，容易编程实现，并且识别效果较好；但该方法易受光照、尺度、旋转等因素影响。</li><li>弹性匹配法。属于动态模板匹配法的一种，模板可有多种表示方法，该方法受图像的形变影响小，且受光照、面部表情、图像尺寸等因素的干扰较小，不足之处在于识别速度慢。</li></ul><p>传统人脸检测、识别在特征提取、精确度、可扩展性方面均有诸多不足，进入深度学习时代后，逐渐被深度学习技术所取代。</p><h2 id="二、人脸数据集介绍"><a href="#二、人脸数据集介绍" class="headerlink" title="二、人脸数据集介绍"></a>二、人脸数据集介绍</h2><h3 id="1-SFC数据集"><a href="#1-SFC数据集" class="headerlink" title="1. SFC数据集"></a>1. SFC数据集</h3><p>Social Face Classification（社交人脸分类，简称SFC）数据集是从一个流行的社交网络中收集的人脸数据集，包括440万张经过标记的人脸，来自4030人，每个人有800到1200张人脸图像，其中每个身份的最新5%的脸图像被排除在外进行测试。这是根据图像的时间戳来完成的，以模拟通过老化进行的连续识别。</p><h3 id="2-LFW数据集"><a href="#2-LFW数据集" class="headerlink" title="2. LFW数据集"></a>2. LFW数据集</h3><p>Labeled Faces in the Wild（经标注的自然条件人脸，简称LFW）包含5749位名人的13323张网络照片，这些照片分为6000对人脸，分为10组。常用作无约束环境中进行人脸验证的基准数据集。</p><h3 id="3-YTF数据集"><a href="#3-YTF数据集" class="headerlink" title="3. YTF数据集"></a>3. YTF数据集</h3><p>YouTube Faces（YTF）收集了1595个主题的3425个YouTube视频（LFW中名人的子集）。这些视频被分成5000个视频对和10个分割，用于评估视频级别的人脸验证在SFC中，人脸识别是由人来标记的，通常包含大约3%的错误。SFC数据集照片在图像质量、光线和表情方面的变化甚至比LFW和YTF中名人的网络图像更大，后者通常是由专业摄影师而不是智能手机拍摄的。</p><h3 id="4-CelebA数据集"><a href="#4-CelebA数据集" class="headerlink" title="4. CelebA数据集"></a>4. CelebA数据集</h3><p>Large-scale CelebFaces Attributes (CelebA)数据集是由香港中文大学汤晓鸥教授实验室公布的大型人脸识别数据集。该数据集包含有200K张人脸图片，人脸属性有40多种，主要用于人脸属性的识别。</p><h3 id="5-WIDER-Face数据集"><a href="#5-WIDER-Face数据集" class="headerlink" title="5. WIDER Face数据集"></a>5. WIDER Face数据集</h3><p>2015年由香港中文大学发布，包含32203张图像、393703张人脸，在面部的尺寸、姿势、遮挡、表情、妆容和光照上都有很大的变化，自发布后广泛应用于评估性能比传统方法更强大的卷积神经网络。</p><h2 id="三、人脸检测"><a href="#三、人脸检测" class="headerlink" title="三、人脸检测"></a>三、人脸检测</h2><h3 id="1-MTCNN模型"><a href="#1-MTCNN模型" class="headerlink" title="1. MTCNN模型"></a>1. MTCNN模型</h3><p>Joint Face Detection and Alignment using  Multi-task Cascaded Convolutional Networks（基于多任务级联卷积网络的联合人脸检测与对准，MTCNN），是一个优秀的人脸检测模型，该模型通过三个阶段精心设计的深度卷积网络，以粗略到精细的方式检测面部位置。</p><h4 id="1）步骤"><a href="#1）步骤" class="headerlink" title="1）步骤"></a>1）步骤</h4><p>第一阶段：通过浅层CNN快速生成候选窗口。</p><p>第二阶段：通过更复杂的CNN拒绝大量非面部窗口来细化窗口。</p><p>第三阶段：使用更强大的CNN再次细化结果并输出五个面部标志位置。</p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_001.png" width="600"><h4 id="2）网络结构"><a href="#2）网络结构" class="headerlink" title="2）网络结构"></a>2）网络结构</h4><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_002.png" alt="MTCNN_图2"></p><ul><li>Proposal Network（P-Net）：提议网络，该完全卷积网络来获得候选面部窗口及其边界框回归向量。 然后基于估计的边界框回归向量校准候选者。 之后，我们采用非最大抑制（NMS）来合并高度重叠的候选者。</li><li>Refine Network（R-Net）：精炼网络（R-Net），它进一步拒绝大量错误候选者，使用边界框回归执行校准，并进行NMS。</li><li>Output Network（O-Net）：输出网络，这个阶段类似于第二阶段，但在这个阶段，我们的目标是识别更多监督的面部区域。 特别是，该网络将输出五个面部坐标点。</li></ul><h4 id="3）训练"><a href="#3）训练" class="headerlink" title="3）训练"></a>3）训练</h4><p>MTCNN利用三项任务来训练CNN探测器：</p><ul><li>面部&#x2F;非面部分类</li><li>边界框回归</li><li>面部标记定位</li></ul><p>① 面部分类。学习目标被制定为二类分类问题。 对于每个样本，使用交叉熵损失函数：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_003.png" alt="MTCNN_公式1"></p><p>其中$p_i$是网络产生的概率，表明样本是网络产生的概率，表明样本$x_i$是一个人脸。 符号 $y^{det}_i∈{0,1}$表示真实标签。</p><p>② 边界框回归。对于每个候选窗口，我们预测它与最近的真实值之间的偏移（即边界框的左边，顶部，高度和宽度）。 学习目标被指定为回归问题，我们对每个样本使用欧几里德损失$x_i$:</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_004.png" alt="MTCNN_公式2"></p><p>其中$\hat{y}_i^{box}$ 是真实坐标。 有四个坐标，包括左上角，高度和宽度，因此$y^{box}_i∈ \mathbb{R}^4$.</p><p>③ 面部标记定位。类似于边界框回归任务，面部标记检测被公式化为回归问题，我们最小化欧几里德损失：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_005.png" alt="MTCNN_公式3"></p><p>其中 $\hat{y}_i^{landmark}$是从网络获得的面部标记坐标，$y_i^{landmark}$是第i个样本的真实坐标。 有五个面部标志，包括左眼，右眼，鼻子，左嘴角和右嘴角，因此$y_i^{landmark} \in \mathbb{R}^1 0$.</p><p>④ 多源训练。由于在每个CNN中使用不同的任务，因此在学习过程中存在不同类型的训练图像，例如面部，非面部和部分对齐的面部。 在这种情况下，不使用一些损失函数（即，等式（1） - （3））。 例如，对于背景区域的样本，仅计算$L_i{det}$，而另外两个损失设置为0.这可以直接使用样本类型指示符来实现。 然后整体学习目标可以表述为：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_006.png" alt="MTCNN_公式4"></p><p>其中ܰN是训练样本的数量，$a_j$表示任务重要性。 在P-Net和R-Net中使用$(a_{det}&#x3D;1,a_{box}&#x3D;0.5,a_{landmark}&#x3D;0.5)$，而在O-Net中使用$(a_{det}&#x3D;1,a_{box}&#x3D;0.5,a_{landmark}&#x3D;1)$以获得更准确的面部标记本地化. $\beta_i^j \in{0,1}$ 是样本类型指示器。</p><h4 id="4）结论"><a href="#4）结论" class="headerlink" title="4）结论"></a>4）结论</h4><ul><li>查准率：95.04%</li><li>召回率：85.1%</li><li>速度：99 FPS</li></ul><h2 id="四、单样本学习模型"><a href="#四、单样本学习模型" class="headerlink" title="四、单样本学习模型"></a>四、单样本学习模型</h2><h3 id="1-孪生网络"><a href="#1-孪生网络" class="headerlink" title="1. 孪生网络"></a>1. 孪生网络</h3><h4 id="1）概述"><a href="#1）概述" class="headerlink" title="1）概述"></a>1）概述</h4><p>孪生网络（Siamese network）又称“连体网络”，有两个结构相同（两个网络可以是CNN，也可以是LSTM等），且共享权值的子网络。分别接受两个输入$x_1, x_2$，将其转换为某种向量$G_w(x_1), G_w(x_2)$，再通过某种距离度量的方式计算两个输出向量的距离$E_w$.如下图所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_007.png" alt="siamese_0"></p><p>“孪生网络”一词的由来：</p><figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">十九世纪泰国出生了一对连体婴儿，当时的医学技术无法使两人分离出来，于是两人顽强地生活了一生，<span class="number">1829</span>年被英国商人发现，进入马戏团，在全世界各地表演，<span class="number">1839</span>年他们访问美国北卡罗莱那州后来成为“玲玲马戏团” 的台柱，最后成为美国公民。<span class="number">1843年4月13</span>日跟英国一对姐妹结婚，恩生了<span class="number">10</span>个小孩，昌生了<span class="number">12</span>个，姐妹吵架时，兄弟就要轮流到每个老婆家住三天。<span class="number">1874</span>年恩因肺病去世，另一位不久也去世，两人均于<span class="number">63</span>岁离开人间。两人的肝至今仍保存在费城的马特博物馆内。从此之后“暹罗双胞胎”（Siamese twins）就成了连体人的代名词，也因为这对双胞胎让全世界都重视到这项特殊疾病。</span><br></pre></td></tr></table></figure><h4 id="2）孪生网络的用途"><a href="#2）孪生网络的用途" class="headerlink" title="2）孪生网络的用途"></a>2）孪生网络的用途</h4><p>孪生网络主要用于单样本或样本较少的模型训练，用于衡量两个输入数据的相似程度。孪生网络有两个输入（$x_1和x_2$），将两个输入到两个相同且权重共享的网络中，这两个网络分别将输入映射到新的空间，形成输入在新的空间中的表示。通过Loss的计算，评价两个输入的相似度。例如：</p><ul><li>词汇或文本的语义相似度分析；</li><li>QA中question和answer的匹配；</li><li>签名或人脸的比对、验证。</li></ul><p>例如，在人脸比对中，如果输入的两幅人脸图像$X_1和X_2$为同一个人，那么映射到新的空间的两个向量距离足够小；反之，如果$X_1和X_2$不为同一个人，两个向量距离足够大。</p><h4 id="3）损失函数"><a href="#3）损失函数" class="headerlink" title="3）损失函数"></a>3）损失函数</h4><p>孪生网络采用对比损失函数（contrastive loss），其表达式如下：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_008.png" alt="siamese_loss_1"></p><p>其中，$D_W$被定义为姐妹孪生网络的输出之间的欧氏距离。$D_W$欧式距离公式如下：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_009.png" alt="siamese_loss_2"></p><ul><li>$G_W$是其中一个姐妹网络的输出。$X_1$和$X_2$是输入数据对;</li><li>Y值为1或0。如果模型预测输入是相似的，那么Y的值为0，否则Y为1。当Y&#x3D;0时（输入是相似的），函数的值为前半部分；当Y&#x3D;1时（输入不相似），函数的值为后半部分；</li><li>max（）是表示0和$m-D_w$之间较大值的函数;</li><li>m是大于0的间隔值（margin value）。有一个边际价值表示超出该边际价值的不同对不会造成损失。这是有道理的，因为你只希望基于实际不相似对来优化网络，但网络认为是相当相似的。</li></ul><h3 id="2-三元网络（Triplet-Network）"><a href="#2-三元网络（Triplet-Network）" class="headerlink" title="2. 三元网络（Triplet Network）"></a>2. 三元网络（Triplet Network）</h3><h4 id="1）概述-1"><a href="#1）概述-1" class="headerlink" title="1）概述"></a>1）概述</h4><p>Triplet Network是Siamese Network的一种延伸，要解决的问题与Siamese Network的基本一致，主要用于单样本或样本较少的模型训练。与孪生网络不同的是，Triplet Network采用三个样本为一组：一个参考样本（也称为锚点样本），一个同类样本（正样本），一个异类样本（负样本）。Triplet Network网络将输入映射到某个特征空间中，使得参考样本与正样本距离足够小、与负样本足够大。</p><h4 id="2）网络结构-1"><a href="#2）网络结构-1" class="headerlink" title="2）网络结构"></a>2）网络结构</h4><p>Triplet Network结构图如下所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_010.png" alt="triplet_network_1"></p><ul><li>Triplet Network由3个相同的前馈神经网络（彼此共享参数）组成；</li><li>输入x为参考样本，$x^-$为负面样本，$x^+$为正面样本；</li><li>网络会输出两个值：参考样本与负面样本、正面样本的特征向量的距离。</li></ul><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_011.png" alt="triplet_network_2"></p><h4 id="3）损失函数-1"><a href="#3）损失函数-1" class="headerlink" title="3）损失函数"></a>3）损失函数</h4><p>Triplet Network的损失函数称为Triplet Loss（三元损失），包含参照样本、正面样本、负面样本之间的距离。$||f(A)-f(P)||^2$表示参照样本与正向样本的距离，$||f(A)-f(N)||^2$表示参照样本与负面样本的距离。我们希望参照样本与正向样本的距离足够小，与负面样本的距离足够大，即：</p><p>$$<br>||f(A)-f(P)||^2 &lt;&#x3D; ||f(A)-f(N)||^2<br>$$</p><p>为了避免两个表达式为0的情况（同时为0也满足该表达式），需要作出一些调整，参照样本与正向样本的距离值比起与负面样本的距离需大于某个常数值，所以表达式变为：</p><p>$$<br>||f(A)-f(P)||^2 + \alpha &lt;&#x3D; ||f(A)-f(N)||^2<br>$$</p><p>其中，$\alpha$为一个超参数，称为间隔（margin）。将等式右边移项到左边：</p><p>$$<br>||f(A)-f(P)||^2 - ||f(A)-f(N)||^2 + \alpha &lt;&#x3D; 0<br>$$</p><p>所以为了定义这个损失函数，我们取这个和0的最大值：</p><p>$$<br>L(A, P, N) &#x3D; max(||f(A)-f(P)||^2 - ||f(A)-f(N)||^2 + \alpha, 0)<br>$$</p><p>在训练中，为了使得效果更好，通常选择更难训练的三元组$(A, P, N)$进行训练。所谓难训练的三元组就是选择的三元组$d(A, P)$很接近$d(A, N)$，即$d(A, P) \approx d(A, N)$，在训练时竭力使式子右边部分变大，左边部分变小，使得左右至少有一个$\alpha$的距离。并且，比起随机选择的三元组，这样的三元组还可以增加模型的学习算法的计算效率。</p><h2 id="五、人脸识别"><a href="#五、人脸识别" class="headerlink" title="五、人脸识别"></a>五、人脸识别</h2><h3 id="1-DeepFace（2014）"><a href="#1-DeepFace（2014）" class="headerlink" title="1. DeepFace（2014）"></a>1. DeepFace（2014）</h3><h4 id="1）概述-2"><a href="#1）概述-2" class="headerlink" title="1）概述"></a>1）概述</h4><p>DeepFace是Facebook研究人员推出的人脸验证模型，是深度学习技术应用于人脸识别的先驱。模型深度9层，超过1.2亿个参数。在LFW数据集上识别率达到97.25%，接近人类识别能力。</p><h4 id="2）人脸对齐处理"><a href="#2）人脸对齐处理" class="headerlink" title="2）人脸对齐处理"></a>2）人脸对齐处理</h4><p>和大多数模型一样，DeepFace采用基准点检测器指导对齐过程。在该模型中，使用了一个相对简单的基准点检测器，经过多次迭代来优化输出。在每一次迭代中，通过训练支持向量回归器（SVR）从图像描述中预测点的结构来提取基准点。</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_012.png" alt="DeepFace_图1"></p><p>对齐步骤：</p><ul><li>检测人脸6个基准点（眼睛2个、鼻尖1个、嘴巴3个）</li><li>裁剪人脸部分</li><li>在裁剪出的人脸中，使用67个基准点进行三角剖分</li><li>将二维对齐裁剪图像转换为三维参考形状</li><li>对三维形状进行旋转，生成正面二维图像</li></ul><h4 id="3）网络结构"><a href="#3）网络结构" class="headerlink" title="3）网络结构"></a>3）网络结构</h4><p>DeepFace网络结构如下图所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_013.png" alt="DeepFace2"></p><ul><li>输入：152*152经过预处理3D对齐的3通道面部图像</li><li>第一层：卷积层（论文中称为C1），采用32个11*11卷积核进行卷积，输出32个142*142的特征图</li><li>第二层：池化层（M2），以步幅为2执行最大池化操作，输出32个71*71的特征图</li><li>第三层：卷积层（C3），采用16个9*9卷积核进行卷积，输出16个63*63的特征图</li></ul><p>以上三层主要提取底层特征，例如简单边沿、纹理。</p><ul><li>第四&#x2F;五&#x2F;六层：局部连接层（L4&#x2F;L5&#x2F;L6），滤波器组，像卷积层一样，应用滤波器组，但是特征映射中的每个位置都学习不同的滤波器组。局部层的使用不会影响特征提取的计算负担，但会影响训练参数的数量。</li><li>第七&#x2F;八层：全连接层（F7&#x2F;F8），用来捕获在面部图像的远处部分捕捉到的特征之间的相关性，例如眼睛的位置和形状以及嘴的位置和形状。最后一个全连接层在Softmax函数作用下产生K路输出。</li></ul><h4 id="4）效果"><a href="#4）效果" class="headerlink" title="4）效果"></a>4）效果</h4><ul><li><h5 id="LFW数据集实验效果"><a href="#LFW数据集实验效果" class="headerlink" title="LFW数据集实验效果"></a>LFW数据集实验效果</h5></li></ul><p>DeepFace在LFW数据集上实验准确率与效果图ROC（Receiver Operating Characteristic）曲线如下所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_014.png" alt="DeepFace_表3"></p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_015.png" alt="DeepFace_图3"></p><ul><li><h5 id="YTF数据集实验效果"><a href="#YTF数据集实验效果" class="headerlink" title="YTF数据集实验效果"></a>YTF数据集实验效果</h5></li></ul><p>DeepFace还在视频级人脸验证数据集上进行了进一步验证。YouTube视频帧的图像质量通常比网络照片差，主要是由于运动模糊或观看距离。为每对训练视频创建50对帧，每个视频一对，并根据视频训练对标记这些帧是否相同。DeepFace取得了91.4%的准确度，将先前的最佳方法的误差减少了50%以上。如下图所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_016.png" alt="DeepFace_表4"></p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_017.png" alt="DeepFace_图4"></p><h4 id="5）计算效率"><a href="#5）计算效率" class="headerlink" title="5）计算效率"></a>5）计算效率</h4><p>单核Intel 2.2GHz CPU，DeepFace每幅图像运行0.33秒，包括图像解码、人脸检测和对齐、前馈网络和最终分类输出。</p><h3 id="2-FaceNet（2015）"><a href="#2-FaceNet（2015）" class="headerlink" title="2. FaceNet（2015）"></a>2. FaceNet（2015）</h3><h4 id="1）概述-3"><a href="#1）概述-3" class="headerlink" title="1）概述"></a>1）概述</h4><p>FaceNet是Google研究人员2015年推出的人脸识比对模型。其思想是将人脸照片转换为128-D的向量，判断向量之间的距离（差异），如果距离大于某个值，则认为不是同一个人的人脸图像；如果距离小于某个值，则认为是同一个人的人脸图像。</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_018.png" alt="FaceNet_图1"></p><h4 id="2）模型结构"><a href="#2）模型结构" class="headerlink" title="2）模型结构"></a>2）模型结构</h4><p>FaceNet模型结构如下图所示：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_019.png" alt="FaceNet_图2"></p><ul><li>批量输入层：输入一个批次的样本；</li><li>深度CNN：用来提取数据特征，然后进行L2标准化，输出向量特征（嵌入）。该部分可以采用不同的CNN模型；作者原论文中给出了两种CNN结构，并对性能进行了对比；</li><li>三元损失函数：接收特征向量，构建三元损失函数，使得Anchor-Positive之间的距离足够小，Anchor-Negtive之间的距离足够大。</li></ul><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_020.png" alt="FaceNet_图3"></p><h4 id="3）损失函数-2"><a href="#3）损失函数-2" class="headerlink" title="3）损失函数"></a>3）损失函数</h4><p>FaceNet采用三元损失函数，表达式如下：</p><p>$$<br>||f(x_i^a)-f(x_i^p)||^2_2 + \alpha &lt;&#x3D; ||f(x_i^a)-f(x_i^n)||^2_2<br>$$</p><p>$$<br>\forall f(x_i^a), f(x_i^p), f(x_i^n) \in \Tau<br>$$</p><p>其中，$x^a_i$表示锚定样本（参考样本），$x^p_i$表示正样本，$x^n_i$表示负样本。$||f(x_i^a)-f(x_i^p)||_2$表示参考样本与正样本间距离的L2范数（欧式距离）。$\Tau$是训练集中所有可能的三元组的集合，具有基数N。训练优化的目标损失函数为：</p><p>$$<br>\sum_i^N[\ \ ||f(x_i^a)-f(x_i^p)||^2_2 - ||f(x_i^a)-f(x_i^n)||^2_2 + \alpha\ \ ]<br>$$</p><p>在训练过程中，为了让模型快速收敛，通常选择难训练的三元组样本进行训练，即$argmax \ x_i^p(||f(x_i^a)-f(x_i^p)||^2_2)$或$argmin \ x_i^n(||f(x_i^a)-f(x_i^n)||^2_2)$. 实际训练中，采用从小批量中选择argmin和argmax，而不是所有样本。</p><h4 id="4）效果与性能"><a href="#4）效果与性能" class="headerlink" title="4）效果与性能"></a>4）效果与性能</h4><h5 id="①-不同网络结构及参数"><a href="#①-不同网络结构及参数" class="headerlink" title="①  不同网络结构及参数"></a>①  不同网络结构及参数</h5><p><strong>网络结构一</strong>：22层，140M（1.4亿）个参数，1.6B（16亿）次左右浮点运算</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_021.png" alt="FaceNet表1"></p><p><strong>网络结构二</strong>：基于GoogLeNet的初始模型。参数量减少了约20倍（约为6.6M~7.5M），每个图像需要220M次浮点运算。</p><h5 id="②-不同图像质量的正确率"><a href="#②-不同图像质量的正确率" class="headerlink" title="② 不同图像质量的正确率"></a>② 不同图像质量的正确率</h5><p>下表是不同压缩率的JPEG图像和不同分辨率图像的正确率：</p><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_022.png" alt="FaceNet表4"></p><h5 id="③-不同嵌入维度的正确率"><a href="#③-不同嵌入维度的正确率" class="headerlink" title="③ 不同嵌入维度的正确率"></a>③ 不同嵌入维度的正确率</h5><p><img src="/images/course/face-detection-recognition/face-detection-recognition_img_023.png" alt="FaceNet表5"></p><h5 id="④-不同数据集上准确率"><a href="#④-不同数据集上准确率" class="headerlink" title="④ 不同数据集上准确率"></a>④ 不同数据集上准确率</h5><ul><li>LFW数据集：使用额外的人脸对齐平均准确率达99.63%</li><li>YFB数据集：平均准确率95.18%</li></ul><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script><link rel="stylesheet" href="/css/markmap.css"><script src="/js/markmap.js"></script>]]></content>
+      
+      
+      <categories>
+          
+          <category> 课程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 计算机视觉 </tag>
+            
+            <tag> 人脸识别 </tag>
+            
+            <tag> 人脸检测 </tag>
             
         </tags>
       
@@ -552,9 +589,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Agent </tag>
             
@@ -587,9 +624,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Agent </tag>
             
@@ -624,9 +661,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Agent </tag>
             
@@ -711,9 +748,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Prompt </tag>
             
@@ -744,9 +781,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Prompt </tag>
             
@@ -777,9 +814,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Agent </tag>
             
@@ -833,9 +870,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Prompt </tag>
             
@@ -864,13 +901,13 @@
             
             <tag> 深度学习 </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> LLM </tag>
             
             <tag> NLP </tag>
             
-            <tag> Transformer </tag>
+            <tag> 深度学习模型 </tag>
             
-            <tag> LLM </tag>
+            <tag> Transformer </tag>
             
             <tag> 大模型 </tag>
             
@@ -899,9 +936,9 @@
             
             <tag> 深度学习 </tag>
             
-            <tag> 深度学习模型 </tag>
-            
             <tag> NLP </tag>
+            
+            <tag> 深度学习模型 </tag>
             
             <tag> Transformer </tag>
             
@@ -932,13 +969,13 @@
             
             <tag> 深度学习 </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> LLM </tag>
             
             <tag> NLP </tag>
             
-            <tag> Transformer </tag>
+            <tag> 深度学习模型 </tag>
             
-            <tag> LLM </tag>
+            <tag> Transformer </tag>
             
             <tag> 大模型 </tag>
             
@@ -967,9 +1004,9 @@
             
             <tag> 深度学习 </tag>
             
-            <tag> 深度学习模型 </tag>
-            
             <tag> NLP </tag>
+            
+            <tag> 深度学习模型 </tag>
             
         </tags>
       
@@ -1029,9 +1066,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> PEFT </tag>
             
@@ -1070,9 +1107,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> PEFT </tag>
             
@@ -1148,9 +1185,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> PEFT </tag>
             
@@ -1189,9 +1226,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> PEFT </tag>
             
@@ -1228,9 +1265,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> PEFT </tag>
             

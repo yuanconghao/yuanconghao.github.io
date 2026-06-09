@@ -1,0 +1,4 @@
+{ "id":"qw", "title":"应变 SiGe 量子阱叠层", "target":"Ge 组分稳定、应变受控、保持二维生长",
+  "recipe":{"nPer":15,"siThick":8.0,"sigeThick":6.0,"geFrac":0.30},
+  "conditions":{"tSub":550,"powSi":80,"powGe":55,"dope":false},
+  "evidence":["典型应变 SiGe/Si 量子阱：x≈0.3、阱厚 6nm，处于 Matthews-Blakeslee 临界厚度内。"] }

@@ -1,0 +1,4 @@
+{ "id":"strain", "title":"临界厚度 / 应变弛豫训练", "target":"不超过临界厚度的前提下最大化 Ge 组分",
+  "recipe":{"nPer":20,"siThick":6.0,"sigeThick":8.0,"geFrac":0.45},
+  "conditions":{"tSub":520,"powSi":80,"powGe":68,"dope":false},
+  "evidence":["高 Ge 组分 + 厚阱极易超临界弛豫，训练在二维生长窗口内权衡 x 与厚度。"] }
