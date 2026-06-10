@@ -54,6 +54,8 @@
           <div class="sech">A. Recipe 配方</div>
           <div class="row"><label>周期数</label><input id="nPer" type="range" min="2" max="70" step="1" value="20"><span
               class="val"><span id="nPerV">20</span> 期</span></div>
+          <div class="row"><label>GaSb buffer</label><input id="bufferNm" type="range" min="20" max="500" step="10"
+              value="150"><span class="val"><span id="bufferNmV">150 nm</span></span></div>
           <div class="row"><label>InAs 主层</label><input id="inas" type="range" min="2" max="8" step="0.01"
               value="5.21"><span class="val"><span id="inasV">5.21 nm</span></span></div>
           <div class="row"><label>GaSb 垒层</label><input id="gasb" type="range" min="0.5" max="3" step="0.01"
@@ -69,7 +71,7 @@
           <div class="legend">
             <span><i style="background:var(--inas)"></i>InAs</span>
             <span><i style="background:var(--gasb)"></i>GaSb</span>
-            <span><i style="background:var(--insb)"></i>InSb-like</span>
+            <span><i style="background:var(--insb)"></i>InSb 界面</span>
             <span><i style="background:var(--gaas)"></i>GaAs-like 风险</span>
           </div>
         </div>
@@ -169,25 +171,29 @@
           <div class="seqs">
             <button id="seq_auto" class="ghost">Auto recipe</button>
             <button id="seq_inas" class="ghost">InAs step</button>
-            <button id="seq_insb" class="ghost">InSb-like</button>
+            <button id="seq_insb" class="ghost">InSb 界面</button>
             <button id="seq_gasb" class="ghost">GaSb step</button>
             <button id="seq_soak" class="ghost">Sb soak</button>
           </div>
           <div class="stat"><span class="k">当前组合</span><span class="v" id="chemNow">--</span></div>
           <div class="stat"><span class="k">组合风险</span><span class="v badge good" id="chemRisk">--</span></div>
+          <div class="inline-timing">
+            <div class="mini-label">配方快门时序参考</div>
+            <canvas id="timing" width="320" height="120"></canvas>
+          </div>
         </div>
 
         <div class="card">
           <div class="sech">D. 界面工程</div>
           <label class="switch"><input id="comp" type="checkbox" checked><span class="track2"></span><span
-              class="swlabel">InSb-like 双界面补偿</span></label>
+              class="swlabel">InSb 双界面补偿</span></label>
           <div class="row" id="insbRow"><label>InSb 厚度</label><input id="insb" type="range" min="0" max="0.3"
               step="0.005" value="0.02"><span class="val"><span id="insbV">0.020 nm</span></span></div>
           <div class="row"><label>Sb soaking</label><input id="soak" type="range" min="0" max="5" step="0.1"
               value="2.0"><span class="val"><span id="soakV">2.0 s</span></span></div>
           <div class="row"><label>As/Sb 延迟</label><input id="switchDelay" type="range" min="0" max="2" step="0.1"
               value="0.5"><span class="val"><span id="switchDelayV">0.5 s</span></span></div>
-          <div class="hint">InSb-like 界面用于补偿 InAs 拉应变；Ga + As 快门组合会形成 GaAs-like 界面，应尽量避免。<b id="insbHint">理论平衡约 --</b>
+          <div class="hint">MEE 双 InSb 界面用于补偿 InAs 拉应变；Ga + As 快门组合会形成 GaAs-like 风险界面，应尽量避免。<b id="insbHint">理论平衡约 --</b>
           </div>
         </div>
       </div>
@@ -204,8 +210,7 @@
           <div class="stack-overview">
             <div class="sech" id="stackMapTitle">全栈压缩总览 · 主画布显示当前局部放大</div>
             <canvas id="stackMap" width="760" height="120"></canvas>
-            <div class="note" id="stackMapNote">横向表示生长顺序：GaSb 衬底 → GaSb buffer → 周期序列；每个周期从左到右为 InSb-like / InAs /
-              InSb-like / GaSb，红框为当前周期。</div>
+            <div class="note" id="stackMapNote">横向表示放倒后的生长截面：GaSb 衬底 → GaSb buffer → 周期序列；每个周期从左到右为 InSb 界面 / InAs / InSb 界面 / GaSb，红框为当前周期。</div>
           </div>
         </div>
         <div class="card">
@@ -214,18 +219,32 @@
         </div>
         <div class="card">
           <div class="sech">RHEED 镜面反射点强度（每一个波峰 = 长完一个完整原子层）</div>
-          <canvas id="rheed" width="760" height="180"></canvas>
-          <div class="note">逐层生长时，表面在"刚铺满（最平）↔ 铺到一半（最糙）"之间周期变化，镜面反射点强度随之振荡。<b>数振荡周期就能精确标定生长速率（ML/s）</b>——这正是 MBE 做到原子层精度的关键原位手段。</div>
+          <div class="rheed-tools">
+            <div class="sensor-legend">
+              <span><i class="s1"></i>Sensor 1</span>
+              <span><i class="s2"></i>Sensor 2</span>
+              <span><i class="s3"></i>Sensor 3</span>
+              <span><i class="s4"></i>Sensor 4</span>
+            </div>
+            <div class="rheed-zoom">
+              <button id="rheedFull" class="ghost" type="button">全程</button>
+              <button id="rheedZoomOut" class="ghost" type="button">缩小</button>
+              <button id="rheedZoomIn" class="ghost" type="button">放大</button>
+            </div>
+          </div>
+          <canvas id="rheed" width="760" height="260"></canvas>
+          <div class="note">四条曲线对应 RHEED 图像中的 4 个 Sensor 区域；逐层生长时，镜面反射点强度随表面平整度振荡。默认横坐标显示完整生长时间，放大后查看最近窗口。</div>
         </div>
         <div class="card">
           <div class="sech">应变累积 · 安全区 / 警告区 / 失配区</div>
           <canvas id="strain" width="760" height="130"></canvas>
+          <div class="note">纵轴表示累计失配应变：0 线以上为拉应变，0 线以下为压应变；绿色区域表示仍在临界范围内，越过 ±临界线后进入弛豫/失配位错风险区。</div>
         </div>
       </div>
 
       <div class="area-status col">
         <div class="card epilist">
-          <div class="sech">PROCESS EPILIST</div>
+          <div class="sech">过程状态 · 设备与生长参数</div>
           <div class="epigrid">
             <div class="ecell">
               <div class="ek">SUB 温度</div>
@@ -294,7 +313,7 @@
           </div>
           <div class="diag-card">
             <div class="diag-head"><span>界面质量</span><b id="intfAbrupt" class="v badge good">--</b></div>
-            <div class="twocol"><span>InSb-like <b id="intfInSb">--</b></span><span>GaAs-like <b
+            <div class="twocol"><span>InSb 界面 <b id="intfInSb">--</b></span><span>GaAs-like <b
                   id="intfGaAs">--</b></span></div>
           </div>
           <div class="diag-card">
@@ -314,6 +333,43 @@
           </div>
         </div>
 
+        <div class="card char-card">
+          <div class="sech">虚拟表征预测 · 对应实验真值</div>
+          <div class="char-grid">
+            <div class="char-item">
+              <div class="ck">DXRD</div>
+              <div class="cv" id="charXrd">--</div>
+              <div class="ct">卫星峰 FWHM，目标 &lt; 20 arcsec</div>
+            </div>
+            <div class="char-item">
+              <div class="ck">AFM</div>
+              <div class="cv" id="charAfm">--</div>
+              <div class="ct">表面 RMS，参考约 1.5 Å</div>
+            </div>
+            <div class="char-item">
+              <div class="ck">HRTEM</div>
+              <div class="cv" id="charHrtem">--</div>
+              <div class="ct">界面平整度 / 周期均匀性</div>
+            </div>
+            <div class="char-item">
+              <div class="ck">PL</div>
+              <div class="cv" id="charPl">--</div>
+              <div class="ct">峰位对应 Eg_eff，半宽反映均匀性</div>
+            </div>
+            <div class="char-item">
+              <div class="ck">I-V</div>
+              <div class="cv" id="charIv">--</div>
+              <div class="ct">R0A 趋势，反映暗电流风险</div>
+            </div>
+            <div class="char-item">
+              <div class="ck">光谱/黑体</div>
+              <div class="cv" id="charSpec">--</div>
+              <div class="ct">λc / QE / D* 趋势预测</div>
+            </div>
+          </div>
+          <div class="note">这些是由当前 recipe、RHEED、界面和应变规则推断的“预表征”指标，用来提前判断风险；真实真值仍需 DXRD、AFM、HRTEM、PL、I-V、光谱响应和黑体测试闭环验证。</div>
+        </div>
+
         <div class="card score-card">
           <div class="sech">评分拆解</div>
           <div class="score-row"><span>Recipe 合理性</span><b id="partRecipe">--</b><em>/20</em></div>
@@ -322,11 +378,6 @@
           <div class="score-row"><span>应变控制</span><b id="partStrain">--</b><em>/15</em></div>
           <div class="score-row"><span>波长匹配</span><b id="partLambda">--</b><em>/15</em></div>
           <div class="score-row"><span>操作规范</span><b id="partOps">--</b><em>/10</em></div>
-        </div>
-
-        <div class="card side-viz">
-          <div class="sech">标准快门时序参考</div>
-          <canvas id="timing" width="360" height="150"></canvas>
         </div>
       </div>
     </div>
@@ -380,10 +431,34 @@
           <div class="sv" id="sRisk">--</div>
         </div>
       </div>
+      <div class="report-sections">
+        <div class="report-card">
+          <div class="report-title">评价模型与适用范围</div>
+          <p id="sModelBasis">--</p>
+        </div>
+        <div class="report-card">
+          <div class="report-title">本次评价标准</div>
+          <div id="sEvalRules" class="rule-list"></div>
+        </div>
+        <div class="report-card">
+          <div class="report-title">本任务复现依据</div>
+          <ul id="sTaskEvidence" class="ref-list"></ul>
+        </div>
+        <div class="report-card">
+          <div class="report-title">通用物理依据与参考文献</div>
+          <ul class="ref-list">
+            <li><a href="https://arxiv.org/abs/1908.00797" target="_blank" rel="noopener">Delmas et al., 2019</a>：InAs/GaSb T2SL MBE 中 InSb 界面工程、XRD FWHM、AFM RMS、PL 截止波长与暗电流表征。</li>
+            <li><a href="https://arxiv.org/abs/0911.4140" target="_blank" rel="noopener">Li et al., 2009</a>：InAs/GaSb 超晶格中 InSb/GaAs 界面键合、失配应变与形貌演化关系。</li>
+            <li><a href="https://arxiv.org/abs/1608.03007" target="_blank" rel="noopener">Kim et al., 2016</a>：原子尺度测量 InAs/GaSb T2SL 子晶格应变、GaAs-like 界面与互混特征。</li>
+            <li><a href="https://arxiv.org/abs/2111.13358" target="_blank" rel="noopener">Fang et al., 2021</a>：InAs/GaSb T2SL 带隙与能带计算需使用 k·p、包络函数、赝势或紧束缚等更高阶模型。</li>
+            <li><a href="https://arxiv.org/abs/1410.0944" target="_blank" rel="noopener">Sullivan et al., 2014</a>：RHEED 强度振荡可用于层状生长监控，但振荡相位需要实验标定。</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <div class="note footnote">
-      物理量为半物理规则模型，用于工艺训练与趋势理解，不作为定量外延设计工具。训练重点：InAs/GaSb 交替生长、InSb-like 界面、RHEED 反馈、应变补偿、截止波长与暗电流风险。
+      物理量为半物理规则模型，用于工艺训练与趋势理解，不作为定量外延设计工具。训练重点：InAs/GaSb 交替生长、MEE 双 InSb 界面、RHEED 反馈、应变补偿、截止波长与暗电流风险。
     </div>
   </div>
 

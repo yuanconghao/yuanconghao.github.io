@@ -9,6 +9,7 @@
 
   var P = {
     nPer: 100,
+    bufferNm: 150,
     inas: 5.21,
     gasb: 1.39,
     insb: 0.20,
@@ -68,13 +69,14 @@
     { id: "strain", title: "应变控制训练", target: "避免失配位错与压应变过量", dataUrl: "./data/strain.json" }
   ];
   M.activeTaskData = null;
+  M.activeShutterSequence = null;
 
   M.st = null; M.atoms = []; M.dims = {};
   M.chamber = null; M.cx = null; M.screenC = null; M.scx = null;
   M.mapC = null; M.mcx = null;
   M.strain = null; M.sx = null; M.timingC = null; M.tcx = null; M.bandC = null; M.bcx = null;
-  M.rheedC = null; M.rx = null;
-  M.shutters = { In: false, Ga: false, As: false, Sb: false };
+  M.rheedC = null; M.rx = null; M.rheedZoomSec = 0;
+  M.shutters = { In: false, Ga: false, Al: false, As: false, Sb: false };
   M.manualShutters = false;
 
   M.$ = function (id) { return document.getElementById(id); };
@@ -168,7 +170,7 @@
     if (sh.In && sh.As && !sh.Ga && !sh.Al && !sh.Sb) return { txt: "当前生长：InAs", mat: "InAs", risk: "low", cls: "good" };
     if (sh.Ga && sh.Sb && !sh.In && !sh.Al && !sh.As) return { txt: "当前生长：GaSb", mat: "GaSb", risk: "low", cls: "good" };
     if (sh.Al && sh.Sb && !sh.In && !sh.Ga && !sh.As) return { txt: "当前生长：AlSb", mat: "AlSb", risk: "low", cls: "good" };
-    if (sh.In && sh.Sb && !sh.Ga && !sh.Al && !sh.As) return { txt: "当前形成：InSb-like 界面", mat: "InSb", risk: "low", cls: "good" };
+    if (sh.In && sh.Sb && !sh.Ga && !sh.Al && !sh.As) return { txt: "当前形成：InSb 界面 (MEE)", mat: "InSb", risk: "low", cls: "good" };
     if (sh.Sb && n === 1) return { txt: "Sb 浸润 (soaking)", mat: "InSb", risk: "low", cls: "good" };
     if ((sh.Ga || sh.Al) && sh.As) return { txt: "警告：GaAs-like 界面", mat: "GaAs", risk: "high", cls: "bad" };
     if (n === 0) return { txt: "快门全关 (AtRunTime 待机)", mat: null, risk: "idle", cls: "warn" };
@@ -268,6 +270,32 @@
     return { txt: "高", cls: "bad", why: "缺陷/应变风险高，器件暗电流会明显上升" };
   }
 
+  function characterizationMetrics() {
+    var st = M.st, q = surfaceQuality(), intf = interfaceMetrics(), lam = cutoff(effGap());
+    var strainRatio = st ? Math.abs(st.accStrain) / STRAIN_CRIT : 0;
+    var gaAs = intf.gaAsLike;
+    var fwhm = 18 + (1 - q) * 55 + (1 - intf.abruptness) * 42 + clamp(strainRatio - 0.45, 0, 1.2) * 35;
+    var rmsA = 1.5 + (1 - q) * 8.5 + gaAs * 5.0 + clamp(strainRatio - 0.6, 0, 1.2) * 4.0;
+    var hUniform = clamp(intf.abruptness * 0.62 + q * 0.26 + (1 - clamp(strainRatio, 0, 1)) * 0.12, 0, 1);
+    var plFwhm = 12 + (1 - hUniform) * 38 + Math.abs(lam - P.targetLam) * 2.0;
+    var dark = darkCurrentRisk();
+    var r0a = Math.pow(10, 2.5 + q * 1.2 + intf.abruptness * 0.8 - clamp(strainRatio, 0, 1.4) * 0.9 - (lam > 14 ? 0.45 : 0));
+    var qe = clamp(0.20 + q * 0.28 + intf.abruptness * 0.18 - gaAs * 0.12 - clamp(strainRatio - 0.7, 0, 1) * 0.12, 0.05, 0.72);
+    var dstar = Math.pow(10, 9.6 + q * 0.55 + intf.abruptness * 0.35 - clamp(strainRatio, 0, 1.3) * 0.45 - (dark.cls === "bad" ? 0.5 : 0));
+    return {
+      xrdFwhm: fwhm,
+      xrdPeriod: P.inas + P.gasb + (P.comp ? P.insb * 2 + 0.36 : 0),
+      afmRmsA: rmsA,
+      hUniform: hUniform,
+      plPeak: lam,
+      plFwhm: plFwhm,
+      r0a: r0a,
+      qe: qe,
+      dstar: dstar,
+      cls: fwhm < 25 && rmsA < 2.5 && hUniform > 0.78 && dark.cls !== "bad" ? "good" : fwhm < 60 && rmsA < 6 && hUniform > 0.55 ? "warn" : "bad"
+    };
+  }
+
   function score() {
     var st = M.st;
     var q, abrupt, inSbLike, gaAsLike, ops;
@@ -320,14 +348,15 @@
     s.push({ stage: "load", label: "Load / AtRunTime 待机", mat: null, nm: 0, dur: 1, subA: 100, subB: 100 });
     s.push({ stage: "deoxide", label: "Deoxide 脱氧 (升温去氧化层)", mat: null, nm: 0, dur: 1400, subA: 300, subB: 530 });
     s.push({ stage: "deoxide", label: "Deoxide 脱氧 (降至生长温度)", mat: null, nm: 0, dur: 700, subA: 530, subB: 440 });
-    s.push({ stage: "buffer", label: "GaSb Buffer 生长 500 nm", mat: "GaSb", nm: 500, dur: 500 / rate_GaSb, subA: 440, subB: 380 });
+    var bufferNm = Math.max(0, P.bufferNm || 0);
+    s.push({ stage: "buffer", label: "GaSb Buffer 生长 " + bufferNm.toFixed(0) + " nm", mat: "GaSb", nm: bufferNm, dur: Math.max(0.1, bufferNm / rate_GaSb), subA: 440, subB: 380 });
     s.push({ stage: "calib", label: "Interface Calib / Sb soaking 标定", mat: "InSb", nm: P.comp ? 0.08 : 0, dur: P.comp ? 0.08 / rate_InAs : 25, subA: 380, subB: 380 });
     for (p = 0; p < P.nPer; p++) {
-      s.push({ stage: "sl", period: p, label: "InSb-like 界面 1 (MEE)", mat: "InSb", nm: P.comp ? P.insb : 0.0, dur: P.comp ? Math.max(0.01, P.insb / rate_InAs) : 0.01, subA: 380, subB: P.tSub });
+      s.push({ stage: "sl", period: p, label: "GaSb→InAs: InSb 界面 (MEE)", mat: "InSb", nm: P.comp ? P.insb : 0.0, dur: P.comp ? Math.max(0.01, P.insb / rate_InAs) : 0.01, subA: 380, subB: P.tSub });
       s.push({ stage: "sl", period: p, label: "Sb 迁移 / soak", mat: "InSb", nm: P.comp ? 0.18 : 0.0, dur: P.comp ? P.soak : 0.01, subA: P.tSub, subB: P.tSub });
       s.push({ stage: "sl", period: p, label: "InAs 主层", mat: "InAs", nm: P.inas, dur: Math.max(0.1, P.inas / rate_InAs), subA: P.tSub, subB: P.tSub });
       s.push({ stage: "sl", period: p, label: "Sb 迁移 / soak", mat: "InSb", nm: P.comp ? 0.18 : 0.0, dur: P.comp ? P.soak : 0.01, subA: P.tSub, subB: P.tSub });
-      s.push({ stage: "sl", period: p, label: "InSb-like 界面 2 (MEE)", mat: "InSb", nm: P.comp ? P.insb : 0.0, dur: P.comp ? Math.max(0.01, P.insb / rate_InAs) : 0.01, subA: P.tSub, subB: P.tSub });
+      s.push({ stage: "sl", period: p, label: "InAs→GaSb: InSb 界面 (MEE)", mat: "InSb", nm: P.comp ? P.insb : 0.0, dur: P.comp ? Math.max(0.01, P.insb / rate_InAs) : 0.01, subA: P.tSub, subB: P.tSub });
       s.push({ stage: "sl", period: p, label: "GaSb 垒层", mat: "GaSb", nm: P.gasb, dur: Math.max(0.1, P.gasb / rate_GaSb), subA: P.tSub, subB: P.tSub });
     }
     s.push({ stage: "cooldown", label: "Cooldown / Sb overpressure 冷却", mat: null, nm: 0, dur: 900, subA: P.tSub, subB: 220 });
@@ -350,7 +379,7 @@
     return {
       taskId: "lwir", mode: "引导模式", steps: steps, si: 0, sp: 0, realT: 0, totalReal: steps.totalReal,
       playing: false, done: false, speedMul: 1, thickNm: 0, phase: 0, accStrain: 0,
-      strainHist: [{ t: 0, s: 0 }], rheedHist: [{ t: 0, v: 0.5 }], iSum: 0, iCount: 0,
+      strainHist: [{ t: 0, s: 0 }], rheedHist: [{ t: 0, v: 0.5, sensors: [0.18, 0.52, 0.66, 0.78] }], iSum: 0, iCount: 0,
       logs: [{ t: 0, msg: "训练任务载入：复现 12.6 μm LWIR 超晶格" }],
       actTSub: steps[0] ? steps[0].subA : 100,
       oxideOpacity: 1.0,
@@ -383,7 +412,7 @@
   M.rangeStatus = rangeStatus; M.interfaceMetrics = interfaceMetrics; M.strainStatus = strainStatus;
   M.effGap = effGap; M.cutoff = cutoff; M.targetMatch = targetMatch;
   M.surfaceQuality = surfaceQuality; M.rheedState = rheedState; M.growthMode = growthMode;
-  M.darkCurrentRisk = darkCurrentRisk; M.score = score; M.buildSteps = buildSteps;
+  M.darkCurrentRisk = darkCurrentRisk; M.characterizationMetrics = characterizationMetrics; M.score = score; M.buildSteps = buildSteps;
   M.freshState = freshState; M.curStep = curStep; M.subTemp = subTemp;
   M.stageOf = stageOf; M.curPeriod = curPeriod; M.stageIdx = stageIdx; M.locate = locate;
   M.recordRHEED = recordRHEED;

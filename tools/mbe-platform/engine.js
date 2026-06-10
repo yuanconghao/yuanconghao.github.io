@@ -76,15 +76,21 @@ window.MBE.needsRedraw = true;
     var st = M.st, sx = M.sx, C = M.C, CRIT = M.STRAIN_CRIT, W = M.dims.stW, H = M.dims.stH;
     if (!sx) return;
     sx.clearRect(0, 0, W, H); sx.fillStyle = C.canvasBg; sx.fillRect(0, 0, W, H);
-    var padL = 30, padR = 8, padT = 8, padB = 14, pw = W - padL - padR, ph = H - padT - padB;
+    var padL = 46, padR = 10, padT = 14, padB = 18, pw = W - padL - padR, ph = H - padT - padB;
     var ymax = CRIT * 1.35; function Y(s) { return padT + (1 - (s + ymax) / (2 * ymax)) * ph; }
     sx.fillStyle = C.zone; sx.fillRect(padL, padT, pw, Y(CRIT) - padT); sx.fillRect(padL, Y(-CRIT), pw, padT + ph - Y(-CRIT));
+    sx.fillStyle = "rgba(15,122,104,.055)"; sx.fillRect(padL, Y(CRIT), pw, Y(-CRIT) - Y(CRIT));
     sx.strokeStyle = C.axis; sx.beginPath(); sx.moveTo(padL, Y(0)); sx.lineTo(padL + pw, Y(0)); sx.stroke();
     sx.strokeStyle = "rgba(192,57,43,.45)"; sx.setLineDash([4, 3]);
     sx.beginPath(); sx.moveTo(padL, Y(CRIT)); sx.lineTo(padL + pw, Y(CRIT)); sx.stroke();
     sx.beginPath(); sx.moveTo(padL, Y(-CRIT)); sx.lineTo(padL + pw, Y(-CRIT)); sx.stroke(); sx.setLineDash([]);
-    sx.fillStyle = C.axisText; sx.font = "9px sans-serif"; sx.textAlign = "right";
-    sx.fillText("tensile", padL - 4, Y(CRIT * .7)); sx.fillText("0", padL - 4, Y(0) + 3); sx.fillText("compress", padL - 4, Y(-CRIT * .7));
+    sx.fillStyle = C.axisText; sx.font = "700 9px sans-serif"; sx.textAlign = "right";
+    sx.fillText("拉(+)", padL - 6, Y(CRIT * .7));
+    sx.fillText("0", padL - 6, Y(0) + 3);
+    sx.fillText("压(-)", padL - 6, Y(-CRIT * .7));
+    sx.textAlign = "left"; sx.font = "9px sans-serif";
+    sx.fillText("+临界", padL + 4, Y(CRIT) - 4);
+    sx.fillText("-临界", padL + 4, Y(-CRIT) + 10);
     var data = st ? st.strainHist : []; if (data.length < 2) return;
     var tMax = Math.max(data[data.length - 1].t, .5), stat = M.strainStatus(st.accStrain);
     sx.strokeStyle = stat.cls === "good" ? C.good : stat.cls === "warn" ? C.warn : C.bad; sx.lineWidth = 1.7; sx.beginPath();
@@ -93,27 +99,58 @@ window.MBE.needsRedraw = true;
   };
 
   // ---------- 通用图表：RHEED 强度振荡曲线 ----------
-  // 需炉子提供：M.rheedC/M.rx、M.dims.rhW/rhH、st.rheedHist = [{t, v}]
+  // 需炉子提供：M.rheedC/M.rx、M.dims.rhW/rhH、st.rheedHist = [{t, v, sensors:[...]}]
   M.drawRheed = function () {
     if (!M.rx) return;
     var st = M.st, rx = M.rx, C = M.C, W = M.dims.rhW, H = M.dims.rhH;
     rx.clearRect(0, 0, W, H); rx.fillStyle = C.canvasBg; rx.fillRect(0, 0, W, H);
-    var padL = 34, padR = 12, padT = 12, padB = 20, pw = W - padL - padR, ph = H - padT - padB;
+    var padL = 42, padR = 18, padT = 18, padB = 30, pw = W - padL - padR, ph = H - padT - padB;
     rx.strokeStyle = "#f1f5f9"; rx.lineWidth = 1;
-    for (var val = 0.2; val <= 1.0; val += 0.2) { var gy = padT + (1 - val) * ph; rx.beginPath(); rx.moveTo(padL, gy); rx.lineTo(padL + pw, gy); rx.stroke(); }
+    for (var val = 0.1; val <= 1.0; val += 0.1) { var gy = padT + (1 - val) * ph; rx.beginPath(); rx.moveTo(padL, gy); rx.lineTo(padL + pw, gy); rx.stroke(); }
     rx.strokeStyle = C.axis; rx.lineWidth = 1.2;
     rx.beginPath(); rx.moveTo(padL, padT); rx.lineTo(padL, padT + ph); rx.lineTo(padL + pw, padT + ph); rx.stroke();
     rx.fillStyle = C.axisText; rx.font = "9px sans-serif"; rx.textAlign = "right";
     rx.fillText("1.0", padL - 6, padT + 4); rx.fillText("0.5", padL - 6, padT + ph / 2 + 3); rx.fillText("0", padL - 6, padT + ph + 3);
     var data = st ? st.rheedHist : []; if (data.length < 2) return;
-    var tLast = data[data.length - 1].t, windowSec = 35, tMin = Math.max(0, tLast - windowSec), tMax = tMin + windowSec;
-    var pts = []; for (var i = 0; i < data.length; i++) if (data[i].t >= tMin - 1) pts.push(data[i]);
+    var tLast = data[data.length - 1].t, zoomSec = M.rheedZoomSec || 0;
+    var tMin = 0, tMax = Math.max(st.totalReal || tLast, tLast, 1), windowSec = tMax - tMin;
+    if (zoomSec > 0) {
+      windowSec = Math.max(5, zoomSec);
+      tMax = Math.max(tLast, windowSec);
+      tMin = Math.max(0, tMax - windowSec);
+    }
+    var pts = []; for (var i = 0; i < data.length; i++) if (data[i].t >= tMin && data[i].t <= tMax) pts.push(data[i]);
     if (pts.length < 2) return;
-    rx.strokeStyle = C.good; rx.lineWidth = 2.0; rx.beginPath();
-    for (var j = 0; j < pts.length; j++) { var px = padL + ((pts[j].t - tMin) / windowSec) * pw, py = padT + (1 - pts[j].v) * ph; if (j === 0) rx.moveTo(px, py); else rx.lineTo(px, py); }
-    rx.stroke();
-    rx.fillStyle = C.axisText; rx.textAlign = "center";
-    for (var sec = Math.ceil(tMin / 5) * 5; sec <= tMax; sec += 5) { var sxp = padL + ((sec - tMin) / windowSec) * pw; if (sxp >= padL && sxp <= padL + pw) rx.fillText(sec + "s", sxp, padT + ph + 13); }
+    var colors = ["#f97316", "#facc15", "#b45309", "#ec4899"];
+    function sensorValue(pt, idx) {
+      if (pt.sensors && pt.sensors[idx] != null) return pt.sensors[idx];
+      var offsets = [0.18, 0.52, 0.66, 0.78], gains = [0.16, 0.18, 0.17, 0.15];
+      return M.clamp(offsets[idx] + gains[idx] * (pt.v || 0), 0, 1);
+    }
+    for (var s = 0; s < 4; s++) {
+      rx.strokeStyle = colors[s];
+      rx.lineWidth = s === 0 ? 1.8 : 1.5;
+      rx.beginPath();
+      for (var j = 0; j < pts.length; j++) {
+        var px = padL + ((pts[j].t - tMin) / Math.max(1, windowSec)) * pw;
+        var py = padT + (1 - sensorValue(pts[j], s)) * ph;
+        if (j === 0) rx.moveTo(px, py); else rx.lineTo(px, py);
+      }
+      rx.stroke();
+    }
+    rx.fillStyle = C.axisText; rx.textAlign = "center"; rx.font = "9px sans-serif";
+    var tickStep = windowSec <= 40 ? 5 : windowSec <= 120 ? 15 : windowSec <= 600 ? 60 : Math.ceil(windowSec / 8 / 60) * 60;
+    for (var sec = Math.ceil(tMin / tickStep) * tickStep; sec <= tMax; sec += tickStep) {
+      var sxp = padL + ((sec - tMin) / Math.max(1, windowSec)) * pw;
+      if (sxp >= padL && sxp <= padL + pw) rx.fillText(Math.round(sec) + "s", sxp, padT + ph + 16);
+    }
+    rx.textAlign = "left"; rx.font = "700 10px sans-serif";
+    rx.fillText(zoomSec > 0 ? "Zoom: last " + Math.round(windowSec) + " s" : "Full growth timeline", padL, 12);
+    for (var k = 0; k < 4; k++) {
+      var lx = W - 184 + k * 44;
+      rx.fillStyle = colors[k]; rx.fillRect(lx, 6, 10, 10);
+      rx.fillStyle = C.axisText; rx.fillText("S" + (k + 1), lx + 14, 15);
+    }
   };
 
   // ---------- 通用图表：RHEED 绿色相屏（条纹↔斑点 + 脱氧漫散射）----------
@@ -181,6 +218,26 @@ window.MBE.needsRedraw = true;
       rheedText = oxideOp > 0.85 ? "Amorphous Halo" : oxideOp > 0.3 ? "Weak Halo & Spotty" : "Reconstructing Streaks";
       rheedDesc = oxideOp > 0.85 ? "非晶态氧化层漫散射环，衬底表面无结构重建" : oxideOp > 0.3 ? "氧化层开始分解，微弱重建斑点出现" : "脱氧接近完成，晶态重构长条纹显露";
     }
+    var sensorColors = ["#f97316", "#facc15", "#b45309", "#ec4899"];
+    var boxes = [
+      { x: 0.12, y: 0.50, label: "1" },
+      { x: 0.80, y: 0.50, label: "2" },
+      { x: 0.48, y: 0.49, label: "3" },
+      { x: 0.52, y: 0.18, label: "4" }
+    ];
+    scx.font = "700 10px sans-serif";
+    scx.textAlign = "left";
+    for (var bi = 0; bi < boxes.length; bi++) {
+      var bw = Math.max(34, W * 0.075), bh = Math.max(30, H * 0.12), bx = boxes[bi].x * W, by = boxes[bi].y * H;
+      scx.strokeStyle = sensorColors[bi];
+      scx.lineWidth = 1.6;
+      scx.strokeRect(bx, by, bw, bh);
+      scx.fillStyle = sensorColors[bi];
+      scx.fillText(boxes[bi].label, bx + 3, by + 11);
+    }
+    scx.fillStyle = "rgba(220,255,230,.72)";
+    scx.font = "700 10px sans-serif";
+    scx.textAlign = "center";
     scx.fillText("RHEED: " + rheedText, W / 2, H - 20);
     scx.font = "9px sans-serif"; scx.fillText(rheedDesc, W / 2, H - 7);
   };

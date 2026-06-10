@@ -5,6 +5,7 @@
   "description": "典型中波红外 MWIR InAs/GaSb 二类超晶格结构的高品质外延基准。学习使用 InSb 界面工程补偿拉应变以提升材料与光学质量。",
   "recipe": {
     "nPer": 120,
+    "bufferNm": 150,
     "inas": 2.43,
     "gasb": 1.83,
     "targetLam": 4.78
@@ -25,6 +26,17 @@
     "insb": 0.18,
     "soak": 2.0,
     "switchDelay": 0.4
+  },
+  "shutterSequence": {
+    "title": "MEE 双 InSb 界面: In+Sb / In+As / Sb / In+Sb / Ga+Sb",
+    "basis": "本任务的快门时序参考来自 InAs/GaSb 双 InSb 界面工程：两个异质界面均用 In+Sb 形成等效 InSb 界面，InAs 主层用 In+As，GaSb 垒层用 Ga+Sb；该图是训练用等效顺序，不代表论文逐秒完整开关表。",
+    "steps": [
+      { "label": "GaSb→InAs InSb interface", "shutters": ["In", "Sb"], "duration": 0.10 },
+      { "label": "InAs well", "shutters": ["In", "As"], "duration": 0.24 },
+      { "label": "Sb soak", "shutters": ["Sb"], "duration": 0.08 },
+      { "label": "InAs→GaSb InSb interface", "shutters": ["In", "Sb"], "duration": 0.10 },
+      { "label": "GaSb barrier", "shutters": ["Ga", "Sb"], "duration": 0.22 }
+    ]
   },
   "expected": {
     "lambdaRange": [4.4, 5.2],

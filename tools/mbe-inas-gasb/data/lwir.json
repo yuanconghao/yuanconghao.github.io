@@ -5,6 +5,7 @@
   "description": "以公开长波红外焦平面器件文献为基准，复现 12.6 μm LWIR InAs/GaSb T2SL。重点通过调节 As/In 与 Sb/Ga 比优化长波厚周期材料的外延质量。",
   "recipe": {
     "nPer": 70,
+    "bufferNm": 150,
     "inas": 4.54,
     "gasb": 2.13,
     "targetLam": 12.6
@@ -25,6 +26,17 @@
     "insb": 0.20,
     "soak": 2.0,
     "switchDelay": 0.5
+  },
+  "shutterSequence": {
+    "title": "LWIR 配方: 双 InSb 界面 MEE 周期时序",
+    "basis": "本任务将长波 InAs/GaSb 配方的界面工程作为独立数据：每个周期用双 InSb 界面补偿较厚 InAs 层的拉应变，快门参考为 In+Sb 界面、In+As 主层、Sb soak、In+Sb 界面、Ga+Sb 垒层。",
+    "steps": [
+      { "label": "GaSb→InAs InSb interface", "shutters": ["In", "Sb"], "duration": 0.10 },
+      { "label": "InAs well", "shutters": ["In", "As"], "duration": 0.34 },
+      { "label": "Sb soak", "shutters": ["Sb"], "duration": 0.08 },
+      { "label": "InAs→GaSb InSb interface", "shutters": ["In", "Sb"], "duration": 0.10 },
+      { "label": "GaSb barrier", "shutters": ["Ga", "Sb"], "duration": 0.16 }
+    ]
   },
   "expected": {
     "lambdaRange": [12.0, 13.0],

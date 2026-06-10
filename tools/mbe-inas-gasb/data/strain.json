@@ -1,10 +1,11 @@
 {
   "id": "strain",
   "title": "应变控制训练",
-  "target": "复现学术文献中的应变平衡 InAs/GaSb T2SL，并观察 InSb-like 界面过补偿风险",
-  "description": "参考学术界已验证的应变平衡方案：120 周期 InAs(8 ML)/GaSb(6 ML) 二类超晶格，并引入 InSb-like 界面进行应变补偿。训练重点是让用户调节 InSb-like 界面厚度、周期数和生长温度，观察从应变平衡到压应变过补偿、表面亮点/粗糙化、RHEED 变弱的过程。",
+  "target": "复现学术文献中的应变平衡 InAs/GaSb T2SL，并观察 InSb 界面过补偿风险",
+  "description": "参考学术界已验证的应变平衡方案：120 周期 InAs(8 ML)/GaSb(6 ML) 二类超晶格，并引入 MEE 双 InSb 界面进行应变补偿。训练重点是让用户调节 InSb 界面厚度、周期数和生长温度，观察从应变平衡到压应变过补偿、表面亮点/粗糙化、RHEED 变弱的过程。",
   "recipe": {
     "nPer": 120,
+    "bufferNm": 150,
     "inas": 2.43,
     "gasb": 1.83,
     "targetLam": 4.78
@@ -26,6 +27,17 @@
     "soak": 2.0,
     "switchDelay": 0.4
   },
+  "shutterSequence": {
+    "title": "应变训练: 1 ML 级 InSb 双界面补偿",
+    "basis": "本任务的时序数据强调应变补偿：每个周期仍采用双 InSb 界面，但 InSb 等效厚度提高到约 1 ML，用于观察从应变平衡到压应变过补偿的边界。",
+    "steps": [
+      { "label": "GaSb→InAs InSb interface", "shutters": ["In", "Sb"], "duration": 0.13 },
+      { "label": "InAs well", "shutters": ["In", "As"], "duration": 0.24 },
+      { "label": "Sb soak", "shutters": ["Sb"], "duration": 0.08 },
+      { "label": "InAs→GaSb InSb interface", "shutters": ["In", "Sb"], "duration": 0.13 },
+      { "label": "GaSb barrier", "shutters": ["Ga", "Sb"], "duration": 0.22 }
+    ]
+  },
   "expected": {
     "lambdaRange": [
       4.5,
@@ -38,7 +50,7 @@
   },
   "evidence": [
     "参考文献报道的 InAs/GaSb T2SL 结构为 120 periods InAs(8 ML)/GaSb(6 ML)，通过 InSb interface engineering 获得清晰卫星峰，0 级峰 FWHM 约 30–39 arcsec，PL 波长约 4.78 μm。",
-    "InSb-like 界面用于补偿 InAs/GaSb 体系的天然拉应变；但 InSb 厚度继续增加会增强压应变，并可能导致 AFM 表面 bright spots 更明显。",
+    "InSb 界面用于补偿 InAs/GaSb 体系的天然拉应变；但 InSb 厚度继续增加会增强压应变，并可能导致 AFM 表面 bright spots 更明显。",
     "1 ML 量级的 InSb 插入层是经典 MBE 应变平衡方案；训练默认 insb=0.30 nm，约等于 1 ML，用于让用户观察补偿与过补偿边界。",
     "生长温度默认 380 ℃，参考近期温度优化研究中 380 ℃ 样品表现出的 step-flow morphology、sharp interfaces 和良好周期均匀性。",
     "气温与气压通过源炉温度控制；标准窗口参考 In: 780 ℃, Ga: 900 ℃, As: 310 ℃, Sb: 430 ℃。本任务默认加载偏高的 Sb 炉温 (440 ℃) 以配合 0.30 nm 界面厚度，用于让用户观察压应变过补偿的演变。"

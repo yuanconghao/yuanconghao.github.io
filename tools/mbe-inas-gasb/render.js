@@ -79,8 +79,9 @@
       if (st.si > bufIndex) bufferGrown = bufferNm;
       else if (st.si === bufIndex) bufferGrown = bufferNm * st.sp;
     }
-    var bufferMaxH = Math.min(maxPx * 0.26, 88);
-    var bufferH = bufferGrown > 0 ? Math.max(5, bufferMaxH * clamp(bufferGrown / Math.max(bufferNm, 1), 0, 1)) : 0;
+    var bufferRefNm = 500;
+    var bufferMaxH = Math.min(maxPx * 0.30, 112);
+    var bufferH = bufferGrown > 0 ? Math.max(6, bufferMaxH * clamp(bufferGrown / bufferRefNm, 0.04, 1)) : 0;
     var filmBaseY = groundY - bufferH;
     var upperNm = 0;
     for (var ui = bufIndex + 1; ui <= st.si && ui < st.steps.length; ui++) {
@@ -131,12 +132,18 @@
 
     // GaSb Buffer (full width)
     if (bufferH > 0) {
-      cx.fillStyle = COL.BUF;
+      var bufferGrad = cx.createLinearGradient(0, filmBaseY, 0, groundY);
+      bufferGrad.addColorStop(0, COL.BUF);
+      bufferGrad.addColorStop(1, "rgba(89,161,79,.72)");
+      cx.fillStyle = bufferGrad;
       cx.fillRect(0, filmBaseY, W, bufferH);
+      cx.strokeStyle = "rgba(15,122,104,.40)";
+      cx.lineWidth = 1;
+      cx.strokeRect(0.5, filmBaseY + 0.5, W - 1, Math.max(1, bufferH - 1));
       cx.fillStyle = "#ffffff";
       cx.font = "700 10px sans-serif";
       cx.textAlign = "center";
-      cx.fillText("GaSb buffer 500 nm (compressed single layer)", W / 2, filmBaseY + Math.min(bufferH - 6, 16));
+      cx.fillText("GaSb buffer " + bufferNm.toFixed(0) + " nm (scaled, 500 nm ref)", W / 2, filmBaseY + Math.min(bufferH - 6, 16));
       if (cur.stage === "buffer") {
         cx.fillStyle = C.axisText;
         cx.textAlign = "left";
@@ -151,8 +158,18 @@
       var c0 = cumul, c1 = cumul + bandNm; cumul = c1;
       if (bandNm <= 0 || c1 <= upperViewBot) continue;
       var lo = Math.max(c0, upperViewBot), yB = filmBaseY - (lo - upperViewBot) * pxNm, yT = filmBaseY - (c1 - upperViewBot) * pxNm;
+      var layerH = Math.max(0.7, yB - yT);
       cx.fillStyle = layerColor(s);
-      cx.fillRect(0, yT, W, Math.max(0.7, yB - yT));
+      cx.fillRect(0, yT, W, layerH);
+      cx.strokeStyle = "rgba(255,255,255,.55)";
+      cx.lineWidth = 0.7;
+      cx.beginPath(); cx.moveTo(0, yT); cx.lineTo(W, yT); cx.stroke();
+      if (i === st.si && s.mat && layerH > 11) {
+        cx.fillStyle = "rgba(23,33,43,.72)";
+        cx.font = "700 9px sans-serif";
+        cx.textAlign = "left";
+        cx.fillText(s.mat + " " + bandNm.toFixed(2) + " nm", 8, yT + Math.min(layerH - 3, 12));
+      }
       if (Q < 0.72 && s.mat && i === st.si) {
         cx.fillStyle = "rgba(192,57,43,.18)";
         for (var r = 0; r < Math.round((1 - Q) * 14); r++) {
@@ -162,18 +179,45 @@
       }
     }
 
-    if (!st.done && cur.mat && st.sp < 1) drawFallingAtoms(cx, 0, W, frontY, cur.mat);
-    if (Math.abs(st.accStrain) > M.STRAIN_CRIT * 0.7) {
-      cx.strokeStyle = "rgba(192,57,43,.75)"; cx.lineWidth = 1.6;
-      for (var d = 0; d < 4; d++) {
-        var dx = W * (0.18 + d * 0.2);
-        cx.beginPath(); cx.moveTo(dx, groundY - 8); cx.lineTo(dx + 18, groundY - 85 - d * 8); cx.stroke();
+    if (upperNm > 0) {
+      var axisX = W - 34;
+      cx.strokeStyle = "rgba(23,33,43,.72)";
+      cx.lineWidth = 1.2;
+      cx.beginPath(); cx.moveTo(axisX, topPad); cx.lineTo(axisX, filmBaseY); cx.stroke();
+      cx.fillStyle = "rgba(23,33,43,.82)";
+      cx.font = "700 8px sans-serif";
+      cx.textAlign = "left";
+      var tickStart = Math.ceil(upperViewBot / 10) * 10;
+      for (var tk = tickStart; tk <= upperViewBot + upperViewNm; tk += 10) {
+        var ty = filmBaseY - (tk - upperViewBot) * pxNm;
+        if (ty < topPad || ty > filmBaseY) continue;
+        cx.beginPath(); cx.moveTo(axisX - 4, ty); cx.lineTo(axisX + 4, ty); cx.stroke();
+        cx.fillText(tk.toFixed(0) + " nm", axisX + 7, ty + 3);
       }
     }
 
-    cx.fillStyle = C.axisText; cx.font = "9px sans-serif"; cx.textAlign = "right";
-    cx.fillText("SL scale: 10 nm · buffer compressed", W - 8, groundY - 10);
-    cx.strokeStyle = C.axisText; cx.beginPath(); cx.moveTo(W - 63, groundY - 16); cx.lineTo(W - 8, groundY - 16); cx.stroke();
+    if (!st.done && cur.mat && st.sp < 1) drawFallingAtoms(cx, 0, W, frontY, cur.mat);
+    var showDefectRisk = cur.stage === "sl" && Math.abs(st.accStrain) > M.STRAIN_CRIT && upperNm > 0;
+    if (showDefectRisk) {
+      var defectBottom = Math.min(filmBaseY - 4, frontY + 12);
+      var defectTop = Math.max(topPad + 14, defectBottom - 82);
+      if (defectBottom > defectTop + 18) {
+        cx.strokeStyle = "rgba(225,87,89,.70)";
+        cx.lineWidth = 1.4;
+        for (var d = 0; d < 4; d++) {
+          var dx = W * (0.20 + d * 0.18);
+          cx.beginPath();
+          cx.moveTo(dx, defectBottom);
+          cx.lineTo(dx + 16, defectTop + d * 5);
+          cx.stroke();
+        }
+        cx.fillStyle = "rgba(225,87,89,.86)";
+        cx.font = "9px sans-serif";
+        cx.textAlign = "left";
+        cx.fillText("misfit dislocation risk", 8, defectTop - 5);
+      }
+    }
+
   }
 
   function drawStackMap() {
@@ -188,12 +232,13 @@
     var cycleTop = padT, cycleH = ph, stepW = cycleW / n;
 
     mcx.globalAlpha = 1;
-    mcx.fillStyle = COL.SUB;
+    mcx.fillStyle = C.subFill;
     rr(mcx, padL, cycleTop, subW, cycleH, 4); mcx.fill();
     mcx.fillStyle = bufferDone ? COL.BUF : "#d9e1ea";
     rr(mcx, padL + subW, cycleTop, bufW, cycleH, 4); mcx.fill();
-    mcx.fillStyle = "#ffffff"; mcx.font = "8px sans-serif"; mcx.textAlign = "center";
+    mcx.fillStyle = C.subText; mcx.font = "8px sans-serif"; mcx.textAlign = "center";
     mcx.fillText("substrate", padL + subW / 2, cycleTop + cycleH / 2 + 3);
+    mcx.fillStyle = "#ffffff";
     mcx.fillText("buffer", padL + subW + bufW / 2, cycleTop + cycleH / 2 + 3);
 
     var hasGap = stepW > 4, gap = hasGap ? Math.min(1.5, stepW * .12) : 0;
@@ -201,13 +246,22 @@
       var x = cycleX0 + p * stepW, done = M.stageOf() === "sl" ? p + 1 < currentPeriod : M.stageIdx(M.stageOf()) > M.stageIdx("sl");
       var active = M.stageOf() === "sl" && p + 1 === currentPeriod;
       var innerX = x + gap, innerW = Math.max(1, stepW - gap * 2);
-      var insbW = Math.max(1, innerW * .08), inasW = innerW * .62, insb2W = Math.max(1, innerW * .08);
-      var gasbW = Math.max(1, innerW - insbW - inasW - insb2W);
+      var insbNm = M.P.comp ? M.P.insb : 0, soakNm = M.P.comp ? 0.18 : 0, periodNm = Math.max(0.01, insbNm * 2 + soakNm * 2 + M.P.inas + M.P.gasb);
+      var xCursor = innerX;
+      function fillPeriodLayer(mat, nm, minW) {
+        if (nm <= 0) return;
+        var w = Math.max(minW || 1, innerW * nm / periodNm);
+        mcx.fillStyle = COL[mat];
+        mcx.fillRect(xCursor, cycleTop, w, cycleH);
+        xCursor += w;
+      }
       mcx.globalAlpha = done ? 0.92 : active ? 1 : 0.26;
-      mcx.fillStyle = COL.InSb; mcx.fillRect(innerX, cycleTop, insbW, cycleH);
-      mcx.fillStyle = COL.InAs; mcx.fillRect(innerX + insbW, cycleTop, inasW, cycleH);
-      mcx.fillStyle = COL.InSb; mcx.fillRect(innerX + insbW + inasW, cycleTop, insb2W, cycleH);
-      mcx.fillStyle = COL.GaSb; mcx.fillRect(innerX + insbW + inasW + insb2W, cycleTop, gasbW, cycleH);
+      fillPeriodLayer("InSb", insbNm, 1);
+      fillPeriodLayer("InSb", soakNm, 1);
+      fillPeriodLayer("InAs", M.P.inas, 2);
+      fillPeriodLayer("InSb", soakNm, 1);
+      fillPeriodLayer("InSb", insbNm, 1);
+      fillPeriodLayer("GaSb", M.P.gasb, 2);
       if (active) {
         mcx.globalAlpha = 1;
         mcx.strokeStyle = C.bad; mcx.lineWidth = 2;
@@ -220,7 +274,7 @@
     mcx.fillStyle = C.axisText; mcx.font = "9px sans-serif"; mcx.textAlign = "left";
     mcx.fillText("substrate", padL + 4, H - 4);
     mcx.fillText("P1", cycleX0, H - 4);
-    mcx.textAlign = "center"; mcx.fillText("left to right: substrate / buffer / repeated InSb-like-InAs-InSb-like-GaSb periods", padL + pw / 2, H - 4);
+    mcx.textAlign = "center"; mcx.fillText("laid-down cross-section: substrate / buffer / repeated InSb interface-InAs-InSb interface-GaSb", padL + pw / 2, H - 4);
     mcx.textAlign = "right"; mcx.fillText("P" + n, cycleX0 + cycleW - 4, H - 4);
   }
 
@@ -228,26 +282,38 @@
     if (!M.tcx) return;
     var tcx = M.tcx, W = M.dims.tmW, H = M.dims.tmH, keys = ["In", "Ga", "As", "Sb"], colors = [M.CELL.In.col, M.CELL.Ga.col, M.CELL.As.col, M.CELL.Sb.col];
     tcx.clearRect(0, 0, W, H); tcx.fillStyle = C.canvasBg; tcx.fillRect(0, 0, W, H);
-    var padL = 34, padR = 8, padT = 12, rowH = (H - padT - 12) / 4, pw = W - padL - padR;
+    var padL = 34, padR = 8, padT = 12, padB = 16, rowH = (H - padT - padB) / 4, pw = W - padL - padR;
     tcx.fillStyle = C.axisText; tcx.font = "9px sans-serif"; tcx.textAlign = "right";
     for (var k = 0; k < keys.length; k++) {
       var y = padT + k * rowH + rowH * .5;
       tcx.fillText(keys[k], padL - 8, y + 3);
       tcx.strokeStyle = "#edf1f5"; tcx.beginPath(); tcx.moveTo(padL, y); tcx.lineTo(padL + pw, y); tcx.stroke();
     }
-    var blocks = [
-      { x: .02, w: .22, on: ["In", "As"] },
-      { x: .28, w: .09, on: ["Sb"] },
-      { x: .40, w: .12, on: ["In", "Sb"] },
-      { x: .58, w: .26, on: ["Ga", "Sb"] },
-      { x: .88, w: .08, on: ["Sb"] }
-    ];
+    var fallback = {
+      title: "MEE 双 InSb 界面: In+Sb / In+As / Sb / In+Sb / Ga+Sb",
+      steps: [
+        { label: "Int-1", shutters: ["In", "Sb"], duration: 0.10 },
+        { label: "InAs", shutters: ["In", "As"], duration: 0.24 },
+        { label: "soak", shutters: ["Sb"], duration: 0.08 },
+        { label: "Int-2", shutters: ["In", "Sb"], duration: 0.10 },
+        { label: "GaSb", shutters: ["Ga", "Sb"], duration: 0.22 }
+      ]
+    };
+    var recipe = M.activeShutterSequence || fallback;
+    var seq = recipe.steps && recipe.steps.length ? recipe.steps : fallback.steps;
+    var total = seq.reduce(function (sum, step) { return sum + Math.max(0.01, step.duration || 1); }, 0);
+    var x0 = 0, blocks = [];
+    for (var i = 0; i < seq.length; i++) {
+      var w = Math.max(0.02, (seq[i].duration || 1) / total);
+      blocks.push({ x: x0, w: w, on: seq[i].shutters || [], label: seq[i].label || "" });
+      x0 += w;
+    }
     for (var b = 0; b < blocks.length; b++) {
       for (var j = 0; j < keys.length; j++) if (blocks[b].on.indexOf(keys[j]) >= 0) {
-        tcx.fillStyle = colors[j]; rr(tcx, padL + blocks[b].x * pw, padT + j * rowH + 4, blocks[b].w * pw, rowH - 8, 3); tcx.fill();
+        tcx.fillStyle = colors[j]; rr(tcx, padL + blocks[b].x * pw, padT + j * rowH + 4, Math.max(2, blocks[b].w * pw - 2), rowH - 8, 3); tcx.fill();
       }
     }
-    tcx.fillStyle = C.axisText; tcx.font = "9px sans-serif"; tcx.textAlign = "center"; tcx.fillText("standard shutter recipe: InAs -> Sb soak -> InSb-like -> GaSb", padL + pw / 2, H - 3);
+    tcx.fillStyle = C.axisText; tcx.font = "9px sans-serif"; tcx.textAlign = "center"; tcx.fillText(recipe.title || fallback.title, padL + pw / 2, H - 3);
   }
 
   function drawBand() {
