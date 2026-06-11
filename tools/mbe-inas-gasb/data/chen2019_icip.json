@@ -1,0 +1,69 @@
+{
+  "id": "chen2019_icip",
+  "title": "Chen 2019 · 两级 ICIP 高速探测器",
+  "target": "复现 4.85 nm period、低失配、高速 MWIR ICIP 吸收区",
+  "description": "论文复现任务。出处：Y. Chen et al., “High Speed Mid-Infrared Interband Cascade Photodetector Based on InAs/GaSb Type-II Superlattice”, Journal of Lightwave Technology / arXiv:1907.05592. 论文的完整器件是两级 interband cascade photodetector，包含 InAs/GaSb 吸收区、InAs/AlSb 和 AlSb/GaSb 输运/势垒区。当前模拟器只模拟 InAs/GaSb T2SL 吸收区，因此用论文给出的 4.85 nm period 映射为约 2.43 nm InAs / 2.42 nm GaSb 的等效周期，用 100 个代表周期训练材料质量判断。",
+  "recipe": {
+    "nPer": 100,
+    "bufferNm": 150,
+    "inas": 2.43,
+    "gasb": 2.42,
+    "targetLam": 5.3
+  },
+  "conditions": {
+    "tSub": 380,
+    "cellTemp": {
+      "in": 782,
+      "ga": 898,
+      "al": 1050,
+      "as": 310,
+      "sb": 430
+    },
+    "alEnabled": false
+  },
+  "interface": {
+    "comp": true,
+    "insb": 0.09,
+    "soak": 2.0,
+    "switchDelay": 0.35
+  },
+  "model": {
+    "quality": { "tSubOpt": 380, "tSubSigma": 45, "asInOpt": 5.8, "asInSigma": 2.0, "sbGaOpt": 6.4, "sbGaSigma": 2.0 },
+    "interface": { "soakOpt": 2.0, "soakPenalty": 0.10, "soakNm": 0 },
+    "optical": { "cutoffUm": 5.3, "reference": { "inas": 2.43, "gasb": 2.42 }, "inasSlope": 0.75, "gasbSlope": 0.10 },
+    "validRange": { "nPer": [80, 120], "bufferNm": [100, 220], "inas": [2.2, 2.7], "gasb": [2.2, 2.7], "insb": [0.04, 0.14], "tSub": [360, 400], "asIn": [4.0, 8.0], "sbGa": [4.0, 8.5] }
+  },
+  "shutterSequence": {
+    "title": "Chen ICIP absorber: 4.85 nm T2SL period",
+    "basis": "Chen 2019 给出 InAs/GaSb 吸收区设计 period 4.85 nm、XRD 拟合 period 4.82 nm；未在公开摘要段落中拆出每个 InAs/GaSb 子层厚度。模拟器将其近似拆为 2.43/2.42 nm，仅用于吸收区训练。",
+    "steps": [
+      { "label": "InSb interface", "shutters": ["In", "Sb"], "duration": 0.08 },
+      { "label": "InAs absorber half-period", "shutters": ["In", "As"], "duration": 0.28 },
+      { "label": "Sb soak", "shutters": ["Sb"], "duration": 0.06 },
+      { "label": "InSb interface", "shutters": ["In", "Sb"], "duration": 0.08 },
+      { "label": "GaSb absorber half-period", "shutters": ["Ga", "Sb"], "duration": 0.28 }
+    ]
+  },
+  "expected": {
+    "lambdaRange": [5.0, 5.6],
+    "surfaceQualityMin": 86,
+    "rheed": "Streaky 2D",
+    "strain": "very low mismatch",
+    "darkCurrentRisk": "medium at room temperature",
+    "xrdFwhmArcsec": 23.47,
+    "periodNm": 4.82,
+    "bandwidthGHz": 2.4
+  },
+  "measurements": {
+    "periodNm": { "value": 4.82, "unit": "nm", "context": "HRXRD fitted SL period", "source": "Chen 2019" },
+    "xrdFwhmArcsec": { "value": 23.47, "unit": "arcsec", "context": "SL(-1) peak FWHM", "source": "Chen 2019" },
+    "cutoffUm": { "value": 5.3, "unit": "μm", "context": "303 K 50% cutoff", "source": "Chen 2019" },
+    "bandwidthGHz": { "value": 2.4, "unit": "GHz", "context": "40 μm device, 300 K, -5 V", "source": "Chen 2019", "calibrate": false },
+    "darkCurrentAcm2": { "value": 2.93e-4, "unit": "A/cm²", "context": "148 K, -0.1 V", "source": "Chen 2019", "calibrate": false }
+  },
+  "evidence": [
+    "Chen et al. (arXiv:1907.05592, DOI:10.1109/JLT.2019.2950607) 报道两级 ICIP：两个 InAs/GaSb 吸收区厚度分别为 1250 nm 和 1110 nm。",
+    "HRXRD 显示超晶格与衬底失配仅 1.35×10^-4，SL(-1) 峰 FWHM 为 23.47 arcsec；吸收区拟合 period 4.82 nm，与设计 4.85 nm 一致。",
+    "器件 303 K 时 50% 截止波长约 5.3 μm；40 μm 器件在 300 K、-5 V 下 3 dB 带宽达到 2.4 GHz，148 K、-0.1 V 暗电流密度为 2.93×10^-4 A/cm²。"
+  ]
+}

@@ -74,20 +74,15 @@
 
     var groundY = H - 34, topPad = sourceY + sourceH + 16, maxPx = groundY - topPad, cur = M.curStep();
     var bufIndex = getBufferIndex(st), bufferNm = bufIndex >= 0 ? st.steps[bufIndex].nm : 0;
-    var bufferGrown = 0;
-    if (bufIndex >= 0) {
-      if (st.si > bufIndex) bufferGrown = bufferNm;
-      else if (st.si === bufIndex) bufferGrown = bufferNm * st.sp;
+    var segs = st.layerSegments || [], bufferGrown = 0, upperNm = 0;
+    for (var si = 0; si < segs.length; si++) {
+      if (segs[si].stage === "buffer") bufferGrown += segs[si].nm;
+      else upperNm += segs[si].nm;
     }
     var bufferRefNm = 500;
     var bufferMaxH = Math.min(maxPx * 0.30, 112);
     var bufferH = bufferGrown > 0 ? Math.max(6, bufferMaxH * clamp(bufferGrown / bufferRefNm, 0.04, 1)) : 0;
     var filmBaseY = groundY - bufferH;
-    var upperNm = 0;
-    for (var ui = bufIndex + 1; ui <= st.si && ui < st.steps.length; ui++) {
-      var us = st.steps[ui];
-      upperNm += (ui < st.si) ? us.nm : us.nm * st.sp;
-    }
     var upperViewNm = 62, upperAvail = Math.max(44, filmBaseY - topPad), pxNm = upperAvail / upperViewNm;
     var upperViewBot = Math.max(0, upperNm - upperViewNm);
     var frontY = cur.stage === "buffer" ? filmBaseY : filmBaseY - Math.min(upperNm - upperViewBot, upperViewNm) * pxNm;
@@ -130,20 +125,24 @@
       cx.restore();
     }
 
-    // GaSb Buffer (full width)
+    // Buffer-stage film (full width, actual material follows shutters)
     if (bufferH > 0) {
-      var bufferGrad = cx.createLinearGradient(0, filmBaseY, 0, groundY);
-      bufferGrad.addColorStop(0, COL.BUF);
-      bufferGrad.addColorStop(1, "rgba(89,161,79,.72)");
-      cx.fillStyle = bufferGrad;
-      cx.fillRect(0, filmBaseY, W, bufferH);
+      var bufCursor = groundY;
+      for (var bi = 0; bi < segs.length; bi++) {
+        var bs = segs[bi];
+        if (bs.stage !== "buffer" || bs.nm <= 0) continue;
+        var bh = Math.max(0.8, bufferH * bs.nm / Math.max(bufferGrown, 0.001));
+        bufCursor -= bh;
+        cx.fillStyle = layerColor(bs);
+        cx.fillRect(0, bufCursor, W, bh);
+      }
       cx.strokeStyle = "rgba(15,122,104,.40)";
       cx.lineWidth = 1;
       cx.strokeRect(0.5, filmBaseY + 0.5, W - 1, Math.max(1, bufferH - 1));
       cx.fillStyle = "#ffffff";
       cx.font = "700 10px sans-serif";
       cx.textAlign = "center";
-      cx.fillText("GaSb buffer " + bufferNm.toFixed(0) + " nm (scaled, 500 nm ref)", W / 2, filmBaseY + Math.min(bufferH - 6, 16));
+      cx.fillText("Buffer stage " + bufferGrown.toFixed(0) + " / " + bufferNm.toFixed(0) + " nm (actual shutter material)", W / 2, filmBaseY + Math.min(bufferH - 6, 16));
       if (cur.stage === "buffer") {
         cx.fillStyle = C.axisText;
         cx.textAlign = "left";
@@ -153,8 +152,8 @@
 
     // Superlattice film growth (full width)
     var cumul = 0;
-    for (var i = bufIndex + 1; i <= st.si && i < st.steps.length; i++) {
-      var s = st.steps[i], bandNm = (i < st.si) ? s.nm : s.nm * st.sp;
+    for (var i = 0; i < segs.length; i++) {
+      var s = segs[i], bandNm = s.stage === "buffer" ? 0 : s.nm;
       var c0 = cumul, c1 = cumul + bandNm; cumul = c1;
       if (bandNm <= 0 || c1 <= upperViewBot) continue;
       var lo = Math.max(c0, upperViewBot), yB = filmBaseY - (lo - upperViewBot) * pxNm, yT = filmBaseY - (c1 - upperViewBot) * pxNm;
@@ -164,13 +163,13 @@
       cx.strokeStyle = "rgba(255,255,255,.55)";
       cx.lineWidth = 0.7;
       cx.beginPath(); cx.moveTo(0, yT); cx.lineTo(W, yT); cx.stroke();
-      if (i === st.si && s.mat && layerH > 11) {
+      if (i === segs.length - 1 && s.mat && layerH > 11) {
         cx.fillStyle = "rgba(23,33,43,.72)";
         cx.font = "700 9px sans-serif";
         cx.textAlign = "left";
         cx.fillText(s.mat + " " + bandNm.toFixed(2) + " nm", 8, yT + Math.min(layerH - 3, 12));
       }
-      if (Q < 0.72 && s.mat && i === st.si) {
+      if (Q < 0.72 && s.mat && i === segs.length - 1) {
         cx.fillStyle = "rgba(192,57,43,.18)";
         for (var r = 0; r < Math.round((1 - Q) * 14); r++) {
           var rx = ((r * 37) % W), rh = (1 - Q) * (4 + (r % 4));
@@ -196,8 +195,9 @@
       }
     }
 
-    if (!st.done && cur.mat && st.sp < 1) drawFallingAtoms(cx, 0, W, frontY, cur.mat);
-    var showDefectRisk = cur.stage === "sl" && Math.abs(st.accStrain) > M.STRAIN_CRIT && upperNm > 0;
+    var dep = M.currentDeposition(cur);
+    if (!st.done && dep.mat && st.sp < 1) drawFallingAtoms(cx, 0, W, frontY, dep.mat);
+    var showDefectRisk = cur.stage === "sl" && M.strainMetrics && M.strainMetrics().relaxationIndex > 1 && upperNm > 0;
     if (showDefectRisk) {
       var defectBottom = Math.min(filmBaseY - 4, frontY + 12);
       var defectTop = Math.max(topPad + 14, defectBottom - 82);
@@ -246,7 +246,9 @@
       var x = cycleX0 + p * stepW, done = M.stageOf() === "sl" ? p + 1 < currentPeriod : M.stageIdx(M.stageOf()) > M.stageIdx("sl");
       var active = M.stageOf() === "sl" && p + 1 === currentPeriod;
       var innerX = x + gap, innerW = Math.max(1, stepW - gap * 2);
-      var insbNm = M.P.comp ? M.P.insb : 0, soakNm = M.P.comp ? 0.18 : 0, periodNm = Math.max(0.01, insbNm * 2 + soakNm * 2 + M.P.inas + M.P.gasb);
+      var insbNm = M.P.comp ? M.P.insb : 0, soakNm = M.P.comp && M.soakLayerNm ? M.soakLayerNm() : 0;
+      var alSbNm = M.P.alEnabled ? Math.max(0, M.P.alSb || 0) : 0;
+      var periodNm = Math.max(0.01, insbNm * 2 + soakNm * 2 + M.P.inas + M.P.gasb + alSbNm);
       var xCursor = innerX;
       function fillPeriodLayer(mat, nm, minW) {
         if (nm <= 0) return;
@@ -261,7 +263,13 @@
       fillPeriodLayer("InAs", M.P.inas, 2);
       fillPeriodLayer("InSb", soakNm, 1);
       fillPeriodLayer("InSb", insbNm, 1);
-      fillPeriodLayer("GaSb", M.P.gasb, 2);
+      if (alSbNm > 0) {
+        fillPeriodLayer("GaSb", M.P.gasb / 2, 1);
+        fillPeriodLayer("AlSb", alSbNm, 1);
+        fillPeriodLayer("GaSb", M.P.gasb / 2, 1);
+      } else {
+        fillPeriodLayer("GaSb", M.P.gasb, 2);
+      }
       if (active) {
         mcx.globalAlpha = 1;
         mcx.strokeStyle = C.bad; mcx.lineWidth = 2;
@@ -318,7 +326,7 @@
 
   function drawBand() {
     if (!M.bcx) return;
-    var bx = M.bcx, W = M.dims.bdW, H = M.dims.bdH, eg = M.effGap(), lam = M.cutoff(eg), overlap = M.interfaceMetrics().abruptness * M.surfaceQuality();
+    var bx = M.bcx, W = M.dims.bdW, H = M.dims.bdH, eg = M.effGap(), opt = M.opticalEstimate ? M.opticalEstimate() : null, lam = opt ? opt.lambda : M.cutoff(eg), overlap = M.interfaceMetrics().abruptness * M.surfaceQuality();
     bx.clearRect(0, 0, W, H); bx.fillStyle = C.canvasBg; bx.fillRect(0, 0, W, H);
     var pad = 28, mid = H * .52, left = pad, right = W - pad;
     bx.strokeStyle = COL.InAs; bx.lineWidth = 2;
@@ -332,7 +340,7 @@
     bx.textAlign = "left"; bx.font = "700 12px sans-serif"; bx.fillStyle = C.label;
     bx.fillText("Eg_eff " + eg.toFixed(3) + " eV", pad, 18);
     bx.fillText("lambda_c " + lam.toFixed(1) + " μm", W * .52, 18);
-    bx.font = "10px sans-serif"; bx.fillText("wavefunction overlap " + Math.round(overlap * 100) + "%", pad, H - 4);
+    bx.font = "10px sans-serif"; bx.fillText((opt ? "CI " + opt.low.toFixed(1) + "-" + opt.high.toFixed(1) + " μm · " : "") + "wavefunction overlap " + Math.round(overlap * 100) + "%", pad, H - 4);
   }
 
   // 通用图表 drawScreen/drawStrain/drawRheed 由 engine.js 提供；此处仅导出领域示意图

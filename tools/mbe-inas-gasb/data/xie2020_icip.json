@@ -1,0 +1,67 @@
+{
+  "id": "xie2020_icip",
+  "title": "Xie 2020 · 五级 ICIP 室温高速器件",
+  "target": "复现 50 周期 2.4/2.4 nm 薄吸收区与高速室温响应",
+  "description": "论文复现任务。出处：Z. Xie et al., “High-speed InAs/GaSb Mid-Wave Infrared Interband Cascade Photodetector at Room Temperature”, Optics Express / arXiv:2008.13386. 论文的完整器件是五级 ICIP，每级包含 50 periods undoped InAs/GaSb (2.4 nm / 2.4 nm) T2SL 吸收层，并配有 AlSb/GaSb、InAs/AlSb 势垒/输运层。当前模拟器只复现每级吸收层的 InAs/GaSb 生长窗口，用于训练薄吸收区、低暗电流和高速响应之间的权衡。",
+  "recipe": {
+    "nPer": 50,
+    "bufferNm": 150,
+    "inas": 2.40,
+    "gasb": 2.40,
+    "targetLam": 5.0
+  },
+  "conditions": {
+    "tSub": 380,
+    "cellTemp": {
+      "in": 782,
+      "ga": 898,
+      "al": 1050,
+      "as": 310,
+      "sb": 430
+    },
+    "alEnabled": false
+  },
+  "interface": {
+    "comp": true,
+    "insb": 0.09,
+    "soak": 2.0,
+    "switchDelay": 0.35
+  },
+  "model": {
+    "quality": { "tSubOpt": 380, "tSubSigma": 45, "asInOpt": 5.8, "asInSigma": 2.0, "sbGaOpt": 6.4, "sbGaSigma": 2.0 },
+    "interface": { "soakOpt": 2.0, "soakPenalty": 0.10, "soakNm": 0 },
+    "optical": { "cutoffUm": 5.0, "reference": { "inas": 2.4, "gasb": 2.4 }, "inasSlope": 0.75, "gasbSlope": 0.10 },
+    "validRange": { "nPer": [40, 70], "bufferNm": [100, 220], "inas": [2.2, 2.7], "gasb": [2.2, 2.7], "insb": [0.04, 0.14], "tSub": [360, 400], "asIn": [4.0, 8.0], "sbGa": [4.0, 8.5] }
+  },
+  "shutterSequence": {
+    "title": "Xie five-stage ICIP: 2.4/2.4 nm absorber period",
+    "basis": "Xie 2020 每级吸收层为 50 periods InAs/GaSb (2.4 nm / 2.4 nm)。完整器件还包括 AlSb/GaSb 电子势垒和 InAs/AlSb 输运区，当前训练台仅映射 InAs/GaSb 吸收层。",
+    "steps": [
+      { "label": "InSb interface", "shutters": ["In", "Sb"], "duration": 0.08 },
+      { "label": "InAs 2.4 nm", "shutters": ["In", "As"], "duration": 0.28 },
+      { "label": "Sb soak", "shutters": ["Sb"], "duration": 0.06 },
+      { "label": "InSb interface", "shutters": ["In", "Sb"], "duration": 0.08 },
+      { "label": "GaSb 2.4 nm", "shutters": ["Ga", "Sb"], "duration": 0.28 }
+    ]
+  },
+  "expected": {
+    "lambdaRange": [4.8, 5.2],
+    "surfaceQualityMin": 84,
+    "rheed": "Streaky 2D",
+    "strain": "controlled thin absorber",
+    "darkCurrentRisk": "medium at room temperature",
+    "bandwidthGHz": 7.04,
+    "darkCurrentAcm2": "9.39e-2 @ -0.1 V, 300 K; 1.04 @ -5 V, 300 K"
+  },
+  "measurements": {
+    "periodNm": { "value": 4.80, "unit": "nm", "context": "50 periods InAs/GaSb absorber, 2.4/2.4 nm", "source": "Xie 2020" },
+    "cutoffUm": { "value": 5.0, "unit": "μm", "context": "300 K cutoff", "source": "Xie 2020" },
+    "bandwidthGHz": { "value": 7.04, "unit": "GHz", "context": "20 μm device, 300 K, -5 V", "source": "Xie 2020", "calibrate": false },
+    "darkCurrentAcm2": { "value": 9.39e-2, "unit": "A/cm²", "context": "300 K, -0.1 V", "source": "Xie 2020", "calibrate": false }
+  },
+  "evidence": [
+    "Xie et al. (arXiv:2008.13386, DOI:10.1364/OE.403332) 报道五级 ICIP；每级吸收层为 50 periods unintentionally doped InAs/GaSb (2.4 nm / 2.4 nm) T2SL。",
+    "论文给出室温 300 K 截止波长约 5 μm；20 μm 器件在 -5 V 下 3 dB 带宽达到 7.04 GHz，40 μm 器件在 -5 V 下为 5.06 GHz。",
+    "室温暗电流密度约 9.39×10^-2 A/cm² @ -0.1 V，1.04 A/cm² @ -5 V；薄吸收区降低载流子渡越时间，是高速响应的关键。"
+  ]
+}

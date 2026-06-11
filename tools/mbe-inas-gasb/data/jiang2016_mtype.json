@@ -1,0 +1,73 @@
+{
+  "id": "jiang2016_mtype",
+  "title": "蒋洞微 2016 · M 型势垒长波器件",
+  "target": "复现 18ML InAs / 5ML GaSb / 5ML AlSb / 5ML GaSb 的 M 型势垒训练周期",
+  "description": "论文复现任务。出处：蒋洞微，《InAs/GaSb II 类超晶格材料生长及其红外探测器性能》，哈尔滨工业大学博士学位论文，2016。论文通过 MBE 参数优化、MEE 双 InSb 界面、应变补偿和 M 型势垒结构实现高质量长波/甚长波 InAs/GaSb 超晶格红外探测器。当前训练任务复现其中一个典型长波 M 型势垒周期 18ML InAs / 5ML GaSb / 5ML AlSb / 5ML GaSb，并用 70 个代表周期训练材料生长、界面、RHEED 和应变判断。",
+  "recipe": {
+    "nPer": 70,
+    "bufferNm": 150,
+    "inas": 5.45,
+    "gasb": 3.03,
+    "alSb": 1.52,
+    "targetLam": 14.0
+  },
+  "conditions": {
+    "tSub": 380,
+    "cellTemp": {
+      "in": 782,
+      "ga": 900,
+      "al": 1050,
+      "as": 310,
+      "sb": 420
+    },
+    "alEnabled": true
+  },
+  "interface": {
+    "comp": true,
+    "insb": 0.21,
+    "soak": 2.0,
+    "switchDelay": 0.35
+  },
+  "model": {
+    "quality": { "tSubOpt": 380, "tSubSigma": 42, "asInOpt": 6.0, "asInSigma": 1.8, "sbGaOpt": 4.0, "sbGaSigma": 1.2 },
+    "interface": { "soakOpt": 2.0, "soakPenalty": 0.08, "soakNm": 0 },
+    "optical": { "cutoffUm": 14.0, "reference": { "inas": 5.45, "gasb": 3.03 }, "inasSlope": 1.1, "gasbSlope": 0.18 },
+    "validRange": { "nPer": [50, 90], "bufferNm": [100, 250], "inas": [5.0, 6.0], "gasb": [2.5, 3.5], "alSb": [1.0, 2.0], "insb": [0.16, 0.27], "tSub": [360, 400], "asIn": [4.5, 7.5], "sbGa": [3.0, 5.5] }
+  },
+  "shutterSequence": {
+    "title": "Jiang M-type: InSb / InAs / InSb / GaSb / AlSb / GaSb",
+    "basis": "蒋洞微 2016 论文给出一个典型长波优化 M 型势垒结构：18ML InAs / 5ML GaSb / 5ML AlSb / 5ML GaSb。模拟器将 GaSb 垒层拆为左右半垒层，并在中间插入 AlSb 势垒；双 InSb 界面用于应变补偿和界面可重复性训练。",
+    "steps": [
+      { "label": "GaSb→InAs InSb interface", "shutters": ["In", "Sb"], "duration": 0.08 },
+      { "label": "InAs 18 ML", "shutters": ["In", "As"], "duration": 0.36 },
+      { "label": "Sb soak", "shutters": ["Sb"], "duration": 0.06 },
+      { "label": "InAs→GaSb InSb interface", "shutters": ["In", "Sb"], "duration": 0.08 },
+      { "label": "GaSb 5 ML", "shutters": ["Ga", "Sb"], "duration": 0.12 },
+      { "label": "AlSb 5 ML", "shutters": ["Al", "Sb"], "duration": 0.12 },
+      { "label": "GaSb 5 ML", "shutters": ["Ga", "Sb"], "duration": 0.12 }
+    ]
+  },
+  "expected": {
+    "lambdaRange": [13.0, 15.0],
+    "surfaceQualityMin": 84,
+    "rheed": "Streaky 2D / Weak Streaky",
+    "strain": "controlled by double InSb interface",
+    "darkCurrentRisk": "reduced by M-type barrier",
+    "xrdFwhmArcsec": 20,
+    "afmRmsA": 1.5,
+    "r0aOhmCm2": 75,
+    "detectivity": "1.9e11 cm Hz^1/2 W^-1"
+  },
+  "measurements": {
+    "xrdFwhmArcsec": { "value": 20, "unit": "arcsec", "context": "优化材料一级卫星峰 FWHM", "source": "蒋洞微 2016" },
+    "afmRmsA": { "value": 1.5, "unit": "Å", "context": "优化材料 AFM RMS", "source": "蒋洞微 2016" },
+    "cutoffUm": { "value": 14.0, "unit": "μm", "context": "长波 M 型势垒器件截止波长", "source": "蒋洞微 2016" },
+    "r0aOhmCm2": { "value": 75, "unit": "Ω·cm²", "context": "器件 R0A", "source": "蒋洞微 2016", "calibrate": false },
+    "detectivity": { "value": 1.9e11, "unit": "cm·Hz^1/2/W", "context": "峰值探测率", "source": "蒋洞微 2016", "calibrate": false }
+  },
+  "evidence": [
+    "蒋洞微博士论文（哈尔滨工业大学，2016）第三章给出优化生长窗口：GaSb buffer 温度约 Tt+110 ℃，InAs/GaSb 超晶格温度约 Tt-15 ℃，超晶格 Sb/Ga 束流比约 4，As/In 束流比约 6。",
+    "论文采用 MEE 双 InSb 界面进行应变补偿，并给出 n_InSb = 0.11559 n_InAs 的应变平衡关系；优化材料的 XRD 一级卫星峰 FWHM 小于 20 arcsec，AFM RMS 约 1.5 Å。",
+    "论文给出的典型 M 型势垒结构为 18ML InAs / 5ML GaSb / 5ML AlSb / 5ML GaSb；长波器件截止波长约 14 μm，阻抗面积积提升至约 75 Ω·cm²，峰值探测率约 1.9×10^11 cm·Hz^1/2·W^-1。"
+  ]
+}

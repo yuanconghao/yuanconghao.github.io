@@ -35,24 +35,33 @@
           <div class="task-selects">
             <label><span>任务</span>
               <select id="taskSelect">
-                <option value="lwir">复现 12.6 μm LWIR 超晶格</option>
                 <option value="standard">标准 InAs/GaSb 超晶格生长</option>
-                <option value="rheed">RHEED 诊断训练</option>
-                <option value="strain">应变控制训练</option>
+                <option value="delmas2019">Delmas 2019 · 界面时序优化</option>
+                <option value="chen2019_icip">Chen 2019 · 两级 ICIP 高速探测器</option>
+                <option value="xie2020_icip">Xie 2020 · 五级 ICIP 室温高速器件</option>
+                <option value="jiang2016_mtype">蒋洞微 2016 · M 型势垒长波器件</option>
+              </select>
+            </label>
+            <label><span>模式</span>
+              <select id="modeSelect">
+                <option value="引导模式">引导模式</option>
+                <option value="自由模式">自由模式</option>
+                <option value="考核模式">考核模式</option>
               </select>
             </label>
           </div>
           <div class="task-copy">
-            <div><b id="taskTitle">复现 12.8 μm LWIR 超晶格</b></div>
-            <div id="taskTarget">λc 12-13 μm, Q > 80, 应变可控</div>
+            <div><b id="taskTitle">标准 InAs/GaSb 超晶格生长</b></div>
+            <div id="taskTarget">20 周期教学基线，保持二维层状生长</div>
             <div class="task-evidence" id="taskEvidence">加载任务数据后显示复现依据。</div>
+            <div class="model-scope"><span id="scopeBadge" class="v badge good">模型适用</span><span id="scopeText">插值范围内</span></div>
           </div>
           <div class="task-score"><span id="scoreV">-- / 100</span><span id="scoreGrade" class="v badge good">--</span>
           </div>
         </div>
         <div class="card">
           <div class="sech">A. Recipe 配方</div>
-          <div class="row"><label>周期数</label><input id="nPer" type="range" min="2" max="70" step="1" value="20"><span
+          <div class="row"><label>周期数</label><input id="nPer" type="range" min="2" max="120" step="1" value="20"><span
               class="val"><span id="nPerV">20</span> 期</span></div>
           <div class="row"><label>GaSb buffer</label><input id="bufferNm" type="range" min="20" max="500" step="10"
               value="150"><span class="val"><span id="bufferNmV">150 nm</span></span></div>
@@ -60,6 +69,8 @@
               value="5.21"><span class="val"><span id="inasV">5.21 nm</span></span></div>
           <div class="row"><label>GaSb 垒层</label><input id="gasb" type="range" min="0.5" max="3" step="0.01"
               value="1.39"><span class="val"><span id="gasbV">1.39 nm</span></span></div>
+          <div class="row" id="alSbRow"><label>AlSb 势垒层</label><input id="alSb" type="range" min="0" max="3" step="0.01"
+              value="0"><span class="val"><span id="alSbV">0.00 nm</span></span></div>
           <div class="row"><label>目标 λc</label><input id="targetLam" type="range" min="3" max="16" step="0.1"
               value="12.8"><span class="val"><span id="targetLamV">12.8 μm</span></span></div>
           <div class="hint">增大 InAs 厚度通常使 Eg_eff 降低、截止波长变长，同时增加应变和暗电流敏感性。</div>
@@ -189,7 +200,7 @@
               class="swlabel">InSb 双界面补偿</span></label>
           <div class="row" id="insbRow"><label>InSb 厚度</label><input id="insb" type="range" min="0" max="0.3"
               step="0.005" value="0.02"><span class="val"><span id="insbV">0.020 nm</span></span></div>
-          <div class="row"><label>Sb soaking</label><input id="soak" type="range" min="0" max="5" step="0.1"
+          <div class="row"><label>Sb soaking</label><input id="soak" type="range" min="0" max="6" step="0.1"
               value="2.0"><span class="val"><span id="soakV">2.0 s</span></span></div>
           <div class="row"><label>As/Sb 延迟</label><input id="switchDelay" type="range" min="0" max="2" step="0.1"
               value="0.5"><span class="val"><span id="switchDelayV">0.5 s</span></span></div>
@@ -372,12 +383,13 @@
 
         <div class="card score-card">
           <div class="sech">评分拆解</div>
-          <div class="score-row"><span>Recipe 合理性</span><b id="partRecipe">--</b><em>/20</em></div>
-          <div class="score-row"><span>表面质量</span><b id="partSurface">--</b><em>/20</em></div>
-          <div class="score-row"><span>界面控制</span><b id="partInterface">--</b><em>/20</em></div>
-          <div class="score-row"><span>应变控制</span><b id="partStrain">--</b><em>/15</em></div>
-          <div class="score-row"><span>波长匹配</span><b id="partLambda">--</b><em>/15</em></div>
-          <div class="score-row"><span>操作规范</span><b id="partOps">--</b><em>/10</em></div>
+          <div class="score-row"><span>Recipe 合理性</span><b id="partRecipe">--</b><em id="maxRecipe">/20</em></div>
+          <div class="score-row"><span>表面质量</span><b id="partSurface">--</b><em id="maxSurface">/20</em></div>
+          <div class="score-row"><span>界面控制</span><b id="partInterface">--</b><em id="maxInterface">/20</em></div>
+          <div class="score-row"><span>应变控制</span><b id="partStrain">--</b><em id="maxStrain">/15</em></div>
+          <div class="score-row"><span>波长匹配</span><b id="partLambda">--</b><em id="maxLambda">/15</em></div>
+          <div class="score-row"><span>操作规范</span><b id="partOps">--</b><em id="maxOps">/10</em></div>
+          <div class="score-row" id="evidenceScoreRow"><span>文献真值贴合</span><b id="partEvidence">--</b><em>/10</em></div>
         </div>
       </div>
     </div>
@@ -441,6 +453,10 @@
           <div id="sEvalRules" class="rule-list"></div>
         </div>
         <div class="report-card">
+          <div class="report-title">预测与实验真值对照</div>
+          <div id="sTruthTable" class="truth-table"></div>
+        </div>
+        <div class="report-card">
           <div class="report-title">本任务复现依据</div>
           <ul id="sTaskEvidence" class="ref-list"></ul>
         </div>
@@ -452,6 +468,7 @@
             <li><a href="https://arxiv.org/abs/1608.03007" target="_blank" rel="noopener">Kim et al., 2016</a>：原子尺度测量 InAs/GaSb T2SL 子晶格应变、GaAs-like 界面与互混特征。</li>
             <li><a href="https://arxiv.org/abs/2111.13358" target="_blank" rel="noopener">Fang et al., 2021</a>：InAs/GaSb T2SL 带隙与能带计算需使用 k·p、包络函数、赝势或紧束缚等更高阶模型。</li>
             <li><a href="https://arxiv.org/abs/1410.0944" target="_blank" rel="noopener">Sullivan et al., 2014</a>：RHEED 强度振荡可用于层状生长监控，但振荡相位需要实验标定。</li>
+            <li>蒋洞微，2016：哈尔滨工业大学博士论文《InAs/GaSb II 类超晶格材料生长及其红外探测器性能》，提供 MEE 双 InSb 界面、M 型势垒和长波/甚长波器件结果。</li>
           </ul>
         </div>
       </div>

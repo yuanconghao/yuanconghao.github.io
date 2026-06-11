@@ -1,10 +1,10 @@
 {
   "id": "standard",
   "title": "标准 InAs/GaSb 超晶格生长",
-  "target": "按所选周期数完成生长并保持二维生长",
-  "description": "典型中波红外 MWIR InAs/GaSb 二类超晶格结构的高品质外延基准。学习使用 InSb 界面工程补偿拉应变以提升材料与光学质量。",
+  "target": "20 周期教学基线，保持二维层状生长",
+  "description": "默认教学任务：使用常见 8 ML InAs / 6 ML GaSb 量级的 MWIR InAs/GaSb 二类超晶格作为入门基线，重点训练 recipe、温度、束流、快门、RHEED 和应变反馈的联动判断。该任务不是单篇论文复现；论文复现任务见后续 Delmas 2019、Chen 2019 和 Xie 2020。",
   "recipe": {
-    "nPer": 120,
+    "nPer": 20,
     "bufferNm": 150,
     "inas": 2.43,
     "gasb": 1.83,
@@ -23,9 +23,15 @@
   },
   "interface": {
     "comp": true,
-    "insb": 0.18,
+    "insb": 0.09,
     "soak": 2.0,
     "switchDelay": 0.4
+  },
+  "model": {
+    "quality": { "tSubOpt": 390, "tSubSigma": 48, "asInOpt": 6.25, "asInSigma": 3.0, "sbGaOpt": 6.0, "sbGaSigma": 2.0 },
+    "interface": { "soakOpt": 2.0, "soakPenalty": 0.12, "soakNm": 0 },
+    "optical": { "cutoffUm": 4.78, "reference": { "inas": 2.43, "gasb": 1.83 }, "inasSlope": 0.9, "gasbSlope": 0.15 },
+    "validRange": { "nPer": [2, 80], "bufferNm": [50, 300], "inas": [2.0, 6.0], "gasb": [1.0, 3.0], "insb": [0.03, 0.18], "tSub": [360, 420], "asIn": [3.5, 9.0], "sbGa": [3.0, 9.0] }
   },
   "shutterSequence": {
     "title": "MEE 双 InSb 界面: In+Sb / In+As / Sb / In+Sb / Ga+Sb",
@@ -40,14 +46,14 @@
   },
   "expected": {
     "lambdaRange": [4.4, 5.2],
-    "surfaceQualityMin": 85,
+    "surfaceQualityMin": 80,
     "rheed": "Streaky 2D",
     "strain": "controlled",
     "darkCurrentRisk": "low"
   },
   "evidence": [
-    "中波红外超晶格结构通常采用 120 个周期 InAs(8 ML, ~2.43 nm) / GaSb(6 ML, ~1.83 nm) 组合，其 50% 截止波长在 ~4.78 μm（文献报道可调谐至 5.15 μm）。",
-    "生长温度 380 ℃ 与气压比 As/In = 8.0、Sb/Ga = 3.0 是典型的外延低错晶面重构窗口，表面粗糙度 RMS 可低至 0.19 nm。",
-    "InSb 界面（约 0.18 nm）有效补偿了 InAs 拉应变，使 XRD 一阶卫星峰半峰宽（FWHM）低至 56 arcsec 左右，展现出极高的空间界面陡峭度与对称性。"
+    "教学基线采用 8 ML InAs (~2.43 nm) / 6 ML GaSb (~1.83 nm) 的中波红外量级结构，默认 20 周期，便于在首屏观察完整生长反馈。",
+    "本任务用于训练参数趋势，不直接声称复现某个最优实验样品；报告中的材料好坏仍按规则模型给出趋势性预判。",
+    "若要复现实验数据，请切换到后续论文任务；这些任务在 description/evidence 中给出论文题名、作者、arXiv/DOI 和提取参数。"
   ]
 }

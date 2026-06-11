@@ -1,0 +1,68 @@
+{
+  "id": "delmas2019",
+  "title": "Delmas 2019 · 界面时序优化",
+  "target": "复现 7 ML InAs / 4 ML GaSb 的 MWIR 高质量材料基准",
+  "description": "论文复现任务。出处：M. Delmas, M. C. Debnath, B. L. Liang, D. L. Huffaker, “Material and device characterization of Type-II InAs/GaSb superlattice infrared detectors”, Infrared Physics & Technology / arXiv:1908.00797. 论文比较了两种 MBE 快门时序；样品 B 使用 Sb-for-As exchange 形成 GaSb-on-InAs 侧 InSb-like 界面，得到近应变补偿、低 RMS 和 5.15 μm 器件截止波长。当前模拟器将其映射为 InSb 界面补偿 + 6 s Sb soak 的等效训练配方。",
+  "recipe": {
+    "nPer": 100,
+    "bufferNm": 50,
+    "inas": 2.12,
+    "gasb": 1.21,
+    "targetLam": 5.15
+  },
+  "conditions": {
+    "tSub": 410,
+    "cellTemp": {
+      "in": 780,
+      "ga": 900,
+      "al": 1050,
+      "as": 300,
+      "sb": 420
+    },
+    "alEnabled": false
+  },
+  "interface": {
+    "comp": true,
+    "insb": 0.08,
+    "soak": 6.0,
+    "switchDelay": 0.2
+  },
+  "model": {
+    "quality": { "tSubOpt": 410, "tSubSigma": 35, "asInOpt": 4.0, "asInSigma": 1.2, "sbGaOpt": 4.0, "sbGaSigma": 1.2 },
+    "interface": { "soakOpt": 6.0, "soakPenalty": 0.025, "soakNm": 0 },
+    "optical": { "cutoffUm": 5.15, "reference": { "inas": 2.12, "gasb": 1.21 }, "inasSlope": 0.8, "gasbSlope": 0.12 },
+    "validRange": { "nPer": [80, 120], "bufferNm": [40, 80], "inas": [1.8, 2.4], "gasb": [1.0, 1.5], "insb": [0.04, 0.14], "tSub": [390, 425], "asIn": [3.0, 5.5], "sbGa": [3.0, 5.5] }
+  },
+  "shutterSequence": {
+    "title": "Delmas B: InAs / Sb soak / GaSb / InAs",
+    "basis": "Delmas 2019 样品 B：InAs 层后暴露 Sb flux 6 s，促进 Sb-for-As exchange 与 GaSb-on-InAs 侧 InSb-like 键形成；论文说明 InAs-on-GaSb 侧未额外控制。模拟器用 InSb 等效补偿厚度 + 长 Sb soak 表示该界面策略，soak 只作为界面处理时间，不计入实体层厚。",
+    "steps": [
+      { "label": "InAs well", "shutters": ["In", "As"], "duration": 0.30 },
+      { "label": "Sb-for-As exchange", "shutters": ["Sb"], "duration": 0.18 },
+      { "label": "GaSb barrier", "shutters": ["Ga", "Sb"], "duration": 0.18 },
+      { "label": "InAs restart", "shutters": ["In", "As"], "duration": 0.30 }
+    ]
+  },
+  "expected": {
+    "lambdaRange": [4.9, 5.3],
+    "surfaceQualityMin": 85,
+    "rheed": "Streaky 2D",
+    "strain": "nearly strain-compensated",
+    "darkCurrentRisk": "low",
+    "xrdFwhmArcsec": 56,
+    "afmRmsNm": 0.19,
+    "darkCurrentAcm2": "8.3e-8 @ -50 mV, 77 K"
+  },
+  "measurements": {
+    "xrdFwhmArcsec": { "value": 56, "unit": "arcsec", "context": "first-order SL satellite", "source": "Delmas 2019 sample B" },
+    "afmRmsA": { "value": 1.9, "unit": "Å", "context": "2 μm × 2 μm AFM scan", "source": "Delmas 2019 sample B" },
+    "plPeakUm": { "value": 5.10, "unit": "μm", "context": "77 K PL peak", "source": "Delmas 2019 sample B" },
+    "cutoffUm": { "value": 5.15, "unit": "μm", "context": "77 K p-i-n device cutoff", "source": "Delmas 2019 sample C" },
+    "darkCurrentAcm2": { "value": 8.3e-8, "unit": "A/cm²", "context": "-50 mV, 77 K", "source": "Delmas 2019 sample C", "calibrate": false }
+  },
+  "evidence": [
+    "Delmas et al. (arXiv:1908.00797, DOI:10.1016/j.infrared.2018.09.012) 报道：测试样品为 50 nm GaSb buffer + 100 pairs undoped InAs/GaSb SL + 4 ML GaSb cap。",
+    "论文实验参数：In/Ga 生长速率分别为 0.3/0.5 ML/s；InAs/GaSb 层采用 7 ML / 4 ML，目标 77 K 截止波长约 5 μm；脱氧 540 ℃，buffer 490 ℃，SL 410 ℃。",
+    "样品 B 的一阶 SL 卫星峰 FWHM 为 56 arcsec，AFM RMS 约 0.19 nm (2 μm × 2 μm)，PL 峰约 5.10 μm；器件样品 C 77 K 截止波长 5.15 μm，-50 mV 暗电流密度 8.3×10^-8 A/cm²。"
+  ]
+}

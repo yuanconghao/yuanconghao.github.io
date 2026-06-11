@@ -37,7 +37,7 @@ h1 { font-size: clamp(19px, 2.2vw, 26px); line-height: 1.18; margin: 0 0 2px; co
 .subgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 @media (max-width: 680px) { .subgrid { grid-template-columns: 1fr; } }
 
-.taskbar { height: 280px; display: flex; flex-direction: column; gap: 9px; justify-content: space-between; }
+.taskbar { min-height: 280px; height: auto; display: flex; flex-direction: column; gap: 9px; justify-content: space-between; }
 .task-selects { display: grid; grid-template-columns: 1fr; gap: 8px; }
 .task-selects label { color: var(--muted); font-size: 13px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 .task-selects select { flex: 1; }
@@ -48,6 +48,8 @@ select {
 .task-copy b { font-size: 14px; }
 .task-copy div:last-child { color: var(--muted); font-size: 12px; margin-top: 2px; }
 .task-evidence { height: 80px; overflow-y: auto; color: var(--muted); font-size: 11px; line-height: 1.55; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--line); }
+.model-scope { display: flex; align-items: center; gap: 7px; margin-top: 6px; color: var(--muted); font-size: 11.5px; line-height: 1.35; }
+.model-scope span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .task-score { display: flex; align-items: center; gap: 8px; justify-content: space-between; white-space: nowrap; padding-top: 2px; border-top: 1px dashed var(--line); margin-top: auto; }
 .task-score > span:first-child { font-size: 20px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
 
@@ -227,6 +229,25 @@ canvas { display: block; width: 100%; background: #ffffff; border: 1px solid var
 .ref-list li { margin: 4px 0; }
 .ref-list a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .ref-list a:hover { text-decoration: underline; }
+.truth-table { display: grid; gap: 6px; margin-top: 8px; font-size: 12px; }
+.truth-row {
+  display: grid; grid-template-columns: 1.05fr .85fr .95fr .75fr .8fr; gap: 8px; align-items: start;
+  padding: 7px 0; border-bottom: 1px dashed var(--line);
+}
+.truth-row:last-child { border-bottom: none; }
+.truth-head { color: var(--muted); font-weight: 800; font-size: 11px; padding-top: 0; }
+.truth-row span { min-width: 0; overflow-wrap: anywhere; color: var(--muted); line-height: 1.45; }
+.truth-row b { display: block; color: var(--text); }
+.truth-row em { display: block; margin-top: 2px; font-style: normal; color: var(--muted); font-size: 10.5px; }
+.truth-fit { display: inline-block; padding: 1px 7px; border-radius: 999px; font-style: normal; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.truth-fit.good { background: rgba(15,122,104,.12); color: var(--good); }
+.truth-fit.warn { background: rgba(185,120,24,.14); color: var(--warn); }
+.truth-fit.bad { background: rgba(192,57,43,.12); color: var(--bad); }
+.truth-empty { color: var(--muted); font-size: 12px; line-height: 1.6; margin-top: 8px; }
+@media (max-width: 780px) {
+  .truth-row { grid-template-columns: 1fr 1fr; }
+  .truth-head { display: none; }
+}
 .footnote { margin-top: 9px; }
 
 /* 引导模式下的手动快门推荐高亮 */
