@@ -193,11 +193,11 @@
       
         <tags>
             
-            <tag> 计算机视觉 </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> NLP </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> 计算机视觉 </tag>
             
             <tag> 多模态 </tag>
             
@@ -265,11 +265,11 @@
       
         <tags>
             
+            <tag> 深度学习模型 </tag>
+            
             <tag> 深度学习 </tag>
             
             <tag> 3D ResNet </tag>
-            
-            <tag> 深度学习模型 </tag>
             
             <tag> 视频理解 </tag>
             
@@ -399,9 +399,9 @@
       
         <tags>
             
-            <tag> 语义分割 </tag>
-            
             <tag> 深度学习 </tag>
+            
+            <tag> 语义分割 </tag>
             
             <tag> FCN </tag>
             
@@ -498,9 +498,9 @@
       
         <tags>
             
-            <tag> TF-IDF </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> TF-IDF </tag>
             
         </tags>
       
@@ -589,9 +589,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Agent </tag>
             
@@ -624,9 +624,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Agent </tag>
             
@@ -661,9 +661,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Agent </tag>
             
@@ -748,9 +748,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Prompt </tag>
             
@@ -781,9 +781,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Prompt </tag>
             
@@ -814,9 +814,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Agent </tag>
             
@@ -870,9 +870,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Prompt </tag>
             
@@ -899,15 +899,15 @@
       
         <tags>
             
+            <tag> LLM </tag>
+            
+            <tag> 深度学习模型 </tag>
+            
             <tag> 深度学习 </tag>
             
             <tag> NLP </tag>
             
-            <tag> 深度学习模型 </tag>
-            
             <tag> Transformer </tag>
-            
-            <tag> LLM </tag>
             
             <tag> 大模型 </tag>
             
@@ -934,11 +934,11 @@
       
         <tags>
             
+            <tag> 深度学习模型 </tag>
+            
             <tag> 深度学习 </tag>
             
             <tag> NLP </tag>
-            
-            <tag> 深度学习模型 </tag>
             
             <tag> Transformer </tag>
             
@@ -967,15 +967,15 @@
       
         <tags>
             
+            <tag> LLM </tag>
+            
+            <tag> 深度学习模型 </tag>
+            
             <tag> 深度学习 </tag>
             
             <tag> NLP </tag>
             
-            <tag> 深度学习模型 </tag>
-            
             <tag> Transformer </tag>
-            
-            <tag> LLM </tag>
             
             <tag> 大模型 </tag>
             
@@ -1002,11 +1002,11 @@
       
         <tags>
             
+            <tag> 深度学习模型 </tag>
+            
             <tag> 深度学习 </tag>
             
             <tag> NLP </tag>
-            
-            <tag> 深度学习模型 </tag>
             
         </tags>
       
@@ -1066,9 +1066,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> PEFT </tag>
             
@@ -1107,9 +1107,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> PEFT </tag>
             
@@ -1185,9 +1185,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> PEFT </tag>
             
@@ -1226,9 +1226,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> PEFT </tag>
             
@@ -1265,9 +1265,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AIGC </tag>
+            
+            <tag> LLM </tag>
             
             <tag> PEFT </tag>
             
@@ -1347,13 +1347,13 @@
       
         <tags>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> DeepLab </tag>
+            <tag> CV </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> DeepLab </tag>
             
             <tag> 图像分割 </tag>
             
@@ -1382,13 +1382,13 @@
       
         <tags>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> Mask R-CNN </tag>
+            <tag> CV </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> Mask R-CNN </tag>
             
             <tag> 图像分割 </tag>
             
@@ -1417,11 +1417,11 @@
       
         <tags>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 图像分割 </tag>
             
@@ -1430,43 +1430,6 @@
             <tag> 医学图像分割 </tag>
             
             <tag> U-Net </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>论文解读：SSD - 单次多框检测器</title>
-      <link href="/2022/11/18/research/paper-ssd/"/>
-      <url>/2022/11/18/research/paper-ssd/</url>
-      
-        <content type="html"><![CDATA[<p><a href="https://arxiv.org/abs/1512.02325">SSD</a>是一种One Stage的检测模型，相比于R-CNN系列模型上要简单许多。其精度与Faster R-CNN相匹敌，而速度达到59FPS，速度上超过Faster R-CNN。</p><p>论文：<a href="https://arxiv.org/pdf/1512.02325.pdf">SSD: Single Shot MultiBox Detector</a></p><span id="more"></span><img src="/images/model/od/ssd.png" alt="" width="600px"/><h3 id="论文想解决什么问题"><a href="#论文想解决什么问题" class="headerlink" title="论文想解决什么问题"></a>论文想解决什么问题</h3><p>SSD针对的是一个当时很现实的矛盾：两阶段检测器精度高，但速度慢；已有一阶段方法虽然快，但精度还不够强。<br>这篇论文的目标，就是尽量保留单阶段检测的速度优势，同时把精度拉到能和Faster R-CNN竞争的水平。</p><h3 id="核心创新"><a href="#核心创新" class="headerlink" title="核心创新"></a>核心创新</h3><ul><li>使用default boxes，在每个位置预设多种尺度和宽高比的候选框。</li><li>在不同分辨率的特征图上同时做预测，自然处理多尺度目标。</li><li>彻底去掉proposal生成阶段，把所有检测计算都放进单个网络里完成。</li></ul><h3 id="结构理解"><a href="#结构理解" class="headerlink" title="结构理解"></a>结构理解</h3><p>SSD可以理解成“在多层特征图上同时密集地预测目标”。浅层特征图更适合看小目标，深层特征图更适合看大目标，因此它通过多尺度特征输出，把不同尺度目标分摊到不同层上处理。<br>这也是SSD相比更早单阶段方法的重要进步。</p><h3 id="实验结果怎么看"><a href="#实验结果怎么看" class="headerlink" title="实验结果怎么看"></a>实验结果怎么看</h3><p>论文报告了 <code>300×300</code> 输入下VOC2007上72.1% mAP、58 FPS，以及 <code>500×500</code> 输入下75.1% mAP 的结果。这个结果说明，单阶段检测器不一定只能换速度不要精度，设计合理的话也可以达到很强的综合表现。</p><h3 id="简单理解与局限"><a href="#简单理解与局限" class="headerlink" title="简单理解与局限"></a>简单理解与局限</h3><p>我对SSD的理解是，它是现代单阶段检测器真正成熟起来的重要一步。<br>它的局限主要在于对小目标仍然不够友好，后续很多方法都在特征金字塔、样本分配和损失函数上继续优化，但SSD奠定了“多尺度特征图直接预测”的基础思路。</p><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script><link rel="stylesheet" href="/css/markmap.css"><script src="/js/markmap.js"></script>]]></content>
-      
-      
-      <categories>
-          
-          <category> 深度学习模型 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> CV </tag>
-            
-            <tag> 深度学习 </tag>
-            
-            <tag> 目标检测 </tag>
-            
-            <tag> SSD </tag>
-            
-            <tag> 深度学习模型 </tag>
-            
-            <tag> ObjectDetection </tag>
-            
-            <tag> OneStage </tag>
             
         </tags>
       
@@ -1491,15 +1454,52 @@
       
         <tags>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 深度学习 </tag>
+            
+            <tag> CV </tag>
             
             <tag> 目标检测 </tag>
             
             <tag> YOLO </tag>
             
+            <tag> ObjectDetection </tag>
+            
+            <tag> OneStage </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>论文解读：SSD - 单次多框检测器</title>
+      <link href="/2022/11/18/research/paper-ssd/"/>
+      <url>/2022/11/18/research/paper-ssd/</url>
+      
+        <content type="html"><![CDATA[<p><a href="https://arxiv.org/abs/1512.02325">SSD</a>是一种One Stage的检测模型，相比于R-CNN系列模型上要简单许多。其精度与Faster R-CNN相匹敌，而速度达到59FPS，速度上超过Faster R-CNN。</p><p>论文：<a href="https://arxiv.org/pdf/1512.02325.pdf">SSD: Single Shot MultiBox Detector</a></p><span id="more"></span><img src="/images/model/od/ssd.png" alt="" width="600px"/><h3 id="论文想解决什么问题"><a href="#论文想解决什么问题" class="headerlink" title="论文想解决什么问题"></a>论文想解决什么问题</h3><p>SSD针对的是一个当时很现实的矛盾：两阶段检测器精度高，但速度慢；已有一阶段方法虽然快，但精度还不够强。<br>这篇论文的目标，就是尽量保留单阶段检测的速度优势，同时把精度拉到能和Faster R-CNN竞争的水平。</p><h3 id="核心创新"><a href="#核心创新" class="headerlink" title="核心创新"></a>核心创新</h3><ul><li>使用default boxes，在每个位置预设多种尺度和宽高比的候选框。</li><li>在不同分辨率的特征图上同时做预测，自然处理多尺度目标。</li><li>彻底去掉proposal生成阶段，把所有检测计算都放进单个网络里完成。</li></ul><h3 id="结构理解"><a href="#结构理解" class="headerlink" title="结构理解"></a>结构理解</h3><p>SSD可以理解成“在多层特征图上同时密集地预测目标”。浅层特征图更适合看小目标，深层特征图更适合看大目标，因此它通过多尺度特征输出，把不同尺度目标分摊到不同层上处理。<br>这也是SSD相比更早单阶段方法的重要进步。</p><h3 id="实验结果怎么看"><a href="#实验结果怎么看" class="headerlink" title="实验结果怎么看"></a>实验结果怎么看</h3><p>论文报告了 <code>300×300</code> 输入下VOC2007上72.1% mAP、58 FPS，以及 <code>500×500</code> 输入下75.1% mAP 的结果。这个结果说明，单阶段检测器不一定只能换速度不要精度，设计合理的话也可以达到很强的综合表现。</p><h3 id="简单理解与局限"><a href="#简单理解与局限" class="headerlink" title="简单理解与局限"></a>简单理解与局限</h3><p>我对SSD的理解是，它是现代单阶段检测器真正成熟起来的重要一步。<br>它的局限主要在于对小目标仍然不够友好，后续很多方法都在特征金字塔、样本分配和损失函数上继续优化，但SSD奠定了“多尺度特征图直接预测”的基础思路。</p><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script><link rel="stylesheet" href="/css/markmap.css"><script src="/js/markmap.js"></script>]]></content>
+      
+      
+      <categories>
+          
+          <category> 深度学习模型 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
             <tag> 深度学习模型 </tag>
+            
+            <tag> 深度学习 </tag>
+            
+            <tag> CV </tag>
+            
+            <tag> 目标检测 </tag>
+            
+            <tag> SSD </tag>
             
             <tag> ObjectDetection </tag>
             
@@ -1528,13 +1528,13 @@
       
         <tags>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> 目标检测 </tag>
+            <tag> CV </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> 目标检测 </tag>
             
             <tag> ObjectDetection </tag>
             
@@ -1565,13 +1565,13 @@
       
         <tags>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> 目标检测 </tag>
+            <tag> CV </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> 目标检测 </tag>
             
             <tag> Fast R-CNN </tag>
             
@@ -1602,11 +1602,11 @@
       
         <tags>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 图像分类 </tag>
             
@@ -1637,11 +1637,11 @@
       
         <tags>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 图像分类 </tag>
             
@@ -1672,11 +1672,11 @@
       
         <tags>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 图像分类 </tag>
             
@@ -1707,11 +1707,11 @@
       
         <tags>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 图像分类 </tag>
             
@@ -2680,15 +2680,15 @@
       
         <tags>
             
-            <tag> 算法 </tag>
-            
             <tag> Algorithm </tag>
             
-            <tag> Leetcode </tag>
+            <tag> 算法 </tag>
             
             <tag> 二叉树 </tag>
             
             <tag> BFS </tag>
+            
+            <tag> Leetcode </tag>
             
             <tag> 相交链表 </tag>
             
@@ -2715,9 +2715,9 @@
       
         <tags>
             
-            <tag> 算法 </tag>
-            
             <tag> Algorithm </tag>
+            
+            <tag> 算法 </tag>
             
             <tag> Leetcode </tag>
             
@@ -2750,13 +2750,13 @@
       
         <tags>
             
-            <tag> 算法 </tag>
-            
             <tag> Algorithm </tag>
             
-            <tag> 动态规划 </tag>
+            <tag> 算法 </tag>
             
             <tag> Leetcode </tag>
+            
+            <tag> 动态规划 </tag>
             
             <tag> 判断子序列 </tag>
             
@@ -2783,9 +2783,9 @@
       
         <tags>
             
-            <tag> 算法 </tag>
-            
             <tag> Algorithm </tag>
+            
+            <tag> 算法 </tag>
             
             <tag> Leetcode </tag>
             
@@ -2818,9 +2818,9 @@
       
         <tags>
             
-            <tag> 算法 </tag>
-            
             <tag> Algorithm </tag>
+            
+            <tag> 算法 </tag>
             
             <tag> Leetcode </tag>
             
@@ -2853,9 +2853,9 @@
       
         <tags>
             
-            <tag> 算法 </tag>
-            
             <tag> Algorithm </tag>
+            
+            <tag> 算法 </tag>
             
             <tag> Leetcode </tag>
             
@@ -2886,9 +2886,9 @@
       
         <tags>
             
-            <tag> 算法 </tag>
-            
             <tag> Algorithm </tag>
+            
+            <tag> 算法 </tag>
             
             <tag> Leetcode </tag>
             
@@ -3148,11 +3148,11 @@
       
         <tags>
             
-            <tag> 链表 </tag>
-            
             <tag> 数据结构 </tag>
             
             <tag> DataStruct </tag>
+            
+            <tag> 链表 </tag>
             
             <tag> 双向链表 </tag>
             
@@ -3179,11 +3179,11 @@
       
         <tags>
             
-            <tag> 链表 </tag>
-            
             <tag> 数据结构 </tag>
             
             <tag> DataStruct </tag>
+            
+            <tag> 链表 </tag>
             
             <tag> 循序链表 </tag>
             

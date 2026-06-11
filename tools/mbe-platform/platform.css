@@ -90,6 +90,7 @@ select {
 .taskbar.collapsible-card { height: auto; gap: 0; justify-content: flex-start; }
 .taskbar.collapsible-card .collapse-body { display: flex; flex-direction: column; gap: 9px; }
 .taskbar.collapsible-card .collapse-body[hidden] { display: none; }
+.taskbar.is-collapsed { min-height: 0; }
 .row { display: flex; align-items: center; gap: 8px; margin: 9px 0; }
 .row label { width: 106px; color: var(--muted); font-size: 13px; }
 .row input[type=range] { flex: 1; accent-color: var(--accent); min-width: 90px; }

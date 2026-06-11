@@ -200,7 +200,7 @@
       var key = "mbe-inas-gasb:collapsed:" + title;
       var saved = null;
       try { saved = window.localStorage ? window.localStorage.getItem(key) : null; } catch (err) { saved = null; }
-      var defaultCollapsed = title.indexOf("训练任务") === 0 || title.indexOf("B.") === 0 || title.indexOf("D.") === 0;
+      var defaultCollapsed = false;
       setCardCollapsed(card, body, toggle, saved == null ? defaultCollapsed : saved === "1");
 
       (function (c, b, t, storageKey, h) {
