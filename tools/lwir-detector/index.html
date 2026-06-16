@@ -21,6 +21,10 @@
         <p>理解 MWIR / LWIR / 宽带红外场景中的目标辐射，如何在 II 类超晶格像元中产生载流子，并通过器件结构与 ROIC 转成可读信号。</p>
       </div>
       <div class="top-actions">
+        <div class="mode-toggle" aria-label="显示模式">
+          <button id="modePrinciple" type="button">原理学习</button>
+          <button id="modeExperiment" type="button">参数实验</button>
+        </div>
         <button id="presetLwir" type="button">LWIR · 行人</button>
         <button id="presetMwir" type="button">MWIR · 尾焰</button>
         <button id="presetBbir" type="button">BBIR · 气体</button>
@@ -62,6 +66,18 @@
           </label>
         </section>
 
+        <section class="panel experiment-only">
+          <div class="panel-title">问题场景</div>
+          <div class="scenario-grid">
+            <button id="issueBand" type="button">波段不匹配</button>
+            <button id="issueHot" type="button">温度过高</button>
+            <button id="issueSat" type="button">积分饱和</button>
+            <button id="issueDark" type="button">暗电流主导</button>
+            <button id="issueQe" type="button">QE 偏低</button>
+            <button id="issueReset" type="button">恢复标准</button>
+          </div>
+        </section>
+
         <section class="model-note">
           <b>固定演示结构</b>
           <p>本页默认使用 InAs/GaSb Type-II 超晶格像元，只保留影响工作原理观察的条件参数。预设用于切换典型波段与目标场景，材料层厚、周期数和界面质量用于底层演示模型。</p>
@@ -87,7 +103,27 @@
           <canvas id="deviceCanvas" width="980" height="420"></canvas>
         </section>
 
-        <section class="analysis-grid">
+        <section class="mechanism-panel">
+          <div class="mechanism-head">
+            <div>
+              <div class="panel-title">机理放大镜</div>
+              <strong id="mechanismTitle">--</strong>
+            </div>
+            <div class="mechanism-tabs" aria-label="机理聚焦">
+              <button id="focusBand" type="button">Type-II 能带</button>
+              <button id="focusDark" type="button">暗电流噪声</button>
+              <button id="focusReadout" type="button">ROIC 积分</button>
+            </div>
+          </div>
+          <p id="mechanismText">--</p>
+          <div class="mechanism-metrics">
+            <div><span id="mechanismMetricA">--</span></div>
+            <div><span id="mechanismMetricB">--</span></div>
+            <div><span id="mechanismMetricC">--</span></div>
+          </div>
+        </section>
+
+        <section class="analysis-grid experiment-only">
           <section class="viz-panel">
             <div class="panel-title">Type-II 能带与光生载流子</div>
             <canvas id="bandCanvas" width="470" height="280"></canvas>
@@ -98,14 +134,14 @@
           </section>
         </section>
 
-        <section class="viz-panel">
+        <section class="viz-panel trend-panel experiment-only">
           <div class="panel-title">温度与暗电流趋势</div>
           <canvas id="trendCanvas" width="980" height="230"></canvas>
         </section>
       </section>
 
       <aside class="result-rail" aria-label="模拟结果">
-        <section class="metric-grid">
+        <section class="metric-grid experiment-only">
           <div class="metric"><span>量子效率 QE</span><b id="qeOut">--</b></div>
           <div class="metric"><span>光电流</span><b id="iphOut">--</b></div>
           <div class="metric"><span>暗电流密度</span><b id="jdarkOut">--</b></div>
@@ -127,6 +163,18 @@
             <span id="readBadge" class="badge good">读出可分辨</span>
             <p id="readDiag">--</p>
           </div>
+        </section>
+
+        <section class="impact-panel experiment-only">
+          <div class="panel-title">当前参数影响</div>
+          <p id="impactLead" class="impact-lead">--</p>
+          <div class="impact-list">
+            <div class="impact-item"><b>波段匹配</b><span id="impactBand">--</span></div>
+            <div class="impact-item"><b>温度 / 暗电流</b><span id="impactTemp">--</span></div>
+            <div class="impact-item"><b>积分读出</b><span id="impactTint">--</span></div>
+            <div class="impact-item"><b>材料与界面</b><span id="impactQuality">--</span></div>
+          </div>
+          <p id="dataSourceText" class="data-source">数据依据：--</p>
         </section>
 
         <section class="chain">

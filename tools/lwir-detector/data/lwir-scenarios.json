@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "sceneKey": "lwir",
+  "scene": "human",
+  "updated": "2026-06-16",
+  "scope": "LWIR human-target calibration layer for the InAs/GaSb T2SL detector simulator.",
+  "literatureDevices": {
+    "delmas_2019_lwir_12_4": {
+      "label": "Delmas 2019 LWIR 12ML/4ML p-i-n",
+      "source": {
+        "title": "Flexibility of Ga-containing Type-II superlattice for long-wavelength infrared detection",
+        "authors": "M. Delmas, D. C. M. Kwan, M. C. Debnath, B. L. Liang, D. L. Huffaker",
+        "year": 2019,
+        "url": "https://arxiv.org/abs/1908.07298"
+      },
+      "structure": {
+        "inasML": 12,
+        "gasbML": 4,
+        "periods": 100,
+        "substrate": "GaSb",
+        "device": "p-i-n photodiode"
+      },
+      "measured": {
+        "temperature_K": 150,
+        "bias_V": -0.05,
+        "cutoff_um": 10.0,
+        "bandgap_eV_77K": 0.124,
+        "darkCurrentDensity_Acm2": 1.07,
+        "xrdFwhm_arcsec": 64,
+        "plFwhm_meV": 28.4,
+        "wavefunctionOverlap": 0.58
+      }
+    },
+    "delmas_2019_lwir_14_7": {
+      "label": "Delmas 2019 LWIR 14ML/7ML p-i-n",
+      "source": {
+        "title": "Flexibility of Ga-containing Type-II superlattice for long-wavelength infrared detection",
+        "authors": "M. Delmas, D. C. M. Kwan, M. C. Debnath, B. L. Liang, D. L. Huffaker",
+        "year": 2019,
+        "url": "https://arxiv.org/abs/1908.07298"
+      },
+      "measured": {
+        "temperature_K": 150,
+        "bias_V": -0.05,
+        "cutoff_um": 10.1,
+        "bandgap_eV_77K": 0.123,
+        "darkCurrentDensity_Acm2": 2.52,
+        "xrdFwhm_arcsec": 58,
+        "plFwhm_meV": 22,
+        "wavefunctionOverlap": 0.40
+      }
+    },
+    "delmas_2019_mwir_interface": {
+      "label": "Delmas 2019 MWIR optimized interface p-i-n",
+      "source": {
+        "title": "Material and device characterization of Type-II InAs/GaSb superlattice infrared detectors",
+        "authors": "M. Delmas, M. C. Debnath, B. L. Liang, D. L. Huffaker",
+        "year": 2019,
+        "url": "https://arxiv.org/abs/1908.00797"
+      },
+      "measured": {
+        "temperature_K": 77,
+        "bias_V": -0.05,
+        "cutoff_um": 5.15,
+        "darkCurrentDensity_Acm2": 8.3e-8,
+        "xrdFwhm_arcsec": 56,
+        "afmRms_nm": 0.19,
+        "residualCarrier_cm3": 9.7e14
+      }
+    },
+    "nagata_2004_ctia": {
+      "label": "Nagata 2004 cryogenic CTIA",
+      "source": {
+        "title": "Cryogenic Capacitive Transimpedance Amplifier for Astronomical Infrared Detectors",
+        "authors": "H. Nagata, H. Shibai, T. Hirao, T. Watabe, M. Noda, Y. Hibi, M. Kawada, T. Nakagawa",
+        "year": 2004,
+        "url": "https://arxiv.org/abs/astro-ph/0403342"
+      },
+      "measured": {
+        "temperature_K": 2,
+        "outputSwing_mV": 270,
+        "powerPerChannel_uW": 10,
+        "openLoopGainMin": 300
+      }
+    }
+  },
+  "scenarioPresets": {
+    "preset": {
+      "label": "LWIR 行人标准场景",
+      "referenceDeviceId": "delmas_2019_lwir_12_4",
+      "params": {
+        "scene": "human",
+        "inas": 3.63,
+        "gasb": 1.22,
+        "periods": 100,
+        "interfaceNm": 0.18,
+        "interfaceQ": 0.84,
+        "mBarrier": true,
+        "detT": 77,
+        "bias": 0.05,
+        "pixel": 25,
+        "tint": 5,
+        "targetT": 310,
+        "bgT": 293,
+        "xrd": 64,
+        "afm": 2.4,
+        "passivation": 0.78
+      }
+    },
+    "band": {
+      "label": "LWIR 行人 · MWIR 器件波段不匹配",
+      "referenceDeviceId": "delmas_2019_mwir_interface",
+      "params": {
+        "scene": "human",
+        "inas": 2.42,
+        "gasb": 2.44,
+        "periods": 100,
+        "interfaceNm": 0.09,
+        "interfaceQ": 0.90,
+        "mBarrier": false,
+        "detT": 77,
+        "bias": 0.05,
+        "pixel": 25,
+        "tint": 5,
+        "targetT": 310,
+        "bgT": 293,
+        "xrd": 56,
+        "afm": 1.9,
+        "passivation": 0.82
+      }
+    },
+    "hot": {
+      "label": "LWIR 行人 · 探测器温度过高",
+      "referenceDeviceId": "delmas_2019_lwir_12_4",
+      "params": {
+        "scene": "human",
+        "inas": 3.63,
+        "gasb": 1.22,
+        "periods": 100,
+        "interfaceNm": 0.18,
+        "interfaceQ": 0.84,
+        "mBarrier": true,
+        "detT": 150,
+        "bias": 0.05,
+        "pixel": 25,
+        "tint": 5,
+        "targetT": 310,
+        "bgT": 293,
+        "xrd": 64,
+        "afm": 2.4,
+        "passivation": 0.78
+      }
+    },
+    "sat": {
+      "label": "LWIR 行人 · 长积分接近饱和",
+      "referenceDeviceId": "nagata_2004_ctia",
+      "params": {
+        "scene": "human",
+        "inas": 3.63,
+        "gasb": 1.22,
+        "periods": 100,
+        "interfaceNm": 0.18,
+        "interfaceQ": 0.84,
+        "mBarrier": true,
+        "detT": 77,
+        "bias": 0.05,
+        "pixel": 25,
+        "tint": 18,
+        "targetT": 315,
+        "bgT": 293,
+        "xrd": 64,
+        "afm": 2.4,
+        "passivation": 0.78
+      }
+    },
+    "dark": {
+      "label": "LWIR 行人 · 暗电流主导",
+      "referenceDeviceId": "delmas_2019_lwir_14_7",
+      "params": {
+        "scene": "human",
+        "inas": 4.24,
+        "gasb": 2.13,
+        "periods": 100,
+        "interfaceNm": 0.28,
+        "interfaceQ": 0.52,
+        "mBarrier": false,
+        "detT": 150,
+        "bias": 0.12,
+        "pixel": 25,
+        "tint": 7,
+        "targetT": 310,
+        "bgT": 293,
+        "xrd": 90,
+        "afm": 5.5,
+        "passivation": 0.48
+      }
+    },
+    "qe": {
+      "label": "LWIR 行人 · QE 偏低",
+      "referenceDeviceId": "delmas_2019_lwir_14_7",
+      "params": {
+        "scene": "human",
+        "inas": 4.24,
+        "gasb": 2.13,
+        "periods": 100,
+        "interfaceNm": 0.30,
+        "interfaceQ": 0.46,
+        "mBarrier": true,
+        "detT": 77,
+        "bias": 0.05,
+        "pixel": 25,
+        "tint": 5,
+        "targetT": 310,
+        "bgT": 293,
+        "xrd": 90,
+        "afm": 5.5,
+        "passivation": 0.42
+      }
+    },
+    "reset": {
+      "label": "恢复 LWIR 行人标准场景",
+      "aliasOf": "preset"
+    }
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "sceneKey": "mwir",
+  "scene": "plume",
+  "updated": "2026-06-16",
+  "scope": "MWIR engine-plume calibration layer for the InAs/GaSb T2SL detector simulator.",
+  "literatureDevices": {
+    "delmas_2019_mwir_interface": {
+      "label": "Delmas 2019 MWIR optimized interface p-i-n",
+      "source": {
+        "title": "Material and device characterization of Type-II InAs/GaSb superlattice infrared detectors",
+        "authors": "M. Delmas, M. C. Debnath, B. L. Liang, D. L. Huffaker",
+        "year": 2019,
+        "url": "https://arxiv.org/abs/1908.00797"
+      },
+      "measured": {
+        "temperature_K": 77,
+        "bias_V": -0.05,
+        "cutoff_um": 5.15,
+        "darkCurrentDensity_Acm2": 8.3e-8,
+        "xrdFwhm_arcsec": 56,
+        "afmRms_nm": 0.19,
+        "residualCarrier_cm3": 9.7e14
+      }
+    },
+    "deng_2019_si_mwir_defect_limited": {
+      "label": "Deng 2019 Si-based MWIR defect-limited p-i-n",
+      "source": {
+        "title": "Demonstration of Si based InAs/GaSb type-II superlattice p-i-n photodetector",
+        "authors": "Z. Deng, D. Guo, C. Gonzalez Burguete, J. Huang, Z. Xie, H. Liu, J. Wu, B. Chen",
+        "year": 2019,
+        "url": "https://arxiv.org/abs/1906.07351"
+      },
+      "measured": {
+        "temperature_K": 70,
+        "bias_V": -0.1,
+        "cutoff_um": 5.5,
+        "darkCurrentDensity_Acm2": 2.3,
+        "responsivity_AW": 1.2,
+        "specificDetectivity_Jones": 1.3e9,
+        "estimatedQE": 0.27
+      }
+    },
+    "delmas_2019_lwir_12_4": {
+      "label": "Delmas 2019 LWIR 12ML/4ML p-i-n",
+      "source": {
+        "title": "Flexibility of Ga-containing Type-II superlattice for long-wavelength infrared detection",
+        "authors": "M. Delmas, D. C. M. Kwan, M. C. Debnath, B. L. Liang, D. L. Huffaker",
+        "year": 2019,
+        "url": "https://arxiv.org/abs/1908.07298"
+      },
+      "measured": {
+        "temperature_K": 150,
+        "bias_V": -0.05,
+        "cutoff_um": 10.0,
+        "bandgap_eV_77K": 0.124,
+        "darkCurrentDensity_Acm2": 1.07,
+        "xrdFwhm_arcsec": 64,
+        "plFwhm_meV": 28.4,
+        "wavefunctionOverlap": 0.58
+      }
+    },
+    "nagata_2004_ctia": {
+      "label": "Nagata 2004 cryogenic CTIA",
+      "source": {
+        "title": "Cryogenic Capacitive Transimpedance Amplifier for Astronomical Infrared Detectors",
+        "authors": "H. Nagata, H. Shibai, T. Hirao, T. Watabe, M. Noda, Y. Hibi, M. Kawada, T. Nakagawa",
+        "year": 2004,
+        "url": "https://arxiv.org/abs/astro-ph/0403342"
+      },
+      "measured": {
+        "temperature_K": 2,
+        "outputSwing_mV": 270,
+        "powerPerChannel_uW": 10,
+        "openLoopGainMin": 300
+      }
+    }
+  },
+  "scenarioPresets": {
+    "preset": {
+      "label": "MWIR 尾焰标准场景",
+      "referenceDeviceId": "delmas_2019_mwir_interface",
+      "params": {
+        "scene": "plume",
+        "inas": 2.42,
+        "gasb": 2.44,
+        "periods": 100,
+        "interfaceNm": 0.09,
+        "interfaceQ": 0.90,
+        "mBarrier": false,
+        "detT": 77,
+        "bias": 0.05,
+        "pixel": 25,
+        "tint": 2.5,
+        "targetT": 760,
+        "bgT": 300,
+        "xrd": 56,
+        "afm": 1.9,
+        "passivation": 0.82
+      }
+    },
+    "band": {
+      "label": "MWIR 尾焰 · LWIR 器件波段不匹配",
+      "referenceDeviceId": "delmas_2019_lwir_12_4",
+      "params": {
+        "scene": "plume",
+        "inas": 3.63,
+        "gasb": 1.22,
+        "periods": 100,
+        "interfaceNm": 0.18,
+        "interfaceQ": 0.84,
+        "mBarrier": true,
+        "detT": 77,
+        "bias": 0.05,
+        "pixel": 25,
+        "tint": 2.5,
+        "targetT": 760,
+        "bgT": 300,
+        "xrd": 64,
+        "afm": 2.4,
+        "passivation": 0.78
+      }
+    },
+    "hot": {
+      "label": "MWIR 尾焰 · 探测器温度过高",
+      "referenceDeviceId": "delmas_2019_mwir_interface",
+      "params": {
+        "scene": "plume",
+        "inas": 2.42,
+        "gasb": 2.44,
+        "periods": 100,
+        "interfaceNm": 0.09,
+        "interfaceQ": 0.90,
+        "mBarrier": false,
+        "detT": 150,
+        "bias": 0.08,
+        "pixel": 25,
+        "tint": 2.5,
+        "targetT": 760,
+        "bgT": 300,
+        "xrd": 56,
+        "afm": 1.9,
+        "passivation": 0.82
+      }
+    },
+    "sat": {
+      "label": "MWIR 尾焰 · 强目标长积分饱和",
+      "referenceDeviceId": "nagata_2004_ctia",
+      "params": {
+        "scene": "plume",
+        "inas": 2.42,
+        "gasb": 2.44,
+        "periods": 100,
+        "interfaceNm": 0.09,
+        "interfaceQ": 0.90,
+        "mBarrier": false,
+        "detT": 77,
+        "bias": 0.05,
+        "pixel": 25,
+        "tint": 19,
+        "targetT": 840,
+        "bgT": 300,
+        "xrd": 56,
+        "afm": 1.9,
+        "passivation": 0.82
+      }
+    },
+    "dark": {
+      "label": "MWIR 尾焰 · 缺陷/表面漏电",
+      "referenceDeviceId": "deng_2019_si_mwir_defect_limited",
+      "params": {
+        "scene": "plume",
+        "inas": 2.42,
+        "gasb": 2.44,
+        "periods": 100,
+        "interfaceNm": 0.24,
+        "interfaceQ": 0.58,
+        "mBarrier": false,
+        "detT": 70,
+        "bias": 0.10,
+        "pixel": 25,
+        "tint": 7,
+        "targetT": 760,
+        "bgT": 300,
+        "xrd": 120,
+        "afm": 8.5,
+        "passivation": 0.48
+      }
+    },
+    "qe": {
+      "label": "MWIR 尾焰 · QE 偏低",
+      "referenceDeviceId": "deng_2019_si_mwir_defect_limited",
+      "params": {
+        "scene": "plume",
+        "inas": 2.42,
+        "gasb": 2.44,
+        "periods": 40,
+        "interfaceNm": 0.28,
+        "interfaceQ": 0.48,
+        "mBarrier": false,
+        "detT": 77,
+        "bias": 0.05,
+        "pixel": 25,
+        "tint": 2.5,
+        "targetT": 760,
+        "bgT": 300,
+        "xrd": 110,
+        "afm": 7.5,
+        "passivation": 0.44
+      }
+    },
+    "reset": {
+      "label": "恢复 MWIR 尾焰标准场景",
+      "aliasOf": "preset"
+    }
+  }
+}

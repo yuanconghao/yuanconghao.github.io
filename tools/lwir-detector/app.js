@@ -2,11 +2,11 @@
   "use strict";
 
   var P = {
-    inas: 5.45,
-    gasb: 3.03,
-    periods: 70,
-    interfaceNm: 0.20,
-    interfaceQ: 0.86,
+    inas: 3.63,
+    gasb: 1.22,
+    periods: 100,
+    interfaceNm: 0.18,
+    interfaceQ: 0.84,
     mBarrier: true,
     detT: 77,
     bias: 0.05,
@@ -14,9 +14,9 @@
     tint: 5,
     targetT: 310,
     bgT: 293,
-    xrd: 24,
-    afm: 2.0,
-    passivation: 0.80,
+    xrd: 64,
+    afm: 2.4,
+    passivation: 0.78,
     scene: "human"
   };
 
@@ -54,18 +54,35 @@
     { name: "Delmas 5.15 μm", inas: 2.12, gasb: 1.21, al: 0, lambda: 5.15 },
     { name: "Chen 5.30 μm", inas: 2.43, gasb: 2.42, al: 0, lambda: 5.30 },
     { name: "Xie 5.00 μm", inas: 2.40, gasb: 2.40, al: 0, lambda: 5.00 },
+    { name: "Delmas 10.0 μm", inas: 3.63, gasb: 1.22, al: 0, lambda: 10.0 },
     { name: "Jiang M-type 14 μm", inas: 5.45, gasb: 3.03, al: 1.52, lambda: 14.00 }
   ];
 
   var els = {};
   var latestModel = null;
+  var activeScenario = "";
+  var viewMode = "experiment";
+  var mechanismFocus = "band";
+  var referenceData = null;
+  var referenceDataSets = {};
+  var activeDataKey = "lwir";
+  var activeReferenceId = "";
+  var REFERENCE_DATA_FILES = {
+    lwir: "./data/lwir-scenarios.json",
+    mwir: "./data/mwir-scenarios.json",
+    bbir: "./data/bbir-scenarios.json"
+  };
   var ids = [
     "inas", "gasb", "periods", "interfaceNm", "interfaceQ", "mBarrier", "detT", "bias", "pixel", "tint", "targetT", "bgT", "xrd", "afm", "passivation",
     "inasV", "gasbV", "periodsV", "interfaceNmV", "interfaceQV", "detTV", "biasV", "pixelV", "tintV", "targetTV", "bgTV", "xrdV", "afmV", "passivationV",
     "lambdaHero", "bandHero", "snrHero", "egOut", "absOut", "qeOut", "iphOut", "jdarkOut", "r0aOut", "dstarOut", "netdOut",
     "absBadge", "darkBadge", "readBadge", "absDiag", "darkDiag", "readDiag",
+    "impactLead", "impactBand", "impactTemp", "impactTint", "impactQuality", "dataSourceText",
+    "mechanismTitle", "mechanismText", "mechanismMetricA", "mechanismMetricB", "mechanismMetricC",
     "chainRad", "chainAbs", "chainSep", "chainNoise", "chainRoi",
-    "presetLwir", "presetMwir", "presetBbir"
+    "presetLwir", "presetMwir", "presetBbir",
+    "issueBand", "issueHot", "issueSat", "issueDark", "issueQe", "issueReset",
+    "modePrinciple", "modeExperiment", "focusBand", "focusDark", "focusReadout"
   ];
 
   var VIS = {
@@ -100,6 +117,141 @@
   }
   function setText(id, value) { if (els[id]) els[id].textContent = value; }
   function setBadge(id, text, cls) { if (els[id]) { els[id].textContent = text; els[id].className = "badge " + cls; } }
+
+  function syncControls() {
+    Object.keys(P).forEach(function (k) {
+      if (!els[k]) return;
+      if (els[k].type === "checkbox") els[k].checked = !!P[k];
+      else els[k].value = P[k];
+    });
+  }
+
+  function setActiveScenario(kind) {
+    activeScenario = kind || "";
+    [
+      ["issueBand", "band"],
+      ["issueHot", "hot"],
+      ["issueSat", "sat"],
+      ["issueDark", "dark"],
+      ["issueQe", "qe"],
+      ["issueReset", "reset"]
+    ].forEach(function (it) {
+      if (els[it[0]]) els[it[0]].classList.toggle("active", activeScenario === it[1]);
+    });
+  }
+
+  function getReferenceDevice(id) {
+    if (!id || !referenceData || !referenceData.literatureDevices) return null;
+    return referenceData.literatureDevices[id] || null;
+  }
+
+  function getActiveReference() {
+    return getReferenceDevice(activeReferenceId);
+  }
+
+  function dataKeyForScene(scene) {
+    if (scene === "plume") return "mwir";
+    if (scene === "gas") return "bbir";
+    return "lwir";
+  }
+
+  function dataKeyForPreset(kind) {
+    if (kind === "mwir") return "mwir";
+    if (kind === "bbir") return "bbir";
+    return "lwir";
+  }
+
+  function setReferenceDataKey(key) {
+    activeDataKey = key || "lwir";
+    referenceData = referenceDataSets[activeDataKey] || null;
+    return !!referenceData;
+  }
+
+  function measuredQe(ref, lambda) {
+    if (!ref || !ref.measured) return null;
+    if (typeof ref.measured.estimatedQE === "number") return ref.measured.estimatedQE;
+    if (typeof ref.measured.quantumEfficiency === "number") return ref.measured.quantumEfficiency;
+    if (typeof ref.measured.responsivity_AW === "number" && lambda > 0) {
+      return clamp(ref.measured.responsivity_AW * 1.24 / lambda, 0.02, 0.95);
+    }
+    return null;
+  }
+
+  function measuredDarkCurrent(ref, opt) {
+    if (!ref || !ref.measured || typeof ref.measured.darkCurrentDensity_Acm2 !== "number") return null;
+    var m = ref.measured;
+    var tref = Math.max(m.temperature_K || P.detT || 77, 1);
+    var vref = Math.max(Math.abs(m.bias_V || P.bias || 0.05), 0.001);
+    var t = Math.max(P.detT || tref, 1);
+    var v = Math.max(Math.abs(P.bias || vref), 0.001);
+    var k = 8.617e-5;
+    var activationScale = Math.exp(-opt.eg / (2 * k) * (1 / t - 1 / tref));
+    var biasScale = (1 + Math.pow(v / 0.08, 1.7)) / (1 + Math.pow(vref / 0.08, 1.7));
+    return clamp(m.darkCurrentDensity_Acm2 * activationScale * biasScale, 1e-10, 40);
+  }
+
+  function applyScenarioData(key, activeKey) {
+    if (!referenceData || !referenceData.scenarioPresets || !referenceData.scenarioPresets[key]) return false;
+    var preset = referenceData.scenarioPresets[key];
+    if (preset.aliasOf && referenceData.scenarioPresets[preset.aliasOf]) {
+      preset = referenceData.scenarioPresets[preset.aliasOf];
+    }
+    Object.assign(P, preset.params || {});
+    activeReferenceId = preset.referenceDeviceId || "";
+    setActiveScenario(activeKey || "");
+    syncControls();
+    render();
+    return true;
+  }
+
+  function setViewMode(mode) {
+    viewMode = mode === "principle" ? "principle" : "experiment";
+    document.body.classList.toggle("mode-principle", viewMode === "principle");
+    document.body.classList.toggle("mode-experiment", viewMode === "experiment");
+    if (els.modePrinciple) els.modePrinciple.classList.toggle("active", viewMode === "principle");
+    if (els.modeExperiment) els.modeExperiment.classList.toggle("active", viewMode === "experiment");
+  }
+
+  function loadReferenceData() {
+    if (!window.fetch) return Promise.resolve(false);
+    var keys = Object.keys(REFERENCE_DATA_FILES);
+    return Promise.all(keys.map(function (key) {
+      return fetch(REFERENCE_DATA_FILES[key], { cache: "no-cache" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("reference data http " + res.status);
+          return res.json();
+        })
+        .then(function (json) {
+          referenceDataSets[key] = json;
+          return true;
+        })
+        .catch(function () {
+          referenceDataSets[key] = null;
+          return false;
+        });
+    }))
+      .then(function (results) {
+        setReferenceDataKey("lwir");
+        return results.some(Boolean);
+      })
+      .catch(function () {
+        referenceDataSets = {};
+        referenceData = null;
+        return false;
+      });
+  }
+
+  function setMechanismFocus(kind) {
+    mechanismFocus = kind === "dark" || kind === "readout" ? kind : "band";
+    [
+      ["focusBand", "band"],
+      ["focusDark", "dark"],
+      ["focusReadout", "readout"]
+    ].forEach(function (it) {
+      if (els[it[0]]) els[it[0]].classList.toggle("active", mechanismFocus === it[1]);
+    });
+    if (latestModel) updateMechanism(latestModel);
+  }
 
   function readInputs() {
     ["inas", "gasb", "periods", "interfaceNm", "interfaceQ", "detT", "bias", "pixel", "tint", "targetT", "bgT", "xrd", "afm", "passivation"].forEach(function (id) {
@@ -156,11 +308,21 @@
   function bandCoverage(lambda) {
     var s = sceneMeta();
     var min = s.lambdaMin || 3, max = s.lambdaMax || 14;
-    return clamp((lambda - min) / Math.max(max - min, 0.5), 0, 1);
+    var mid = (min + max) / 2;
+    if (lambda <= min) return 0;
+    if (lambda >= max) return 1;
+    if (lambda <= mid) return 0.75 * (lambda - min) / Math.max(mid - min, 0.5);
+    return 0.75 + 0.25 * (lambda - mid) / Math.max(max - mid, 0.5);
   }
 
   function model() {
     var opt = opticalEstimate();
+    var ref = getActiveReference();
+    if (ref && ref.measured && typeof ref.measured.cutoff_um === "number") {
+      opt.lambda = ref.measured.cutoff_um;
+      opt.eg = 1.24 / opt.lambda;
+      opt.confidence = 0.92;
+    }
     var bandResponse = bandCoverage(opt.lambda);
     var periodNm = P.inas + P.gasb + P.interfaceNm * 2;
     var absNm = periodNm * P.periods;
@@ -168,7 +330,12 @@
     var materialQ = clamp(1 - (P.xrd - 18) / 170 - (P.afm - 1.2) / 25, 0.25, 1);
     var overlap = clamp(0.30 + P.interfaceQ * 0.52 + (P.mBarrier ? 0.05 : 0) - Math.max(0, opt.lambda - 14) * 0.025, 0.15, 0.88);
     var absorption = 1 - Math.exp(-1.15 * absUm * clamp(opt.lambda / 10, 0.55, 1.35));
+    if (ref && ref.measured && typeof ref.measured.wavefunctionOverlap === "number") {
+      overlap = clamp(ref.measured.wavefunctionOverlap, 0.10, 0.92);
+    }
     var qe = clamp(absorption * overlap * materialQ * (0.78 + P.passivation * 0.22) * (0.18 + bandResponse * 0.82), 0.03, 0.78);
+    var qeAnchor = measuredQe(ref, opt.lambda);
+    if (qeAnchor != null) qe = clamp(qe * 0.35 + qeAnchor * 0.65, 0.03, 0.78);
     var photonSignal = Math.max(0, (Math.pow(P.targetT / 300, 4) - Math.pow(P.bgT / 300, 4)));
     var pixelAreaCm2 = Math.pow(P.pixel * 1e-4, 2);
     var iph = 2.2e-7 * qe * photonSignal * pixelAreaCm2 * 1e6;
@@ -177,8 +344,10 @@
     var biasTerm = 1 + Math.pow(P.bias / 0.08, 1.7);
     var barrierTerm = P.mBarrier ? 0.34 : 1.0;
     var jdark = clamp(8e1 * tempTerm * defect * biasTerm * barrierTerm, 1e-10, 4e-1);
+    var jdarkAnchor = measuredDarkCurrent(ref, opt);
+    if (jdarkAnchor != null) jdark = jdarkAnchor;
     var idark = jdark * pixelAreaCm2;
-    var noise = Math.sqrt(Math.max(idark, 1e-18) * Math.max(P.tint, 0.1) / 5) * 2.0e-2 + 1.5e-12;
+    var noise = Math.sqrt(Math.max(idark, 1e-18) * Math.max(P.tint, 0.1) / 5) * 6.5e-6 + 1.5e-12;
     var snr = iph / noise;
     var r0a = clamp(0.025 / Math.max(jdark, 1e-12), 1e-2, 1e9);
     var dstar = clamp(1.0e10 * qe / Math.sqrt(Math.max(jdark, 1e-10) / 1e-6) * (P.pixel / 25), 1e7, 8e12);
@@ -246,6 +415,93 @@
     [["chainRad", m.photonSignal > 0.01], ["chainAbs", m.qe > 0.18], ["chainSep", m.overlap > 0.45], ["chainNoise", m.darkRatio < 2], ["chainRoi", m.snr > 2]].forEach(function (it) {
       if (els[it[0]]) els[it[0]].classList.toggle("on", !!it[1]);
     });
+
+    updateImpact(m, s);
+    updateMechanism(m);
+  }
+
+  function updateImpact(m, s) {
+    var lead;
+    if (m.bandResponse < 0.35) {
+      lead = "主要限制来自波段不匹配：目标发出的红外光没有被当前截止波长充分覆盖。";
+    } else if (m.darkRatio > 2) {
+      lead = "主要限制来自暗电流：没有光照也产生的电流已经压过了有效光电流。";
+    } else if (m.saturationRisk > 0.65) {
+      lead = "主要风险来自读出饱和：积分时间太长，Vint 曲线接近 ROIC 上限。";
+    } else if (m.qe < 0.18) {
+      lead = "主要限制来自吸收/收集效率：界面、周期厚度或表面钝化让可收集电荷变少。";
+    } else if (m.snr < 2) {
+      lead = "当前信号偏弱：热辐射差、吸收效率和噪声共同限制了输出热图。";
+    } else {
+      lead = "当前链路比较顺畅：目标辐射、T2SL 吸收、载流子分离和 ROIC 读出能形成可分辨输出。";
+    }
+
+    var bandText = m.bandResponse > 0.85
+      ? "λc 覆盖 " + (s.band || m.band) + "，入射光和光生载流子动效较强。"
+      : m.bandResponse > 0.35
+        ? "λc 只覆盖部分目标波段，热图仍有响应，但 QE 和光电流会下降。"
+        : "λc 与 " + (s.band || m.band) + " 不匹配，光路会变暗，吸收区粒子明显减少。";
+
+    var tempText = m.darkRatio < 0.25
+      ? "探测器温度和偏压较稳，暗电流低于光电流，红色漏电动效较弱。"
+      : m.darkRatio < 2
+        ? "暗电流已经接近光电流，温度或偏压继续升高会让 SNR 快速变差。"
+        : "暗电流主导输出，红色漏电动效增强，热图会被噪声淹没。";
+
+    var tintText = m.saturationRisk > 0.65
+      ? "积分时间偏长，Vint 曲线接近饱和线，继续增加会丢失亮暗差异。"
+      : m.integrationFill > 0.72
+        ? "积分电荷较多，输出更亮，但需要留意暗电流和饱和余量。"
+        : "积分电荷仍有余量，ROIC 曲线处在较安全的动态范围。";
+
+    var qualityText = m.materialQ > 0.75 && P.interfaceQ > 0.80
+      ? "界面质量和表征指标较好，电子/空穴收集路径清晰。"
+      : m.materialQ > 0.50
+        ? "材料质量处于临界区，XRD/AFM 或界面质量会拖低 QE。"
+        : "材料与界面质量偏差较大，吸收区产生的载流子难以有效收集。";
+
+    setText("impactLead", lead);
+    setText("impactBand", bandText);
+    setText("impactTemp", tempText);
+    setText("impactTint", tintText);
+    setText("impactQuality", qualityText);
+
+    var ref = getActiveReference();
+    if (ref && ref.source) {
+      var sourceText = "数据依据：" + activeDataKey.toUpperCase() + " · " + ref.source.authors + "，" + ref.source.year + "，《" + ref.source.title + "》";
+      if (ref.measured && typeof ref.measured.darkCurrentDensity_Acm2 === "number") {
+        sourceText += "；Jdark=" + fmtExp(ref.measured.darkCurrentDensity_Acm2) + " A/cm²";
+      }
+      if (ref.measured && typeof ref.measured.cutoff_um === "number") {
+        sourceText += "，λc≈" + ref.measured.cutoff_um + " μm";
+      }
+      setText("dataSourceText", sourceText);
+    } else {
+      setText("dataSourceText", "数据依据：当前为教学规则插值；LWIR/MWIR/BBIR 分别读取独立 JSON，避免场景参数互相覆盖。");
+    }
+  }
+
+  function updateMechanism(m) {
+    var s = sceneMeta();
+    if (mechanismFocus === "dark") {
+      setText("mechanismTitle", "暗电流把真实光信号淹没");
+      setText("mechanismText", "理想情况下，ROIC 主要积分目标辐射产生的光电流；但探测器温度、偏压、界面缺陷和表面漏电会带来无光照电流。暗电流越接近或超过光电流，热图中的目标边界就越不稳定。");
+      setText("mechanismMetricA", "Jdark " + fmtExp(m.jdark) + " A/cm²");
+      setText("mechanismMetricB", "Idark / Iphoto " + m.darkRatio.toFixed(2));
+      setText("mechanismMetricC", "探测器温度 " + P.detT.toFixed(0) + " K");
+    } else if (mechanismFocus === "readout") {
+      setText("mechanismTitle", "ROIC 把电荷积分成像素灰度");
+      setText("mechanismText", "CTIA 读出链路不是直接读一个瞬时电流，而是在积分时间内把 Iphoto - Idark 转成电容电压 Vint。积分时间太短会信号弱，太长又可能饱和，亮暗差异会被压扁。");
+      setText("mechanismMetricA", "积分时间 " + P.tint.toFixed(1) + " ms");
+      setText("mechanismMetricB", "Vint 占比 " + pct(m.integrationFill));
+      setText("mechanismMetricC", "饱和风险 " + pct(m.saturationRisk));
+    } else {
+      setText("mechanismTitle", "Type-II 能带让电子和空穴分居两侧");
+      setText("mechanismText", "InAs/GaSb 二类超晶格的关键不是简单叠层，而是错位能带：电子更容易落在 InAs 势阱，空穴更容易落在 GaSb 势阱。这样可以通过周期厚度调节有效带隙和截止波长，但界面质量会直接影响波函数重叠和收集效率。");
+      setText("mechanismMetricA", "λc " + m.opt.lambda.toFixed(1) + " μm / " + (s.band || m.band));
+      setText("mechanismMetricB", "波段覆盖 " + pct(m.bandResponse));
+      setText("mechanismMetricC", "波函数重叠 " + pct(m.overlap));
+    }
   }
 
   function canvasCtx(id) {
@@ -508,6 +764,69 @@
   }
 
   var thermalCanvas = null;
+
+  function drawDetectionBox(ctx, x, y, w, h, label, color, confidence, dashed) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.8;
+    if (dashed) ctx.setLineDash([5, 4]);
+    rr(ctx, x, y, w, h, 6);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    var text = label + " " + Math.round(confidence * 100) + "%";
+    ctx.font = "800 10px sans-serif";
+    var tw = ctx.measureText(text).width + 14;
+    ctx.fillStyle = "rgba(255,255,255,.90)";
+    rr(ctx, x, Math.max(2, y - 22), tw, 18, 5);
+    ctx.fill();
+    ctx.fillStyle = color;
+    ctx.textAlign = "left";
+    ctx.fillText(text, x + 7, Math.max(14, y - 9));
+    ctx.restore();
+  }
+
+  function drawThermalDetection(ctx, x, y, size, m) {
+    var sceneKey = P.scene || "human";
+    var conf = clamp(0.36 + m.snr / 35, 0.32, 0.96);
+    var color = m.snr > 6 ? VIS.field : m.snr > 2 ? VIS.photon : VIS.dark;
+    var dashed = m.snr <= 2;
+    if (sceneKey === "plume" || sceneKey === "engine") {
+      drawDetectionBox(ctx, x + size * 0.26, y + size * 0.33, size * 0.60, size * 0.35, "尾焰高温源", color, conf, dashed);
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,255,255,.50)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x + size * 0.18, y + size * 0.56);
+      ctx.lineTo(x + size * 0.86, y + size * 0.48);
+      ctx.stroke();
+      ctx.restore();
+    } else if (sceneKey === "gas" || sceneKey === "drone") {
+      drawDetectionBox(ctx, x + size * 0.46, y + size * 0.22, size * 0.40, size * 0.48, "气体云团", color, conf, true);
+      drawDetectionBox(ctx, x + size * 0.13, y + size * 0.43, size * 0.36, size * 0.28, "泄漏源", VIS.photon, clamp(conf - 0.10, 0.25, 0.90), dashed);
+    } else {
+      drawDetectionBox(ctx, x + size * 0.31, y + size * 0.08, size * 0.38, size * 0.82, "行人目标", color, conf, dashed);
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,255,255,.42)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x + size * 0.42, y + size * 0.18);
+      ctx.lineTo(x + size * 0.58, y + size * 0.18);
+      ctx.moveTo(x + size * 0.37, y + size * 0.74);
+      ctx.lineTo(x + size * 0.63, y + size * 0.74);
+      ctx.stroke();
+      ctx.restore();
+    }
+    if (m.snr <= 2) {
+      ctx.save();
+      ctx.fillStyle = "rgba(184,50,42,.88)";
+      ctx.font = "800 10px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText("低置信 / 噪声干扰", x + size - 8, y + size - 10);
+      ctx.restore();
+    }
+  }
+
   function drawThermalOutput(ctx, x, y, size, m, heat, tAnim) {
     var res = 128;
     if (!thermalCanvas) thermalCanvas = document.createElement("canvas");
@@ -516,8 +835,18 @@
     var tctx = thermalCanvas.getContext("2d");
     var img = tctx.createImageData(res, res);
     var sceneKey = P.scene || "human";
-    var sceneSignal = sceneKey === "gas" ? clamp(m.snr / 18, 0.28, 0.74) : clamp(0.70 + heat * 0.30, 0.70, 1);
-    var sceneNoise = sceneKey === "gas" ? 0.16 : 0.045;
+    var snrVisual = clamp(m.snr / 15, 0, 1);
+    var bandGate = m.bandResponse > 0.05 ? 1.0 : clamp(0.12 + m.bandResponse * 17.6, 0.12, 1.0);
+    var responseVisual = clamp((0.15 + m.bandResponse * 0.35 + m.qe * 0.45 + snrVisual * 0.55) * bandGate, 0.06, 1.15);
+    var readoutVisual = clamp(0.38 + Math.sqrt(m.integrationFill) * 0.72, 0.25, 1.12);
+    var darkVisual = clamp(0.08 + m.darkActivity * 0.22 + Math.min(m.darkRatio, 6) * 0.045 + (1 - m.materialQ) * 0.09, 0.08, 0.52);
+    var saturationVisual = clamp(m.saturationRisk, 0, 1);
+    var sceneSignal = sceneKey === "gas"
+      ? clamp(responseVisual * readoutVisual, 0.05, 0.92)
+      : clamp((0.50 + heat * 0.50) * responseVisual * readoutVisual * 1.55, 0.08, 1.15);
+    var noiseScale = clamp(1 - snrVisual * 0.55, 0.30, 1.0);
+    var sceneNoise = ((sceneKey === "gas" ? 0.035 : 0.018) + darkVisual * (sceneKey === "gas" ? 0.55 : 0.34) + (1 - m.bandResponse) * 0.035) * noiseScale;
+    var contrastLoss = 1 - saturationVisual * 0.38;
     for (var py = 0; py < res; py++) {
       for (var px = 0; px < res; px++) {
         var nx = px / (res - 1), ny = py / (res - 1);
@@ -525,12 +854,24 @@
         var vignette = 0.08 * (1 - Math.min(1, Math.hypot(nx - 0.5, ny - 0.5) / 0.72));
         var fixedNoise = Math.sin(px * 12.9898 + py * 78.233 + tAnim * 2.1) * 43758.5453;
         fixedNoise = fixedNoise - Math.floor(fixedNoise);
-        var rowNoise = Math.sin(py * 0.55 + tAnim * 1.4) * 0.035;
-        var val = 0.10 + vignette + shape * (0.62 + heat * 0.30) * sceneSignal + (fixedNoise - 0.5) * sceneNoise + rowNoise;
-        if (sceneKey === "plume") val += blob({ x: nx, y: ny }, 0.46, 0.52, 0.14, 0.09) * 0.30;
+        var columnNoise = Math.sin(px * 0.47 + tAnim * 0.65) * darkVisual * 0.045;
+        var rowNoise = Math.sin(py * 0.55 + tAnim * 1.4) * (0.012 + darkVisual * 0.075);
+        var badPixel = fixedNoise > 0.986 ? darkVisual * 0.42 : 0;
+        var val = 0.10 + vignette + shape * (0.62 + heat * 0.30) * sceneSignal * contrastLoss + (fixedNoise - 0.5) * sceneNoise + rowNoise + columnNoise + badPixel;
+        if (sceneKey === "plume") val += blob({ x: nx, y: ny }, 0.46, 0.52, 0.14, 0.09) * 0.30 * sceneSignal * contrastLoss;
         if (sceneKey === "gas") {
           var plumeBand = Math.max(blob({ x: nx, y: ny }, 0.64, 0.39, 0.24, 0.17), blob({ x: nx, y: ny }, 0.74, 0.52, 0.22, 0.15));
-          val = 0.13 + shape * 0.48 * sceneSignal + plumeBand * 0.16 + (fixedNoise - 0.5) * sceneNoise + rowNoise * 0.55;
+          var gasStructure = shape * 0.46 + plumeBand * 0.34;
+          var bandLoss = clamp(1 - m.bandResponse, 0, 1);
+          val = 0.11 + vignette * 0.62 + gasStructure * sceneSignal * contrastLoss + bandLoss * 0.085 + (fixedNoise - 0.5) * sceneNoise + rowNoise + columnNoise + badPixel;
+          if (bandLoss > 0.35) {
+            val = lerp(val, 0.15 + vignette * 0.35 + (fixedNoise - 0.5) * sceneNoise * 0.75, (bandLoss - 0.35) * 0.55);
+          }
+        }
+        if (saturationVisual > 0.05) {
+          var flatLevel = sceneKey === "gas" ? 0.52 + shape * 0.12 : 0.58 + shape * 0.18;
+          val = lerp(val, flatLevel + (fixedNoise - 0.5) * 0.035, saturationVisual * 0.50);
+          val += saturationVisual * 0.08;
         }
         var col = heatColor(val);
         var idx = (py * res + px) * 4;
@@ -545,6 +886,7 @@
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(thermalCanvas, x, y, size, size);
     ctx.restore();
+    drawThermalDetection(ctx, x, y, size, m);
     ctx.strokeStyle = "#c7d1da";
     ctx.strokeRect(x, y, size, size);
   }
@@ -1049,19 +1391,20 @@
     for (var j = 0; j < n; j += 5) {
       ctx.fillRect(absX + edgeW, absY + j * layerH, absW - edgeW * 2, Math.max(1, layerH * 0.12));
     }
-    drawBandInset(ctx, absX + edgeW + 8, absY + 12, absW - edgeW * 2 - 16, Math.min(72, absH * 0.42), m, tAnim);
+    var bandInsetH = Math.min(72, absH * 0.42);
+    drawBandInset(ctx, absX + edgeW + 8, absY + 12, absW - edgeW * 2 - 16, bandInsetH, m, tAnim);
     ctx.save();
     ctx.shadowColor = VIS.photonGlow;
     ctx.shadowBlur = 8;
-    var photonCount = Math.max(1, Math.round(1 + m.bandResponse * 3));
+    var photonCount = Math.max(1, Math.min(3, Math.round(1 + m.bandResponse * 2)));
+    var photonStartY = absY - 28;
+    var photonEndY = absY + absH * 0.28;
     for (var ph = 0; ph < photonCount; ph++) {
-      var rx = absX + absW * (0.39 + ph * 0.09);
-      drawArrow(ctx, rx, winY + 26, rx, absY + absH * 0.70, VIS.photon, 1.5);
+      var spread = photonCount === 1 ? 0 : (ph - (photonCount - 1) / 2) * 0.105;
+      var rx = absX + absW * (0.50 + spread);
+      drawArrow(ctx, rx, photonStartY, rx, photonEndY, VIS.photon, 1.35);
       var rp = (tAnim * (0.26 + m.photonSignal * 0.18) + ph * 0.17) % 1;
-      ctx.fillStyle = VIS.photon;
-      ctx.beginPath();
-      ctx.arc(rx, lerp(winY + 28, absY + absH * 0.70, rp), 2.4 + m.bandResponse * 1.1, 0, Math.PI * 2);
-      ctx.fill();
+      glowDot(ctx, rx, lerp(photonStartY + 2, photonEndY - 4, rp), VIS.photon, 2.1 + m.bandResponse * 0.9, 0.42 + m.bandResponse * 0.44);
     }
     ctx.restore();
     ctx.fillStyle = "#17212b";
@@ -1116,38 +1459,63 @@
     ctx.textAlign = "left";
     ctx.fillText("内建电场 / 反偏", fieldX - 99, contactBotY + 42);
 
+    var leftPContactX = pixOuterX + 38 + pPadW * 0.56;
+    var rightPContactX = pixOuterX + pixOuterW - 38 - pPadW * 0.56;
+    var carrierBaseY = absY + Math.max(bandInsetH + 22, absH * 0.54);
+    var holeBendY = absY + Math.max(bandInsetH + 8, absH * 0.40);
+    var carrierSeeds = [
+      { x: absX + absW * 0.40, y: carrierBaseY - absH * 0.05, p: leftPContactX, n: absX + absW * 0.42 },
+      { x: absX + absW * 0.47, y: carrierBaseY + absH * 0.02, p: leftPContactX + pPadW * 0.18, n: absX + absW * 0.47 },
+      { x: absX + absW * 0.54, y: carrierBaseY - absH * 0.02, p: rightPContactX - pPadW * 0.18, n: absX + absW * 0.54 },
+      { x: absX + absW * 0.61, y: carrierBaseY + absH * 0.05, p: rightPContactX, n: absX + absW * 0.60 }
+    ];
+    var electronPaths = [];
+    var holePaths = [];
+    carrierSeeds.forEach(function (seed) {
+      electronPaths.push({
+        p0: { x: seed.x, y: seed.y },
+        p1: { x: seed.n - 10, y: absY + absH * 0.70 },
+        p2: { x: seed.n - 4, y: contactBotY - 10 },
+        p3: { x: seed.n, y: contactBotY + 9 }
+      });
+      holePaths.push({
+        p0: { x: seed.x + 8, y: seed.y - 4 },
+        p1: { x: seed.p, y: holeBendY },
+        p2: { x: seed.p, y: contactTopY + 32 },
+        p3: { x: seed.p, y: contactTopY + 10 }
+      });
+    });
     ctx.save();
-    ctx.lineWidth = 1.3;
+    ctx.lineWidth = 1.35;
     ctx.strokeStyle = VIS.electronSoft;
-    for (var ep = 0; ep < 4; ep++) {
-      var pathX = absX + absW * (0.34 + ep * 0.10);
+    electronPaths.forEach(function (path) {
       ctx.beginPath();
-      ctx.moveTo(pathX, absY + absH * 0.52);
-      ctx.bezierCurveTo(pathX - 12, absY + absH * 0.68, pathX - 4, contactBotY - 8, pathX, contactBotY + 8);
+      ctx.moveTo(path.p0.x, path.p0.y);
+      ctx.bezierCurveTo(path.p1.x, path.p1.y, path.p2.x, path.p2.y, path.p3.x, path.p3.y);
       ctx.stroke();
-    }
+    });
     ctx.strokeStyle = VIS.holeSoft;
-    for (var hp = 0; hp < 4; hp++) {
-      var hPathX = absX + absW * (0.39 + hp * 0.10);
+    holePaths.forEach(function (path) {
       ctx.beginPath();
-      ctx.moveTo(hPathX, absY + absH * 0.48);
-      ctx.bezierCurveTo(hPathX + 10, absY + absH * 0.30, hPathX + 2, contactTopY + 32, hPathX, contactTopY + 10);
+      ctx.moveTo(path.p0.x, path.p0.y);
+      ctx.bezierCurveTo(path.p1.x, path.p1.y, path.p2.x, path.p2.y, path.p3.x, path.p3.y);
       ctx.stroke();
-    }
+    });
     ctx.restore();
 
     var carrierCount = Math.max(2, Math.round(2 + m.qe * m.bandResponse * 8));
     for (var c = 0; c < carrierCount; c++) {
+      var pathIndex = c % carrierSeeds.length;
       var phase = (tAnim * 0.46 + c / carrierCount) % 1;
-      var cx = absX + absW * (0.34 + (c % 4) * 0.10);
-      var cy = absY + absH * (0.36 + ((c * 17) % 24) / 100);
+      var electronPoint = cubicPoint(electronPaths[pathIndex].p0, electronPaths[pathIndex].p1, electronPaths[pathIndex].p2, electronPaths[pathIndex].p3, phase);
+      var holePoint = cubicPoint(holePaths[pathIndex].p0, holePaths[pathIndex].p1, holePaths[pathIndex].p2, holePaths[pathIndex].p3, phase);
       ctx.fillStyle = VIS.electron;
       ctx.beginPath();
-      ctx.arc(cx + Math.sin(tAnim + c) * 3, lerp(cy, contactBotY + 11, phase), 3.3, 0, Math.PI * 2);
+      ctx.arc(electronPoint.x + Math.sin(tAnim + c) * 1.6, electronPoint.y, 3.3, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = VIS.hole;
       ctx.beginPath();
-      ctx.arc(cx + 10 + Math.cos(tAnim + c) * 3, lerp(cy, contactTopY + 11, phase), 3.3, 0, Math.PI * 2);
+      ctx.arc(holePoint.x + Math.cos(tAnim + c) * 1.6, holePoint.y, 3.3, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.fillStyle = VIS.hole;
@@ -1352,48 +1720,102 @@
     latestModel = m;
     updateReadout(m);
     drawDevice(m);
-    drawBand(m);
-    drawSignal(m);
-    drawTrend(m);
+    if (viewMode === "experiment") {
+      drawBand(m);
+      drawSignal(m);
+      drawTrend(m);
+    }
   }
 
   function animationLoop(ts) {
     if (latestModel) {
       drawDevice(latestModel, ts);
-      drawSignal(latestModel, ts);
+      if (viewMode === "experiment") drawSignal(latestModel, ts);
     }
     requestAnimationFrame(animationLoop);
   }
 
   function applyPreset(kind) {
+    setActiveScenario("");
+    setReferenceDataKey(dataKeyForPreset(kind));
+    if (applyScenarioData("preset", "")) return;
+    activeReferenceId = "";
     if (kind === "mwir") {
-      Object.assign(P, { scene: "plume", inas: 2.43, gasb: 2.42, periods: 100, interfaceNm: 0.09, interfaceQ: 0.90, mBarrier: false, detT: 150, bias: 0.08, xrd: 24, afm: 2.0, passivation: 0.82, targetT: 760, bgT: 300, tint: 2.5 });
+      Object.assign(P, { scene: "plume", inas: 2.42, gasb: 2.44, periods: 100, interfaceNm: 0.09, interfaceQ: 0.90, mBarrier: false, detT: 77, bias: 0.05, xrd: 56, afm: 1.9, passivation: 0.82, targetT: 760, bgT: 300, tint: 2.5 });
     } else if (kind === "bbir") {
-      Object.assign(P, { scene: "gas", inas: 5.45, gasb: 3.03, periods: 70, interfaceNm: 0.16, interfaceQ: 0.78, mBarrier: true, detT: 120, bias: 0.06, xrd: 36, afm: 2.6, passivation: 0.76, targetT: 325, bgT: 300, tint: 8.0 });
+      Object.assign(P, { scene: "gas", inas: 4.24, gasb: 2.13, periods: 100, interfaceNm: 0.18, interfaceQ: 0.72, mBarrier: true, detT: 77, bias: 0.05, xrd: 58, afm: 2.8, passivation: 0.72, targetT: 325, bgT: 300, tint: 8.0 });
     } else {
-      Object.assign(P, { scene: "human", inas: 5.45, gasb: 3.03, periods: 70, interfaceNm: 0.20, interfaceQ: 0.86, mBarrier: true, detT: 77, bias: 0.05, xrd: 24, afm: 2.0, passivation: 0.80, targetT: 310, bgT: 293, tint: 5 });
+      Object.assign(P, { scene: "human", inas: 3.63, gasb: 1.22, periods: 100, interfaceNm: 0.18, interfaceQ: 0.84, mBarrier: true, detT: 77, bias: 0.05, xrd: 64, afm: 2.4, passivation: 0.78, targetT: 310, bgT: 293, tint: 5 });
     }
-    Object.keys(P).forEach(function (k) {
-      if (!els[k]) return;
-      if (els[k].type === "checkbox") els[k].checked = !!P[k];
-      else els[k].value = P[k];
-    });
+    syncControls();
+    render();
+  }
+
+  function applyIssuePreset(kind) {
+    setReferenceDataKey(dataKeyForScene(P.scene));
+    if (kind === "reset") {
+      if (applyScenarioData("preset", "reset")) return;
+    }
+    if (applyScenarioData(kind, kind)) return;
+    activeReferenceId = "";
+    if (kind === "band") {
+      Object.assign(P, { scene: "human", inas: 2.42, gasb: 2.44, periods: 100, interfaceNm: 0.09, interfaceQ: 0.90, mBarrier: false, detT: 77, bias: 0.05, xrd: 56, afm: 1.9, passivation: 0.82, targetT: 310, bgT: 293, tint: 5.0 });
+    } else if (kind === "hot") {
+      Object.assign(P, { scene: "human", inas: 3.63, gasb: 1.22, periods: 100, interfaceNm: 0.18, interfaceQ: 0.84, mBarrier: true, detT: 150, bias: 0.05, xrd: 64, afm: 2.4, passivation: 0.78, targetT: 310, bgT: 293, tint: 5.0 });
+    } else if (kind === "sat") {
+      Object.assign(P, { scene: "human", inas: 3.63, gasb: 1.22, periods: 100, interfaceNm: 0.18, interfaceQ: 0.84, mBarrier: true, detT: 77, bias: 0.05, xrd: 64, afm: 2.4, passivation: 0.78, targetT: 315, bgT: 293, tint: 18.0 });
+    } else if (kind === "dark") {
+      Object.assign(P, { scene: "human", inas: 4.24, gasb: 2.13, periods: 100, interfaceNm: 0.28, interfaceQ: 0.52, mBarrier: false, detT: 150, bias: 0.12, xrd: 90, afm: 5.5, passivation: 0.48, targetT: 310, bgT: 293, tint: 7.0 });
+    } else if (kind === "qe") {
+      Object.assign(P, { scene: "human", inas: 4.24, gasb: 2.13, periods: 100, interfaceNm: 0.30, interfaceQ: 0.46, mBarrier: true, detT: 77, bias: 0.05, xrd: 90, afm: 5.5, passivation: 0.42, targetT: 310, bgT: 293, tint: 5.0 });
+    } else {
+      Object.assign(P, { scene: "human", inas: 3.63, gasb: 1.22, periods: 100, interfaceNm: 0.18, interfaceQ: 0.84, mBarrier: true, detT: 77, bias: 0.05, xrd: 64, afm: 2.4, passivation: 0.78, targetT: 310, bgT: 293, tint: 5.0 });
+      kind = "reset";
+    }
+    setActiveScenario(kind);
+    syncControls();
     render();
   }
 
   function init() {
     ids.forEach(function (id) { els[id] = $(id); });
+    setViewMode("experiment");
+    setMechanismFocus("band");
     Object.keys(P).forEach(function (k) {
       if (!els[k]) return;
-      els[k].addEventListener("input", render);
-      els[k].addEventListener("change", render);
+      els[k].addEventListener("input", function () { activeReferenceId = ""; setActiveScenario(""); render(); });
+      els[k].addEventListener("change", function () { activeReferenceId = ""; setActiveScenario(""); render(); });
     });
+    els.modePrinciple.addEventListener("click", function () {
+      setViewMode("principle");
+      requestAnimationFrame(render);
+    });
+    els.modeExperiment.addEventListener("click", function () {
+      setViewMode("experiment");
+      requestAnimationFrame(render);
+    });
+    els.focusBand.addEventListener("click", function () { setMechanismFocus("band"); });
+    els.focusDark.addEventListener("click", function () { setMechanismFocus("dark"); });
+    els.focusReadout.addEventListener("click", function () { setMechanismFocus("readout"); });
     els.presetLwir.addEventListener("click", function () { applyPreset("lwir"); });
     els.presetMwir.addEventListener("click", function () { applyPreset("mwir"); });
     els.presetBbir.addEventListener("click", function () { applyPreset("bbir"); });
+    els.issueBand.addEventListener("click", function () { applyIssuePreset("band"); });
+    els.issueHot.addEventListener("click", function () { applyIssuePreset("hot"); });
+    els.issueSat.addEventListener("click", function () { applyIssuePreset("sat"); });
+    els.issueDark.addEventListener("click", function () { applyIssuePreset("dark"); });
+    els.issueQe.addEventListener("click", function () { applyIssuePreset("qe"); });
+    els.issueReset.addEventListener("click", function () { applyIssuePreset("reset"); });
     window.addEventListener("resize", render);
-    render();
-    requestAnimationFrame(animationLoop);
+    loadReferenceData().then(function (loaded) {
+      setReferenceDataKey("lwir");
+      if (loaded && applyScenarioData("preset", "")) {
+        requestAnimationFrame(animationLoop);
+        return;
+      }
+      render();
+      requestAnimationFrame(animationLoop);
+    });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

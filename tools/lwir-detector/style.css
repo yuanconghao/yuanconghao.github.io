@@ -64,6 +64,15 @@ button, input { font: inherit; }
   justify-content: flex-end;
 }
 
+.mode-toggle {
+  display: inline-flex;
+  padding: 2px;
+  gap: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-soft);
+}
+
 button {
   min-height: 32px;
   padding: 6px 11px;
@@ -76,6 +85,43 @@ button {
 }
 
 button:hover { border-color: var(--accent); color: var(--accent); }
+
+.mode-toggle button {
+  min-height: 28px;
+  padding: 4px 10px;
+  border-color: transparent;
+  background: transparent;
+  font-size: 12px;
+}
+
+.mode-toggle button.active {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--accent);
+  box-shadow: 0 1px 2px rgba(23, 33, 43, .06);
+}
+
+body.mode-principle .experiment-only {
+  display: none;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.scenario-grid button {
+  min-height: 34px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.scenario-grid button.active {
+  border-color: var(--accent);
+  background: rgba(31,111,139,.10);
+  color: var(--accent);
+}
 
 .workspace {
   display: grid;
@@ -98,14 +144,14 @@ button:hover { border-color: var(--accent); color: var(--accent); }
   align-items: start;
 }
 
-.panel, .hero-panel, .viz-panel, .diagnosis, .chain, .model-note, .metric {
+.panel, .hero-panel, .viz-panel, .diagnosis, .chain, .model-note, .metric, .impact-panel, .mechanism-panel {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(23, 33, 43, 0.04);
 }
 
-.panel, .diagnosis, .chain, .model-note { padding: 12px; }
+.panel, .diagnosis, .chain, .model-note, .impact-panel, .mechanism-panel { padding: 12px; }
 
 .panel-title {
   margin-bottom: 9px;
@@ -182,6 +228,67 @@ input[type="range"] {
 .toggle input:checked + span::after { transform: translateX(18px); }
 
 .hero-panel { padding: 12px; }
+
+.mechanism-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+}
+
+.mechanism-head strong {
+  display: block;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.mechanism-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.mechanism-tabs button {
+  min-height: 30px;
+  padding: 5px 9px;
+  font-size: 12px;
+}
+
+.mechanism-tabs button.active {
+  border-color: var(--accent);
+  background: rgba(31,111,139,.10);
+  color: var(--accent);
+}
+
+.mechanism-panel p {
+  margin: 8px 0 10px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.mechanism-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mechanism-metrics div {
+  min-height: 42px;
+  padding: 8px;
+  background: var(--panel-soft);
+  border: 1px solid #e6edf3;
+  border-radius: 7px;
+}
+
+.mechanism-metrics span {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
 
 .hero-readout {
   display: grid;
@@ -266,6 +373,50 @@ canvas {
   line-height: 1.6;
 }
 
+.impact-lead {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.impact-list {
+  display: grid;
+  gap: 7px;
+}
+
+.impact-item {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 8px;
+  align-items: start;
+  padding: 8px;
+  background: var(--panel-soft);
+  border: 1px solid #e6edf3;
+  border-radius: 7px;
+}
+
+.impact-item b {
+  color: var(--accent);
+  font-size: 11px;
+}
+
+.impact-item span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.data-source {
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .badge {
   display: inline-block;
   padding: 2px 8px;
@@ -336,10 +487,12 @@ canvas {
   .topbar, .workspace, .analysis-grid { grid-template-columns: 1fr; }
   .result-rail { grid-column: 1; }
   .top-actions { justify-content: flex-start; }
+  .mechanism-head { grid-template-columns: 1fr; }
+  .mechanism-tabs { justify-content: flex-start; }
   .hero-readout, .metric-grid { grid-template-columns: 1fr 1fr; }
   .control { grid-template-columns: 84px 1fr 76px; }
 }
 
 @media (max-width: 520px) {
-  .hero-readout, .metric-grid { grid-template-columns: 1fr; }
+  .hero-readout, .metric-grid, .mechanism-metrics { grid-template-columns: 1fr; }
 }
