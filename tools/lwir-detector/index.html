@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InAs/GaSb 红外探测器工作原理模拟器</title>
+  <link rel="stylesheet" href="./style.css">
+  <script>
+    if (window.top !== window.self) {
+      window.top.location.replace(window.location.href);
+    }
+  </script>
+</head>
+
+<body>
+  <main class="detector-shell">
+    <header class="topbar">
+      <div>
+        <h1>InAs/GaSb 红外探测器工作原理模拟器</h1>
+        <p>理解 MWIR / LWIR / 宽带红外场景中的目标辐射，如何在 II 类超晶格像元中产生载流子，并通过器件结构与 ROIC 转成可读信号。</p>
+      </div>
+      <div class="top-actions">
+        <button id="presetLwir" type="button">LWIR · 行人</button>
+        <button id="presetMwir" type="button">MWIR · 尾焰</button>
+        <button id="presetBbir" type="button">BBIR · 气体</button>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <aside class="control-rail" aria-label="工作原理控制">
+        <section class="panel">
+          <div class="panel-title">热辐射场景</div>
+          <label class="control">
+            <span>目标温度</span>
+            <input id="targetT" type="range" min="250" max="900" step="1" value="310">
+            <b id="targetTV">310 K</b>
+          </label>
+          <label class="control">
+            <span>背景温度</span>
+            <input id="bgT" type="range" min="240" max="330" step="1" value="293">
+            <b id="bgTV">293 K</b>
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">探测与读出</div>
+          <label class="control">
+            <span>探测器温度</span>
+            <input id="detT" type="range" min="60" max="300" step="1" value="77">
+            <b id="detTV">77 K</b>
+          </label>
+          <label class="control">
+            <span>反向偏压</span>
+            <input id="bias" type="range" min="0" max="0.50" step="0.01" value="0.05">
+            <b id="biasV">0.05 V</b>
+          </label>
+          <label class="control">
+            <span>积分时间</span>
+            <input id="tint" type="range" min="0.2" max="20" step="0.1" value="5">
+            <b id="tintV">5.0 ms</b>
+          </label>
+        </section>
+
+        <section class="model-note">
+          <b>固定演示结构</b>
+          <p>本页默认使用 InAs/GaSb Type-II 超晶格像元，只保留影响工作原理观察的条件参数。预设用于切换典型波段与目标场景，材料层厚、周期数和界面质量用于底层演示模型。</p>
+        </section>
+      </aside>
+
+      <section class="main-stage" aria-label="探测器工作原理">
+        <section class="hero-panel">
+          <div class="hero-readout">
+            <div>
+              <span>截止波长</span>
+              <strong id="lambdaHero">--</strong>
+            </div>
+            <div>
+              <span>响应波段</span>
+              <strong id="bandHero">--</strong>
+            </div>
+            <div>
+              <span>信噪状态</span>
+              <strong id="snrHero">--</strong>
+            </div>
+          </div>
+          <canvas id="deviceCanvas" width="980" height="420"></canvas>
+        </section>
+
+        <section class="analysis-grid">
+          <section class="viz-panel">
+            <div class="panel-title">Type-II 能带与光生载流子</div>
+            <canvas id="bandCanvas" width="470" height="280"></canvas>
+          </section>
+          <section class="viz-panel">
+            <div class="panel-title">光电流、暗电流与 ROIC 积分</div>
+            <canvas id="signalCanvas" width="470" height="280"></canvas>
+          </section>
+        </section>
+
+        <section class="viz-panel">
+          <div class="panel-title">温度与暗电流趋势</div>
+          <canvas id="trendCanvas" width="980" height="230"></canvas>
+        </section>
+      </section>
+
+      <aside class="result-rail" aria-label="模拟结果">
+        <section class="metric-grid">
+          <div class="metric"><span>量子效率 QE</span><b id="qeOut">--</b></div>
+          <div class="metric"><span>光电流</span><b id="iphOut">--</b></div>
+          <div class="metric"><span>暗电流密度</span><b id="jdarkOut">--</b></div>
+          <div class="metric"><span>D* 趋势</span><b id="dstarOut">--</b></div>
+          <div class="metric"><span>NETD 趋势</span><b id="netdOut">--</b></div>
+        </section>
+
+        <section class="diagnosis">
+          <div class="panel-title">器件解释</div>
+          <div class="diag-item">
+            <span id="absBadge" class="badge good">吸收正常</span>
+            <p id="absDiag">--</p>
+          </div>
+          <div class="diag-item">
+            <span id="darkBadge" class="badge good">暗电流受控</span>
+            <p id="darkDiag">--</p>
+          </div>
+          <div class="diag-item">
+            <span id="readBadge" class="badge good">读出可分辨</span>
+            <p id="readDiag">--</p>
+          </div>
+        </section>
+
+        <section class="chain">
+          <div class="panel-title">工作链路</div>
+          <div class="chain-step" id="chainRad"><b>1</b><span>热辐射进入光学系统</span></div>
+          <div class="chain-step" id="chainAbs"><b>2</b><span>T2SL 吸收光子</span></div>
+          <div class="chain-step" id="chainSep"><b>3</b><span>电子/空穴分离收集</span></div>
+          <div class="chain-step" id="chainNoise"><b>4</b><span>暗电流与噪声竞争</span></div>
+          <div class="chain-step" id="chainRoi"><b>5</b><span>ROIC 积分输出</span></div>
+        </section>
+
+        <section class="model-note">
+          <b>模型边界</b>
+          <p>这是器件工作原理教学模型。它用文献锚点插值和规则项解释趋势，不替代 k·p/TCAD/真实黑体、I-V、光谱响应测试。</p>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+
+</html>

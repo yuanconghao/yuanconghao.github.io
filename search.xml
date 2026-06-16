@@ -4,6 +4,45 @@
   
     
     <entry>
+      <title>长波红外探测器如何工作：从热辐射到器件信号的学习笔记</title>
+      <link href="//research/lwir-detectors-how-they-work/"/>
+      <url>//research/lwir-detectors-how-they-work/</url>
+      
+        <content type="html"><![CDATA[<p>这篇文章单独整理 <strong>长波红外探测器（LWIR detector）到底怎么工作</strong>。它不是某一篇论文的解读，也不直接复用前面 <a href="/research/inas-gasb-type-ii-superlattice-ir-detectors/">InAs&#x2F;GaSb II 类超晶格材料生长及红外探测器性能</a> 的章节结构，而是从“我怎么理解这种探测器”出发，把目前业界常见路线放在一张地图里。</p><p>我现在最需要理解的问题不是“某个器件参数是多少”，而是：</p><ol><li>为什么室温物体可以被长波红外相机看见？</li><li>探测器到底把什么东西转换成了电信号？</li><li>为什么有的红外相机不需要制冷，有的必须制冷？</li><li>HgCdTe、QWIP、InAs&#x2F;GaSb 二类超晶格这些路线分别在解决什么问题？</li><li>我现在做的 MBE InAs&#x2F;GaSb 模拟器，最终和一个真实探测器之间差了哪些环节？</li></ol><blockquote><p>本文写作时参考了 NASA 对红外波段和热红外的科普说明、公开的红外探测器&#x2F;微测辐射热计&#x2F;HgCdTe&#x2F;QWIP 技术资料，以及近年关于 II 类超晶格高工作温度探测器的研究报道。业界公司和产品只用于帮助理解技术路线，不作为产品推荐。</p></blockquote><hr><h2 id="1-先抓住一句话"><a href="#1-先抓住一句话" class="headerlink" title="1. 先抓住一句话"></a>1. 先抓住一句话</h2><p><strong>长波红外探测器的本质，是把 8-14 μm 波段的热辐射，转换成可以读出的电信号。</strong></p><p>这里有两个关键词：</p><ul><li><strong>热辐射</strong>：常温物体自己会发出红外光，不需要外部照明。</li><li><strong>电信号</strong>：探测器必须把红外带来的能量变化，变成电阻、电流、电压或电荷变化。</li></ul><p>所以长波红外成像不是“看见颜色”，而是“测到每个像素方向上来的热辐射强弱”，再经过标定、校正和图像处理，变成热图。</p><p>一个完整的红外成像链路可以写成：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">  A[&quot;目标物体&lt;br/&gt;温度 / 发射率&quot;] --&gt; B[&quot;8-14 μm 热辐射&quot;]</span><br><span class="line">  B --&gt; C[&quot;红外光学系统&lt;br/&gt;Ge / ZnSe / Si 镜头&quot;]</span><br><span class="line">  C --&gt; D[&quot;探测器像元阵列&quot;]</span><br><span class="line">  D --&gt; E[&quot;ROIC 读出电路&quot;]</span><br><span class="line">  E --&gt; F[&quot;非均匀性校正 / 标定&quot;]</span><br><span class="line">  F --&gt; G[&quot;灰度图 / 伪彩热图 / 温度估计&quot;]</span><br></pre></td></tr></table></figure><p>这条链路里，探测器只是中间一环。但它决定了系统的核心能力：灵敏度、响应速度、噪声、是否制冷、成本、体积和波段。</p><hr><h2 id="2-为什么长波红外适合看常温目标"><a href="#2-为什么长波红外适合看常温目标" class="headerlink" title="2. 为什么长波红外适合看常温目标"></a>2. 为什么长波红外适合看常温目标</h2><p>红外本质上还是电磁波。NASA 的红外波段介绍中提到，人眼看不见红外，但人能把它感知为热；地球科学中 8-15 μm 常被称为 thermal infrared，因为它适合研究地球长波热辐射。</p><p>这和黑体辐射有关。一个温度为 $T$ 的物体，会向外发射连续光谱。峰值波长大致由维恩位移定律给出：</p><p>$$<br>\lambda_{peak} &#x3D; \frac{2898}{T}\ \mu m<br>$$</p><p>室温目标大约 $T &#x3D; 300K$：</p><p>$$<br>\lambda_{peak} \approx \frac{2898}{300} \approx 9.7\ \mu m<br>$$</p><p>这正好落在 <strong>8-14 μm 长波红外窗口</strong>。所以人、车辆、建筑、地面、设备发热区域，都会在长波红外里表现出明显差异。</p><p>这里有一个容易误解的点：长波红外相机并不一定是在直接测“温度”。它首先测的是到达探测器的辐射功率。温度反演还要考虑：</p><ul><li>目标表面发射率；</li><li>大气吸收和散射；</li><li>光学系统透过率；</li><li>背景辐射；</li><li>探测器自身温度和标定曲线。</li></ul><p>所以红外图像里亮，不一定简单等于“真实温度更高”。它表示“这个方向进入系统的长波红外辐射更强”，温度只是经过模型和标定后推出来的物理量。</p><hr><h2 id="3-两大路线：热探测器和光子探测器"><a href="#3-两大路线：热探测器和光子探测器" class="headerlink" title="3. 两大路线：热探测器和光子探测器"></a>3. 两大路线：热探测器和光子探测器</h2><p>红外探测器最核心的分类不是材料，而是 <strong>工作机制</strong>。</p><table><thead><tr><th align="left">类型</th><th align="left">典型路线</th><th align="left">核心机制</th><th align="left">是否常需制冷</th><th align="left">优点</th><th align="left">主要代价</th></tr></thead><tbody><tr><td align="left">热探测器</td><td align="left">微测辐射热计 microbolometer、热电堆、热释电</td><td align="left">红外先变成热，再读温度相关电学量</td><td align="left">通常不需要深冷</td><td align="left">小型、低成本、适合民用热成像</td><td align="left">慢一些，灵敏度和高速能力有限</td></tr><tr><td align="left">光子探测器</td><td align="left">HgCdTe、InSb、QWIP、II 类超晶格</td><td align="left">光子直接激发电子跃迁，产生载流子</td><td align="left">多数需要制冷</td><td align="left">灵敏度高、速度快、可做高端成像</td><td align="left">贵、复杂、暗电流敏感</td></tr></tbody></table><p>这两个路线的差别可以这样理解：</p><ul><li>热探测器像“温度计”：红外把像元加热一点点，像元电阻或电压变化。</li><li>光子探测器像“太阳能电池&#x2F;光电二极管”：红外光子能量足够时，直接产生电子-空穴对或电子能级跃迁。</li></ul><p>这也是为什么非制冷热像仪常用微测辐射热计，而高端科研、制导、天文、低噪声高速探测常用制冷光子探测器。</p><hr><h2 id="4-非制冷微测辐射热计：现在最常见的热成像路线"><a href="#4-非制冷微测辐射热计：现在最常见的热成像路线" class="headerlink" title="4. 非制冷微测辐射热计：现在最常见的热成像路线"></a>4. 非制冷微测辐射热计：现在最常见的热成像路线</h2><p>很多便携式热像仪、工业测温相机、车载夜视、安防热成像，核心都是 <strong>非制冷微测辐射热计（uncooled microbolometer）</strong>。</p><p>它的像元结构可以想象成一个“悬空小热岛”：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flowchart TB</span><br><span class="line">  A[&quot;入射 LWIR 辐射&quot;] --&gt; B[&quot;吸收层&quot;]</span><br><span class="line">  B --&gt; C[&quot;温敏电阻&lt;br/&gt;VOx 或 a-Si&quot;]</span><br><span class="line">  C --&gt; D[&quot;热隔离支撑梁&quot;]</span><br><span class="line">  D --&gt; E[&quot;ROIC 读出电路&quot;]</span><br></pre></td></tr></table></figure><p>工作过程：</p><ol><li>长波红外辐射照到像元吸收层。</li><li>吸收层升温，温升可能非常小。</li><li>温敏材料电阻发生变化，常见材料包括 VOx 和非晶硅。</li><li>读出电路扫描每个像素的电阻变化。</li><li>经过非均匀性校正、坏点修复、温度标定，得到热图。</li></ol><p>微测辐射热计的关键不是“光生电流”，而是：</p><p>$$<br>\Delta T &#x3D; \frac{P_{abs}}{G}<br>$$</p><p>其中 $P_{abs}$ 是吸收的红外功率，$G$ 是像元到衬底的热导。热导越低，同样辐射造成的温升越大，灵敏度越高。但热导太低，热量散得慢，响应速度会下降。</p><p>这就是非制冷热探测器的核心权衡：</p><table><thead><tr><th align="left">设计目标</th><th align="left">希望怎么做</th><th align="left">副作用</th></tr></thead><tbody><tr><td align="left">高灵敏度</td><td align="left">降低热导、提高吸收、提高 TCR</td><td align="left">响应变慢，像元更脆弱</td></tr><tr><td align="left">快响应</td><td align="left">降低热容、提高热导</td><td align="left">温升变小，噪声影响更明显</td></tr><tr><td align="left">低成本</td><td align="left">CMOS&#x2F;MEMS 批量制造</td><td align="left">性能不如高端制冷光子探测器</td></tr></tbody></table><p>所以你会看到非制冷热像仪通常很方便、小、便宜、无需等待制冷，但在极弱信号、高帧率、高灵敏度、远距离探测方面，很难和制冷光子探测器相比。</p><hr><h2 id="5-制冷-HgCdTe：高端红外探测器的长期主力"><a href="#5-制冷-HgCdTe：高端红外探测器的长期主力" class="headerlink" title="5. 制冷 HgCdTe：高端红外探测器的长期主力"></a>5. 制冷 HgCdTe：高端红外探测器的长期主力</h2><p><strong>HgCdTe（MCT，碲镉汞）</strong> 是传统高性能红外探测器中非常核心的材料体系。它的优势在于可以通过调节 Hg&#x2F;Cd 组分改变禁带宽度，从而覆盖中波和长波红外。</p><p>光子探测器的基本逻辑是：</p><p>$$<br>h\nu \ge E_g<br>$$</p><p>也就是入射光子的能量大于材料禁带，电子就能从价带跃迁到导带，形成可收集的载流子。截止波长由有效禁带决定：</p><p>$$<br>\lambda_c(\mu m) &#x3D; \frac{1.24}{E_g(eV)}<br>$$</p><p>长波红外要探测到 10 μm 左右，对应：</p><p>$$<br>E_g \approx 0.124 eV<br>$$</p><p>这个禁带非常窄。窄禁带的好处是能吸收长波红外，坏处是热激发载流子也非常容易产生。于是暗电流会变大，探测器会被自身热噪声淹没。</p><p>这就是为什么高性能长波 HgCdTe 通常要制冷。制冷的目的不是让目标更亮，而是让探测器自己更安静。</p><p>一个典型制冷光子探测器链路是：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">  A[&quot;LWIR 光子&quot;] --&gt; B[&quot;HgCdTe 吸收层&quot;]</span><br><span class="line">  B --&gt; C[&quot;电子-空穴对&quot;]</span><br><span class="line">  C --&gt; D[&quot;p-n / p-i-n 结分离载流子&quot;]</span><br><span class="line">  D --&gt; E[&quot;电流或电荷信号&quot;]</span><br><span class="line">  E --&gt; F[&quot;ROIC 积分读出&quot;]</span><br><span class="line">  F --&gt; G[&quot;低噪声图像&quot;]</span><br></pre></td></tr></table></figure><p>HgCdTe 的强项：</p><ul><li>量子效率高；</li><li>光谱覆盖范围广；</li><li>高端成像性能成熟；</li><li>在科研、军事、遥感、天文等场景中长期应用。</li></ul><p>但它的工程难点也很清楚：</p><ul><li>材料组分和均匀性要求高；</li><li>缺陷、深能级和表面漏电会明显影响暗电流；</li><li>长波器件通常依赖制冷封装；</li><li>大面阵、低成本、重复性并不容易。</li></ul><p>如果用一句话理解 HgCdTe：<strong>它性能强，但材料和制冷系统都很“贵”。</strong></p><hr><h2 id="6-QWIP：用量子阱能级差来吸收红外"><a href="#6-QWIP：用量子阱能级差来吸收红外" class="headerlink" title="6. QWIP：用量子阱能级差来吸收红外"></a>6. QWIP：用量子阱能级差来吸收红外</h2><p><strong>QWIP（Quantum Well Infrared Photodetector，量子阱红外探测器）</strong> 不是靠普通带间跃迁，而是靠量子阱里的 <strong>子带间跃迁</strong>。</p><p>把电子关在一个很薄的量子阱里，它的能级会离散化。只要两个量子能级之间的能量差刚好等于红外光子能量，红外就能被吸收：</p><p>$$<br>h\nu &#x3D; E_2 - E_1<br>$$</p><p>因此 QWIP 的波段由量子阱厚度、势垒高度和材料体系设计决定，而不是单纯由材料本征禁带决定。</p><p>它的优点：</p><ul><li>III-V 族材料体系成熟；</li><li>面阵均匀性好；</li><li>像元一致性和大规模 FPA 制造有优势；</li><li>可以通过结构设计实现多波段。</li></ul><p>它的短板：</p><ul><li>通常需要低温；</li><li>量子效率依赖光耦合结构；</li><li>对垂直入射光吸收弱，常需要光栅或耦合结构；</li><li>在极限灵敏度上通常不如最好的 HgCdTe。</li></ul><p>如果用一句话理解 QWIP：<strong>它像一个“人工设计的红外能级尺”，稳定、均匀，但需要低温和光耦合设计。</strong></p><hr><h2 id="7-II-类超晶格：为什么-InAs-GaSb-会被重点研究"><a href="#7-II-类超晶格：为什么-InAs-GaSb-会被重点研究" class="headerlink" title="7. II 类超晶格：为什么 InAs&#x2F;GaSb 会被重点研究"></a>7. II 类超晶格：为什么 InAs&#x2F;GaSb 会被重点研究</h2><p>我现在重点做的 InAs&#x2F;GaSb 二类超晶格，属于 <strong>III-V 族 II 类超晶格（Type-II Superlattice, T2SL）</strong> 路线。</p><p>它的核心思想不是找一个天然禁带刚好的材料，而是用 MBE 一层一层长出一个人工周期结构：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">... / InAs / GaSb / InAs / GaSb / ...</span><br></pre></td></tr></table></figure><p>在 II 类能带对齐中，电子主要在 InAs 侧，空穴主要在 GaSb 侧。电子和空穴空间分离，系统的有效带隙由超晶格周期、层厚、应变和界面决定。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">  A[&quot;InAs 层&lt;br/&gt;电子势阱&quot;] --- B[&quot;界面&lt;br/&gt;InSb-like / GaAs-like&quot;]</span><br><span class="line">  B --- C[&quot;GaSb 层&lt;br/&gt;空穴势阱&quot;]</span><br><span class="line">  C --- D[&quot;周期重复&quot;]</span><br><span class="line">  D --&gt; E[&quot;人工有效带隙 Eg_eff&quot;]</span><br><span class="line">  E --&gt; F[&quot;截止波长 λc&quot;]</span><br></pre></td></tr></table></figure><p>这条路线的吸引力在于：</p><ul><li>可以通过层厚调节截止波长，覆盖 MWIR、LWIR 甚至 VLWIR；</li><li>III-V 工艺和 MBE 外延基础较成熟；</li><li>理论上可获得较低 Auger 复合和较好的高温潜力；</li><li>能做 nBn、p-i-n、M 型势垒、interband cascade photodetector 等多种结构；</li><li>与多色、宽谱、焦平面阵列路线兼容。</li></ul><p>但它也非常挑剔：</p><ul><li>每个周期只有几 nm，界面一旦混乱，能带就变了；</li><li>InSb-like &#x2F; GaAs-like 界面会改变应变和带边；</li><li>应变累积可能导致位错；</li><li>表面粗糙、互扩散、厚度误差会影响 PL、XRD 和暗电流；</li><li>材料好坏不是只看 cutoff，还要看 XRD、AFM、HRTEM、PL、I-V 和光谱响应。</li></ul><p>所以，做 InAs&#x2F;GaSb 模拟器的意义就很明确：它不是简单播放“长层动画”，而是帮助我理解 <strong>recipe、温度、束流、快门、RHEED、界面和表征结果之间的因果链</strong>。</p><hr><h2 id="8-业界路线大致怎么看"><a href="#8-业界路线大致怎么看" class="headerlink" title="8. 业界路线大致怎么看"></a>8. 业界路线大致怎么看</h2><p>从应用角度看，当前长波红外探测器可以粗略分为四类。</p><h3 id="8-1-民用和工业热成像：非制冷微测辐射热计为主"><a href="#8-1-民用和工业热成像：非制冷微测辐射热计为主" class="headerlink" title="8.1 民用和工业热成像：非制冷微测辐射热计为主"></a>8.1 民用和工业热成像：非制冷微测辐射热计为主</h3><p>这类产品追求：</p><ul><li>小体积；</li><li>低功耗；</li><li>低成本；</li><li>无需制冷；</li><li>可靠易用。</li></ul><p>典型应用：</p><ul><li>工业测温；</li><li>电力巡检；</li><li>安防监控；</li><li>消防；</li><li>车载夜视；</li><li>消费级热成像附件。</li></ul><p>这类场景通常不需要极限灵敏度和超高速响应，所以非制冷微测辐射热计非常合适。</p><h3 id="8-2-高端成像和远距离探测：制冷-HgCdTe-仍然强"><a href="#8-2-高端成像和远距离探测：制冷-HgCdTe-仍然强" class="headerlink" title="8.2 高端成像和远距离探测：制冷 HgCdTe 仍然强"></a>8.2 高端成像和远距离探测：制冷 HgCdTe 仍然强</h3><p>这类系统更关心：</p><ul><li>极低噪声；</li><li>高灵敏度；</li><li>远距离目标探测；</li><li>高帧率；</li><li>高动态范围；</li><li>多波段能力。</li></ul><p>典型应用：</p><ul><li>国防和预警；</li><li>空间遥感；</li><li>天文观测；</li><li>高端科学仪器；</li><li>高性能红外搜索与跟踪。</li></ul><p>这里制冷 HgCdTe 仍然是重要路线。</p><h3 id="8-3-大面阵和均匀性：QWIP-有自己的位置"><a href="#8-3-大面阵和均匀性：QWIP-有自己的位置" class="headerlink" title="8.3 大面阵和均匀性：QWIP 有自己的位置"></a>8.3 大面阵和均匀性：QWIP 有自己的位置</h3><p>QWIP 的价值更多体现在：</p><ul><li>材料均匀性；</li><li>大面积阵列；</li><li>多波段结构设计；</li><li>稳定可重复的 III-V 制程。</li></ul><p>它不是最“民用便宜”的路线，也不一定是最高灵敏度路线，但在特定遥感、成像和多色探测任务中仍有价值。</p><h3 id="8-4-面向未来的高温高性能：II-类超晶格正在追赶"><a href="#8-4-面向未来的高温高性能：II-类超晶格正在追赶" class="headerlink" title="8.4 面向未来的高温高性能：II 类超晶格正在追赶"></a>8.4 面向未来的高温高性能：II 类超晶格正在追赶</h3><p>II 类超晶格的产业意义在于：如果它能在更高工作温度下接近 HgCdTe 的性能，就可以减轻制冷负担，降低系统 SWaP（尺寸、重量、功耗）。</p><p>近年研究中，T2SL、InAs&#x2F;InAsSb、InAs&#x2F;GaSb、nBn、pBn、plasmonic absorber、interband cascade photodetector 等方向都在围绕一个核心问题展开：</p><p><strong>能不能在保持量子效率的同时，把暗电流压到足够低，并提高工作温度？</strong></p><p>这和我当前模拟器里的几个评价指标是对应的：</p><table><thead><tr><th align="left">模拟器里的量</th><th align="left">真实器件里的意义</th></tr></thead><tbody><tr><td align="left">周期厚度</td><td align="left">决定能带、截止波长、XRD 周期峰</td></tr><tr><td align="left">InSb&#x2F;GaAs-like 界面</td><td align="left">影响应变、界面态、能带偏移和暗电流</td></tr><tr><td align="left">RHEED 振荡</td><td align="left">反映层状生长、表面平整度和速率稳定性</td></tr><tr><td align="left">应变累积</td><td align="left">对应位错、弛豫和暗电流风险</td></tr><tr><td align="left">PL 峰位&#x2F;FWHM</td><td align="left">反映光学带隙和均匀性</td></tr><tr><td align="left">I-V &#x2F; R0A</td><td align="left">直接反映暗电流和结质量</td></tr><tr><td align="left">D* &#x2F; QE</td><td align="left">最终探测性能</td></tr></tbody></table><hr><h2 id="9-一个像素到底在输出什么"><a href="#9-一个像素到底在输出什么" class="headerlink" title="9. 一个像素到底在输出什么"></a>9. 一个像素到底在输出什么</h2><p>理解探测器工作时，可以把一个像素想成一个“小实验”。</p><h3 id="9-1-对热探测器"><a href="#9-1-对热探测器" class="headerlink" title="9.1 对热探测器"></a>9.1 对热探测器</h3><p>输入是辐射功率 $P_{IR}$，输出是电阻变化：</p><p>$$<br>P_{IR} \rightarrow \Delta T \rightarrow \Delta R \rightarrow \Delta V<br>$$</p><p>所以它关心：</p><ul><li>吸收率高不高；</li><li>热隔离好不好；</li><li>电阻温度系数 TCR 大不大；</li><li>热噪声和读出噪声小不小；</li><li>热时间常数能不能满足帧率。</li></ul><h3 id="9-2-对光子探测器"><a href="#9-2-对光子探测器" class="headerlink" title="9.2 对光子探测器"></a>9.2 对光子探测器</h3><p>输入是光子通量，输出是光生载流子：</p><p>$$<br>h\nu \rightarrow e^- &#x2F; h^+ \rightarrow I_{photo}<br>$$</p><p>所以它关心：</p><ul><li>光子能否被吸收；</li><li>载流子能否被分离和收集；</li><li>暗电流有多低；</li><li>复合中心多不多；</li><li>器件结构是否抑制隧穿和表面漏电。</li></ul><p>这也是为什么光子探测器更像半导体器件，热探测器更像 MEMS 热-电转换器。</p><hr><h2 id="10-关键指标如何串起来"><a href="#10-关键指标如何串起来" class="headerlink" title="10. 关键指标如何串起来"></a>10. 关键指标如何串起来</h2><p>学习红外探测器时，很容易被指标淹没。我的理解是先抓五个。</p><h3 id="10-1-截止波长-lambda-c"><a href="#10-1-截止波长-lambda-c" class="headerlink" title="10.1 截止波长 $\lambda_c$"></a>10.1 截止波长 $\lambda_c$</h3><p>它回答：这个探测器能看到多长的波？</p><p>对于光子探测器：</p><p>$$<br>\lambda_c &#x3D; \frac{1.24}{E_g}<br>$$</p><p>对于 InAs&#x2F;GaSb T2SL，$E_g$ 不是天然材料禁带，而是人工超晶格的有效带隙，所以它对层厚和界面极敏感。</p><h3 id="10-2-量子效率-QE"><a href="#10-2-量子效率-QE" class="headerlink" title="10.2 量子效率 QE"></a>10.2 量子效率 QE</h3><p>它回答：进来的光子有多少真正变成了可收集载流子？</p><p>QE 高，说明吸收、载流子输运和收集都比较好。对于长波探测器，想提高 QE 往往需要更厚吸收区；但吸收区太厚，又会带来应变、复合和暗电流问题。</p><h3 id="10-3-暗电流"><a href="#10-3-暗电流" class="headerlink" title="10.3 暗电流"></a>10.3 暗电流</h3><p>它回答：没有光的时候，器件自己漏了多少电？</p><p>长波器件最怕暗电流，因为目标信号本来就弱。如果暗电流大，噪声也大，弱目标就被淹没。</p><p>常见来源包括：</p><ul><li>扩散电流；</li><li>产生-复合电流；</li><li>陷阱辅助隧穿；</li><li>带间隧穿；</li><li>表面漏电；</li><li>缺陷和位错相关电流。</li></ul><h3 id="10-4-探测率-D"><a href="#10-4-探测率-D" class="headerlink" title="10.4 探测率 $D^*$"></a>10.4 探测率 $D^*$</h3><p>它回答：综合面积、带宽和噪声以后，探测弱信号的能力如何？</p><p>它不是单独由材料决定，而是材料、结构、制冷、光学、读出电路和封装共同决定。</p><h3 id="10-5-NETD"><a href="#10-5-NETD" class="headerlink" title="10.5 NETD"></a>10.5 NETD</h3><p>NETD 常见于热成像系统，表示能分辨的最小温差。它越小，图像越能看出微弱温差。</p><p>但要注意：NETD 是系统指标，不只是探测器材料指标。镜头 F 数、积分时间、算法、标定和环境都会影响它。</p><hr><h2 id="11-从材料生长到器件：中间还差哪些步骤"><a href="#11-从材料生长到器件：中间还差哪些步骤" class="headerlink" title="11. 从材料生长到器件：中间还差哪些步骤"></a>11. 从材料生长到器件：中间还差哪些步骤</h2><p>我现在做 MBE 模拟器，主要覆盖的是外延生长阶段。但一个能工作的红外探测器还需要后续器件工艺。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">flowchart TB</span><br><span class="line">  A[&quot;MBE 外延片&lt;br/&gt;材料结构&quot;] --&gt; B[&quot;XRD / AFM / HRTEM / PL 表征&quot;]</span><br><span class="line">  B --&gt; C[&quot;光刻定义台面&quot;]</span><br><span class="line">  C --&gt; D[&quot;刻蚀形成像元 / 台面&quot;]</span><br><span class="line">  D --&gt; E[&quot;侧壁钝化&lt;br/&gt;降低表面漏电&quot;]</span><br><span class="line">  E --&gt; F[&quot;欧姆接触 / 金属电极&quot;]</span><br><span class="line">  F --&gt; G[&quot;倒装互连到 ROIC&quot;]</span><br><span class="line">  G --&gt; H[&quot;封装 / 制冷 / 光学窗口&quot;]</span><br><span class="line">  H --&gt; I[&quot;I-V / 光谱响应 / 黑体测试&quot;]</span><br></pre></td></tr></table></figure><p>材料好是必要条件，但不是充分条件。</p><p>例如：</p><ul><li>外延层 XRD 很好，但台面刻蚀损伤严重，暗电流仍然会高；</li><li>PL 峰位合适，但吸收区太薄，量子效率可能低；</li><li>界面很好，但钝化不好，表面漏电会毁掉 I-V；</li><li>单像元性能好，但 FPA 互连、ROIC、非均匀性校正不好，图像仍然差。</li></ul><p>所以后面学习器件时，应该把问题拆开：</p><ol><li>材料外延决定：能带、应变、缺陷、界面、均匀性。</li><li>器件结构决定：电场分布、载流子收集、暗电流抑制。</li><li>工艺加工决定：表面漏电、接触质量、阵列一致性。</li><li>系统封装决定：制冷、窗口、光学和长期稳定性。</li></ol><hr><h2 id="12-和-MBE-模拟器的关系"><a href="#12-和-MBE-模拟器的关系" class="headerlink" title="12. 和 MBE 模拟器的关系"></a>12. 和 MBE 模拟器的关系</h2><p>现在的 MBE 模拟器可以先承担三个角色。</p><h3 id="12-1-帮我理解材料生长因果链"><a href="#12-1-帮我理解材料生长因果链" class="headerlink" title="12.1 帮我理解材料生长因果链"></a>12.1 帮我理解材料生长因果链</h3><p>比如：</p><ul><li>InAs&#x2F;GaSb 厚度改变，为什么 cutoff 变？</li><li>InSb-like 界面为什么既影响应变，也影响暗电流？</li><li>RHEED 条纹变差为什么可能对应 AFM RMS 增大？</li><li>周期越多，为什么应变和厚度误差更容易累积？</li></ul><p>这些都可以先用规则模型和文献锚点做训练。</p><h3 id="12-2-帮我整理论文任务库"><a href="#12-2-帮我整理论文任务库" class="headerlink" title="12.2 帮我整理论文任务库"></a>12.2 帮我整理论文任务库</h3><p>每篇论文可以抽成一个任务 JSON：</p><ul><li>recipe；</li><li>温度；</li><li>束流；</li><li>快门时序；</li><li>XRD；</li><li>AFM；</li><li>PL；</li><li>I-V；</li><li>光谱响应；</li><li>适用范围；</li><li>引用来源。</li></ul><p>这样模拟器不只是“玩具”，而是一个结构化的学习资料库。</p><h3 id="12-3-为后续-AI-模型准备标签体系"><a href="#12-3-为后续-AI-模型准备标签体系" class="headerlink" title="12.3 为后续 AI 模型准备标签体系"></a>12.3 为后续 AI 模型准备标签体系</h3><p>等 RHEED 视频数据逐渐积累后，可以把模拟器里的概念变成标签：</p><ul><li>生长阶段；</li><li>当前快门状态；</li><li>是否有 RHEED 振荡；</li><li>振荡是否衰减；</li><li>条纹是否变斑点；</li><li>是否进入粗糙化风险；</li><li>对应 XRD&#x2F;AFM&#x2F;PL 真值。</li></ul><p>这会帮助后续模型从“看图分类”走向“工艺状态判断”。</p><hr><h2 id="13-我现在的阶段性理解"><a href="#13-我现在的阶段性理解" class="headerlink" title="13. 我现在的阶段性理解"></a>13. 我现在的阶段性理解</h2><p>如果只用一段话总结：</p><p><strong>长波红外探测器是一个把常温目标 8-14 μm 热辐射转成电信号的系统。非制冷微测辐射热计通过热效应工作，适合低成本热成像；制冷 HgCdTe 通过光子激发载流子工作，性能强但材料和制冷复杂；QWIP 用量子阱子带跃迁设计吸收波段，均匀性好但需要低温和光耦合；InAs&#x2F;GaSb 二类超晶格则通过人工周期结构调节有效带隙，有希望在多色、高温、高性能方向追赶传统材料，但极其依赖 MBE 层厚、界面和应变控制。</strong></p><p>对我后续学习来说，主线可以定为：</p><ol><li>先用 MBE 模拟器把材料生长和表征指标对应起来；</li><li>再学习器件结构如何抑制暗电流、提高 QE；</li><li>最后把 RHEED 视频、recipe 参数和表征真值串成一个 AI 辅助判断流程。</li></ol><p>这条线走通以后，数字孪生才不是单纯可视化，而是一个能把“过程数据”和“材料&#x2F;器件结果”连接起来的训练平台。</p><hr><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol><li>NASA Science, <a href="https://science.nasa.gov/ems/07_infraredwaves/">Infrared Waves</a>.</li><li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Infrared_detector">Infrared detector</a>.</li><li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Microbolometer">Microbolometer</a>.</li><li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Mercury_cadmium_telluride">Mercury cadmium telluride</a>.</li><li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Quantum_well_infrared_photodetector">Quantum well infrared photodetector</a>.</li><li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Lynred">Lynred</a>.</li><li>Nordin et al., <a href="https://arxiv.org/abs/2201.04695">High operating temperature plasmonic infrared detectors</a>, 2022.</li><li>Xie et al., <a href="https://arxiv.org/abs/2008.13386">High-speed InAs&#x2F;GaSb Mid-Wave Infrared Interband Cascade Photodetector at Room Temperature</a>, 2020.</li><li>Chen et al., <a href="https://arxiv.org/abs/1907.05592">High Speed Mid-Infrared Interband Cascade Photodetector Based on InAs&#x2F;GaSb Type-II Superlattice</a>, 2019.</li><li>蒋洞微. 《InAs&#x2F;GaSb II 类超晶格材料生长及其红外探测器性能》, 哈尔滨工业大学博士论文, 2016.</li></ol><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script><link rel="stylesheet" href="/css/markmap.css"><script src="/js/markmap.js"></script>]]></content>
+      
+      
+      <categories>
+          
+          <category> 研究 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> InAs/GaSb </tag>
+            
+            <tag> II 类超晶格 </tag>
+            
+            <tag> 长波红外 </tag>
+            
+            <tag> 红外探测器 </tag>
+            
+            <tag> 热成像 </tag>
+            
+            <tag> HgCdTe </tag>
+            
+            <tag> 微测辐射热计 </tag>
+            
+            <tag> QWIP </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>长波红外探测器全流程：InAs/GaSb 二类超晶格的材料生长原理与器件工艺</title>
       <link href="//research/inas-gasb-lwir-detector/"/>
       <url>//research/inas-gasb-lwir-detector/</url>
@@ -24,15 +63,15 @@
             
             <tag> II 类超晶格 </tag>
             
-            <tag> MBE </tag>
-            
-            <tag> 暗电流 </tag>
-            
             <tag> 长波红外 </tag>
+            
+            <tag> MBE </tag>
             
             <tag> 材料生长 </tag>
             
             <tag> 器件工艺 </tag>
+            
+            <tag> 暗电流 </tag>
             
         </tags>
       
@@ -61,13 +100,13 @@
             
             <tag> II 类超晶格 </tag>
             
-            <tag> 红外探测器 </tag>
-            
             <tag> MBE </tag>
             
-            <tag> 量子效率 </tag>
-            
             <tag> 暗电流 </tag>
+            
+            <tag> 红外探测器 </tag>
+            
+            <tag> 量子效率 </tag>
             
         </tags>
       
@@ -92,9 +131,9 @@
       
         <tags>
             
-            <tag> 红外探测器 </tag>
-            
             <tag> MBE </tag>
+            
+            <tag> 红外探测器 </tag>
             
             <tag> 半导体工艺 </tag>
             
@@ -193,11 +232,11 @@
       
         <tags>
             
+            <tag> 计算机视觉 </tag>
+            
             <tag> 深度学习模型 </tag>
             
             <tag> NLP </tag>
-            
-            <tag> 计算机视觉 </tag>
             
             <tag> 多模态 </tag>
             
@@ -265,11 +304,11 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
-            
             <tag> 深度学习 </tag>
             
             <tag> 3D ResNet </tag>
+            
+            <tag> 深度学习模型 </tag>
             
             <tag> 视频理解 </tag>
             
@@ -399,9 +438,9 @@
       
         <tags>
             
-            <tag> 深度学习 </tag>
-            
             <tag> 语义分割 </tag>
+            
+            <tag> 深度学习 </tag>
             
             <tag> FCN </tag>
             
@@ -498,9 +537,9 @@
       
         <tags>
             
-            <tag> 算法 </tag>
-            
             <tag> TF-IDF </tag>
+            
+            <tag> 算法 </tag>
             
         </tags>
       
@@ -589,9 +628,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> Agent </tag>
             
@@ -624,9 +663,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> Agent </tag>
             
@@ -661,9 +700,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> Agent </tag>
             
@@ -748,9 +787,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> Prompt </tag>
             
@@ -781,9 +820,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> Prompt </tag>
             
@@ -814,9 +853,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> Agent </tag>
             
@@ -870,9 +909,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> Prompt </tag>
             
@@ -899,15 +938,15 @@
       
         <tags>
             
-            <tag> LLM </tag>
+            <tag> 深度学习 </tag>
             
             <tag> 深度学习模型 </tag>
-            
-            <tag> 深度学习 </tag>
             
             <tag> NLP </tag>
             
             <tag> Transformer </tag>
+            
+            <tag> LLM </tag>
             
             <tag> 大模型 </tag>
             
@@ -934,9 +973,9 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
-            
             <tag> 深度学习 </tag>
+            
+            <tag> 深度学习模型 </tag>
             
             <tag> NLP </tag>
             
@@ -967,15 +1006,15 @@
       
         <tags>
             
-            <tag> LLM </tag>
+            <tag> 深度学习 </tag>
             
             <tag> 深度学习模型 </tag>
-            
-            <tag> 深度学习 </tag>
             
             <tag> NLP </tag>
             
             <tag> Transformer </tag>
+            
+            <tag> LLM </tag>
             
             <tag> 大模型 </tag>
             
@@ -1002,9 +1041,9 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
-            
             <tag> 深度学习 </tag>
+            
+            <tag> 深度学习模型 </tag>
             
             <tag> NLP </tag>
             
@@ -1066,9 +1105,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> PEFT </tag>
             
@@ -1080,9 +1119,9 @@
             
             <tag> FineTuning </tag>
             
-            <tag> LLama2 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> LLama2 </tag>
             
         </tags>
       
@@ -1107,9 +1146,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> PEFT </tag>
             
@@ -1121,9 +1160,9 @@
             
             <tag> FineTuning </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> GPT3.5-Turbo </tag>
+            
+            <tag> OpenAI </tag>
             
         </tags>
       
@@ -1185,9 +1224,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> PEFT </tag>
             
@@ -1226,9 +1265,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> PEFT </tag>
             
@@ -1265,9 +1304,9 @@
       
         <tags>
             
-            <tag> AIGC </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AIGC </tag>
             
             <tag> PEFT </tag>
             
@@ -1347,13 +1386,13 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> CV </tag>
-            
             <tag> DeepLab </tag>
+            
+            <tag> 深度学习模型 </tag>
             
             <tag> 图像分割 </tag>
             
@@ -1382,13 +1421,13 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> CV </tag>
-            
             <tag> Mask R-CNN </tag>
+            
+            <tag> 深度学习模型 </tag>
             
             <tag> 图像分割 </tag>
             
@@ -1417,11 +1456,11 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 图像分割 </tag>
             
@@ -1430,43 +1469,6 @@
             <tag> 医学图像分割 </tag>
             
             <tag> U-Net </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>论文解读：YOLO - 统一实时目标检测</title>
-      <link href="/2022/11/18/research/paper-yolo/"/>
-      <url>/2022/11/18/research/paper-yolo/</url>
-      
-        <content type="html"><![CDATA[<p>YOLO（You Only Look Once ），创造性的将物体检测任务直接当作回归问题来处理，将候选区和检测两个阶段合二为一。目前YOLO版本已经更新到YOLO7，另外还有许多YOLO变种。</p><span id="more"></span><h3 id="YOLO1"><a href="#YOLO1" class="headerlink" title="YOLO1"></a>YOLO1</h3><p>论文：<a href="https://arxiv.org/pdf/1506.02640.pdf">You Only Look Once: Unified, Real-Time Object Detection</a></p><p>YOLOv1最核心的思想，是把目标检测直接视为一个回归问题：输入一张图，网络一次前向传播就同时给出边框位置和类别概率。<br>它的优势是速度非常快，而且整张图统一建模，背景误检较少；缺点是定位精度和对小目标的处理相对一般，容易出现边框不够准的问题。</p><h3 id="YOLO2"><a href="#YOLO2" class="headerlink" title="YOLO2"></a>YOLO2</h3><p>论文：<a href="https://arxiv.org/pdf/1612.08242.pdf">YOLO9000: Better, Faster, Stronger</a></p><p>YOLOv2在第一版基础上做了很多关键改进，包括batch normalization、anchor boxes、维度聚类以及更强的backbone。<br>这篇论文还有一个很有代表性的点，就是联合使用分类数据和检测数据进行训练，把可检测类别扩展到9000类，体现出YOLO从“快”走向“更强泛化”的思路。</p><h3 id="YOLO3"><a href="#YOLO3" class="headerlink" title="YOLO3"></a>YOLO3</h3><p>论文：<a href="https://arxiv.org/pdf/1804.02767.pdf">YOLOv3: An Incremental Improvement</a></p><p>YOLOv3的名字虽然叫“渐进式改进”，但影响非常大。它引入了更强的Darknet-53，并采用多尺度预测，让模型对不同大小目标都更友好。<br>论文中给出的结论也很典型：YOLOv3在速度和精度之间取得了很强平衡，尤其在实时检测场景里非常有竞争力。</p><h3 id="YOLO4"><a href="#YOLO4" class="headerlink" title="YOLO4"></a>YOLO4</h3><p>论文：<a href="https://arxiv.org/pdf/2004.10934.pdf">YOLOv4: Optimal Speed and Accuracy of Object Detection</a></p><p>YOLOv4更像是一篇非常强的工程整合论文。它把很多被验证有效的训练技巧和结构设计系统组合起来，在通用GPU上实现了更好的实时检测效果。<br>从学习角度看，YOLOv4很值得读的地方在于：它说明目标检测不仅靠单一结构创新，训练策略、数据增强和loss设计同样能决定最终上限。</p><h3 id="YOLO5"><a href="#YOLO5" class="headerlink" title="YOLO5"></a>YOLO5</h3><p>论文：<a href="https://github.com/ultralytics/yolov5">YOLOv5 Source</a></p><p>YOLOv5严格来说不是一篇正式论文，而是一个影响力很大的工程实现。它在训练、推理、导出和部署体验上做得非常成熟，所以在工业和实践社区传播特别广。<br>如果把YOLO系列当作学习路线，YOLOv5更适合作为“工程落地入口”，而不是传统意义上的论文阅读对象。</p><h3 id="YOLO6"><a href="#YOLO6" class="headerlink" title="YOLO6"></a>YOLO6</h3><p>论文：<a href="https://arxiv.org/pdf/2209.02976.pdf">YOLOv6: A Single-Stage Object Detection Framework for Industrial Applications</a></p><p>YOLOv6从标题就很明确，重点是工业应用。它关注的不只是学术指标，还包括部署效率、量化兼容性和实际吞吐表现。<br>所以这篇论文更像是在回答一个工程问题：怎样把单阶段检测器做成真正能在产业环境里稳定落地的方案。</p><h3 id="YOLO7"><a href="#YOLO7" class="headerlink" title="YOLO7"></a>YOLO7</h3><p>论文：<a href="https://arxiv.org/pdf/2207.02696.pdf">YOLOv7: Trainable bag-of-freebies sets new state-of-the-art for real-time object detectors</a></p><p>YOLOv7继续围绕实时检测做优化，论文强调的是在较宽FPS范围内同时兼顾速度和精度，并把很多训练期有效但不增加推理成本的技巧做成了可训练化设计。<br>它代表了YOLO系列后期一个很明显的趋势：不仅卷结构本身重要，训练策略和整体系统协同同样是性能突破的关键。</p><h3 id="如何理解YOLO系列的演进"><a href="#如何理解YOLO系列的演进" class="headerlink" title="如何理解YOLO系列的演进"></a>如何理解YOLO系列的演进</h3><p>如果把YOLO整个系列连起来看，它的主线非常清晰：</p><ul><li>YOLOv1证明“检测可以端到端、一次完成”。</li><li>YOLOv2和YOLOv3补齐了精度、多尺度和类别扩展能力。</li><li>YOLOv4开始把很多高收益工程技巧系统化。</li><li>YOLOv5到YOLOv7则越来越强调工程可用性、训练技巧与部署效率的统一。</li></ul><h3 id="简单理解与局限"><a href="#简单理解与局限" class="headerlink" title="简单理解与局限"></a>简单理解与局限</h3><p>我对YOLO系列的理解是，它几乎定义了实时目标检测的发展方向。<br>它的共同优点是速度快、结构清晰、工程生态成熟；共同局限则是早期版本在小目标、密集目标和极高定位精度上往往不如更重的两阶段方法，因此很多后续工作都在围绕这些短板继续优化。</p><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script><link rel="stylesheet" href="/css/markmap.css"><script src="/js/markmap.js"></script>]]></content>
-      
-      
-      <categories>
-          
-          <category> 深度学习模型 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 深度学习模型 </tag>
-            
-            <tag> 深度学习 </tag>
-            
-            <tag> CV </tag>
-            
-            <tag> 目标检测 </tag>
-            
-            <tag> YOLO </tag>
-            
-            <tag> ObjectDetection </tag>
-            
-            <tag> OneStage </tag>
             
         </tags>
       
@@ -1491,15 +1493,52 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 深度学习 </tag>
-            
-            <tag> CV </tag>
             
             <tag> 目标检测 </tag>
             
             <tag> SSD </tag>
+            
+            <tag> 深度学习模型 </tag>
+            
+            <tag> ObjectDetection </tag>
+            
+            <tag> OneStage </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>论文解读：YOLO - 统一实时目标检测</title>
+      <link href="/2022/11/18/research/paper-yolo/"/>
+      <url>/2022/11/18/research/paper-yolo/</url>
+      
+        <content type="html"><![CDATA[<p>YOLO（You Only Look Once ），创造性的将物体检测任务直接当作回归问题来处理，将候选区和检测两个阶段合二为一。目前YOLO版本已经更新到YOLO7，另外还有许多YOLO变种。</p><span id="more"></span><h3 id="YOLO1"><a href="#YOLO1" class="headerlink" title="YOLO1"></a>YOLO1</h3><p>论文：<a href="https://arxiv.org/pdf/1506.02640.pdf">You Only Look Once: Unified, Real-Time Object Detection</a></p><p>YOLOv1最核心的思想，是把目标检测直接视为一个回归问题：输入一张图，网络一次前向传播就同时给出边框位置和类别概率。<br>它的优势是速度非常快，而且整张图统一建模，背景误检较少；缺点是定位精度和对小目标的处理相对一般，容易出现边框不够准的问题。</p><h3 id="YOLO2"><a href="#YOLO2" class="headerlink" title="YOLO2"></a>YOLO2</h3><p>论文：<a href="https://arxiv.org/pdf/1612.08242.pdf">YOLO9000: Better, Faster, Stronger</a></p><p>YOLOv2在第一版基础上做了很多关键改进，包括batch normalization、anchor boxes、维度聚类以及更强的backbone。<br>这篇论文还有一个很有代表性的点，就是联合使用分类数据和检测数据进行训练，把可检测类别扩展到9000类，体现出YOLO从“快”走向“更强泛化”的思路。</p><h3 id="YOLO3"><a href="#YOLO3" class="headerlink" title="YOLO3"></a>YOLO3</h3><p>论文：<a href="https://arxiv.org/pdf/1804.02767.pdf">YOLOv3: An Incremental Improvement</a></p><p>YOLOv3的名字虽然叫“渐进式改进”，但影响非常大。它引入了更强的Darknet-53，并采用多尺度预测，让模型对不同大小目标都更友好。<br>论文中给出的结论也很典型：YOLOv3在速度和精度之间取得了很强平衡，尤其在实时检测场景里非常有竞争力。</p><h3 id="YOLO4"><a href="#YOLO4" class="headerlink" title="YOLO4"></a>YOLO4</h3><p>论文：<a href="https://arxiv.org/pdf/2004.10934.pdf">YOLOv4: Optimal Speed and Accuracy of Object Detection</a></p><p>YOLOv4更像是一篇非常强的工程整合论文。它把很多被验证有效的训练技巧和结构设计系统组合起来，在通用GPU上实现了更好的实时检测效果。<br>从学习角度看，YOLOv4很值得读的地方在于：它说明目标检测不仅靠单一结构创新，训练策略、数据增强和loss设计同样能决定最终上限。</p><h3 id="YOLO5"><a href="#YOLO5" class="headerlink" title="YOLO5"></a>YOLO5</h3><p>论文：<a href="https://github.com/ultralytics/yolov5">YOLOv5 Source</a></p><p>YOLOv5严格来说不是一篇正式论文，而是一个影响力很大的工程实现。它在训练、推理、导出和部署体验上做得非常成熟，所以在工业和实践社区传播特别广。<br>如果把YOLO系列当作学习路线，YOLOv5更适合作为“工程落地入口”，而不是传统意义上的论文阅读对象。</p><h3 id="YOLO6"><a href="#YOLO6" class="headerlink" title="YOLO6"></a>YOLO6</h3><p>论文：<a href="https://arxiv.org/pdf/2209.02976.pdf">YOLOv6: A Single-Stage Object Detection Framework for Industrial Applications</a></p><p>YOLOv6从标题就很明确，重点是工业应用。它关注的不只是学术指标，还包括部署效率、量化兼容性和实际吞吐表现。<br>所以这篇论文更像是在回答一个工程问题：怎样把单阶段检测器做成真正能在产业环境里稳定落地的方案。</p><h3 id="YOLO7"><a href="#YOLO7" class="headerlink" title="YOLO7"></a>YOLO7</h3><p>论文：<a href="https://arxiv.org/pdf/2207.02696.pdf">YOLOv7: Trainable bag-of-freebies sets new state-of-the-art for real-time object detectors</a></p><p>YOLOv7继续围绕实时检测做优化，论文强调的是在较宽FPS范围内同时兼顾速度和精度，并把很多训练期有效但不增加推理成本的技巧做成了可训练化设计。<br>它代表了YOLO系列后期一个很明显的趋势：不仅卷结构本身重要，训练策略和整体系统协同同样是性能突破的关键。</p><h3 id="如何理解YOLO系列的演进"><a href="#如何理解YOLO系列的演进" class="headerlink" title="如何理解YOLO系列的演进"></a>如何理解YOLO系列的演进</h3><p>如果把YOLO整个系列连起来看，它的主线非常清晰：</p><ul><li>YOLOv1证明“检测可以端到端、一次完成”。</li><li>YOLOv2和YOLOv3补齐了精度、多尺度和类别扩展能力。</li><li>YOLOv4开始把很多高收益工程技巧系统化。</li><li>YOLOv5到YOLOv7则越来越强调工程可用性、训练技巧与部署效率的统一。</li></ul><h3 id="简单理解与局限"><a href="#简单理解与局限" class="headerlink" title="简单理解与局限"></a>简单理解与局限</h3><p>我对YOLO系列的理解是，它几乎定义了实时目标检测的发展方向。<br>它的共同优点是速度快、结构清晰、工程生态成熟；共同局限则是早期版本在小目标、密集目标和极高定位精度上往往不如更重的两阶段方法，因此很多后续工作都在围绕这些短板继续优化。</p><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script><link rel="stylesheet" href="/css/markmap.css"><script src="/js/markmap.js"></script>]]></content>
+      
+      
+      <categories>
+          
+          <category> 深度学习模型 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> CV </tag>
+            
+            <tag> 深度学习 </tag>
+            
+            <tag> 目标检测 </tag>
+            
+            <tag> YOLO </tag>
+            
+            <tag> 深度学习模型 </tag>
             
             <tag> ObjectDetection </tag>
             
@@ -1528,13 +1567,13 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> CV </tag>
-            
             <tag> 目标检测 </tag>
+            
+            <tag> 深度学习模型 </tag>
             
             <tag> ObjectDetection </tag>
             
@@ -1565,13 +1604,13 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> CV </tag>
-            
             <tag> 目标检测 </tag>
+            
+            <tag> 深度学习模型 </tag>
             
             <tag> Fast R-CNN </tag>
             
@@ -1602,11 +1641,11 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 图像分类 </tag>
             
@@ -1637,11 +1676,11 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 图像分类 </tag>
             
@@ -1672,11 +1711,11 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 图像分类 </tag>
             
@@ -1707,11 +1746,11 @@
       
         <tags>
             
-            <tag> 深度学习模型 </tag>
+            <tag> CV </tag>
             
             <tag> 深度学习 </tag>
             
-            <tag> CV </tag>
+            <tag> 深度学习模型 </tag>
             
             <tag> 图像分类 </tag>
             
@@ -2680,9 +2719,9 @@
       
         <tags>
             
-            <tag> Algorithm </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> Algorithm </tag>
             
             <tag> 二叉树 </tag>
             
@@ -2715,9 +2754,9 @@
       
         <tags>
             
-            <tag> Algorithm </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> Algorithm </tag>
             
             <tag> Leetcode </tag>
             
@@ -2750,9 +2789,9 @@
       
         <tags>
             
-            <tag> Algorithm </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> Algorithm </tag>
             
             <tag> Leetcode </tag>
             
@@ -2783,9 +2822,9 @@
       
         <tags>
             
-            <tag> Algorithm </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> Algorithm </tag>
             
             <tag> Leetcode </tag>
             
@@ -2818,9 +2857,9 @@
       
         <tags>
             
-            <tag> Algorithm </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> Algorithm </tag>
             
             <tag> Leetcode </tag>
             
@@ -2853,9 +2892,9 @@
       
         <tags>
             
-            <tag> Algorithm </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> Algorithm </tag>
             
             <tag> Leetcode </tag>
             
@@ -2886,9 +2925,9 @@
       
         <tags>
             
-            <tag> Algorithm </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> Algorithm </tag>
             
             <tag> Leetcode </tag>
             
@@ -3148,11 +3187,11 @@
       
         <tags>
             
+            <tag> 链表 </tag>
+            
             <tag> 数据结构 </tag>
             
             <tag> DataStruct </tag>
-            
-            <tag> 链表 </tag>
             
             <tag> 双向链表 </tag>
             
@@ -3179,11 +3218,11 @@
       
         <tags>
             
+            <tag> 链表 </tag>
+            
             <tag> 数据结构 </tag>
             
             <tag> DataStruct </tag>
-            
-            <tag> 链表 </tag>
             
             <tag> 循序链表 </tag>
             

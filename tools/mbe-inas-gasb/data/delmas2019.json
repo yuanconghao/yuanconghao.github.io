@@ -3,6 +3,13 @@
   "title": "Delmas 2019 · 界面时序优化",
   "target": "复现 7 ML InAs / 4 ML GaSb 的 MWIR 高质量材料基准",
   "description": "论文复现任务。出处：M. Delmas, M. C. Debnath, B. L. Liang, D. L. Huffaker, “Material and device characterization of Type-II InAs/GaSb superlattice infrared detectors”, Infrared Physics & Technology / arXiv:1908.00797. 论文比较了两种 MBE 快门时序；样品 B 使用 Sb-for-As exchange 形成 GaSb-on-InAs 侧 InSb-like 界面，得到近应变补偿、低 RMS 和 5.15 μm 器件截止波长。当前模拟器将其映射为 InSb 界面补偿 + 6 s Sb soak 的等效训练配方。",
+  "library": {
+    "type": "论文复现任务",
+    "source": "Delmas et al., Infrared Physics & Technology / arXiv:1908.00797",
+    "scope": "适合训练 InSb-like 界面、Sb-for-As exchange、低 RMS 和 5 μm MWIR 材料质量判断。",
+    "limitations": "公开数据没有完整逐秒快门日志；模拟器用等效 InSb 界面和 Sb soak 表达样品 B 的界面策略。",
+    "tags": ["paper", "interface", "MWIR", "AFM", "PL"]
+  },
   "recipe": {
     "nPer": 100,
     "bufferNm": 50,

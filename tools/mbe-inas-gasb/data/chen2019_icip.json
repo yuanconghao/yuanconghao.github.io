@@ -3,6 +3,13 @@
   "title": "Chen 2019 · 两级 ICIP 高速探测器",
   "target": "复现 4.85 nm period、低失配、高速 MWIR ICIP 吸收区",
   "description": "论文复现任务。出处：Y. Chen et al., “High Speed Mid-Infrared Interband Cascade Photodetector Based on InAs/GaSb Type-II Superlattice”, Journal of Lightwave Technology / arXiv:1907.05592. 论文的完整器件是两级 interband cascade photodetector，包含 InAs/GaSb 吸收区、InAs/AlSb 和 AlSb/GaSb 输运/势垒区。当前模拟器只模拟 InAs/GaSb T2SL 吸收区，因此用论文给出的 4.85 nm period 映射为约 2.43 nm InAs / 2.42 nm GaSb 的等效周期，用 100 个代表周期训练材料质量判断。",
+  "library": {
+    "type": "论文复现任务",
+    "source": "Chen et al., Journal of Lightwave Technology / arXiv:1907.05592",
+    "scope": "适合训练 4.85 nm MWIR 吸收区、低失配 XRD 和高速 ICIP 器件材料前提。",
+    "limitations": "完整 ICIP 含输运层/势垒层，当前仅复现 InAs/GaSb 吸收区等效周期。",
+    "tags": ["paper", "ICIP", "MWIR", "DXRD", "high-speed"]
+  },
   "recipe": {
     "nPer": 100,
     "bufferNm": 150,

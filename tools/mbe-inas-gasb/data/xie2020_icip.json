@@ -3,6 +3,13 @@
   "title": "Xie 2020 · 五级 ICIP 室温高速器件",
   "target": "复现 50 周期 2.4/2.4 nm 薄吸收区与高速室温响应",
   "description": "论文复现任务。出处：Z. Xie et al., “High-speed InAs/GaSb Mid-Wave Infrared Interband Cascade Photodetector at Room Temperature”, Optics Express / arXiv:2008.13386. 论文的完整器件是五级 ICIP，每级包含 50 periods undoped InAs/GaSb (2.4 nm / 2.4 nm) T2SL 吸收层，并配有 AlSb/GaSb、InAs/AlSb 势垒/输运层。当前模拟器只复现每级吸收层的 InAs/GaSb 生长窗口，用于训练薄吸收区、低暗电流和高速响应之间的权衡。",
+  "library": {
+    "type": "论文复现任务",
+    "source": "Xie et al., Optics Express / arXiv:2008.13386",
+    "scope": "适合训练 2.4/2.4 nm 薄吸收区、室温高速响应和暗电流权衡。",
+    "limitations": "完整五级 ICIP 的 AlSb/GaSb、InAs/AlSb 输运结构未完全建模；当前只模拟吸收区。",
+    "tags": ["paper", "ICIP", "MWIR", "room-temperature", "high-speed"]
+  },
   "recipe": {
     "nPer": 50,
     "bufferNm": 150,

@@ -54,6 +54,12 @@
             <div><b id="taskTitle">标准 InAs/GaSb 超晶格生长</b></div>
             <div id="taskTarget">20 周期教学基线，保持二维层状生长</div>
             <div class="task-evidence" id="taskEvidence">加载任务数据后显示复现依据。</div>
+            <div class="task-meta">
+              <div><span>类型</span><b id="taskType">教学基线任务</b></div>
+              <div><span>数据来源</span><b id="taskSource">通用规则模型</b></div>
+              <div><span>适用范围</span><b id="taskScope">用于训练参数趋势。</b></div>
+              <div><span>限制</span><b id="taskLimit">缺少真实表征闭环。</b></div>
+            </div>
             <div class="model-scope"><span id="scopeBadge" class="v badge good">模型适用</span><span id="scopeText">插值范围内</span></div>
           </div>
           <div class="task-score"><span id="scoreV">-- / 100</span><span id="scoreGrade" class="v badge good">--</span>
@@ -254,6 +260,26 @@
       </div>
 
       <div class="area-status col">
+        <div class="card process-card">
+          <div class="sech">工艺状态机 · 当前阶段判读</div>
+          <div class="process-top">
+            <span id="procBadge" class="v badge good">阶段正常</span>
+            <div class="mini-track"><i id="procProgress"></i></div>
+          </div>
+          <div class="process-main">
+            <div><span>阶段目标</span><b id="procObjective">--</b></div>
+            <div><span>设备动作</span><b id="procEquipment">--</b></div>
+            <div><span>预期反馈</span><b id="procExpected">--</b></div>
+            <div><span>当前动作</span><b id="procAction">--</b></div>
+          </div>
+          <div class="process-stats">
+            <div><span>推荐快门</span><b id="procShutters">--</b></div>
+            <div><span>沉积材料</span><b id="procMaterial">--</b></div>
+          </div>
+          <p id="procCheck">--</p>
+          <p id="procVerdict">--</p>
+        </div>
+
         <div class="card epilist">
           <div class="sech">过程状态 · 设备与生长参数</div>
           <div class="epigrid">
@@ -379,6 +405,7 @@
             </div>
           </div>
           <div class="note">这些是由当前 recipe、RHEED、界面和应变规则推断的“预表征”指标，用来提前判断风险；真实真值仍需 DXRD、AFM、HRTEM、PL、I-V、光谱响应和黑体测试闭环验证。</div>
+          <div class="char-evidence-table" id="charEvidenceTable"></div>
         </div>
 
         <div class="card score-card">
@@ -447,6 +474,10 @@
         <div class="report-card">
           <div class="report-title">评价模型与适用范围</div>
           <p id="sModelBasis">--</p>
+        </div>
+        <div class="report-card">
+          <div class="report-title">生长过程复盘</div>
+          <div id="sProcessReview" class="process-review"></div>
         </div>
         <div class="report-card">
           <div class="report-title">本次评价标准</div>

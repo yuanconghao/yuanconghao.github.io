@@ -3,6 +3,13 @@
   "title": "标准 InAs/GaSb 超晶格生长",
   "target": "20 周期教学基线，保持二维层状生长",
   "description": "默认教学任务：使用常见 8 ML InAs / 6 ML GaSb 量级的 MWIR InAs/GaSb 二类超晶格作为入门基线，重点训练 recipe、温度、束流、快门、RHEED 和应变反馈的联动判断。该任务不是单篇论文复现；论文复现任务见后续 Delmas 2019、Chen 2019 和 Xie 2020。",
+  "library": {
+    "type": "教学基线任务",
+    "source": "通用 InAs/GaSb T2SL 工艺概念 + 内置规则模型",
+    "scope": "用于初学者理解周期、buffer、温度、快门、RHEED、应变和截止波长之间的联动。",
+    "limitations": "不是单篇论文复现，未提供实验真值；评分只能作为趋势训练。",
+    "tags": ["teaching", "baseline", "MWIR"]
+  },
   "recipe": {
     "nPer": 20,
     "bufferNm": 150,

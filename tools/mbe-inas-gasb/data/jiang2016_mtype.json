@@ -3,6 +3,13 @@
   "title": "蒋洞微 2016 · M 型势垒长波器件",
   "target": "复现 18ML InAs / 5ML GaSb / 5ML AlSb / 5ML GaSb 的 M 型势垒训练周期",
   "description": "论文复现任务。出处：蒋洞微，《InAs/GaSb II 类超晶格材料生长及其红外探测器性能》，哈尔滨工业大学博士学位论文，2016。论文通过 MBE 参数优化、MEE 双 InSb 界面、应变补偿和 M 型势垒结构实现高质量长波/甚长波 InAs/GaSb 超晶格红外探测器。当前训练任务复现其中一个典型长波 M 型势垒周期 18ML InAs / 5ML GaSb / 5ML AlSb / 5ML GaSb，并用 70 个代表周期训练材料生长、界面、RHEED 和应变判断。",
+  "library": {
+    "type": "论文/学位论文复现任务",
+    "source": "蒋洞微，哈尔滨工业大学博士论文，2016",
+    "scope": "适合训练 MEE 双 InSb 界面、M 型势垒、长波截止和低暗电流材料-器件关联。",
+    "limitations": "博士论文中的完整器件、掺杂和工艺细节未全部进入模型；当前重点复现吸收/势垒周期和表征指标。",
+    "tags": ["thesis", "LWIR", "M-type", "AlSb", "device"]
+  },
   "recipe": {
     "nPer": 70,
     "bufferNm": 150,

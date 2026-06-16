@@ -94,6 +94,50 @@
     { id: "cooldown", name: "Cooldown" },
     { id: "report", name: "Report" }
   ];
+  M.STAGE_GUIDE = {
+    load: {
+      objective: "装片、抽真空、确认源炉与衬底转台处在待机安全状态",
+      equipment: "快门全关；SUB 低温待机；RHEED 可用于背景检查",
+      expected: "RHEED 无有效外延条纹，事件日志只记录设备准备状态",
+      check: "进入升温前，所有手动快门应保持 OFF"
+    },
+    deoxide: {
+      objective: "去除 GaSb 衬底原生氧化层并恢复可外延表面",
+      equipment: "SUB 升温至脱氧窗口，束流快门保持关闭",
+      expected: "氧化层透明度下降，RHEED 从暗背景恢复为条纹",
+      check: "脱氧未完成时不要进入 buffer 生长"
+    },
+    buffer: {
+      objective: "生长 GaSb buffer，平整衬底并建立后续超晶格基准面",
+      equipment: "Ga + Sb 打开；SUB 回落至 buffer/SL 生长窗口",
+      expected: "RHEED 保持 streaky，buffer 厚度按 recipe 增长",
+      check: "若手动打开 In/As，buffer 将不再是纯 GaSb"
+    },
+    calib: {
+      objective: "用 Sb soaking / InSb 界面标定切换节奏",
+      equipment: "按任务定义的界面工程时序切换 Sb、In、As/Ga",
+      expected: "RHEED 强度出现短暂扰动后恢复，界面 abruptness 保持较高",
+      check: "Ga + As 同开会形成 GaAs-like 风险界面"
+    },
+    sl: {
+      objective: "按周期重复 InAs/GaSb 或 M 型势垒结构，训练层厚、快门和 RHEED 判断",
+      equipment: "源炉束流、快门组合和 SUB 温度需随 recipe 保持稳定",
+      expected: "RHEED 强度随单层生长振荡；应变和截止波长趋势同步更新",
+      check: "关注 RHEED 振荡衰减、应变松弛指数和界面风险"
+    },
+    cooldown: {
+      objective: "在 Sb 过压保护下冷却，避免表面再构和组分脱附",
+      equipment: "关闭 III 族源；保持 V 族保护性环境并降温",
+      expected: "不再增加厚度，RHEED 强度进入稳定/缓慢变化",
+      check: "冷却阶段不应继续沉积超晶格材料"
+    },
+    report: {
+      objective: "汇总 recipe、过程反馈、虚拟表征与文献真值对照",
+      equipment: "停止生长并生成训练复盘",
+      expected: "输出评分、模型适用范围、表征预测和证据来源",
+      check: "报告是训练用预判，不替代真实 DXRD/AFM/PL/I-V 测试"
+    }
+  };
 
   M.TASKS = [
     { id: "standard", title: "标准 InAs/GaSb 超晶格生长", target: "20 周期教学基线，保持二维层状生长", dataUrl: "./data/standard.json" },
@@ -498,6 +542,66 @@
     };
   }
 
+  function taskLibraryMeta() {
+    var task = M.activeTaskData || {}, entry = null;
+    for (var i = 0; i < M.TASKS.length; i++) if (M.TASKS[i].id === task.id) entry = M.TASKS[i];
+    var lib = task.library || {};
+    var hasMeasurements = task.measurements && Object.keys(task.measurements).length > 0;
+    return {
+      title: task.title || (entry && entry.title) || "未命名任务",
+      type: lib.type || (hasMeasurements ? "论文复现任务" : "教学基线任务"),
+      source: lib.source || (hasMeasurements ? "任务 JSON 中的 measurements/evidence" : "通用规则模型 + 教学参数"),
+      scope: lib.scope || (task.description || "用于训练 recipe、快门、RHEED、应变和截止波长趋势判断。"),
+      limitations: lib.limitations || "当前仍是半物理规则/文献插值模型，缺少真实 RHEED sensor 与完整器件工艺真值。",
+      tags: lib.tags || []
+    };
+  }
+
+  function stageProgress(stageId) {
+    var st = M.st;
+    if (!st) return 0;
+    var total = 0, elapsed = 0;
+    for (var i = 0; i < st.steps.length; i++) {
+      var step = st.steps[i];
+      if (step.stage !== stageId) continue;
+      total += step.dur;
+      var a = step.t0, b = step.t0 + step.dur;
+      if (st.realT >= b) elapsed += step.dur;
+      else if (st.realT > a) elapsed += st.realT - a;
+    }
+    return total > 0 ? clamp(elapsed / total, 0, 1) : 0;
+  }
+
+  function stageProcess() {
+    var st = M.st, step = st ? curStep() : null, stageId = step ? step.stage : "load";
+    var guide = M.STAGE_GUIDE[stageId] || M.STAGE_GUIDE.load;
+    var rec = stepShutters(step), open = [];
+    Object.keys(rec).forEach(function (k) { if (rec[k]) open.push(k); });
+    var dep = currentDeposition(step), q = surfaceQuality(st), strain = strainMetrics(st), chem = shutterChemistry();
+    var issues = [], cls = "good";
+    if (stageId === "buffer" && dep.mat && dep.mat !== "GaSb") issues.push("buffer 阶段沉积材料偏离 GaSb");
+    if (stageId === "sl" && q < 0.55) issues.push("RHEED/表面质量已经进入粗糙风险");
+    if (stageId === "sl" && strain.relaxationIndex > 1) issues.push("应变松弛指数超过临界");
+    if ((stageId === "buffer" || stageId === "sl" || stageId === "calib") && chem.risk === "high") issues.push("当前快门组合存在高风险界面");
+    if (stageId === "deoxide" && st && stageProgress(stageId) > 0.75 && st.oxideOpacity > 0.15) issues.push("脱氧接近结束但氧化层仍未完全消失");
+    if (issues.length) cls = issues.length > 1 || strain.relaxationIndex > 1 || chem.risk === "high" ? "bad" : "warn";
+    return {
+      id: stageId,
+      name: guide.name || stageId,
+      objective: guide.objective,
+      equipment: guide.equipment,
+      expected: guide.expected,
+      check: guide.check,
+      progress: stageProgress(stageId),
+      action: step ? step.label : "--",
+      material: dep.mat || "无沉积",
+      shutters: open.length ? open.join(" + ") : "全部关闭",
+      issues: issues,
+      cls: cls,
+      verdict: issues.length ? issues.join("；") : "当前阶段动作与 recipe 目标一致"
+    };
+  }
+
   function surfaceQuality(optSt) {
     var st = optSt || M.st;
     var tSubVal = st ? st.actTSub : P.tSub;
@@ -630,6 +734,48 @@
     var used = rows.filter(function (r) { return r.calibrate; });
     var score = used.length ? used.reduce(function (sum, r) { return sum + r.fit; }, 0) / used.length : null;
     return { rows: rows, used: used.length, score: score };
+  }
+
+  function measurementText(keys) {
+    var m = valueOfMeasurement(keys);
+    if (!m) return { txt: "待实验回填", source: "", calibrate: false };
+    var val = m.value != null ? m.value : m;
+    var unit = m.unit || "";
+    return {
+      txt: String(val) + (unit ? " " + unit : ""),
+      source: m.source || "",
+      context: m.context || "",
+      calibrate: m.calibrate !== false
+    };
+  }
+  function confidenceBand(base, needsTruth) {
+    var app = applicability(), opt = opticalEstimate();
+    var c = clamp(base * (0.70 + app.confidence * 0.20 + opt.confidence * 0.10) - (needsTruth ? 0.08 : 0), 0.15, 0.92);
+    return {
+      value: c,
+      cls: c >= 0.72 ? "good" : c >= 0.48 ? "warn" : "bad",
+      txt: c >= 0.72 ? "较可信" : c >= 0.48 ? "趋势参考" : "强外推"
+    };
+  }
+  function characterizationRows() {
+    var ch = characterizationMetrics(), opt = opticalEstimate(), cmp = truthComparison();
+    function fitFor(label) {
+      for (var i = 0; i < cmp.rows.length; i++) if (cmp.rows[i].label === label) return cmp.rows[i].fit;
+      return null;
+    }
+    var rows = [
+      { key: "DXRD", metric: "周期厚度 / 卫星峰 FWHM", pred: ch.xrdPeriod.toFixed(2) + " nm / " + ch.xrdFwhm.toFixed(0) + " arcsec", truth: measurementText(["periodNm", "xrdFwhmArcsec"]), conf: confidenceBand(0.78, false), basis: "由 recipe 周期厚度、RHEED 表面质量、界面 abruptness 和应变松弛指数估算。" },
+      { key: "AFM", metric: "表面 RMS", pred: ch.afmRmsA.toFixed(1) + " Å", truth: measurementText(["afmRmsA", "afmRmsNm"]), conf: confidenceBand(0.70, false), basis: "由 RHEED 质量、GaAs-like 风险和应变松弛趋势映射到粗糙度。" },
+      { key: "HRTEM", metric: "界面平整度 / 周期均匀性", pred: (ch.hUniform * 100).toFixed(0) + "%", truth: measurementText(["hrtemUniformity"]), conf: confidenceBand(0.55, true), basis: "目前缺少真实图像真值，主要由界面 abruptness 与 RHEED 稳定性推断。" },
+      { key: "PL", metric: "峰位 / 截止波长", pred: ch.plPeak.toFixed(1) + " μm / CI " + opt.low.toFixed(1) + "-" + opt.high.toFixed(1), truth: measurementText(["plPeakUm", "cutoffUm"]), conf: confidenceBand(0.82, false), basis: "短期方案采用文献结构点插值，外推时置信度下降。" },
+      { key: "I-V", metric: "R0A / 暗电流风险", pred: ch.r0a.toExponential(1), truth: measurementText(["r0aOhmCm2", "darkCurrentAcm2"]), conf: confidenceBand(0.45, true), basis: "器件工艺、掺杂和台面制备未完整建模，只作为材料风险趋势。" },
+      { key: "光谱/黑体", metric: "QE / D*", pred: "QE " + (ch.qe * 100).toFixed(0) + "% / D* " + ch.dstar.toExponential(1), truth: measurementText(["detectivity", "responsivity", "qe"]), conf: confidenceBand(0.42, true), basis: "依赖器件结构与测试条件，当前只用于提醒后续真值闭环。" }
+    ];
+    for (var r = 0; r < rows.length; r++) {
+      var f = fitFor(rows[r].key === "PL" ? "PL 峰/截止" : rows[r].key === "AFM" ? "AFM RMS" : rows[r].key === "DXRD" ? "DXRD FWHM" : rows[r].key);
+      rows[r].fit = f;
+    }
+    return rows;
   }
 
   function score() {
@@ -775,6 +921,7 @@
   M.surfaceQuality = surfaceQuality; M.rheedState = rheedState; M.growthMode = growthMode;
   M.latticeMismatch = latticeMismatch; M.criticalThickness = criticalThickness; M.strainMetrics = strainMetrics;
   M.opticalEstimate = opticalEstimate; M.applicability = applicability; M.truthComparison = truthComparison;
+  M.taskLibraryMeta = taskLibraryMeta; M.stageProcess = stageProcess; M.characterizationRows = characterizationRows;
   M.darkCurrentRisk = darkCurrentRisk; M.characterizationMetrics = characterizationMetrics; M.score = score; M.buildSteps = buildSteps;
   M.freshState = freshState; M.curStep = curStep; M.subTemp = subTemp;
   M.stageOf = stageOf; M.curPeriod = curPeriod; M.stageIdx = stageIdx; M.locate = locate;

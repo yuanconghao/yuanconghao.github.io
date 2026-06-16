@@ -37,6 +37,15 @@
     return el && el.value ? el.value : "引导模式";
   }
 
+  function renderTaskMeta() {
+    var meta = M.taskLibraryMeta ? M.taskLibraryMeta() : null;
+    if (!meta) return;
+    setText("taskType", meta.type);
+    setText("taskSource", meta.source);
+    setText("taskScope", meta.scope);
+    setText("taskLimit", meta.limitations);
+  }
+
   function setInputValue(id, value, fmt) {
     var el = $(id), out = $(id + "V");
     if (!el || value == null) return;
@@ -129,6 +138,34 @@
     var chem = M.shutterChemistry();
     setText("chemNow", chem.txt);
     clsBadge("chemRisk", chem.risk === "high" ? "风险高" : chem.risk === "med" ? "需注意" : chem.risk === "idle" ? "待机" : "正常", chem.cls);
+  }
+
+  function renderStageProcess() {
+    if (!M.stageProcess) return;
+    var proc = M.stageProcess();
+    setText("procObjective", proc.objective);
+    setText("procEquipment", proc.equipment);
+    setText("procExpected", proc.expected);
+    setText("procCheck", proc.check);
+    setText("procAction", proc.action);
+    setText("procMaterial", proc.material);
+    setText("procShutters", proc.shutters);
+    setText("procVerdict", proc.verdict);
+    clsBadge("procBadge", proc.cls === "good" ? "阶段正常" : proc.cls === "warn" ? "需关注" : "偏离 recipe", proc.cls);
+    var bar = $("procProgress");
+    if (bar) bar.style.width = (proc.progress * 100).toFixed(1) + "%";
+  }
+
+  function renderCharEvidence() {
+    var box = $("charEvidenceTable");
+    if (!box || !M.characterizationRows) return;
+    var rows = M.characterizationRows();
+    box.innerHTML = rows.map(function (r) {
+      var truth = r.truth && r.truth.txt ? r.truth.txt : "待实验回填";
+      var src = r.truth && r.truth.source ? " · " + r.truth.source : "";
+      var fit = r.fit == null ? "" : " · 贴合 " + (r.fit * 100).toFixed(0) + "%";
+      return "<div class=\"char-evidence-row\"><span><b>" + r.key + "</b><em>" + r.metric + "</em></span><span>" + r.pred + "</span><span>" + truth + src + "</span><span><i class=\"truth-fit " + r.conf.cls + "\">" + r.conf.txt + " " + (r.conf.value * 100).toFixed(0) + "%</i>" + fit + "</span></div>";
+    }).join("");
   }
 
   function updateConditionHints() {
@@ -234,6 +271,7 @@
     setText("taskTitle", currentTask().title);
     setText("taskTarget", currentTask().target);
     setText("taskEvidence", isExamActive ? "考核模式：复现依据、推荐范围和即时提示将在生长完成后进入报告。" : (M.activeTaskData && M.activeTaskData.evidence ? M.activeTaskData.evidence[0] : "任务数据文件未加载时使用内置任务目标。"));
+    renderTaskMeta();
     clsBadge("scopeBadge", app.txt, app.cls);
     setText("scopeText", "置信度 " + (app.confidence * 100).toFixed(0) + "% · " + (app.issues.length ? app.issues.slice(0, 2).join("；") : opt.extrapolation));
     setText("stageTitle", s.label);
@@ -325,6 +363,8 @@
 
     updateConditionHints();
     updateShutterButtons();
+    renderStageProcess();
+    renderCharEvidence();
     renderLogs();
 
     if (!isExamActive && Q < 0.55) logEvent("RHEED 变差：表面粗糙度增加，建议检查温度/V-III/速率");
@@ -345,6 +385,7 @@
     setText("sEg", eg.toFixed(3) + " eV"); setText("sLam", lam.toFixed(1) + " μm"); setText("sBand", M.bandName(lam));
     setText("sRisk", risk.txt);
     setText("sModelBasis", "本报告使用物理启发规则模型进行预判：截止波长采用文献锚点插值 + 置信区间，应变采用相对 GaSb 的晶格失配与临界厚度风险。当前模型适用性：" + app.txt + "，置信度 " + (app.confidence * 100).toFixed(0) + "%；不等同于真实 DXRD/AFM/PL/I-V 或机器学习预测。");
+    renderProcessReview();
     renderEvalRules(sc, avg, ss, intf, expected, opt, strainM, app);
     renderTruthComparison(task);
     renderTaskEvidence(task);
@@ -377,6 +418,32 @@
     box.innerHTML = rows.map(function (r) {
       return "<div class=\"rule-item\"><b>" + r[0] + "</b><span>" + r[1] + "</span></div>";
     }).join("");
+  }
+  function renderProcessReview() {
+    var box = $("sProcessReview");
+    if (!box || !M.st) return;
+    var st = M.st, stages = M.STAGES.map(function (s) { return s.id; });
+    var names = {};
+    M.STAGES.forEach(function (s) { names[s.id] = s.name; });
+    var thick = {}, stageDur = {};
+    stages.forEach(function (id) { thick[id] = 0; stageDur[id] = 0; });
+    for (var i = 0; i < st.steps.length; i++) {
+      if (stageDur[st.steps[i].stage] != null) stageDur[st.steps[i].stage] += st.steps[i].dur;
+    }
+    for (var j = 0; j < st.layerSegments.length; j++) {
+      var seg = st.layerSegments[j];
+      if (thick[seg.stage] != null) thick[seg.stage] += seg.nm;
+    }
+    var proc = M.stageProcess ? M.stageProcess() : null;
+    var rows = stages.filter(function (id) { return id !== "report"; }).map(function (id) {
+      var done = M.stageIdx(id) < M.stageIdx(M.stageOf()) || (M.stageOf() === id && st.done);
+      var active = M.stageOf() === id && !st.done;
+      var cls = active ? "active" : done ? "done" : "";
+      return "<div class=\"process-row " + cls + "\"><span><b>" + names[id] + "</b><em>" + (M.STAGE_GUIDE[id] ? M.STAGE_GUIDE[id].objective : "") + "</em></span><span>" + fmtHMS(stageDur[id] || 0) + "</span><span>" + (thick[id] || 0).toFixed(1) + " nm</span></div>";
+    }).join("");
+    var warning = "实际沉积 " + st.actualThickNm.toFixed(1) + " nm；偏离 recipe " + (st.offRecipeNm || 0).toFixed(2) + " nm；GaAs-like 风险沉积 " + (st.gaAsNm || 0).toFixed(2) + " nm。";
+    if (proc && proc.issues.length) warning += " 当前阶段问题：" + proc.issues.join("；") + "。";
+    box.innerHTML = "<div class=\"process-table\"><div class=\"process-row process-head\"><span>阶段目标</span><span>配方时长</span><span>实际沉积</span></div>" + rows + "</div><p>" + warning + "</p>";
   }
   function fmtTruthValue(v, unit, logScale) {
     if (v == null || !isFinite(v)) return "--";
