@@ -26,6 +26,8 @@
       target: "行人目标",
       note: "8-14 μm 常温热辐射峰值",
       band: "LWIR 8-14 μm",
+      lambdaMin: 8,
+      lambdaMax: 14,
       resolution: "128 × 128"
     },
     plume: {
@@ -33,6 +35,8 @@
       target: "发动机尾焰",
       note: "3-5 μm 高温目标强辐射",
       band: "MWIR 3-5 μm",
+      lambdaMin: 3,
+      lambdaMax: 5,
       resolution: "128 × 128"
     },
     gas: {
@@ -40,6 +44,8 @@
       target: "气体泄漏场景",
       note: "2-14 μm 宽带气体/宽域侦测",
       band: "BBIR 2-14 μm",
+      lambdaMin: 2,
+      lambdaMax: 14,
       resolution: "128 × 128"
     }
   };
@@ -61,6 +67,21 @@
     "chainRad", "chainAbs", "chainSep", "chainNoise", "chainRoi",
     "presetLwir", "presetMwir", "presetBbir"
   ];
+
+  var VIS = {
+    photon: "#b86b1d",
+    photonSoft: "rgba(184,107,29,.44)",
+    photonGlow: "rgba(184,107,29,.42)",
+    electron: "#2166d1",
+    electronSoft: "rgba(33,102,209,.34)",
+    hole: "#b83f7a",
+    holeSoft: "rgba(184,63,122,.36)",
+    field: "#0f8a72",
+    fieldSoft: "rgba(15,138,114,.64)",
+    current: "#2f8fac",
+    dark: "#b8322a",
+    readout: "#687787"
+  };
 
   function $(id) { return document.getElementById(id); }
   function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
@@ -132,15 +153,22 @@
     return "VLWIR";
   }
 
+  function bandCoverage(lambda) {
+    var s = sceneMeta();
+    var min = s.lambdaMin || 3, max = s.lambdaMax || 14;
+    return clamp((lambda - min) / Math.max(max - min, 0.5), 0, 1);
+  }
+
   function model() {
     var opt = opticalEstimate();
+    var bandResponse = bandCoverage(opt.lambda);
     var periodNm = P.inas + P.gasb + P.interfaceNm * 2;
     var absNm = periodNm * P.periods;
     var absUm = absNm / 1000;
     var materialQ = clamp(1 - (P.xrd - 18) / 170 - (P.afm - 1.2) / 25, 0.25, 1);
     var overlap = clamp(0.30 + P.interfaceQ * 0.52 + (P.mBarrier ? 0.05 : 0) - Math.max(0, opt.lambda - 14) * 0.025, 0.15, 0.88);
     var absorption = 1 - Math.exp(-1.15 * absUm * clamp(opt.lambda / 10, 0.55, 1.35));
-    var qe = clamp(absorption * overlap * materialQ * (0.78 + P.passivation * 0.22), 0.03, 0.78);
+    var qe = clamp(absorption * overlap * materialQ * (0.78 + P.passivation * 0.22) * (0.18 + bandResponse * 0.82), 0.03, 0.78);
     var photonSignal = Math.max(0, (Math.pow(P.targetT / 300, 4) - Math.pow(P.bgT / 300, 4)));
     var pixelAreaCm2 = Math.pow(P.pixel * 1e-4, 2);
     var iph = 2.2e-7 * qe * photonSignal * pixelAreaCm2 * 1e6;
@@ -156,6 +184,10 @@
     var dstar = clamp(1.0e10 * qe / Math.sqrt(Math.max(jdark, 1e-10) / 1e-6) * (P.pixel / 25), 1e7, 8e12);
     var netd = clamp(90 / Math.sqrt(Math.max(snr, 0.05)) + (1 - qe) * 18 + Math.max(0, P.detT - 120) * 0.45, 5, 500);
     var darkRatio = idark / Math.max(iph, 1e-18);
+    var fieldStrength = clamp(0.25 + P.bias / 0.16 * 0.45 + overlap * 0.45, 0.25, 1.15);
+    var darkActivity = clamp(Math.log10(Math.max(darkRatio, 0.001)) / 2 + 0.35, 0.12, 1);
+    var integrationFill = clamp((snr / 18) * Math.sqrt(Math.max(P.tint, 0.2) / 5), 0.04, 1);
+    var saturationRisk = clamp((P.tint - 12) / 8 + Math.max(0, integrationFill - 0.88) * 1.6, 0, 1);
     return {
       opt: opt,
       periodNm: periodNm,
@@ -164,6 +196,7 @@
       overlap: overlap,
       absorption: absorption,
       qe: qe,
+      bandResponse: bandResponse,
       photonSignal: photonSignal,
       iph: iph,
       jdark: jdark,
@@ -174,6 +207,10 @@
       dstar: dstar,
       netd: netd,
       darkRatio: darkRatio,
+      fieldStrength: fieldStrength,
+      darkActivity: darkActivity,
+      integrationFill: integrationFill,
+      saturationRisk: saturationRisk,
       band: bandName(opt.lambda)
     };
   }
@@ -194,7 +231,8 @@
 
     var absCls = m.qe > 0.35 ? "good" : m.qe > 0.18 ? "warn" : "bad";
     setBadge("absBadge", m.qe > 0.35 ? "吸收/收集较好" : m.qe > 0.18 ? "吸收偏弱" : "吸收不足", absCls);
-    setText("absDiag", "当前观察对象为" + s.label + "，截止波长约 " + m.opt.lambda.toFixed(1) + " μm。红外光子进入 T2SL 吸收区后产生电子/空穴对；QE 表示入射光子最终变成可收集电荷的效率。");
+    var coverText = m.bandResponse > 0.85 ? "基本覆盖目标波段" : m.bandResponse > 0.35 ? "只能覆盖目标波段的一部分" : "与目标波段不匹配";
+    setText("absDiag", "当前观察对象为" + s.label + "，截止波长约 " + m.opt.lambda.toFixed(1) + " μm，" + coverText + "。红外光子进入 T2SL 吸收区后产生电子/空穴对；QE 表示入射光子最终变成可收集电荷的效率。");
 
     var darkCls = m.darkRatio < 0.25 ? "good" : m.darkRatio < 2 ? "warn" : "bad";
     setBadge("darkBadge", darkCls === "good" ? "暗电流受控" : darkCls === "warn" ? "暗电流接近信号" : "暗电流主导", darkCls);
@@ -202,7 +240,8 @@
 
     var readCls = m.snr > 10 ? "good" : m.snr > 2 ? "warn" : "bad";
     setBadge("readBadge", readCls === "good" ? "ROIC 可稳定积分" : readCls === "warn" ? "读出临界" : "信号偏弱", readCls);
-    setText("readDiag", "目标与背景热辐射差形成光电流；积分时间越长信号越多，但暗电流和饱和风险也会增加。当前 SNR 趋势约 " + m.snr.toFixed(1) + "。");
+    var satText = m.saturationRisk > 0.65 ? "当前积分时间偏长，ROIC 有接近饱和的风险。" : "当前积分时间仍在可解释范围内。";
+    setText("readDiag", "目标与背景热辐射差形成光电流；积分时间越长信号越多，但暗电流和饱和风险也会增加。" + satText + " 当前 SNR 趋势约 " + m.snr.toFixed(1) + "。");
 
     [["chainRad", m.photonSignal > 0.01], ["chainAbs", m.qe > 0.18], ["chainSep", m.overlap > 0.45], ["chainNoise", m.darkRatio < 2], ["chainRoi", m.snr > 2]].forEach(function (it) {
       if (els[it[0]]) els[it[0]].classList.toggle("on", !!it[1]);
@@ -235,6 +274,26 @@
     ctx.fill();
   }
 
+  function cubicPoint(p0, p1, p2, p3, t) {
+    var u = 1 - t;
+    return {
+      x: u * u * u * p0.x + 3 * u * u * t * p1.x + 3 * u * t * t * p2.x + t * t * t * p3.x,
+      y: u * u * u * p0.y + 3 * u * u * t * p1.y + 3 * u * t * t * p2.y + t * t * t * p3.y
+    };
+  }
+
+  function glowDot(ctx, x, y, color, radius, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha == null ? 1 : alpha;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = radius * 2.6;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
   function stepBadge(ctx, n, x, y, title, desc, color) {
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -251,6 +310,143 @@
     ctx.fillStyle = "#66727f";
     ctx.font = "10px sans-serif";
     ctx.fillText(desc, x + 18, y + 13);
+  }
+
+  function drawBandInset(ctx, x, y, w, h, m, tAnim) {
+    ctx.save();
+    ctx.fillStyle = "rgba(255,255,255,.90)";
+    rr(ctx, x, y, w, h, 7);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(214,224,232,.88)";
+    ctx.stroke();
+    ctx.fillStyle = "#17212b";
+    ctx.font = "800 9px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("Type-II 能带", x + 8, y + 13);
+
+    var bx = x + 12, bw = w - 24;
+    var eY = y + h * 0.38, hY = y + h * 0.66;
+    ctx.lineWidth = 1.6;
+    ctx.strokeStyle = VIS.electron;
+    ctx.beginPath();
+    ctx.moveTo(bx, eY - 5);
+    ctx.lineTo(bx + bw * 0.34, eY - 5);
+    ctx.lineTo(bx + bw * 0.34, eY + 5);
+    ctx.lineTo(bx + bw * 0.67, eY + 5);
+    ctx.lineTo(bx + bw * 0.67, eY - 4);
+    ctx.lineTo(bx + bw, eY - 4);
+    ctx.stroke();
+
+    ctx.strokeStyle = VIS.hole;
+    ctx.beginPath();
+    ctx.moveTo(bx, hY + 4);
+    ctx.lineTo(bx + bw * 0.32, hY + 4);
+    ctx.lineTo(bx + bw * 0.32, hY - 5);
+    ctx.lineTo(bx + bw * 0.66, hY - 5);
+    ctx.lineTo(bx + bw * 0.66, hY + 5);
+    ctx.lineTo(bx + bw, hY + 5);
+    ctx.stroke();
+
+    var p = (tAnim * 0.35) % 1;
+    var photonX = x + w * 0.50;
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = VIS.photon;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(photonX, y + 18);
+    ctx.lineTo(photonX, y + h - 12);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    glowDot(ctx, photonX, lerp(y + 20, y + h - 14, p), VIS.photon, 2.2, 0.75);
+    glowDot(ctx, x + w * 0.40, eY + 5, VIS.electron, 2.5, 0.86);
+    glowDot(ctx, x + w * 0.62, hY - 5, VIS.hole, 2.5, 0.86);
+
+    ctx.fillStyle = VIS.electron;
+    ctx.font = "800 8px sans-serif";
+    ctx.fillText("e- / InAs", x + 8, y + h - 18);
+    ctx.fillStyle = VIS.hole;
+    ctx.textAlign = "right";
+    ctx.fillText("h+ / GaSb", x + w - 8, y + h - 18);
+    ctx.fillStyle = "#66727f";
+    ctx.textAlign = "center";
+    ctx.fillText("Eg " + m.opt.eg.toFixed(3) + " eV", x + w * 0.50, y + h - 6);
+    ctx.restore();
+  }
+
+  function drawIntegrationCurve(ctx, x, y, w, h, m, tAnim) {
+    ctx.fillStyle = "#ffffff";
+    rr(ctx, x, y, w, h, 7);
+    ctx.fill();
+    ctx.strokeStyle = VIS.readout;
+    ctx.stroke();
+
+    ctx.fillStyle = "#17212b";
+    ctx.font = "800 10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("CTIA 积分电容 · Vint(t)", x + w / 2, y + 13);
+
+    var gx = x + 14, gy = y + 22, gw = w - 28, gh = h - 36;
+    ctx.fillStyle = "#edf4f8";
+    rr(ctx, gx, gy, gw, gh, 5);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(104,119,135,.25)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(gx, gy + gh);
+    ctx.lineTo(gx + gw, gy + gh);
+    ctx.stroke();
+
+    var darkBase = clamp(m.darkActivity * 0.34, 0.04, 0.46);
+    ctx.strokeStyle = "rgba(184,50,42,.45)";
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(gx, gy + gh - gh * darkBase);
+    ctx.lineTo(gx + gw, gy + gh - gh * darkBase);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.strokeStyle = VIS.current;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (var i = 0; i <= 52; i++) {
+      var u = i / 52;
+      var level = (1 - Math.exp(-u * (2.2 + m.bandResponse * 1.5))) * m.integrationFill;
+      var px = gx + gw * u;
+      var py = gy + gh - gh * clamp(level, 0, 1);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    if (m.saturationRisk > 0.35) {
+      ctx.strokeStyle = "rgba(169,103,22,.62)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(gx, gy + gh * 0.14);
+      ctx.lineTo(gx + gw, gy + gh * 0.14);
+      ctx.stroke();
+      ctx.fillStyle = "#a96716";
+      ctx.font = "800 8px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText("接近饱和", gx + gw - 4, gy + gh * 0.14 - 3);
+    }
+
+    var phase = (tAnim * 0.18) % 1;
+    var dotLevel = (1 - Math.exp(-phase * (2.2 + m.bandResponse * 1.5))) * m.integrationFill;
+    var dotX = gx + gw * phase, dotY = gy + gh - gh * clamp(dotLevel, 0, 1);
+    ctx.strokeStyle = "rgba(47,143,172,.45)";
+    ctx.beginPath();
+    ctx.moveTo(dotX, gy);
+    ctx.lineTo(dotX, gy + gh);
+    ctx.stroke();
+    glowDot(ctx, dotX, dotY, VIS.current, 3, 0.86);
+
+    ctx.fillStyle = "#66727f";
+    ctx.font = "8px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("dark", gx + 4, gy + gh - gh * darkBase - 3);
+    ctx.textAlign = "center";
+    ctx.fillText("Iphoto - Idark → Vint", x + w / 2, y + h - 5);
   }
 
   function sceneMeta() {
@@ -396,7 +592,7 @@
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, W, H);
 
-    var flowY = 38;
+    var flowY = 30;
     stepBadge(ctx, 1, W * 0.05, flowY, "热辐射", "目标发出 8-14 μm 光子", "#a96716");
     stepBadge(ctx, 2, W * 0.25, flowY, "光学聚焦", "镜头把红外聚到像元", "#7a5c24");
     stepBadge(ctx, 3, W * 0.45, flowY, "T2SL 吸收", "hν ≥ Eg 产生 e-/h+", "#1f6f8b");
@@ -568,7 +764,7 @@
     ctx.fillStyle = "rgba(255,255,255,.94)";
     rr(ctx, leakLabelX, leakLabelY - 15, 104, 21, 4);
     ctx.fill();
-    ctx.fillStyle = "#b8322a";
+    ctx.fillStyle = VIS.dark;
     ctx.font = "800 10px sans-serif";
     ctx.textAlign = "left";
     ctx.fillText("暗电流 / 表面漏电", leakLabelX + 6, leakLabelY);
@@ -595,7 +791,7 @@
     ctx.fillStyle = "#edf4f8";
     rr(ctx, capX + 12, capY + 14, capW - 24, 18, 4);
     ctx.fill();
-    ctx.fillStyle = "#1f6f8b";
+    ctx.fillStyle = VIS.current;
     rr(ctx, capX + 12, capY + 14, (capW - 24) * fill, 18, 4);
     ctx.fill();
     ctx.fillStyle = "#17212b";
@@ -618,7 +814,7 @@
       ctx.fill();
       ctx.strokeStyle = "#c7d1da";
       ctx.stroke();
-      ctx.fillStyle = idx === 1 ? "#1f6f8b" : "#687787";
+      ctx.fillStyle = idx === 1 ? VIS.current : VIS.readout;
       ctx.font = "800 11px sans-serif";
       ctx.fillText(u[0], ux + unitW / 2, rowY + 17);
       ctx.fillStyle = "#66727f";
@@ -683,66 +879,74 @@
     var currentScene = sceneMeta();
     var sceneBand = currentScene.band || "8-14 μm";
 
-    var flowY = 38;
-    stepBadge(ctx, 1, W * 0.05, flowY, "热辐射", "目标发出 " + sceneBand + " 光子", "#a96716");
+    var flowY = 30;
+    stepBadge(ctx, 1, W * 0.05, flowY, "热辐射", "目标发出 " + sceneBand + " 光子", VIS.photon);
     stepBadge(ctx, 2, W * 0.25, flowY, "光学聚焦", "镜头把红外聚到像元", "#7a5c24");
-    stepBadge(ctx, 3, W * 0.45, flowY, "T2SL 吸收", "hν ≥ Eg 产生 e-/h+", "#1f6f8b");
-    stepBadge(ctx, 4, W * 0.65, flowY, "结区分离", "内建电场收集载流子", "#0e7665");
-    stepBadge(ctx, 5, W * 0.82, flowY, "ROIC 输出", "积分电荷形成灰度", "#687787");
-    drawArrow(ctx, W * 0.18, flowY, W * 0.23, flowY, "#c47b38", 1.5);
-    drawArrow(ctx, W * 0.38, flowY, W * 0.43, flowY, "#1f6f8b", 1.5);
-    drawArrow(ctx, W * 0.58, flowY, W * 0.63, flowY, "#0e7665", 1.5);
-    drawArrow(ctx, W * 0.76, flowY, W * 0.80, flowY, "#687787", 1.5);
+    stepBadge(ctx, 3, W * 0.45, flowY, "T2SL 吸收", "hν ≥ Eg 产生 e-/h+", VIS.electron);
+    stepBadge(ctx, 4, W * 0.65, flowY, "结区分离", "内建电场收集载流子", VIS.field);
+    stepBadge(ctx, 5, W * 0.82, flowY, "ROIC 输出", "积分电荷形成灰度", VIS.readout);
+    drawArrow(ctx, W * 0.18, flowY, W * 0.23, flowY, VIS.photon, 1.5);
+    drawArrow(ctx, W * 0.38, flowY, W * 0.43, flowY, VIS.electron, 1.5);
+    drawArrow(ctx, W * 0.58, flowY, W * 0.63, flowY, VIS.field, 1.5);
+    drawArrow(ctx, W * 0.76, flowY, W * 0.80, flowY, VIS.readout, 1.5);
 
     ctx.strokeStyle = "#e8eef3";
     ctx.beginPath();
-    ctx.moveTo(28, 88);
-    ctx.lineTo(W - 28, 88);
+    ctx.moveTo(24, 68);
+    ctx.lineTo(W - 24, 68);
     ctx.stroke();
 
-    var mainTop = 108, footerTop = H - 76, mainH = footerTop - mainTop;
-    var opticalX = W * 0.035, opticalW = W * 0.265;
-    var pixelX = W * 0.325, pixelW = W * 0.285;
-    var roicX = W * 0.635, roicW = W * 0.330;
-    var panelY = mainTop + 18, panelH = mainH - 36;
+    var mainTop = 76, footerTop = H - 58, mainH = footerTop - mainTop;
+    var opticalX = W * 0.030, opticalW = W * 0.175;
+    var pixelX = W * 0.235, pixelW = W * 0.385;
+    var roicX = W * 0.650, roicW = W * 0.315;
+    var panelY = mainTop + 4, panelH = mainH - 8;
 
     function lane(x, w, title, subtitle) {
-      ctx.fillStyle = "#fbfcfd";
-      rr(ctx, x, panelY, w, panelH, 12);
-      ctx.fill();
-      ctx.strokeStyle = "#edf2f6";
-      ctx.stroke();
       ctx.fillStyle = "#17212b";
       ctx.font = "800 13px sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText(title, x + 18, panelY + 26);
+      ctx.fillText(title, x + 8, panelY + 19);
       ctx.fillStyle = "#66727f";
       ctx.font = "10px sans-serif";
-      ctx.fillText(subtitle, x + 18, panelY + 43);
+      ctx.fillText(subtitle, x + 8, panelY + 35);
     }
+    ctx.strokeStyle = "#edf2f6";
+    ctx.lineWidth = 1;
+    [pixelX - W * 0.018, roicX - W * 0.018].forEach(function (x) {
+      ctx.beginPath();
+      ctx.moveTo(x, panelY + 8);
+      ctx.lineTo(x, panelY + panelH - 8);
+      ctx.stroke();
+    });
     lane(opticalX, opticalW, "光学输入", "目标热辐射被镜头聚焦到窗口");
     lane(pixelX, pixelW, "像元剖面", "II 类超晶格吸收并分离载流子");
     lane(roicX, roicW, "读出链路", "光电流积分、放大、数字化");
 
     var heat = clamp((P.targetT - 250) / 170, 0, 1);
-    var targetX = opticalX + opticalW * 0.23, targetY = panelY + panelH * 0.44;
-    var lensX = opticalX + opticalW * 0.58, lensY = targetY;
-    var focusX = pixelX + pixelW * 0.50, focusY = panelY + 104;
-    var tg = ctx.createLinearGradient(targetX - 48, targetY - 58, targetX + 48, targetY + 58);
+    var targetX = opticalX + opticalW * 0.27, targetY = panelY + panelH * 0.45;
+    var lensX = opticalX + opticalW * 0.70, lensY = targetY;
+    var focusX = pixelX + pixelW * 0.50, focusY = panelY + 92;
+    var targetW = clamp(opticalW * 0.62, 78, 108);
+    var targetH = clamp(targetW * 1.08, 88, 118);
+    var glyphSize = clamp(targetW * 0.48, 40, 54);
+    var lensRx = clamp(opticalW * 0.075, 10, 15);
+    var lensRy = clamp(panelH * 0.17, 54, 72);
+    var tg = ctx.createLinearGradient(targetX - targetW * 0.42, targetY - targetH * 0.46, targetX + targetW * 0.42, targetY + targetH * 0.46);
     tg.addColorStop(0, "rgba(123,92,36,.16)");
-    tg.addColorStop(1, "rgba(196,123,56," + (0.34 + heat * 0.44).toFixed(2) + ")");
+    tg.addColorStop(1, "rgba(184,107,29," + (0.34 + heat * 0.44).toFixed(2) + ")");
     ctx.fillStyle = tg;
-    rr(ctx, targetX - 58, targetY - 62, 116, 124, 14);
+    rr(ctx, targetX - targetW / 2, targetY - targetH / 2, targetW, targetH, Math.min(14, targetW * 0.13));
     ctx.fill();
-    ctx.strokeStyle = "#c47b38";
+    ctx.strokeStyle = VIS.photon;
     ctx.lineWidth = 1.6;
     ctx.stroke();
     ctx.fillStyle = "#17212b";
     ctx.font = "800 14px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(currentScene.target, targetX, targetY - 22);
+    ctx.fillText(currentScene.target, targetX, targetY - targetH * 0.26);
     try {
-      drawTargetGlyph(ctx, P.scene, targetX, targetY + 2, 58);
+      drawTargetGlyph(ctx, P.scene, targetX, targetY + 2, glyphSize);
     } catch (err) {
       ctx.fillStyle = "rgba(23,33,43,.72)";
       ctx.font = "800 18px sans-serif";
@@ -750,52 +954,44 @@
     }
     ctx.fillStyle = "#7a5c24";
     ctx.font = "12px sans-serif";
-    ctx.fillText(P.targetT.toFixed(0) + " K", targetX, targetY + 44);
+    ctx.fillText(P.targetT.toFixed(0) + " K", targetX, targetY + targetH * 0.35);
     ctx.fillStyle = "#66727f";
     ctx.font = "10px sans-serif";
-    ctx.fillText(currentScene.note, targetX, targetY + 61);
+    ctx.fillText(sceneBand, targetX, targetY + targetH * 0.49);
 
     ctx.strokeStyle = "#7a5c24";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.ellipse(lensX, lensY, 15, 72, 0, 0, Math.PI * 2);
+    ctx.ellipse(lensX, lensY, lensRx, lensRy, 0, 0, Math.PI * 2);
     ctx.stroke();
     ctx.fillStyle = "rgba(122,92,36,.10)";
     ctx.fill();
     ctx.fillStyle = "#17212b";
     ctx.font = "800 12px sans-serif";
-    ctx.fillText("红外镜头", lensX, lensY + 92);
+    ctx.fillText("红外镜头", lensX, lensY + lensRy + 20);
     ctx.fillStyle = "#66727f";
     ctx.font = "10px sans-serif";
-    ctx.fillText("Ge / ZnSe", lensX, lensY + 108);
+    ctx.fillText("Ge / ZnSe", lensX, lensY + lensRy + 36);
 
     ctx.save();
-    ctx.shadowColor = "rgba(212,138,56,.42)";
+    ctx.shadowColor = VIS.photonGlow;
     ctx.shadowBlur = 8;
     ctx.lineWidth = 1.5;
     for (var pr = 0; pr < 7; pr++) {
       var off = (pr - 3) * 16;
-      ctx.strokeStyle = "rgba(196,123,56,.44)";
+      ctx.strokeStyle = "rgba(184,107,29," + (0.14 + m.bandResponse * 0.36).toFixed(2) + ")";
       ctx.beginPath();
-      ctx.moveTo(targetX + 58, targetY + off * 0.72);
-      ctx.bezierCurveTo(lensX - 52, lensY + off, lensX + 54, lensY + off * 0.28, focusX, focusY + off * 0.15);
+      ctx.moveTo(targetX + targetW / 2, targetY + off * 0.72);
+      ctx.bezierCurveTo(lensX - lensRx * 3.6, lensY + off, lensX + lensRx * 3.6, lensY + off * 0.28, focusX, focusY + off * 0.15);
       ctx.stroke();
-      var p = (tAnim * (0.18 + m.photonSignal * 0.18) + pr * 0.13) % 1;
-      var px = lerp(targetX + 62, focusX, p);
+      var p = (tAnim * (0.14 + m.photonSignal * 0.14 + m.bandResponse * 0.10) + pr * 0.13) % 1;
+      var px = lerp(targetX + targetW * 0.54, focusX, p);
       var py = lerp(targetY + off * 0.72, focusY + off * 0.15, p) - Math.sin(p * Math.PI) * 20;
-      ctx.fillStyle = "#c47b38";
-      ctx.beginPath();
-      ctx.arc(px, py, 3.2, 0, Math.PI * 2);
-      ctx.fill();
+      glowDot(ctx, px, py, VIS.photon, 2.0 + m.bandResponse * 1.4, 0.38 + m.bandResponse * 0.52);
     }
     ctx.restore();
 
-    var pixOuterX = pixelX + pixelW * 0.08, pixOuterY = panelY + 52, pixOuterW = pixelW * 0.84, pixOuterH = Math.min(560, panelH - 70);
-    ctx.fillStyle = "#ffffff";
-    rr(ctx, pixOuterX, pixOuterY, pixOuterW, pixOuterH, 10);
-    ctx.fill();
-    ctx.strokeStyle = "#d6e0e8";
-    ctx.stroke();
+    var pixOuterX = pixelX + pixelW * 0.045, pixOuterY = panelY + 50, pixOuterW = pixelW * 0.91, pixOuterH = panelH - 86;
 
     var winY = pixOuterY + 24, contactTopY = winY + 44, absY = contactTopY + 50;
     var nContactH = 22, subH = 30, gapAbsToN = 34, gapNToSub = 40, bottomPad = 24;
@@ -824,9 +1020,9 @@
     ctx.fillStyle = "#f8fafb";
     ctx.fillRect(absX, absY, absW, absH);
     var fieldGrad = ctx.createLinearGradient(absX, absY, absX, absY + absH);
-    fieldGrad.addColorStop(0, "rgba(212,138,56,.10)");
-    fieldGrad.addColorStop(0.5, "rgba(57,169,200,.05)");
-    fieldGrad.addColorStop(1, "rgba(74,160,216,.10)");
+    fieldGrad.addColorStop(0, "rgba(184,63,122,.10)");
+    fieldGrad.addColorStop(0.5, "rgba(15,138,114,.05)");
+    fieldGrad.addColorStop(1, "rgba(33,102,209,.10)");
     ctx.fillStyle = fieldGrad;
     ctx.fillRect(absX, absY, absW, absH);
     ctx.strokeStyle = "#d6e0e8";
@@ -853,16 +1049,18 @@
     for (var j = 0; j < n; j += 5) {
       ctx.fillRect(absX + edgeW, absY + j * layerH, absW - edgeW * 2, Math.max(1, layerH * 0.12));
     }
+    drawBandInset(ctx, absX + edgeW + 8, absY + 12, absW - edgeW * 2 - 16, Math.min(72, absH * 0.42), m, tAnim);
     ctx.save();
-    ctx.shadowColor = "rgba(212,138,56,.55)";
+    ctx.shadowColor = VIS.photonGlow;
     ctx.shadowBlur = 8;
-    for (var ph = 0; ph < 3; ph++) {
-      var rx = absX + absW * (0.40 + ph * 0.10);
-      drawArrow(ctx, rx, winY + 26, rx, absY + absH * 0.70, "#d48a38", 1.5);
+    var photonCount = Math.max(1, Math.round(1 + m.bandResponse * 3));
+    for (var ph = 0; ph < photonCount; ph++) {
+      var rx = absX + absW * (0.39 + ph * 0.09);
+      drawArrow(ctx, rx, winY + 26, rx, absY + absH * 0.70, VIS.photon, 1.5);
       var rp = (tAnim * (0.26 + m.photonSignal * 0.18) + ph * 0.17) % 1;
-      ctx.fillStyle = "#d48a38";
+      ctx.fillStyle = VIS.photon;
       ctx.beginPath();
-      ctx.arc(rx, lerp(winY + 28, absY + absH * 0.70, rp), 3, 0, Math.PI * 2);
+      ctx.arc(rx, lerp(winY + 28, absY + absH * 0.70, rp), 2.4 + m.bandResponse * 1.1, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.restore();
@@ -887,20 +1085,40 @@
     ctx.fillText("GaSb substrate / bump bonds", pixOuterX + pixOuterW / 2, subY + 19);
 
     var fieldX = pixOuterX + pixOuterW - 36;
+    ctx.save();
+    ctx.strokeStyle = "rgba(15,138,114,.18)";
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(fieldX, contactBotY - 2);
+    ctx.lineTo(fieldX, contactTopY + 25);
+    ctx.stroke();
+    ctx.restore();
+    ctx.save();
     ctx.setLineDash([5, 5]);
-    drawArrow(ctx, fieldX, contactBotY - 2, fieldX, contactTopY + 25, "#0e7665", 1.6);
+    ctx.lineDashOffset = -tAnim * 22;
+    drawArrow(ctx, fieldX, contactBotY - 2, fieldX, contactTopY + 25, VIS.field, 1.6);
+    ctx.restore();
+    ctx.save();
+    var fieldPulseCount = Math.max(2, Math.round(2 + m.fieldStrength * 3));
+    for (var fp = 0; fp < fieldPulseCount; fp++) {
+      var ft = (tAnim * (0.42 + m.fieldStrength * 0.35) + fp / fieldPulseCount) % 1;
+      var fy = lerp(contactBotY - 4, contactTopY + 28, ft);
+      var fr = 2.4 + Math.sin((ft + fp) * Math.PI) * 0.9;
+      glowDot(ctx, fieldX, fy, VIS.field, fr, 0.42 + m.fieldStrength * 0.38);
+    }
+    ctx.restore();
     ctx.setLineDash([]);
     ctx.fillStyle = "rgba(255,255,255,.92)";
     rr(ctx, fieldX - 106, contactBotY + 27, 98, 21, 4);
     ctx.fill();
-    ctx.fillStyle = "#0e7665";
+    ctx.fillStyle = VIS.field;
     ctx.font = "800 10px sans-serif";
     ctx.textAlign = "left";
     ctx.fillText("内建电场 / 反偏", fieldX - 99, contactBotY + 42);
 
     ctx.save();
     ctx.lineWidth = 1.3;
-    ctx.strokeStyle = "rgba(74,160,216,.34)";
+    ctx.strokeStyle = VIS.electronSoft;
     for (var ep = 0; ep < 4; ep++) {
       var pathX = absX + absW * (0.34 + ep * 0.10);
       ctx.beginPath();
@@ -908,7 +1126,7 @@
       ctx.bezierCurveTo(pathX - 12, absY + absH * 0.68, pathX - 4, contactBotY - 8, pathX, contactBotY + 8);
       ctx.stroke();
     }
-    ctx.strokeStyle = "rgba(212,138,56,.34)";
+    ctx.strokeStyle = VIS.holeSoft;
     for (var hp = 0; hp < 4; hp++) {
       var hPathX = absX + absW * (0.39 + hp * 0.10);
       ctx.beginPath();
@@ -918,85 +1136,66 @@
     }
     ctx.restore();
 
-    var carrierCount = Math.max(3, Math.round(3 + m.qe * 5));
+    var carrierCount = Math.max(2, Math.round(2 + m.qe * m.bandResponse * 8));
     for (var c = 0; c < carrierCount; c++) {
       var phase = (tAnim * 0.46 + c / carrierCount) % 1;
       var cx = absX + absW * (0.34 + (c % 4) * 0.10);
       var cy = absY + absH * (0.36 + ((c * 17) % 24) / 100);
-      ctx.fillStyle = "#4aa0d8";
+      ctx.fillStyle = VIS.electron;
       ctx.beginPath();
       ctx.arc(cx + Math.sin(tAnim + c) * 3, lerp(cy, contactBotY + 11, phase), 3.3, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = "#d48a38";
+      ctx.fillStyle = VIS.hole;
       ctx.beginPath();
       ctx.arc(cx + 10 + Math.cos(tAnim + c) * 3, lerp(cy, contactTopY + 11, phase), 3.3, 0, Math.PI * 2);
       ctx.fill();
     }
-    ctx.fillStyle = "#d48a38";
+    ctx.fillStyle = VIS.hole;
     ctx.font = "800 10px sans-serif";
     ctx.fillText("h+ → p", pixOuterX + 30, contactTopY - 10);
-    ctx.fillStyle = "#4aa0d8";
+    ctx.fillStyle = VIS.electron;
     ctx.fillText("e- → n", pixOuterX + 30, contactBotY + 38);
 
     var leakAlpha = clamp(Math.log10(Math.max(m.darkRatio, 0.001)) / 2 + 0.35, 0.16, 0.80);
     var leakX = pixOuterX + pixOuterW - 24;
+    var leakStart = { x: leakX, y: contactBotY + 10 };
+    var leakCtrl1 = { x: leakX + 18, y: absY + absH + 18 };
+    var leakCtrl2 = { x: leakX + 18, y: absY - 8 };
+    var leakEnd = { x: leakX, y: contactTopY + 10 };
     ctx.strokeStyle = "rgba(184,50,42," + leakAlpha.toFixed(2) + ")";
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 5]);
+    ctx.lineDashOffset = -tAnim * 24;
     ctx.beginPath();
-    ctx.moveTo(leakX, contactBotY + 10);
-    ctx.bezierCurveTo(leakX + 18, absY + absH + 18, leakX + 18, absY - 8, leakX, contactTopY + 10);
+    ctx.moveTo(leakStart.x, leakStart.y);
+    ctx.bezierCurveTo(leakCtrl1.x, leakCtrl1.y, leakCtrl2.x, leakCtrl2.y, leakEnd.x, leakEnd.y);
     ctx.stroke();
     ctx.setLineDash([]);
+    ctx.lineDashOffset = 0;
+    var leakPulseCount = Math.max(1, Math.round(1 + m.darkActivity * 4));
+    for (var lp = 0; lp < leakPulseCount; lp++) {
+      var lt = (tAnim * (0.22 + m.darkActivity * 0.48) + lp / leakPulseCount) % 1;
+      var leakPt = cubicPoint(leakStart, leakCtrl1, leakCtrl2, leakEnd, lt);
+      glowDot(ctx, leakPt.x, leakPt.y, VIS.dark, 2.2 + m.darkActivity * 2.4, 0.32 + m.darkActivity * 0.55);
+    }
     ctx.fillStyle = "rgba(255,255,255,.94)";
     rr(ctx, leakX - 116, subY + 38, 112, 22, 4);
     ctx.fill();
-    ctx.fillStyle = "#b8322a";
+    ctx.fillStyle = VIS.dark;
     ctx.font = "800 10px sans-serif";
     ctx.fillText("暗电流 / 表面漏电", leakX - 109, subY + 53);
 
-    var roicOuterX = roicX + roicW * 0.05, roicOuterY = pixOuterY + 8, roicOuterW = roicW * 0.90, roicOuterH = pixOuterH + 42;
-    ctx.fillStyle = "#eef4f7";
-    rr(ctx, roicOuterX, roicOuterY, roicOuterW, roicOuterH, 12);
-    ctx.fill();
-    ctx.strokeStyle = "#b6c2cc";
-    ctx.stroke();
+    var roicOuterX = roicX + roicW * 0.035, roicOuterY = panelY + 50, roicOuterW = roicW * 0.93, roicOuterH = panelH - 86;
     ctx.fillStyle = "#17212b";
     ctx.font = "800 14px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("ROIC 读出电路", roicOuterX + roicOuterW / 2, roicOuterY + 26);
+    ctx.fillText("ROIC 读出电路", roicOuterX + roicOuterW / 2, roicOuterY + 16);
 
-    var fill = clamp(m.snr / 25, 0.05, 1);
-    var blockX = roicOuterX + 24, blockW = roicOuterW - 48;
-    var capY = roicOuterY + 46, capH = 46;
-    ctx.fillStyle = "#ffffff";
-    rr(ctx, blockX, capY, blockW, capH, 7);
-    ctx.fill();
-    ctx.strokeStyle = "#687787";
-    ctx.stroke();
-    ctx.fillStyle = "#17212b";
-    ctx.font = "800 11px sans-serif";
-    ctx.fillText("CTIA 积分电容", roicOuterX + roicOuterW / 2, capY + 14);
-    ctx.fillStyle = "#edf4f8";
-    rr(ctx, blockX + 14, capY + 22, blockW - 28, 12, 4);
-    ctx.fill();
-    ctx.fillStyle = "#1f6f8b";
-    rr(ctx, blockX + 14, capY + 22, (blockW - 28) * fill, 12, 4);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(104,119,135,.40)";
-    ctx.lineWidth = 1;
-    for (var tick = 0; tick <= 4; tick++) {
-      var tx = blockX + 14 + (blockW - 28) * tick / 4;
-      ctx.beginPath();
-      ctx.moveTo(tx, capY + 20);
-      ctx.lineTo(tx, capY + 38);
-      ctx.stroke();
-    }
-    ctx.fillStyle = "#66727f";
-    ctx.font = "10px sans-serif";
-    ctx.fillText("Iphoto - Idark → Vint", roicOuterX + roicOuterW / 2, capY + 40);
+    var blockX = roicOuterX + 12, blockW = roicOuterW - 24;
+    var capY = roicOuterY + 28, capH = 70;
+    drawIntegrationCurve(ctx, blockX, capY, blockW, capH, m, tAnim);
 
-    var chainY = capY + capH + 14, unitGap = 10, unitW = (blockW - unitGap * 2) / 3, unitH = 38;
+    var chainY = capY + capH + 10, unitGap = 8, unitW = (blockW - unitGap * 2) / 3, unitH = 34;
     [["S/H", "采样保持"], ["AMP", "低噪声放大"], ["ADC", "数字化"]].forEach(function (u, idx) {
       var ux = blockX + idx * (unitW + unitGap);
       ctx.fillStyle = "#ffffff";
@@ -1004,21 +1203,22 @@
       ctx.fill();
       ctx.strokeStyle = "#c7d1da";
       ctx.stroke();
-      ctx.fillStyle = idx === 1 ? "#1f6f8b" : "#687787";
-      ctx.font = "800 11px sans-serif";
-      ctx.fillText(u[0], ux + unitW / 2, chainY + 15);
+      ctx.fillStyle = idx === 1 ? VIS.current : VIS.readout;
+      ctx.font = "800 10px sans-serif";
+      ctx.fillText(u[0], ux + unitW / 2, chainY + 13);
       ctx.fillStyle = "#66727f";
       ctx.font = "9px sans-serif";
-      ctx.fillText(u[1], ux + unitW / 2, chainY + 28);
-      ctx.fillStyle = idx === 1 ? "#28c5a7" : "#d99a3d";
+      ctx.fillText(u[1], ux + unitW / 2, chainY + 25);
+      ctx.fillStyle = idx === 1 ? VIS.field : VIS.photon;
       ctx.beginPath();
-      ctx.arc(ux + 12, chainY + 12, 3.2, 0, Math.PI * 2);
+      ctx.arc(ux + 10, chainY + 10, 3, 0, Math.PI * 2);
       ctx.fill();
-      if (idx < 2) drawArrow(ctx, ux + unitW + 2, chainY + unitH / 2, ux + unitW + unitGap - 3, chainY + unitH / 2, "#687787", 1.2);
+      if (idx < 2) drawArrow(ctx, ux + unitW + 2, chainY + unitH / 2, ux + unitW + unitGap - 3, chainY + unitH / 2, VIS.readout, 1.2);
     });
 
-    var gridY = chainY + unitH + 14;
-    var mapSize = Math.min(blockW, roicOuterY + roicOuterH - gridY - 36);
+    var gridY = chainY + unitH + 12;
+    var mapSpace = roicOuterY + roicOuterH - gridY - 24;
+    var mapSize = Math.max(96, Math.min(blockW, mapSpace));
     var gridX = roicOuterX + roicOuterW / 2 - mapSize / 2;
     try {
       drawThermalOutput(ctx, gridX, gridY, mapSize, m, heat, tAnim);
@@ -1038,11 +1238,11 @@
 
     var currentY = capY + capH / 2;
     ctx.save();
-    ctx.shadowColor = "rgba(57,169,200,.65)";
+    ctx.shadowColor = "rgba(47,143,172,.65)";
     ctx.shadowBlur = 9;
-    drawArrow(ctx, pixOuterX + pixOuterW + 8, currentY, roicOuterX - 10, currentY, "#39a9c8", 2.2);
+    drawArrow(ctx, pixOuterX + pixOuterW + 8, currentY, roicOuterX - 10, currentY, VIS.current, 2.2);
     ctx.restore();
-    ctx.fillStyle = "#39a9c8";
+    ctx.fillStyle = VIS.current;
     ctx.font = "800 10px sans-serif";
     ctx.textAlign = "left";
     ctx.fillText("光电流", pixOuterX + pixOuterW + 16, currentY - 8);
@@ -1050,11 +1250,11 @@
     var legendY = footerTop + 28;
     var legendX = W * 0.06;
     var legend = [
-      ["#c47b38", "红外光子"],
-      ["#1f6f8b", "电子 e-"],
-      ["#c47b38", "空穴 h+"],
-      ["#b8322a", "暗电流"],
-      ["#0e7665", "电场收集"]
+      [VIS.photon, "红外光子"],
+      [VIS.electron, "电子 e-"],
+      [VIS.hole, "空穴 h+"],
+      [VIS.dark, "暗电流"],
+      [VIS.field, "电场收集"]
     ];
     ctx.textAlign = "left";
     legend.forEach(function (it, idx) {
@@ -1094,25 +1294,27 @@
     ctx.fillStyle = "#7a5c24"; ctx.font = "10px sans-serif"; ctx.fillText("hν ≥ Eg", cx + 8, cy - 4);
   }
 
-  function drawSignal(m) {
+  function drawSignal(m, now) {
     var o = canvasCtx("signalCanvas"), ctx = o.ctx, W = o.w, H = o.h;
+    var tAnim = (now || (performance.now ? performance.now() : Date.now())) / 1000;
     ctx.clearRect(0, 0, W, H); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, H);
-    var padL = 44, padR = 18, padT = 24, padB = 34, pw = W - padL - padR, ph = H - padT - padB;
-    ctx.strokeStyle = "#d9e0e7"; ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + ph); ctx.lineTo(padL + pw, padT + ph); ctx.stroke();
+    var padL = 34, padT = 34, padB = 36, leftW = W * 0.36, ph = H - padT - padB;
+    ctx.strokeStyle = "#d9e0e7"; ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + ph); ctx.lineTo(padL + leftW, padT + ph); ctx.stroke();
     var sig = clamp(Math.log10(Math.max(m.iph, 1e-14)) + 13, 0, 7) / 7;
     var dark = clamp(Math.log10(Math.max(m.idark, 1e-14)) + 13, 0, 7) / 7;
     function bar(x, val, color, label) {
       var h = val * ph;
-      ctx.fillStyle = color; rr(ctx, x, padT + ph - h, pw * .18, h, 5); ctx.fill();
-      ctx.fillStyle = "#66727f"; ctx.font = "11px sans-serif"; ctx.textAlign = "center"; ctx.fillText(label, x + pw * .09, padT + ph + 18);
+      ctx.fillStyle = color; rr(ctx, x, padT + ph - h, leftW * .22, h, 5); ctx.fill();
+      ctx.fillStyle = "#66727f"; ctx.font = "11px sans-serif"; ctx.textAlign = "center"; ctx.fillText(label, x + leftW * .11, padT + ph + 18);
     }
-    bar(padL + pw * .18, sig, "#1f6f8b", "photo");
-    bar(padL + pw * .48, dark, "#b8322a", "dark");
-    ctx.strokeStyle = "#0e7665"; ctx.lineWidth = 2;
+    bar(padL + leftW * .18, sig, VIS.current, "photo");
+    bar(padL + leftW * .55, dark, VIS.dark, "dark");
+    ctx.strokeStyle = VIS.field; ctx.lineWidth = 2;
     var y = padT + ph * (1 - clamp(m.snr / 25, 0, 1));
-    ctx.beginPath(); ctx.moveTo(padL + pw * .05, y); ctx.lineTo(padL + pw * .88, y); ctx.stroke();
-    ctx.fillStyle = "#0e7665"; ctx.font = "700 12px sans-serif"; ctx.textAlign = "left"; ctx.fillText("SNR trend " + m.snr.toFixed(1), padL + 4, y - 6);
-    ctx.fillStyle = "#17212b"; ctx.fillText("ROIC integrates charge for " + P.tint.toFixed(1) + " ms", padL, 18);
+    ctx.beginPath(); ctx.moveTo(padL + leftW * .06, y); ctx.lineTo(padL + leftW * .92, y); ctx.stroke();
+    ctx.fillStyle = VIS.field; ctx.font = "700 11px sans-serif"; ctx.textAlign = "left"; ctx.fillText("SNR " + m.snr.toFixed(1), padL + 4, y - 6);
+    ctx.fillStyle = "#17212b"; ctx.font = "800 12px sans-serif"; ctx.fillText("光电流 / 暗电流竞争", padL, 18);
+    drawIntegrationCurve(ctx, W * 0.45, 24, W * 0.50, H - 48, m, tAnim);
   }
 
   function drawTrend(m) {
@@ -1156,7 +1358,10 @@
   }
 
   function animationLoop(ts) {
-    if (latestModel) drawDevice(latestModel, ts);
+    if (latestModel) {
+      drawDevice(latestModel, ts);
+      drawSignal(latestModel, ts);
+    }
     requestAnimationFrame(animationLoop);
   }
 

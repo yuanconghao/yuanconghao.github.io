@@ -219,7 +219,7 @@ canvas {
   border-radius: 8px;
 }
 
-#deviceCanvas { height: clamp(760px, 82vh, 960px); }
+#deviceCanvas { height: clamp(620px, 72vh, 780px); }
 #bandCanvas, #signalCanvas { height: 270px; }
 #trendCanvas { height: 220px; }
 
